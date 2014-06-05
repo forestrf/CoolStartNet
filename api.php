@@ -1,12 +1,33 @@
 <?php
 
 require_once 'php/funciones/genericas.php';
+require_once 'php/clases/DB.php';
 
 // $_GET['size'] => 1..infinito
 // $_GET['widget'] => [nombre1,nombre2...]
 // $_GET['variable'] => [nombre1,nombre2...]
 // $_POST['value'] => [valor1, valor2...]
 // $_GET['action'] => get/set
+
+/*
+Tablas:
+	Usuarios
+		ID => int
+		Nick => string
+		Password => string
+	Widgets
+		ID => int
+		Nombre => string
+		Descripción => string
+		Variables => json
+	Variables:
+		ID => int
+		IDUsuario => int
+		IDWidget => int (-1 = interno, 0..infinito = widgets)
+		Variable => string
+		Tipo => 1(link)/2(contenedor)
+		Valor => ""/json/string/filtrado segun variable widget
+*/
 
 /*
 Fallos:
