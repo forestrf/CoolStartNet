@@ -85,7 +85,7 @@ class DB {
 	// Consultar si existe un nick en la base de datos
 	function existeNick($nick){
 		$nick = mysql_escape_mimic($nick);
-		return count($this->consulta("SELECT * FROM usuarios WHERE `NICK` = '{$nick}'", true)) > 0;
+		return count($this->consulta("SELECT * FROM usuarios WHERE `Nick` = '{$nick}'", true)) > 0;
 	}
 	
 	// Insertar un usuario en la base de datos
@@ -98,9 +98,9 @@ class DB {
 	// Retorna la ID del usuario que tiene ese NICK
 	function idDesdeNick($nick){
 		$nick = mysql_escape_mimic($nick);
-		$nick = $this->consulta("SELECT ID FROM usuarios WHERE NICK = '{$nick}'", true);
+		$nick = $this->consulta("SELECT ID FROM usuarios WHERE Nick = '{$nick}'", true);
 		$nick = $nick[0];
-		return $nick["ID"];
+		return $nick['ID'];
 	}
 	
 	// Retorna el NICK del usuario dada una ID
@@ -108,7 +108,7 @@ class DB {
 		$ID = mysql_escape_mimic($ID);
 		$ID = $this->consulta("SELECT NICK FROM usuarios WHERE ID = '{$ID}'", true);
 		$ID = $ID[0];
-		return $ID["NICK"];
+		return $ID['Nick'];
 	}
 	
 	// Retorna la ID
@@ -142,9 +142,37 @@ function mysql_escape_mimic($inp){
 	if(is_array($inp))
 		return array_map(__METHOD__, $inp);
 
-	if(!empty($inp) && is_string($inp)) {
+	if(!empty($inp) && is_string($inp)){
 		return str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $inp);
 	}
 
 	return $inp;
+}
+
+function hash_password($password){
+	return custom_hmac('md5', $password, 'GVWUIF/WA&Htb9 hwaw&.434/ */34+', true);
+}
+
+function custom_hmac($algo, $data, $key, $raw_output=false){
+	$algo = strtolower($algo);
+	$pack = 'H'.strlen($algo('test'));
+	$size = 64;
+	$opad = str_repeat(chr(0x5C), $size);
+	$ipad = str_repeat(chr(0x36), $size);
+	
+	if(strlen($key) > $size){
+		$key = str_pad(pack($pack, $algo($key)), $size, chr(0x00));
+	}
+	else{
+		$key = str_pad($key, $size, chr(0x00));
+	}
+	
+	for($i = 0; $i < strlen($key) - 1; $i++){
+		$opad[$i] = $opad[$i] ^ $key[$i];
+		$ipad[$i] = $ipad[$i] ^ $key[$i];
+	}
+	
+	$output = $algo($opad.pack($pack, $algo($ipad.$data)));
+	
+	return ($raw_output) ? pack($pack, $output) : $output;
 }
