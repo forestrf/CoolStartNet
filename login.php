@@ -7,28 +7,23 @@ if(isset($_POST['submit'])){
 	$valido = $db -> NickPasswordValidacion($_POST['nick'], $_POST['password']);
 	
 	if($valido !== false){
-		
 		$_SESSION['usuario'] = $valido;
-		
-		var_dump($valido);
-		exit;
 	}
 	else{
 		echo 'login inválido<br>';
 	}
 }
 
+var_dump($_SESSION);
+
 if(isset($_SESSION['usuario'])){
-	echo 'estás logueado como '.$_SESSION['usuario']['Nick'];
 	exit;
 }
-
-var_dump($_SESSION);
 ?>
 
 <form method="POST" action="">
-<input type="text" name="nick" placeholder="nick"><br>
-<input type="password" name="password" placeholder="password"><br>
-<input name="submit" type="submit" value="Entrar">
+	<input type="text" name="nick" placeholder="nick"><br>
+	<input type="password" name="password" placeholder="password"><br>
+	<input name="submit" type="submit" value="Entrar">
 </form>
 
