@@ -184,12 +184,14 @@ function variableDeWidgetValidoHandler(&$widgets, &$variables, $size){
 	if(count($variables) !== (int)$size){
 		return false;
 	}
+	$i = 0;
 	foreach($widgets as &$widget){
-		foreach($variables as &$variable){
+		foreach($variables[$i] as &$variable){
 			if(!variableDeWidgetValido($widget, $variable)){
 				return false;
 			}
 		}
+		++$i;
 	}
 	return true;
 }
