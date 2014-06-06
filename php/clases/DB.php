@@ -16,6 +16,8 @@ class DB {
 	
 	var $LAST_MYSQL_ID = '';
 	
+	private $cache = array();
+	
 	function Abrir($host=null, $user=null, $pass=null, $bd=null){
 		if($host !== null)
 			$this->host = $host;
@@ -41,12 +43,12 @@ class DB {
 	// Realizar una consulta sql. Retorna false en caso de error, además de imprimir el error en pantalla
 	// Solo aquí se realiza una consulta directamente. De esta forma se puede abrir conexión en caso de ser necesaria o usar una respuesta cacheada
 	private function consulta($query, $cacheable = false){
-		/*if($cacheable && MEMCACHE){
+		if($cacheable){
 			$cacheado = $this->consultaCache($query);
 			if($cacheado !== false){
 				return $cacheado;
 			}
-		}*/
+		}
 		
 		if($this->conexionAbierta === false){
 			$this->Abrir();
@@ -70,17 +72,21 @@ class DB {
 			return false;
 		}
 		
-		/*if($cacheable && MEMCACHE){
-			$arrayCacheado = $resultado->fetch_array(MYSQLI_ASSOC);
-			$this->cacheaResultado($query, $arrayCacheado);
-			return $arrayCacheado;
-		}*/
 		$resultadoArray = array();
 		while($rt = $resultado->fetch_array(MYSQLI_ASSOC)){$resultadoArray[] = $rt;};
+		if($cacheable){
+			$this->cacheaResultado($query, $resultadoArray);
+		}
 		return $resultadoArray;
 	}
 	
-	// FUNCIONES QUE SE USAN EN LA APLICACIÓN
+	
+	
+	# ---------------------------------------------------------------------------
+	#
+	# USUARIOS
+	#
+	# ---------------------------------------------------------------------------
 	
 	// Consultar si existe un nick en la base de datos
 	function existeNick($nick){
@@ -104,38 +110,32 @@ class DB {
 		return count($result) > 0 ? $result[0] : false;
 	}
 	
-	// Retorna la ID del usuario que tiene ese NICK
-	function idDesdeNick($nick){
-		$nick = mysql_escape_mimic($nick);
-		$nick = $this->consulta("SELECT ID FROM usuarios WHERE `nick` = '{$nick}'", true);
-		$nick = $nick[0];
-		return $nick['ID'];
+	
+	
+	# ---------------------------------------------------------------------------
+	#
+	# WIDGETS
+	#
+	# ---------------------------------------------------------------------------
+	
+	function getWidget($nombre){
+		$nombre = mysql_escape_mimic($nombre);
+		$result = $this->consulta("SELECT * FROM widgets WHERE `nombre` = '{$nombre}';");
+		return count($result) > 0 ? $result[0] : false;
 	}
 	
-	// Retorna el NICK del usuario dada una ID
-	function nickDesdeId($ID){
-		$ID = mysql_escape_mimic($ID);
-		$ID = $this->consulta("SELECT NICK FROM usuarios WHERE `ID` = '{$ID}'", true);
-		$ID = $ID[0];
-		return $ID['Nick'];
-	}
 	
 	// --------------------------------------------------------
-	/*
+	
 	//Cachear resultados. $consulta es el sql a cachear, $resultado es el array de la respuesta y $tiempoValido es la cantidad de segundos que se guardaré en cache (usando memcache)
-	function cacheaResultado($consulta, $resultado, $tiempoValido = 3600){
-		$resultado = json_encode($resultado);
-		$memcache_obj = memcache_pconnect('localhost', 11211);
-		$memcache_obj->add($consulta, $resultado, false, $tiempoValido);
+	function cacheaResultado($consulta, $resultado){
+		$this->cache[$consulta] = $resultado;
 	}
 	
 	//Cachear resultados. $consulta es el sql a cachear, $resultado es el array de la respuesta y $tiempoValido es la cantidad de segundos que se guardaré en cache (usando memcache)
 	function consultaCache($consulta){
-		$memcache_obj = memcache_pconnect('localhost', 11211);
-		$resultado = $memcache_obj->get($consulta);
-		return $resultado===false?false:json_decode($resultado);
+		return isset($this->cache[$consulta]) ? $this->cache[$consulta] : false;
 	}
-	*/
 }
 
 // Copia de mysql_real_escape_string para uso sin conexión abierta
