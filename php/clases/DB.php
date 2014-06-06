@@ -8,7 +8,7 @@ class DB {
 	private $host = "localhost";
 	private $user = "root";
 	private $pass = "";
-	private $bd = "briscaonline";
+	private $bd = "forest";
 
 	private $mysqli;
 	
@@ -85,20 +85,29 @@ class DB {
 	// Consultar si existe un nick en la base de datos
 	function existeNick($nick){
 		$nick = mysql_escape_mimic($nick);
-		return count($this->consulta("SELECT * FROM usuarios WHERE `Nick` = '{$nick}'", true)) > 0;
+		return count($this->consulta("SELECT * FROM usuarios WHERE `nick` = '{$nick}'", true)) > 0;
 	}
 	
 	// Insertar un usuario en la base de datos
 	function insertaUsuario($nick, $password){
 		$nick = mysql_escape_mimic($nick);
-		$password = mysql_escape_mimic($password);
-		return $this->consulta("INSERT INTO usuarios (`Nick`, `Password`) VALUES ('$nick', '$password')") === true;
+		$password = hash_password(mysql_escape_mimic($password));
+		echo $password;
+		return $this->consulta("INSERT INTO usuarios (`nick`, `password`) VALUES ('$nick', '$password')") === true;
+	}
+	
+	// Retorna la ID
+	function NickPasswordValidacion($nick, $password){
+		$nick = mysql_escape_mimic($nick);
+		$password = hash_password(mysql_escape_mimic($password));
+		$result = $this->consulta("SELECT * FROM usuarios WHERE `nick` = '{$nick}' AND `password` = '{$password}';");
+		return count($result) > 0 ? $result[0] : false;
 	}
 	
 	// Retorna la ID del usuario que tiene ese NICK
 	function idDesdeNick($nick){
 		$nick = mysql_escape_mimic($nick);
-		$nick = $this->consulta("SELECT ID FROM usuarios WHERE Nick = '{$nick}'", true);
+		$nick = $this->consulta("SELECT ID FROM usuarios WHERE `nick` = '{$nick}'", true);
 		$nick = $nick[0];
 		return $nick['ID'];
 	}
@@ -106,16 +115,9 @@ class DB {
 	// Retorna el NICK del usuario dada una ID
 	function nickDesdeId($ID){
 		$ID = mysql_escape_mimic($ID);
-		$ID = $this->consulta("SELECT NICK FROM usuarios WHERE ID = '{$ID}'", true);
+		$ID = $this->consulta("SELECT NICK FROM usuarios WHERE `ID` = '{$ID}'", true);
 		$ID = $ID[0];
 		return $ID['Nick'];
-	}
-	
-	// Retorna la ID
-	function NickPasswordValidacion($nick, $password){
-		$nick = mysql_escape_mimic($nick);
-		$password = mysql_escape_mimic($password);
-		return count($this->consulta("SELECT * FROM usuarios WHERE NICK = '{$nick}' AND PASSWORD = '{$password}' AND user_validado = '';")) > 0;
 	}
 	
 	// --------------------------------------------------------
@@ -150,7 +152,7 @@ function mysql_escape_mimic($inp){
 }
 
 function hash_password($password){
-	return custom_hmac('md5', $password, 'GVWUIF/WA&Htb9 hwaw&.434/ */34+', true);
+	return custom_hmac('md5', $password, 'GVWUIF/WA&Htb9 hwaw&.434/ */34+');
 }
 
 function custom_hmac($algo, $data, $key, $raw_output=false){
