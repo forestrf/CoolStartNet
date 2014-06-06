@@ -102,7 +102,7 @@ class DB {
 		return $this->consulta("INSERT INTO usuarios (`nick`, `password`) VALUES ('$nick', '$password')") === true;
 	}
 	
-	// Retorna la ID
+	// Retorna el usuario
 	function NickPasswordValidacion($nick, $password){
 		$nick = mysql_escape_mimic($nick);
 		$password = hash_password(mysql_escape_mimic($password));
@@ -118,9 +118,18 @@ class DB {
 	#
 	# ---------------------------------------------------------------------------
 	
+	// Retorna la configuración del widget
 	function getWidget($nombre){
 		$nombre = mysql_escape_mimic($nombre);
 		$result = $this->consulta("SELECT * FROM widgets WHERE `nombre` = '{$nombre}';");
+		return count($result) > 0 ? $result[0] : false;
+	}
+	
+	// Retorna una variable del usuario
+	function getVariable($widgetID, $variable){
+		$widgetID = mysql_escape_mimic($widgetID);
+		$variable = mysql_escape_mimic($variable);
+		$result = $this->consulta("SELECT ID, tipo, valor FROM variables WHERE `IDusuario` = '{$_SESSION['usuario']['ID']}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
 		return count($result) > 0 ? $result[0] : false;
 	}
 	

@@ -1,7 +1,15 @@
 <?php
 
+session_start();
+if(!isset($_SESSION['usuario'])){
+	exit;
+}
+
+
 require_once 'php/funciones/genericas.php';
 require_once 'php/clases/DB.php';
+
+$db = new DB();
 
 // $_GET['size'] => 1..infinito
 // $_GET['widget'] => [nombre1,nombre2...]
@@ -18,7 +26,6 @@ Tablas:
 	Widgets
 		ID => int
 		Nombre => string
-		Descripción => string
 		Variables => json
 	Variables:
 		ID => int
@@ -105,7 +112,7 @@ if(widgetValidoHandler($widget_json, $_GET['size'])){
 		switch(isset($_GET['action'])?$_GET['action']:null){
 			case 'get':
 				// Simple
-				$respuesta = getHandler($widget_json, $variable_json, $_GET['size']);
+				$respuesta = getHandler($widget_json, $variable_json);
 				if($respuesta !== false){
 					perfect(json_encode($respuesta));
 				}
@@ -115,7 +122,7 @@ if(widgetValidoHandler($widget_json, $_GET['size'])){
 			break;
 			case 'set':
 				// Comprobar bloqueos
-				if(setHandler($widget_json, $variable_json, $value_json, $_GET['size'])){
+				if(setHandler($widget_json, $variable_json, $value_json)){
 					perfect(1);
 				}
 				else{
@@ -163,11 +170,15 @@ function widgetValidoHandler(&$widgets, $size){
 	if(count($widgets) !== (int)$size){
 		return false;
 	}
+	$widgets_array = array();
 	foreach($widgets as &$widget){
-		if(!widgetValido($widget)){
+		$result = widgetValido($widget);
+		if($result === false){
 			return false;
 		}
+		$widgets_array[] = &$result;
 	}
+	$widgets = $widgets_array;
 	return true;
 }
 
@@ -175,7 +186,8 @@ function widgetValidoHandler(&$widgets, $size){
 function widgetValido(&$widget){
 	// Únicamente mirar en la base de datos si existe el widget
 	// Aprovechar para cargar la información mínima del widget para las futuras preguntas
-	return true;
+	global $db;
+	return $db->getWidget($widget);
 }
 
 // Antes deben de validarse los widgets. Es necesario llamar antes a widgetValidoHandler
@@ -185,31 +197,53 @@ function variableDeWidgetValidoHandler(&$widgets, &$variables, $size){
 		return false;
 	}
 	$i = 0;
+	$variables_widget = array();
 	foreach($widgets as &$widget){
+		$variables_widget[$i] = json_decode($widget['variables']);
 		foreach($variables[$i] as &$variable){
-			if(!variableDeWidgetValido($widget, $variable)){
+			if(!in_array($variable, $variables_widget[$i])){
 				return false;
 			}
 		}
 		++$i;
 	}
-	return true;
-}
-
-// Variable pertenece al widget
-// true/false
-function variableDeWidgetValido(&$widget, &$variable){
-	// Únicamente mirar en la base de datos si el widget tiene esa variable
+	$variables = $variables_widget;
 	return true;
 }
 
 // Llamar antes a widgetValidoHandler y variableDeWidgetHandler ya que no se valida aquí
 // array con el contenido/false -> fallos al consultar o consulta
-function getHandler(&$widgets, &$variables, $size){}
+function getHandler(&$widgets, &$variables){
+	global $db;
+	$respuesta_array = array();
+	$i=0;
+	foreach($variables as &$variables_widget){
+		foreach($variables_widget as &$variable){
+			$respuesta_array[$i][$variable] = $db->getVariable($widgets[$i]['ID'], $variable);
+		}
+		++$i;
+	}
+	return $respuesta_array;
+}
 
 // Llamar antes a widgetValidoHandler y variableDeWidgetHandler ya que no se valida aquí
 // true/false -> fallos al grabar
-function setHandler(&$widgets, &$variables, &$valores, $size){}
+function setHandler(&$widgets, &$variables, &$valores){
+	global $db;
+	$i=0;
+	foreach($variables as &$variables_widget){
+		$j=0;
+		foreach($variables_widget as &$variable){
+			$resp = $db->setVariable($widgets[$i]['ID'], $variable, $valores[$i][$j]);
+			if($resp === false){
+				return false;
+			}
+			++$j;
+		}
+		++$i;
+	}
+	return true;
+}
 
 
 
