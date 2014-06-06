@@ -25,16 +25,16 @@ D.g('enviar').onclick = function(){
 
 API = (function(){
 	var call = function(parametros, callback){
-		if(typeof parametros === 'object'){
+		if(parametros){
 			if(typeof parametros["action"] === "string"){
 				if(typeof parametros["widget"] === "string"){
 					if(typeof parametros["variable"] === "object"){
 						// Varias variables
-						get_o_set(parametros["action"], parametros["widget"], parametros["variable"], parametros["value"]);
+						get_o_set(parametros["action"], callback, parametros["widget"], parametros["variable"], parametros["value"]);
 					}
 					else if(typeof parametros["variable"] === "string"){
 						// Una variable
-						get_o_set(parametros["action"], parametros["widget"], [parametros["variable"]], [parametros["value"]]);
+						get_o_set(parametros["action"], callback, parametros["widget"], [parametros["variable"]], [parametros["value"]]);
 					}
 					else{
 						callback(fail(1004));
@@ -53,13 +53,15 @@ API = (function(){
 		}
 	}
 	
-	var get_o_set = function(modo, widget, variables, valores){
+	var get_o_set = function(modo, callback, widget, variables, valores){
 		switch(modo){
 			case 'get':
 				agregaAConsultaGet(widget, variables);
+				callbacksConsultaGet.push({"callback":callback,"widget":widget,"variables":variables});
 			break;
 			case 'set':
-				agregaAConsultaGet(widget, variables, valores);
+				agregaAConsultaSet(widget, variables, valores);
+				callbacksConsultaSet.push({"callback":callback,"widget":widget});
 			break;
 			default:
 				callback(fail(1000));
@@ -70,6 +72,7 @@ API = (function(){
 	
 	
 	
+	// OK
 	// string, []
 	var agregaAConsultaGet = function(widget, array_variables){
 		if(proximaConsultaGet[widget] === undefined){
@@ -80,6 +83,7 @@ API = (function(){
 		}
 	}
 	
+	// OK
 	// string, [], []
 	var agregaAConsultaSet = function(widget, array_variables, array_valores){
 		if(proximaConsultaSet[widget] === undefined){
@@ -93,6 +97,8 @@ API = (function(){
 	
 	
 	
+	var callbacksConsultaGet = [];
+	var callbacksConsultaSet = [];
 	
 	var proximaConsultaGet = {};
 	var proximaConsultaSet = {};
@@ -102,9 +108,39 @@ API = (function(){
 	}
 	
 	
+	var procesaGet = function(){
+		var widget = [];
+		var variables = [];
+		for(var i in proximaConsultaGet){
+			widget.push(i);
+			var variables_temp = [];
+			for(var j in proximaConsultaGet[i]){
+				variables_temp.push(j);
+			}
+			variables.push(variables_temp);
+		}
+		
+		var req = new XMLHttpRequest();
+		req.open('GET', 'api.php?size='+widget.length+'&widget='+JSON.stringify(widget)+'&variable='+JSON.stringify(variables)+'&action=get', true);
+		req.onreadystatechange = function(aEvt){
+			if(req.readyState == 4){
+				if(req.status == 200)
+					console.log(req.responseText);
+				else
+					console.log("Error loading page\n");
+			}
+		};
+		req.send(null);
+		
+		
+	}
 	
 	
 	
-	
-	return {"call":call};
+	return {
+		"call":call,
+		"proximaConsultaGet":proximaConsultaGet,
+		"proximaConsultaSet":proximaConsultaSet,
+		"procesaGet":procesaGet
+	};
 })();
