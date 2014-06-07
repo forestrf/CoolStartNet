@@ -76,7 +76,7 @@ API = (function(){
 	// string, []
 	var agregaAConsultaGet = function(widget, array_variables){
 		if(proximaConsultaGet[widget] === undefined){
-			proximaConsultaGet[widget] = [];
+			proximaConsultaGet[widget] = {};
 		}
 		for(var i in array_variables){
 			proximaConsultaGet[widget][array_variables[i]] = null;
@@ -87,7 +87,7 @@ API = (function(){
 	// string, [], []
 	var agregaAConsultaSet = function(widget, array_variables, array_valores){
 		if(proximaConsultaSet[widget] === undefined){
-			proximaConsultaSet[widget] = [];
+			proximaConsultaSet[widget] = {};
 		}
 		for(var i in array_variables){
 			proximaConsultaSet[widget][array_variables[i]] = array_valores[i];
@@ -109,19 +109,8 @@ API = (function(){
 	
 	
 	var procesaGet = function(){
-		var widget = [];
-		var variables = [];
-		for(var i in proximaConsultaGet){
-			widget.push(i);
-			var variables_temp = [];
-			for(var j in proximaConsultaGet[i]){
-				variables_temp.push(j);
-			}
-			variables.push(variables_temp);
-		}
-		
 		var req = new XMLHttpRequest();
-		req.open('GET', 'api.php?size='+widget.length+'&widget='+JSON.stringify(widget)+'&variable='+JSON.stringify(variables)+'&action=get', true);
+		req.open('GET', 'api.php?data='+JSON.stringify(proximaConsultaGet)+'&action=get', true);
 		req.onreadystatechange = function(aEvt){
 			if(req.readyState == 4){
 				if(req.status == 200)

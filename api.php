@@ -39,16 +39,9 @@ Tablas:
 /*
 Fallos:
 1 => Faltan variables por especificar
-2 => Los widgets indicados son inválidos o alguno de ellos es inválido
-3 => La variable size contiene un valor incorrecto
-4 => La variable action contiene set pero no se ha especificado la variable value
 5 => La variable action debe valer "set" o "get"
-6 => Las variables indicadas no se corresponden con las variables que el widget posée
 7 => Fallo al guardar
-8 => Fallo al consultar
-9 => JSON mal formado en la variable widget
-10 => JSON mal formado en la variable variable
-11 => JSON mal formado en la variable value
+9 => JSON mal formado en la variable data
 */
 
 /*
@@ -57,24 +50,14 @@ Perfects:
 */
 
 if(
-	!isset($_GET['size']) ||
-	!isset($_GET['widget']) ||
-	!isset($_GET['variable']) ||
+	!isset($_GET['data']) ||
 	!isset($_GET['action'])
 ){
 	fail(1);
 }
 
-if(!isInteger($_GET['size']) || $_GET['size'] < 1){
-	fail(3);
-}
-
 if($_GET['action'] !== 'set' && $_GET['action'] !== 'get'){
 	fail(5);
-}
-
-if($_GET['action'] === 'set' && !isset($_POST['value'])){
-	fail(4);
 }
 
 
@@ -92,56 +75,35 @@ Además, se puede incluir datos ya predefinidos por forest.tk por lo que al llam
 
 */
 
-$widget_json = json_decode($_GET['widget'], false);
-if($widget_json === null){
+$data_json = json_decode($_GET['data'], true);
+if($data_json === null){
 	fail(9);
 }
-$variable_json = json_decode($_GET['variable'], false);
-if($variable_json === null){
-	fail(10);
-}
-if($_GET['action'] === 'set'){
-	$value_json = json_decode($_POST['value'], false);
-	if($value_json === null){
-		fail(11);
-	}
+
+
+widgetVariablesValido($data_json);
+
+switch(isset($_GET['action'])?$_GET['action']:null){
+	case 'get':
+		// Simple
+		$respuesta = getHandler($data_json);
+		perfect(json_encode($respuesta));
+	break;
+	case 'set':
+		// Comprobar bloqueos
+		if(setHandler($widget_json)){
+			perfect(1);
+		}
+		else{
+			fail(7);
+		}
+	break;
+	default:
+		// No debería ocurrir nunca
+		fail(5);
+	break;
 }
 
-if(widgetValidoHandler($widget_json, $_GET['size'])){
-	if(variableDeWidgetValidoHandler($widget_json, $variable_json, $_GET['size'])){
-		switch(isset($_GET['action'])?$_GET['action']:null){
-			case 'get':
-				// Simple
-				$respuesta = getHandler($widget_json, $variable_json);
-				if($respuesta !== false){
-					perfect(json_encode($respuesta));
-				}
-				else{
-					fail(8);
-				}
-			break;
-			case 'set':
-				// Comprobar bloqueos
-				if(setHandler($widget_json, $variable_json, $value_json)){
-					perfect(1);
-				}
-				else{
-					fail(7);
-				}
-			break;
-			default:
-				// No debería ocurrir nunca
-				fail(5);
-			break;
-		}
-	}
-	else{
-		fail(6);
-	}
-}
-else{
-	fail(2);
-}
 
 
 
@@ -166,20 +128,30 @@ else{
 
 // Validar una cantidad de widgets determinada por size
 // true/false
-function widgetValidoHandler(&$widgets, $size){
-	if(count($widgets) !== (int)$size){
-		return false;
-	}
+function widgetVariablesValido(&$widgets){
+	global $widgets_array;
 	$widgets_array = array();
-	foreach($widgets as &$widget){
+	
+	foreach($widgets as $widget => &$variables){
 		$result = widgetValido($widget);
 		if($result === false){
-			return false;
+			unset($widgets[$widget]);
 		}
-		$widgets_array[] = &$result;
+		else{
+			$widgets_array[$widget] = $result;
+			
+			$widgets_array[$widget]['variables'] = json_decode($result['variables']);
+			
+			foreach($widgets[$widget] as $variable => $no_importa){
+				foreach($widgets_array[$widget]['variables'] as &$posible_variable){
+					if($variable === $posible_variable){
+						break;
+					}
+					unset($widgets[$widget][$variable]);
+				}
+			}
+		}
 	}
-	$widgets = $widgets_array;
-	return true;
 }
 
 // Validar un solo widget
@@ -190,38 +162,16 @@ function widgetValido(&$widget){
 	return $db->getWidget($widget);
 }
 
-// Antes deben de validarse los widgets. Es necesario llamar antes a widgetValidoHandler
-// true/false
-function variableDeWidgetValidoHandler(&$widgets, &$variables, $size){
-	if(count($variables) !== (int)$size){
-		return false;
-	}
-	$i = 0;
-	$variables_widget = array();
-	foreach($widgets as &$widget){
-		$variables_widget[$i] = json_decode($widget['variables']);
-		foreach($variables[$i] as &$variable){
-			if(!in_array($variable, $variables_widget[$i])){
-				return false;
-			}
-		}
-		++$i;
-	}
-	$variables = $variables_widget;
-	return true;
-}
 
 // Llamar antes a widgetValidoHandler y variableDeWidgetHandler ya que no se valida aquí
 // array con el contenido/false -> fallos al consultar o consulta
-function getHandler(&$widgets, &$variables){
-	global $db;
+function getHandler(&$widgets){
+	global $db,$widgets_array;
 	$respuesta_array = array();
-	$i=0;
-	foreach($variables as &$variables_widget){
-		foreach($variables_widget as &$variable){
-			$respuesta_array[$i][$variable] = $db->getVariable($widgets[$i]['ID'], $variable);
+	foreach($widgets as $nombre => &$variables_widget){
+		foreach($variables_widget as $variable => $no_importa){
+			$respuesta_array[$nombre][$variable] = $db->getVariable($widgets_array[$nombre]['ID'], $variable);
 		}
-		++$i;
 	}
 	return $respuesta_array;
 }
@@ -229,18 +179,15 @@ function getHandler(&$widgets, &$variables){
 // Llamar antes a widgetValidoHandler y variableDeWidgetHandler ya que no se valida aquí
 // true/false -> fallos al grabar
 function setHandler(&$widgets, &$variables, &$valores){
-	global $db;
+	global $db,$widgets_array;
 	$i=0;
-	foreach($variables as &$variables_widget){
-		$j=0;
-		foreach($variables_widget as &$variable){
-			$resp = $db->setVariable($widgets[$i]['ID'], $variable, $valores[$i][$j]);
-			if($resp === false){
+	foreach($widgets as $nombre => &$variables_widget){
+		foreach($variables_widget as $variable => &$valor){
+			$resp = $db->setVariable($widgets_array[$nombre]['ID'], $variable, $valor);
+			/*if($resp === false){
 				return false;
-			}
-			++$j;
+			}*/
 		}
-		++$i;
 	}
 	return true;
 }
