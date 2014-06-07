@@ -133,6 +133,30 @@ class DB {
 		return count($result) > 0 ? $result[0] : false;
 	}
 	
+	// $insert_o_update = 'I' / 'U'
+	function setVariable($widgetID, $variable, $valor, $insert_o_update = null){
+		$widgetID = mysql_escape_mimic($widgetID);
+		$variable = mysql_escape_mimic($variable);
+		$valor = mysql_escape_mimic($valor);
+		
+		if($insert_o_update !== null){
+			$result = $this->consulta("SELECT ID FROM variables WHERE `IDusuario` = '{$_SESSION['usuario']['ID']}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
+			if($result){
+				$insert_o_update = $result?'I':'U';
+			}
+		}
+		switch($insert_o_update){
+			case 'I':
+				return $this->consulta("INSERT INTO variables (`IDusuario`, `IDwidget`, `variable`, `valor`) VALUES ('{$_SESSION['usuario']['ID']}', '{$widgetID}', '{$variable}', '{$valor}');");
+			break;
+			case 'U':
+				return $this->consulta("UPDATE variables SET `valor` = '{$valor}' WHERE `IDusuario` = '{$_SESSION['usuario']['ID']}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
+			break;
+		}
+		
+		return false;
+	}
+	
 	
 	// --------------------------------------------------------
 	
