@@ -19,7 +19,17 @@ D.g('enviar').onclick = function(){
 1001 => Debe de llamarse a call con un objeto consulta
 1002 => debe de especificarse un action en el objeto consulta
 1003 => debe de especificarse un nombre de widget en el objeto consulta
-1004 => debe de especificarse una variable o un array de variables en el objeto consulta
+*/
+
+/*
+parametros => (
+	action => get/set,
+	widget => (
+		'widget1' => (
+			'variable1'
+		)
+	)
+)
 */
 
 
@@ -27,18 +37,9 @@ API = (function(){
 	var call = function(parametros, callback){
 		if(parametros){
 			if(typeof parametros["action"] === "string"){
-				if(typeof parametros["widget"] === "string"){
-					if(typeof parametros["variable"] === "object"){
-						// Varias variables
-						get_o_set(parametros["action"], callback, parametros["widget"], parametros["variable"], parametros["value"]);
-					}
-					else if(typeof parametros["variable"] === "string"){
-						// Una variable
-						get_o_set(parametros["action"], callback, parametros["widget"], [parametros["variable"]], [parametros["value"]]);
-					}
-					else{
-						callback(fail(1004));
-					}
+				if(typeof parametros["widgets"] === "object"){
+					// Una variable
+					get_o_set(parametros["action"], callback, parametros["widgets"]);
 				}
 				else{
 					callback(fail(1003));
@@ -53,15 +54,19 @@ API = (function(){
 		}
 	}
 	
-	var get_o_set = function(modo, callback, widget, variables, valores){
+	var get_o_set = function(modo, callback, widgets){
 		switch(modo){
 			case 'get':
-				agregaAConsultaGet(widget, variables);
-				callbacksConsultaGet.push({"callback":callback,"widget":widget,"variables":variables});
+				for(var widget in widgets){
+					agregaAConsultaGet(widget, widgets[widget]);
+				}
+				callbacksConsultaGet.push({"callback":callback,"widgets":widgets});
 			break;
 			case 'set':
-				agregaAConsultaSet(widget, variables, valores);
-				callbacksConsultaSet.push({"callback":callback,"widget":widget});
+				for(var widget in widgets){
+					agregaAConsultaSet(widget, widgets[widget]);
+				}
+				callbacksConsultaSet.push({"callback":callback,"widgets":widgets});
 			break;
 			default:
 				callback(fail(1000));
@@ -85,12 +90,12 @@ API = (function(){
 	
 	// OK
 	// string, [], []
-	var agregaAConsultaSet = function(widget, array_variables, array_valores){
+	var agregaAConsultaSet = function(widget, array_variables){
 		if(proximaConsultaSet[widget] === undefined){
 			proximaConsultaSet[widget] = {};
 		}
 		for(var i in array_variables){
-			proximaConsultaSet[widget][array_variables[i]] = array_valores[i];
+			proximaConsultaSet[widget][i] = array_variables[i];
 		}
 	}
 	
@@ -114,8 +119,55 @@ API = (function(){
 		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		req.onreadystatechange = function(aEvt){
 			if(req.readyState == 4){
-				if(req.status == 200)
-					console.log(req.responseText);
+				if(req.status == 200){
+					//console.log(req.responseText);
+					switch(action){
+						case 'get':
+							var respuesta = JSON.parse(req.responseText);
+							
+							//{"callback":callback,"widgets":widgets,"variables":variables}
+							
+							// Recorrer los callback y generar respuesta
+							if(respuesta['response']==='OK'){
+								for(var i in callbacksConsulta){
+									
+									var obj = {};
+									
+									// Por cada widget pedido
+									for(var widget in callbacksConsulta[i]['widgets']){
+										// Si está recibido
+										if(typeof respuesta['content'][widget] !== 'undefined'){
+											obj[widget] = {};
+											for(var j in callbacksConsulta[i]['widgets'][widget]){
+												var variable = callbacksConsulta[i]['widgets'][widget][j];
+												// Si se pidió la variable
+												if(typeof respuesta['content'][widget][variable] !== 'undefined'){
+													obj[widget][variable] = respuesta['content'][widget][variable];
+												}
+											}
+										}
+									}
+									
+									callbacksConsulta[i]['callback'](obj);
+								}
+							}
+							else{
+								for(var i in callbacksConsulta){
+									callbacksConsulta[i]['callback'](respuesta);
+								}
+							}
+							
+							
+							
+						break;
+						case 'set':
+							
+						break;
+					}
+					if(action === 'get'){
+					
+					}
+				}
 				else
 					console.log("Error loading page\n");
 			}
@@ -126,10 +178,14 @@ API = (function(){
 	
 	var procesaGet = function(){
 		procesa('get', proximaConsultaGet, callbacksConsultaGet);
+		proximaConsultaGet = {};
+		callbacksConsultaGet = [];
 	}
 	
 	var procesaSet = function(){
 		procesa('set', proximaConsultaSet, callbacksConsultaSet);
+		proximaConsultaSet = {};
+		callbacksConsultaSet = [];
 	}
 	
 	
@@ -139,6 +195,7 @@ API = (function(){
 		"proximaConsultaGet":proximaConsultaGet,
 		"proximaConsultaSet":proximaConsultaSet,
 		"procesaGet":procesaGet,
-		"procesaSet":procesaSet
+		"procesaSet":procesaSet,
+		"callbacksConsultaGet":callbacksConsultaGet
 	};
 })();
