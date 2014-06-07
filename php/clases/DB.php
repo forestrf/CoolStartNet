@@ -129,8 +129,8 @@ class DB {
 	function getVariable($widgetID, $variable){
 		$widgetID = mysql_escape_mimic($widgetID);
 		$variable = mysql_escape_mimic($variable);
-		$result = $this->consulta("SELECT ID, tipo, valor FROM variables WHERE `IDusuario` = '{$_SESSION['usuario']['ID']}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
-		return count($result) > 0 ? $result[0] : false;
+		$result = $this->consulta("SELECT valor FROM variables WHERE `IDusuario` = '{$_SESSION['usuario']['ID']}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
+		return count($result) > 0 ? $result[0]['valor'] : false;
 	}
 	
 	// $insert_o_update = 'I' / 'U'
