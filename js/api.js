@@ -142,12 +142,12 @@ API = (function(){
 									// Por cada widget pedido
 									for(widget in callbacksConsulta[i]['widgets']){
 										++widget_contador;
-										// Si est· recibido
+										// Si est√° recibido
 										if(typeof respuesta['content'][widget] !== 'undefined'){
 											obj[widget] = {};
 											for(var j in callbacksConsulta[i]['widgets'][widget]){
 												var variable = callbacksConsulta[i]['widgets'][widget][j];
-												// Si se pidiÛ la variable
+												// Si se pidi√≥ la variable
 												if(typeof respuesta['content'][widget][variable] !== 'undefined'){
 													obj[widget][variable] = respuesta['content'][widget][variable];
 												}

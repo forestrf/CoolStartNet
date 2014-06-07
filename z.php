@@ -8,21 +8,21 @@
 <body>
 
 
-Mirar quÈ widgets tiene el usuario
+Mirar qu√© widgets tiene el usuario
 
 Recorrerlos todos e incluir el js que les corresponde.
 
 Un widget debe de contener lo siguiente: 
 - Javascript que lo compone
-- PosiciÛn y tamaÒo donde est· situado
+- Posici√≥n y tama√±o donde est√° situado
 
-El javascript dibujar· todo el widget, incluido el div que lo contendr· en el body
-El javascript debe de estar contenido en su totalidad en una funciÛn anÛnima
-El javascript tendr· acceso a la API para leer y escribir variables de cualquier widget
-El javascript tendr· accesp a la posiciÛn y tamaÒo indicado y podr· editarlo ya que ser·n variables accesibles desde la API
+El javascript dibujar√° todo el widget, incluido el div que lo contendr√° en el body
+El javascript debe de estar contenido en su totalidad en una funci√≥n an√≥nima
+El javascript tendr√° acceso a la API para leer y escribir variables de cualquier widget
+El javascript tendr√° accesp a la posici√≥n y tama√±o indicado y podr√° editarlo ya que ser√°n variables accesibles desde la API
 
-Si es necesario css, se escribir· mediante style en el js.
-Si es necesario im·genes, se usar· base64 en el js (lo siento...)
+Si es necesario css, se escribir√° mediante style en el js.
+Si es necesario im√°genes, se usar√° base64 en el js (lo siento...)
 
 
 
