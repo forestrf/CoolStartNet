@@ -149,11 +149,16 @@ function widgetVariablesValido(&$widgets){
 			
 			$widgets_array[$widget]['variables'] = json_decode($result['variables']);
 			
-			foreach($widgets[$widget] as $variable => $no_importa){
+			
+			foreach($widgets[$widget] as $variable => &$no_importa){
+				$borrar = true;
 				foreach($widgets_array[$widget]['variables'] as &$posible_variable){
 					if($variable === $posible_variable){
+						$borrar = false;
 						break;
 					}
+				}
+				if($borrar){
 					unset($widgets[$widget][$variable]);
 				}
 			}

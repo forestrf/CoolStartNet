@@ -43,14 +43,12 @@ body{
 <script>
 
 
-g = document.getElementById;
+var action = document.getElementById('action');
+var widget = document.getElementById('widget');
+var variable = document.getElementById('variable');
+var valor = document.getElementById('valor');
 
-var action = g('action');
-var widget = g('widget');
-var variable = g('variable');
-var valor = g('valor');
-
-D.g('enviar').onclick = function(){
+document.getElementById('enviar').onclick = function(){
 	var comando = {
 		'action':action.value,
 		'widget':widget.value,
@@ -63,7 +61,17 @@ D.g('enviar').onclick = function(){
 	}
 	
 	API.call(comando, function(entrada){
-		valor.value = entrada[variable.value];
+		if(typeof entrada !== 'undefined'){
+			if(typeof entrada[variable.value] !== 'undefined'){
+				valor.value = entrada[variable.value];
+			}
+			else{
+				valor.value = "";
+			}
+		}
+		else{
+			valor.value = "";
+		}
 	});
 }
 
