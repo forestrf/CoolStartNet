@@ -35,7 +35,6 @@ Tablas:
 		IDUsuario => int
 		IDWidget => int (-1 = interno, 0..infinito = widgets)
 		Variable => string
-		Tipo => 1(link)/2(contenedor)
 		Valor => ""/json/string/filtrado segun variable widget
 */
 
@@ -52,16 +51,12 @@ Perfects:
 1 => Guardado corréctamente
 */
 
-if(
-	!isset($_POST['data']) ||
-	!isset($_POST['action'])
-){
+if(!isset($_POST['data']) || !isset($_POST['action'])){
 	fail(1);
 }
 
 $data = &$_POST['data'];
 $action = &$_POST['action'];
-
 
 if($action !== 'set' && $action !== 'get'){
 	fail(5);
@@ -115,18 +110,6 @@ switch(isset($action)?$action:null){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 # --------------------------------------------------------------------------------------------------------------
 #
 # HANDLERS
@@ -148,7 +131,6 @@ function widgetVariablesValido(&$widgets){
 			$widgets_array[$widget] = $result;
 			
 			$widgets_array[$widget]['variables'] = json_decode($result['variables']);
-			
 			
 			foreach($widgets[$widget] as $variable => &$no_importa){
 				$borrar = true;
