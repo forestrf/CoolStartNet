@@ -49,21 +49,17 @@ D = document, D.g = D.getElementById;
 D.g('enviar').onclick = function(){
 	var comando = {
 		'action':D.g('action').value,
-		'widgets':{}
+		'widget':D.g('widget').value,
+		'variables':D.g('variable').value
 	};
 	
-	switch(comando['action']){
-		case 'get':
-			comando['widgets'][D.g('widget').value] = D.g('variable').value;
-		break;
-		case 'set':
-			comando['widgets'][D.g('widget').value] = {};
-			comando['widgets'][D.g('widget').value][D.g('variable').value] = D.g('valor').value;
-		break;
+	if(comando['action'] === 'set'){
+		comando['variables'] = {};
+		comando['variables'][D.g('variable').value] = D.g('valor').value;
 	}
 	
 	API.call(comando, function(entrada){
-		D.g('valor').value = entrada[D.g('widget').value][D.g('variable').value];
+		D.g('valor').value = entrada[D.g('variable').value];
 	});
 	
 	

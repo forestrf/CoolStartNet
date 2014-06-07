@@ -18,6 +18,17 @@ parametros => (
 
 
 API = (function(){
+	var precall = function(parametros, callback){
+				
+		var comando = {
+			'action':parametros['action'],
+			'widgets':{}
+		};
+		comando['widgets'][parametros['widget']] = parametros['variables'];
+		
+		call(comando, callback);
+	}
+	
 	var call = function(parametros, callback){
 		if(parametros){
 			if(typeof parametros["action"] === "string"){
@@ -51,7 +62,7 @@ API = (function(){
 				}
 				callbacksConsultaGet.push({"callback":callback,"widgets":widgets});
 				clearTimeout(timeoutGet);
-				timeoutGet = setTimeout(API.procesaGet, 100);
+				timeoutGet = setTimeout(procesaGet, 100);
 			break;
 			case 'set':
 				for(var widget in widgets){
@@ -59,7 +70,7 @@ API = (function(){
 				}
 				callbacksConsultaSet.push({"callback":callback,"widgets":widgets});
 				clearTimeout(timeoutSet);
-				timeoutSet = setTimeout(API.procesaSet, 100);
+				timeoutSet = setTimeout(procesaSet, 100);
 			break;
 			default:
 				callback(fail(1000));
@@ -125,9 +136,12 @@ API = (function(){
 								for(var i in callbacksConsulta){
 									
 									var obj = {};
+									var widget_contador = 0;
+									var widget = '';
 									
 									// Por cada widget pedido
-									for(var widget in callbacksConsulta[i]['widgets']){
+									for(widget in callbacksConsulta[i]['widgets']){
+										++widget_contador;
 										// Si está recibido
 										if(typeof respuesta['content'][widget] !== 'undefined'){
 											obj[widget] = {};
@@ -141,7 +155,12 @@ API = (function(){
 										}
 									}
 									
-									callbacksConsulta[i]['callback'](obj);
+									if(widget_contador === 1){
+										callbacksConsulta[i]['callback'](obj[widget]);
+									}
+									else{
+										callbacksConsulta[i]['callback'](obj);
+									}
 								}
 							}
 							else{
@@ -184,11 +203,6 @@ API = (function(){
 	
 	
 	return {
-		"call":call,
-		"proximaConsultaGet":proximaConsultaGet,
-		"proximaConsultaSet":proximaConsultaSet,
-		"procesaGet":procesaGet,
-		"procesaSet":procesaSet,
-		"callbacksConsultaGet":callbacksConsultaGet
+		"call":precall,
 	};
 })();
