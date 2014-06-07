@@ -139,12 +139,11 @@ class DB {
 		$variable = mysql_escape_mimic($variable);
 		$valor = mysql_escape_mimic($valor);
 		
-		if($insert_o_update !== null){
+		if($insert_o_update === null){
 			$result = $this->consulta("SELECT ID FROM variables WHERE `IDusuario` = '{$_SESSION['usuario']['ID']}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
-			if($result){
-				$insert_o_update = $result?'I':'U';
-			}
+			$insert_o_update = $result?'U':'I';
 		}
+		
 		switch($insert_o_update){
 			case 'I':
 				return $this->consulta("INSERT INTO variables (`IDusuario`, `IDwidget`, `variable`, `valor`) VALUES ('{$_SESSION['usuario']['ID']}', '{$widgetID}', '{$variable}', '{$valor}');");

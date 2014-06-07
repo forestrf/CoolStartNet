@@ -108,9 +108,10 @@ API = (function(){
 	}
 	
 	
-	var procesaGet = function(){
+	var procesa = function(action, proximaConsulta, callbacksConsulta){
 		var req = new XMLHttpRequest();
-		req.open('GET', 'api.php?data='+JSON.stringify(proximaConsultaGet)+'&action=get', true);
+		req.open('POST', 'api.php', true);
+		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		req.onreadystatechange = function(aEvt){
 			if(req.readyState == 4){
 				if(req.status == 200)
@@ -119,9 +120,16 @@ API = (function(){
 					console.log("Error loading page\n");
 			}
 		};
-		req.send(null);
-		
-		
+		var data = 'action='+action+'&data='+encodeURIComponent(JSON.stringify(proximaConsulta));
+		req.send(data);
+	}
+	
+	var procesaGet = function(){
+		procesa('get', proximaConsultaGet, callbacksConsultaGet);
+	}
+	
+	var procesaSet = function(){
+		procesa('set', proximaConsultaSet, callbacksConsultaSet);
 	}
 	
 	
@@ -130,6 +138,7 @@ API = (function(){
 		"call":call,
 		"proximaConsultaGet":proximaConsultaGet,
 		"proximaConsultaSet":proximaConsultaSet,
-		"procesaGet":procesaGet
+		"procesaGet":procesaGet,
+		"procesaSet":procesaSet
 	};
 })();

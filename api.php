@@ -11,11 +11,14 @@ require_once 'php/clases/DB.php';
 
 $db = new DB();
 
-// $_GET['size'] => 1..infinito
-// $_GET['widget'] => [nombre1,nombre2...]
-// $_GET['variable'] => [nombre1,nombre2...]
-// $_POST['value'] => [valor1, valor2...]
-// $_GET['action'] => get/set
+/*
+$_GET['data'] => json(
+	widget => (
+		variable => valor
+	)
+)
+$_GET['action'] => get/set
+*/
 
 /*
 Tablas:
@@ -50,13 +53,17 @@ Perfects:
 */
 
 if(
-	!isset($_GET['data']) ||
-	!isset($_GET['action'])
+	!isset($_POST['data']) ||
+	!isset($_POST['action'])
 ){
 	fail(1);
 }
 
-if($_GET['action'] !== 'set' && $_GET['action'] !== 'get'){
+$data = &$_POST['data'];
+$action = &$_POST['action'];
+
+
+if($action !== 'set' && $action !== 'get'){
 	fail(5);
 }
 
@@ -75,7 +82,7 @@ Además, se puede incluir datos ya predefinidos por forest.tk por lo que al llam
 
 */
 
-$data_json = json_decode($_GET['data'], true);
+$data_json = json_decode($data, true);
 if($data_json === null){
 	fail(9);
 }
@@ -83,7 +90,7 @@ if($data_json === null){
 
 widgetVariablesValido($data_json);
 
-switch(isset($_GET['action'])?$_GET['action']:null){
+switch(isset($action)?$action:null){
 	case 'get':
 		// Simple
 		$respuesta = getHandler($data_json);
@@ -91,7 +98,7 @@ switch(isset($_GET['action'])?$_GET['action']:null){
 	break;
 	case 'set':
 		// Comprobar bloqueos
-		if(setHandler($widget_json)){
+		if(setHandler($data_json)){
 			perfect(1);
 		}
 		else{
@@ -178,9 +185,8 @@ function getHandler(&$widgets){
 
 // Llamar antes a widgetValidoHandler y variableDeWidgetHandler ya que no se valida aquí
 // true/false -> fallos al grabar
-function setHandler(&$widgets, &$variables, &$valores){
+function setHandler(&$widgets){
 	global $db,$widgets_array;
-	$i=0;
 	foreach($widgets as $nombre => &$variables_widget){
 		foreach($variables_widget as $variable => &$valor){
 			$resp = $db->setVariable($widgets_array[$nombre]['ID'], $variable, $valor);
