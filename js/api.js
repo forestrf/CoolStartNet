@@ -1,20 +1,4 @@
 /*
-D.g('enviar').onclick = function(){
-	var consulta = {
-		'widget':Array(D.g('widget').value),
-		'variable':Array(Array(D.g('variable').value)),
-		'action':D.g('action').value
-	}
-	console.log(consulta);
-	var req = new XMLHttpRequest();
-	req.open('GET', 'http://localhost/api.php?size=1&widget='+JSON.stringify(consulta['widget'])+'&variable='+JSON.stringify(consulta['variable'])+'&action=get', false); 
-	req.send(null);
-	if(req.status == 200)
-		console.log(req.responseText);
-}
-*/
-
-/*
 1000 => Debe especificarse un atributo "action" con valor "set" o "get"
 1001 => Debe de llamarse a call con un objeto consulta
 1002 => debe de especificarse un action en el objeto consulta
@@ -55,18 +39,27 @@ API = (function(){
 	}
 	
 	var get_o_set = function(modo, callback, widgets){
+		for(var widget in widgets){
+			if(typeof widgets[widget] === 'string'){
+				widgets[widget] = [widgets[widget]];
+			}
+		}
 		switch(modo){
 			case 'get':
 				for(var widget in widgets){
 					agregaAConsultaGet(widget, widgets[widget]);
 				}
 				callbacksConsultaGet.push({"callback":callback,"widgets":widgets});
+				clearTimeout(timeoutGet);
+				timeoutGet = setTimeout(API.procesaGet, 100);
 			break;
 			case 'set':
 				for(var widget in widgets){
 					agregaAConsultaSet(widget, widgets[widget]);
 				}
 				callbacksConsultaSet.push({"callback":callback,"widgets":widgets});
+				clearTimeout(timeoutSet);
+				timeoutSet = setTimeout(API.procesaSet, 100);
 			break;
 			default:
 				callback(fail(1000));
@@ -101,6 +94,8 @@ API = (function(){
 	
 	
 	
+	var timeoutGet = 0;
+	var timeoutSet = 0;
 	
 	var callbacksConsultaGet = [];
 	var callbacksConsultaSet = [];
@@ -124,8 +119,6 @@ API = (function(){
 					switch(action){
 						case 'get':
 							var respuesta = JSON.parse(req.responseText);
-							
-							//{"callback":callback,"widgets":widgets,"variables":variables}
 							
 							// Recorrer los callback y generar respuesta
 							if(respuesta['response']==='OK'){
