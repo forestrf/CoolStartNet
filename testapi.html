@@ -42,37 +42,30 @@ body{
 
 <script>
 
-// http://localhost/api.php?size=1&widget=["bookmarks"]&variable=[["list"]]&action=get
 
-D = document, D.g = D.getElementById;
+g = document.getElementById;
+
+var action = g('action');
+var widget = g('widget');
+var variable = g('variable');
+var valor = g('valor');
 
 D.g('enviar').onclick = function(){
 	var comando = {
-		'action':D.g('action').value,
-		'widget':D.g('widget').value,
-		'variables':D.g('variable').value
+		'action':action.value,
+		'widget':widget.value,
+		'variables':variable.value
 	};
 	
 	if(comando['action'] === 'set'){
 		comando['variables'] = {};
-		comando['variables'][D.g('variable').value] = D.g('valor').value;
+		comando['variables'][variable.value] = valor.value;
 	}
 	
 	API.call(comando, function(entrada){
-		D.g('valor').value = entrada[D.g('variable').value];
+		valor.value = entrada[variable.value];
 	});
-	
-	
 }
-
-
-
-
-
-
-
-
-
 
 
 </script>
