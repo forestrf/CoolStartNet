@@ -126,21 +126,23 @@ class DB {
 	}
 	
 	// Retorna una variable del usuario
-	function getVariable($widgetID, $variable){
+	function getVariable($widgetID, $variable, $ID = null){
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
 		$widgetID = mysql_escape_mimic($widgetID);
 		$variable = mysql_escape_mimic($variable);
-		$result = $this->consulta("SELECT valor FROM variables WHERE `IDusuario` = '{$_SESSION['usuario']['ID']}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
+		$result = $this->consulta("SELECT valor FROM variables WHERE `IDusuario` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
 		return count($result) > 0 ? $result[0]['valor'] : false;
 	}
 	
 	// $insert_o_update = 'I' / 'U'
-	function setVariable($widgetID, $variable, $valor, $insert_o_update = null){
+	function setVariable($widgetID, $variable, $valor, $ID = null, $insert_o_update = null){
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
 		$widgetID = mysql_escape_mimic($widgetID);
 		$variable = mysql_escape_mimic($variable);
 		$valor = mysql_escape_mimic($valor);
 		
 		if($insert_o_update === null){
-			$result = $this->consulta("SELECT ID FROM variables WHERE `IDusuario` = '{$_SESSION['usuario']['ID']}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
+			$result = $this->consulta("SELECT ID FROM variables WHERE `IDusuario` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
 			$insert_o_update = $result?'U':'I';
 		}
 		
@@ -155,6 +157,25 @@ class DB {
 		
 		return false;
 	}
+	
+	
+	
+	# ---------------------------------------------------------------------------
+	#
+	# WIDGETS - USUARIOS
+	#
+	# ---------------------------------------------------------------------------
+	
+	// Retorna un listado con los widgets que tiene el usuario. Si se especifica ID se buscará los widgets del usuario con esa id, de lo contrario se usa el actual usuario.
+	function getWidgetsDelUsuario($ID = null){
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
+		return $this->consulta("SELECT widgets.* FROM `widgets-usuario` LEFT JOIN widgets ON `widgets-usuario`.IDwidget = widgets.ID WHERE `IDusuario` = '{$ID}'");
+	}
+	
+	
+	
+	
+	
 	
 	
 	// --------------------------------------------------------
