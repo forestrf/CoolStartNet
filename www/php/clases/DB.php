@@ -5,11 +5,11 @@
 class DB {
 	
 	// Datos de login por defecto. En caso de necesitar cambiar el login, cambiar aquí
-	private $host = "localhost";
-	private $user = "root";
-	private $pass = "";
-	private $bd = "forest";
-
+	private $host = 'localhost';
+	private $user = 'root';
+	private $pass = ''; // Cambiar en producción
+	private $bd = 'forest';
+	
 	private $mysqli;
 	
 	private $conexionAbierta = false;
@@ -214,8 +214,9 @@ function mysql_escape_mimic($inp){
 	return $inp;
 }
 
+$hmac_password = 'GVWUIF/WA&Htb9 hwaw&.434/ */34+'; // Cambiar en producción
 function hash_password($password){
-	return custom_hmac('md5', $password, 'GVWUIF/WA&Htb9 hwaw&.434/ */34+');
+	return custom_hmac('md5', $password, $hmac_password);
 }
 
 function custom_hmac($algo, $data, $key, $raw_output=false){
