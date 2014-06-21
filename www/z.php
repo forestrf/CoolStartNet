@@ -25,7 +25,11 @@ Si es necesario css, se escribirá mediante style en el js.
 Si es necesario imágenes, se usará base64 en el js (lo siento...)
 
 
+<?php
 
+// Widgets del usuario
+
+?>
 
 </body>
 </html>

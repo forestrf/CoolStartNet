@@ -172,6 +172,16 @@ class DB {
 		return $this->consulta("SELECT widgets.* FROM `widgets-usuario` LEFT JOIN widgets ON `widgets-usuario`.IDwidget = widgets.ID WHERE `IDusuario` = '{$ID}'");
 	}
 	
+	function getWidgetsDisponiblesUsuario($ID = null){
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
+		return $this->consulta("SELECT * FROM `widgets`");
+	}
+	
+	function quitarWidgetDelUsuario($ID = null){
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
+		
+	}
+	
 	
 	
 	
