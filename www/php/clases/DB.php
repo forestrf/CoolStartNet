@@ -1,14 +1,16 @@
 <?php
 
+require_once 'php/config.php';
+
 // En caso de mudar de base de datos sería necesario modificar la clase siguiente. Las funciones para la aplicación deben permanecer definidas y con los mismos parámetros
 // Pero puede variar su contenido para adaptarse a la nueva base de datos
 class DB {
 	
 	// Datos de login por defecto. En caso de necesitar cambiar el login, cambiar aquí
-	private $host = 'localhost';
-	private $user = 'root';
-	private $pass = ''; // Cambiar en producción
-	private $bd = 'forest';
+	private $host = MYSQL_HOST;
+	private $user = MYSQL_USER;
+	private $pass = MYSQL_PASSWORD;
+	private $bd   = MYSQL_DATABASE;
 	
 	private $mysqli;
 	
@@ -223,9 +225,8 @@ function mysql_escape_mimic($inp){
 	return $inp;
 }
 
-$hmac_password = 'GVWUIF/WA&Htb9 hwaw&.434/ */34+'; // Cambiar en producción
 function hash_password($password){
-	return custom_hmac('md5', $password, $hmac_password);
+	return custom_hmac('md5', $password, USER_PASSWORD_HMAC_SEED);
 }
 
 function custom_hmac($algo, $data, $key, $raw_output=false){
