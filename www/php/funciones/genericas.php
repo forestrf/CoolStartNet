@@ -28,8 +28,8 @@ function custom_hmac($algo='md5', $data, $key, $raw_output=false){
 	return ($raw_output) ? pack($pack, $output) : $output;
 }
 
-function hash_ipa($usuarioRND, $widgetID, $variable, $password){
-	return md5($usuarioRND.'-'.$widgetID.'-'.$variable.'-'.$password);
+function hash_ipa($usuarioRND, $widgetID, $password){
+	return md5($usuarioRND.'-'.$widgetID.'-'.$password);
 }
 
 function random_string($size, $chr_start=34, $chr_end=255){

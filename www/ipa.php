@@ -19,4 +19,4 @@ $db = new DB();
 
 
 // Por continuar. Comprobar referer y de coincidir, recoger datos, comprobar hash y de coincidir de nuevo, cambiar datos.
-// hash_ipa($usuarioRND, $widgetID, $variable, PASSWORD_TOKEN_IPA);
+// hash_ipa($usuarioRND, $widgetID, PASSWORD_TOKEN_IPA);
