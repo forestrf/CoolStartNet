@@ -1,6 +1,7 @@
 <?php
 
-require_once 'php/config.php';
+require_once __DIR__.'/../config.php';
+require_once __DIR__.'/../funciones/genericas.php';
 
 // En caso de mudar de base de datos sería necesario modificar la clase siguiente. Las funciones para la aplicación deben permanecer definidas y con los mismos parámetros
 // Pero puede variar su contenido para adaptarse a la nueva base de datos
@@ -100,8 +101,8 @@ class DB {
 	function insertaUsuario($nick, $password){
 		$nick = mysql_escape_mimic($nick);
 		$password = hash_password(mysql_escape_mimic($password));
-		echo $password;
-		return $this->consulta("INSERT INTO `usuarios` (`nick`, `password`) VALUES ('$nick', '$password')") === true;
+		$rnd = random_string(32);
+		return $this->consulta("INSERT INTO `usuarios` (`nick`, `password`, `RND`) VALUES ('{$nick}', '{$password}', '{$rnd}')") === true;
 	}
 	
 	// Retorna el usuario
@@ -227,28 +228,4 @@ function mysql_escape_mimic($inp){
 
 function hash_password($password){
 	return custom_hmac('md5', $password, USER_PASSWORD_HMAC_SEED);
-}
-
-function custom_hmac($algo, $data, $key, $raw_output=false){
-	$algo = strtolower($algo);
-	$pack = 'H'.strlen($algo('test'));
-	$size = 64;
-	$opad = str_repeat(chr(0x5C), $size);
-	$ipad = str_repeat(chr(0x36), $size);
-	
-	if(strlen($key) > $size){
-		$key = str_pad(pack($pack, $algo($key)), $size, chr(0x00));
-	}
-	else{
-		$key = str_pad($key, $size, chr(0x00));
-	}
-	
-	for($i = 0; $i < strlen($key) - 1; $i++){
-		$opad[$i] = $opad[$i] ^ $key[$i];
-		$ipad[$i] = $ipad[$i] ^ $key[$i];
-	}
-	
-	$output = $algo($opad.pack($pack, $algo($ipad.$data)));
-	
-	return ($raw_output) ? pack($pack, $output) : $output;
 }

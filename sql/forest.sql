@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-06-2014 a las 16:25:00
--- Versión del servidor: 5.5.32
--- Versión de PHP: 5.4.25
+-- Tiempo de generaciÃ³n: 23-06-2014 a las 01:22:35
+-- VersiÃ³n del servidor: 5.5.32
+-- VersiÃ³n de PHP: 5.4.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `nick` text COLLATE utf8_bin NOT NULL,
   `password` text COLLATE utf8_bin NOT NULL,
+  `RND` varchar(32) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=13 ;
 
