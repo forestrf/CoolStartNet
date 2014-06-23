@@ -16,3 +16,7 @@ define('USER_PASSWORD_HMAC_SEED', 'write random characters here');
 # Semilla para el hash de los token.
 # Seed to generate the hash of the token.
 define('PASSWORD_TOKEN_IPA', 'write random characters here');
+
+# Ruta de la web con / final, empezando desde el subdominio (de tener) y sin protocolo.
+# path to the web with / in the end, starting with the subdomain (if there is) and without protocol.
+define('WEB_PATH', 'www.mywebhere.com/folder/to/site/');

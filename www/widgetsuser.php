@@ -6,7 +6,9 @@ if(!isset($_SESSION['usuario'])){
 }
 
 
+require_once 'php/config.php';
 require_once 'php/clases/DB.php';
+require_once 'php/funciones/genericas.php';
 
 $db = new DB();
 
@@ -15,24 +17,44 @@ $db = new DB();
 <html>
 <head>
 	<title>Widgets con los que cuenta el usuario</title>
+	<!--<link rel="stylesheet" href="css/reset.min.css"/>-->
+	<style>
+		form {
+			display: inline;
+		}
+	</style>
 </head>
 <body>
 
-Agregar y quitar widgets para el usuario.<br>
-Tirar de post<p>
+Agregar y quitar widgets para el usuario.<br/>
+Tirar de post<br/><br/>
 
-En uso:<br>
+En uso:<br/>
 <?php
-foreach($db->getWidgetsDelUsuario() as $widget){
-	echo $widget['nombre'].' (Quitar)<br>';
+$widgets_usuario = $db->getWidgetsDelUsuario();
+
+foreach($widgets_usuario as &$widget){
+	echo $widget['nombre'].' (<form method="POST" action="ipa.php">
+			<input type="hidden" name="accion" value="1">
+			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
+			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['usuario']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
+			<input type="submit" value="Quitar">
+		</form>)<br/>';
 }
 ?>
 
-<p>
-Disponibles:<br>
+<br/><br/>
+Disponibles:<br/>
 <?php
-foreach($db->getWidgetsDelUsuario() as $widget){
-	echo $widget['nombre'].' (Usar)<br>';
+$widgets_disponibles = $db->getWidgetsDisponiblesUsuario();
+
+foreach($widgets_disponibles as &$widget){
+	echo $widget['nombre'].' (<form method="POST" action="ipa.php">
+			<input type="hidden" name="accion" value="2">
+			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
+			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['usuario']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
+			<input type="submit" value="Usar">
+		</form>)<br/>';
 }
 ?>
 
