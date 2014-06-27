@@ -191,7 +191,11 @@ class DB {
 	function agregarWidgetAlUsuario($widgetID, $ID = null){
 		$widgetID = mysql_escape_mimic($widgetID);
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
-		$this->consulta("INSERT INTO `widgets-usuario` (`IDwidget`, `IDusuario`) VALUES ('{$widgetID}', '{$ID}')");
+		
+		// Comprobar si el usuario ya tenía el widget
+		if(count($this->consulta("SELECT * FROM `widgets-usuario` WHERE `IDwidget` = '{$widgetID}' AND `IDusuario` = '{$ID}'")) === 0){
+			$this->consulta("INSERT INTO `widgets-usuario` (`IDwidget`, `IDusuario`) VALUES ('{$widgetID}', '{$ID}')");
+		}
 	}
 	
 	
