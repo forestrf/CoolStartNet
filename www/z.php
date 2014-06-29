@@ -1,3 +1,19 @@
+<?php
+
+session_start();
+if(!isset($_SESSION['usuario'])){
+	exit;
+}
+
+
+require_once 'php/config.php';
+require_once 'php/clases/DB.php';
+require_once 'php/funciones/genericas.php';
+
+$db = new DB();
+
+?>
+
 <!doctype html>
 <html>
 <head>
@@ -28,7 +44,10 @@ Si es necesario imágenes, se usará base64 en el js (lo siento...)
 <?php
 
 // Widgets del usuario
-
+$widgets_usuario = $db->getWidgetsDelUsuario();
+foreach($widgets_usuario as &$widget){
+	print_r($widget);
+}
 ?>
 
 </body>

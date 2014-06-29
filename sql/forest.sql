@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 23-06-2014 a las 01:22:35
+-- Tiempo de generación: 29-06-2014 a las 13:38:50
 -- Versión del servidor: 5.5.32
 -- Versión de PHP: 5.4.25
 
@@ -19,6 +19,19 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `forest`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `contenido`
+--
+
+CREATE TABLE IF NOT EXISTS `contenido` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `data` mediumblob NOT NULL,
+  `hash` varchar(32) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -66,6 +79,23 @@ CREATE TABLE IF NOT EXISTS `widgets` (
   PRIMARY KEY (`ID`),
   UNIQUE KEY `nombre` (`nombre`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `widgets-contenido`
+--
+
+CREATE TABLE IF NOT EXISTS `widgets-contenido` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `IDwidget` int(11) NOT NULL,
+  `version` int(11) NOT NULL,
+  `nombre` text COLLATE utf8_bin NOT NULL,
+  `hash` varchar(32) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID` (`ID`),
+  KEY `ID_2` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
