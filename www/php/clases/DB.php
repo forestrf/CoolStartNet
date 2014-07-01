@@ -161,6 +161,19 @@ class DB {
 		return false;
 	}
 	
+	function creaWidget($nombre){
+		$nombre = mysql_escape_mimic($nombre);
+		$result = $this->consulta("INSERT INTO `widgets` (`nombre`, `variables`) VALUES ('{$nombre}', '[]');");
+		return $result;
+	}
+	
+	// Solo se puede borrar widgets privados a no ser que seas el admin
+	function borraWidget($widgetID){
+		$widgetID = mysql_escape_mimic($widgetID);
+		$result = $this->consulta("DELETE FROM `widgets` WHERE `ID` = '{$widgetID}';");
+		return $result;
+	}
+	
 	
 	
 	# ---------------------------------------------------------------------------
@@ -176,6 +189,12 @@ class DB {
 	}
 	
 	function getWidgetsDisponiblesUsuario($ID = null){
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
+		return $this->consulta("SELECT * FROM `widgets`");
+	}
+	
+	// Retorna un listado con los widgets propiedad del usuario sobre los cuales tiene el control, como borrarlos o editarlos
+	function getWidgetsControlDelUsuario($ID = null){
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
 		return $this->consulta("SELECT * FROM `widgets`");
 	}

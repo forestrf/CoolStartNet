@@ -1,7 +1,7 @@
 <?php
 
 function isInteger($input){
-    return(ctype_digit(strval($input)));
+    return ctype_digit(strval($input));
 }
 
 function custom_hmac($algo='md5', $data, $key, $raw_output=false){
