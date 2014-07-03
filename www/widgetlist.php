@@ -43,7 +43,7 @@ Tirar de post<br/><br/>
 <br/><br/>
 Widgets que he creado:<br/>
 <?php
-$widgets = $db->getWidgetsControlDelUsuario();
+$widgets = $db->getWidgetsControlUsuario();
 
 foreach($widgets as &$widget){
 	echo $widget['nombre'].' (

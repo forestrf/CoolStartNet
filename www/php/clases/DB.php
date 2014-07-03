@@ -162,16 +162,29 @@ class DB {
 	}
 	
 	function creaWidget($nombre){
+		$ID = $_SESSION['usuario']['ID'];
 		$nombre = mysql_escape_mimic($nombre);
-		$result = $this->consulta("INSERT INTO `widgets` (`nombre`, `variables`) VALUES ('{$nombre}', '[]');");
-		return $result;
+		$result = $this->consulta("SELECT `ID` FROM `widgets` WHERE `nombre` = '{$nombre}';");
+		if(!$result){
+			return $this->consulta("INSERT INTO `widgets` (`nombre`, `propietarioID`) VALUES ('{$nombre}', '{$ID}');");
+		}
+		return false;
 	}
 	
-	// Solo se puede borrar widgets privados a no ser que seas el admin
-	function borraWidget($widgetID){
+	// Solo se puede borrar widgets públicos si se es admin
+	// Borrar un widget es drástico. Borra las variables y lo desenlaza de los usuarios. PELIGROSO
+	// No borra el contenido ya que este puede coincidir por hash. El contenido se borrará mediante un proceso rutinario que comprueba la no vinculación de un hash.
+	function borraWidget($widgetID, $admin = false){
+		$ID = $_SESSION['usuario']['ID'];
 		$widgetID = mysql_escape_mimic($widgetID);
-		$result = $this->consulta("DELETE FROM `widgets` WHERE `ID` = '{$widgetID}';");
-		return $result;
+		if($admin){
+			$extra_consulta = "AND `propietarioID` = '{$ID}'";
+		}
+		$this->consulta("DELETE FROM `widgets` WHERE `ID` = '{$widgetID}' {$extra_consulta};");
+		$this->consulta("DELETE FROM `variables` WHERE `IDwidget` = '{$widgetID}' {$extra_consulta};");
+		$this->consulta("DELETE FROM `widgets-contenido` WHERE `IDwidget` = '{$widgetID}' {$extra_consulta};");
+		$this->consulta("DELETE FROM `widgets-usuario` WHERE `IDwidget` = '{$widgetID}' {$extra_consulta};");
+		$this->consulta("DELETE FROM `widgets-variables` WHERE `IDwidget` = '{$widgetID}' {$extra_consulta};");
 	}
 	
 	
@@ -188,15 +201,22 @@ class DB {
 		return $this->consulta("SELECT `widgets`.* FROM `widgets-usuario` LEFT JOIN `widgets` ON `widgets-usuario`.`IDwidget` = `widgets`.`ID` WHERE `IDusuario` = '{$ID}'");
 	}
 	
+	// Retorna un listado con los widgets que puede usar el usuario en la página principal.
 	function getWidgetsDisponiblesUsuario($ID = null){
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
-		return $this->consulta("SELECT * FROM `widgets`");
+		return $this->consulta("SELECT * FROM `widgets`;"); // Por poner filtrado de widgets privados
 	}
 	
 	// Retorna un listado con los widgets propiedad del usuario sobre los cuales tiene el control, como borrarlos o editarlos
-	function getWidgetsControlDelUsuario($ID = null){
+	// ID puede dejarse null si se llama con $admin = true
+	function getWidgetsControlUsuario($ID = null, $admin = false){
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
-		return $this->consulta("SELECT * FROM `widgets`");
+		if($admin){
+			return $this->consulta("SELECT * FROM `widgets`;");
+		}
+		else{
+			return $this->consulta("SELECT * FROM `widgets` WHERE `propietarioID` = '{$ID}';");
+		}
 	}
 	
 	// Quitar un widget de un usuario no borra la configuraciones del widget de ese usuario.
