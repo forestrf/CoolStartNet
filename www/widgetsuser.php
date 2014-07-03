@@ -51,14 +51,19 @@ Disponibles:<br/>
 $widgets_disponibles = $db->getWidgetsDisponiblesUsuario();
 
 foreach($widgets_disponibles as &$widget){
-	echo $widget['nombre'].' (<form method="POST" action="ipa.php">
-			<input type="hidden" name="switch" value="1">
-			<input type="hidden" name="accion" value="2">
-			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
-			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['usuario']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
-			<input type="hidden" name="volver" value="1">
-			<input type="submit" value="Usar">
-		</form>)<br/>';
+	if(in_array($widget, $widgets_usuario)){
+		echo $widget['nombre'].' (en uso).<br/>';
+	}
+	else{
+		echo $widget['nombre'].' (<form method="POST" action="ipa.php">
+				<input type="hidden" name="switch" value="1">
+				<input type="hidden" name="accion" value="2">
+				<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
+				<input type="hidden" name="token" value="'.hash_ipa($_SESSION['usuario']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
+				<input type="hidden" name="volver" value="1">
+				<input type="submit" value="Usar">
+			</form>)<br/>';
+	}
 }
 ?>
 

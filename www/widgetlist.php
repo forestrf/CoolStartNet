@@ -47,7 +47,10 @@ $widgets = $db->getWidgetsControlUsuario();
 
 foreach($widgets as &$widget){
 	echo $widget['nombre'].' (
-		<a>editar</a>
+		<form method="GET" action="widgetedit.php">
+			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
+			<input type="submit" value="Editar">
+		</form>
 		<form method="POST" action="ipa.php">
 			<input type="hidden" name="switch" value="2">
 			<input type="hidden" name="accion" value="2">
