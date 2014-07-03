@@ -128,21 +128,28 @@ class DB {
 		return count($result) > 0 ? $result[0] : false;
 	}
 	
+	// Retorna la configuración del widget
+	function getWidgetPorID($ID){
+		$ID = mysql_escape_mimic($ID);
+		$result = $this->consulta("SELECT * FROM `widgets` WHERE `ID` = '{$ID}';");
+		return count($result) > 0 ? $result[0] : false;
+	}
+	
 	// Retorna una variable del usuario
 	function getVariable($widgetID, $variable, $ID = null){
-		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
 		$widgetID = mysql_escape_mimic($widgetID);
 		$variable = mysql_escape_mimic($variable);
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
 		$result = $this->consulta("SELECT `valor` FROM `variables` WHERE `IDusuario` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
 		return count($result) > 0 ? $result[0]['valor'] : false;
 	}
 	
 	// $insert_o_update = 'I' / 'U'
 	function setVariable($widgetID, $variable, $valor, $ID = null, $insert_o_update = null){
-		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
 		$widgetID = mysql_escape_mimic($widgetID);
 		$variable = mysql_escape_mimic($variable);
 		$valor = mysql_escape_mimic($valor);
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
 		
 		if($insert_o_update === null){
 			$result = $this->consulta("SELECT `ID` FROM `variables` WHERE `IDusuario` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
@@ -162,8 +169,8 @@ class DB {
 	}
 	
 	function creaWidget($nombre){
-		$ID = $_SESSION['usuario']['ID'];
 		$nombre = mysql_escape_mimic($nombre);
+		$ID = $_SESSION['usuario']['ID'];
 		$result = $this->consulta("SELECT `ID` FROM `widgets` WHERE `nombre` = '{$nombre}';");
 		if(!$result){
 			return $this->consulta("INSERT INTO `widgets` (`nombre`, `propietarioID`) VALUES ('{$nombre}', '{$ID}');");
@@ -175,8 +182,8 @@ class DB {
 	// Borrar un widget es drástico. Borra las variables y lo desenlaza de los usuarios. PELIGROSO
 	// No borra el contenido ya que este puede coincidir por hash. El contenido se borrará mediante un proceso rutinario que comprueba la no vinculación de un hash.
 	function borraWidget($widgetID, $admin = false){
-		$ID = $_SESSION['usuario']['ID'];
 		$widgetID = mysql_escape_mimic($widgetID);
+		$ID = $_SESSION['usuario']['ID'];
 		if($admin){
 			$extra_consulta = "AND `propietarioID` = '{$ID}'";
 		}
@@ -187,7 +194,34 @@ class DB {
 		$this->consulta("DELETE FROM `widgets-variables` WHERE `IDwidget` = '{$widgetID}' {$extra_consulta};");
 	}
 	
+	// Retorna un array con las versiones existentes del widget, de la última a la primera
+	function getWidgetVersiones($widgetID){
+		$widgetID = mysql_escape_mimic($widgetID);
+		return $this->consulta("SELECT version FROM `widgets-variables` WHERE `IDwidget` = '{$widgetID}' ORDER BY `version` DESC;");
+	}
 	
+	function creaWidgetVersion($widgetID, $variables = '[]'){
+		$widgetID = mysql_escape_mimic($widgetID);
+		$new_version = $this->getWidgetVersiones($widgetID)[0]['version'];
+		if(!$new_version){
+			$new_version = 0;
+		}
+		++$new_version;
+		return $this->consulta("INSERT INTO `widgets-variables` (`IDwidget`, `variables`, `version`) VALUES ('{$widgetID}', '{$variables}', '{$new_version}')");
+	}
+	
+	// Version puede ser un número o un array de números (aunque no creo que se use)
+	function getWidgetContenidoVersion($widgetID, $version){
+		$widgetID = mysql_escape_mimic($widgetID);
+		$version = mysql_escape_mimic($version);
+		if(is_array($version)){
+			$versiones_sql = "version = '".implode("' OR version = '", $version)."'";
+			return $this->consulta("SELECT * FROM `widgets-contenido` WHERE `IDwidget` = '{$widgetID}' AND ({$versiones_sql});");
+		}
+		else{
+			return $this->consulta("SELECT * FROM `widgets-contenido` WHERE `IDwidget` = '{$widgetID}' AND version = '{$version}';");
+		}
+	}
 	
 	# ---------------------------------------------------------------------------
 	#
