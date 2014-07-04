@@ -17,10 +17,10 @@ require_once __DIR__.'/../clases/DB.php';
 $db = new DB();
 
 
-// Esta api debe de llamarse solo por mi, no debe de funcionar llamándose desde algo que no sea la configuración de la web.
-// Para controlar que no se haga nada raro se enviará un token y se bloqueará por referer.
-// EL referer debe de ser la página de la que se puede configurar el valor en cuestión (Manejar mediante un array)
-// El token se genera mediante un md5 de la variable que se va a cambiar, una contraseña y una variable que parta de la id del usuario (rnd).
+// Esta api debe de llamarse solo por mi, no debe de funcionar llamÃ¡ndose desde algo que no sea la configuraciÃ³n de la web.
+// Para controlar que no se haga nada raro se enviarÃ¡ un token y se bloquearÃ¡ por referer.
+// EL referer debe de ser la pÃ¡gina de la que se puede configurar el valor en cuestiÃ³n (Manejar mediante un array)
+// El token se genera mediante un md5 de la variable que se va a cambiar, una contraseÃ±a y una variable que parta de la id del usuario (rnd).
 
 /*
 Acciones:
@@ -40,7 +40,7 @@ $posibles_referers = array(
 foreach($posibles_referers as $referer_temp){
 	foreach(array('http', 'https') as $protocolo){
 		if(strpos($_SERVER['HTTP_REFERER'], $protocolo.'://'.WEB_PATH.$referer_temp) === 0){
-			// Referer válido
+			// Referer vÃ¡lido
 			
 			// Comprobar id
 			if(isset($_POST['widgetID']) && isInteger($_POST['widgetID']) && $_POST['widgetID'] >= 0){

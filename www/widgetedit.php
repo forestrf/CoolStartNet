@@ -32,7 +32,7 @@ $db = new DB();
 <body>
 
 Edita un widget agregando archivos y versiones y variables<br/>
-No se pueden borrar ni modificar versiones p鷅licas<br/>
+No se pueden borrar ni modificar versiones p煤blicas pero se puede ocultar. Aquellos que lo tengan lo seguir谩n teniendo pero nadie m谩s lo podr谩 agregar.<br/>
 Tirar de post<br/><br/>
 
 
@@ -42,26 +42,49 @@ Tirar de post<br/><br/>
 	<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 	<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 	<input type="hidden" name="volver" value="1">
-	<input type="submit" value="Crear nueva versi髇">
+	<input type="submit" value="Crear nueva versi贸n">
 </form><br/>
 <?php
 $versiones = $db->getWidgetVersiones($widgetID);
 if(count($versiones) > 0){
+	$primera = true;
 	foreach($versiones as $version){
-		echo $version['version'].'<br/>';
+		echo '['.$version['version'].']',$version['publico']?'+ ':' ';
+		
+		if($version['publico'] === '1'){
+			echo '<input type="submit" value="Convertir en versi贸n actual"> ',
+			'<input type="submit" value="Ocultar de publicaciones">';
+		}
+		else{
+			echo '<input type="submit" value="Editar"> ',
+			'<input type="submit" value="Borrar"> ',
+			'<input type="submit" value="Publicar">';
+		}
+		echo '
+		'.($version['publico'] === '1' && $primera?'Versi贸n actual':'').'
+		
+		<br/>';
+		
+		if($version['publico'] === '1'){
+			$primera = false;
+		}
 	}
-	/*$version = 1;
+	/*
+	$version = 1;
 	var_dump($db->getWidgetContenidoVersion($widgetID, $version));
 	*/
 }
 else{
-	echo 'Este widget no cuenta con ninguna versi髇.';
+	echo 'Este widget no cuenta con ninguna versi贸n.';
 }
 
 ?>
 
-
-
+PONER ESTO EN EL PHP ABIERTO POR BOT脫N EDITAR LA VERSI脫N.
+Script:
+Hueco para adjuntar el script.
+Elementos:
+Hueco para adjuntar elementos.
 
 <?php
 

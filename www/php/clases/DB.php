@@ -184,8 +184,8 @@ class DB {
 	function borraWidget($widgetID, $admin = false){
 		$widgetID = mysql_escape_mimic($widgetID);
 		$ID = $_SESSION['usuario']['ID'];
-		if($admin){
-			$extra_consulta = "AND `propietarioID` = '{$ID}'";
+		if(!$admin){
+			$extra_consulta = "AND `propietarioID` = '{$ID}' AND `publicado` = '0'";
 		}
 		$this->consulta("DELETE FROM `widgets` WHERE `ID` = '{$widgetID}' {$extra_consulta};");
 		$this->consulta("DELETE FROM `variables` WHERE `IDwidget` = '{$widgetID}' {$extra_consulta};");
@@ -197,12 +197,19 @@ class DB {
 	// Retorna un array con las versiones existentes del widget, de la última a la primera
 	function getWidgetVersiones($widgetID){
 		$widgetID = mysql_escape_mimic($widgetID);
-		return $this->consulta("SELECT version FROM `widgets-variables` WHERE `IDwidget` = '{$widgetID}' ORDER BY `version` DESC;");
+		return $this->consulta("SELECT * FROM `widgets-variables` WHERE `IDwidget` = '{$widgetID}' ORDER BY `version` DESC;");
+	}
+	
+	// Retorna la última versión
+	function getWidgetLastVersion($widgetID, $publico = true){
+		$widgetID = mysql_escape_mimic($widgetID);
+		$publico = $publico?true:false;
+		return $this->consulta("SELECT * FROM `widgets-variables` WHERE `IDwidget` = '{$widgetID}' AND `publico` = '{$publico}' ORDER BY `version` DESC LIMIT 1;")[0];
 	}
 	
 	function creaWidgetVersion($widgetID, $variables = '[]'){
 		$widgetID = mysql_escape_mimic($widgetID);
-		$new_version = $this->getWidgetVersiones($widgetID)[0]['version'];
+		$new_version = $this->getWidgetLastVersion($widgetID, false)['version'];
 		if(!$new_version){
 			$new_version = 0;
 		}
@@ -213,7 +220,9 @@ class DB {
 	// Version puede ser un número o un array de números (aunque no creo que se use)
 	function getWidgetContenidoVersion($widgetID, $version){
 		$widgetID = mysql_escape_mimic($widgetID);
-		$version = mysql_escape_mimic($version);
+		if(!isInteger($version) || $version < 0){
+			return false;
+		}
 		if(is_array($version)){
 			$versiones_sql = "version = '".implode("' OR version = '", $version)."'";
 			return $this->consulta("SELECT * FROM `widgets-contenido` WHERE `IDwidget` = '{$widgetID}' AND ({$versiones_sql});");
@@ -238,7 +247,7 @@ class DB {
 	// Retorna un listado con los widgets que puede usar el usuario en la página principal.
 	function getWidgetsDisponiblesUsuario($ID = null){
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
-		return $this->consulta("SELECT * FROM `widgets`;"); // Por poner filtrado de widgets privados
+		return $this->consulta("SELECT * FROM `widgets` WHERE `propietarioID` = '-1' OR `propietarioID` = '{$ID}' OR `publicado` = 1;"); // Por poner filtrado de widgets privados
 	}
 	
 	// Retorna un listado con los widgets propiedad del usuario sobre los cuales tiene el control, como borrarlos o editarlos

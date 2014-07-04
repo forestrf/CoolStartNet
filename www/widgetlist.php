@@ -50,15 +50,18 @@ foreach($widgets as &$widget){
 		<form method="GET" action="widgetedit.php">
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
 			<input type="submit" value="Editar">
-		</form>
-		<form method="POST" action="ipa.php">
+		</form>';
+	if($widget['publicado'] === '0'){
+		echo '<form method="POST" action="ipa.php">
 			<input type="hidden" name="switch" value="2">
 			<input type="hidden" name="accion" value="2">
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
 			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['usuario']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
 			<input type="hidden" name="volver" value="1">
 			<input type="submit" value="Borrar">
-		</form>)<br/>';
+		</form>';
+	}
+	echo ')<br/>';
 }
 
 ?>

@@ -5,10 +5,10 @@ if(!isset($_POST['switch'])){
 }
 
 /*
-1 => quitar o poner widgets en en la p·gina del usuario
+1 => quitar o poner widgets en en la p√°gina del usuario
 2 => crear o borrar widgets
-3 => generar una versiÛn para el widget
-4 => editar una versiÛn existente de un widget (subir un archivo con su nombre, editar nombre de un archivo, agregar o quitar un archivo o cambiar las variables)
+3 => generar una versi√≥n para el widget
+4 => editar una versi√≥n existente de un widget (subir un archivo con su nombre, editar nombre de un archivo, agregar o quitar un archivo o cambiar las variables)
 */
 
 switch($_POST['switch']){
