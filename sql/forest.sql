@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 29-06-2014 a las 13:38:50
+-- Tiempo de generación: 04-07-2014 a las 02:34:36
 -- Versión del servidor: 5.5.32
 -- Versión de PHP: 5.4.25
 
@@ -75,10 +75,11 @@ CREATE TABLE IF NOT EXISTS `variables` (
 CREATE TABLE IF NOT EXISTS `widgets` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(30) COLLATE utf8_bin NOT NULL,
-  `variables` text COLLATE utf8_bin NOT NULL,
+  `propietarioID` int(11) NOT NULL,
+  `publicado` tinyint(1) NOT NULL COMMENT 'Si se publica cambiar a 1 desde php. Nunca volver a 0',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `nombre` (`nombre`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -106,8 +107,25 @@ CREATE TABLE IF NOT EXISTS `widgets-contenido` (
 CREATE TABLE IF NOT EXISTS `widgets-usuario` (
   `IDusuario` int(11) NOT NULL,
   `IDwidget` int(11) NOT NULL,
-  KEY `IDusuario` (`IDusuario`,`IDwidget`)
+  KEY `IDusuario` (`IDusuario`,`IDwidget`),
+  KEY `IDusuario_2` (`IDusuario`),
+  KEY `IDwidget` (`IDwidget`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `widgets-variables`
+--
+
+CREATE TABLE IF NOT EXISTS `widgets-variables` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `IDwidget` int(11) NOT NULL,
+  `variables` text COLLATE utf8_bin NOT NULL,
+  `version` int(11) NOT NULL,
+  `publico` tinyint(1) NOT NULL COMMENT '0 = privada, 1 = pública',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=41 ;
 
 --
 -- Restricciones para tablas volcadas
