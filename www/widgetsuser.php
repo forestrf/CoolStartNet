@@ -1,5 +1,7 @@
 <?php
 
+header('Content-Type: text/html; charset=UTF-8');
+
 session_start();
 if(!isset($_SESSION['usuario'])){
 	exit;
@@ -41,7 +43,7 @@ foreach($widgets_usuario as &$widget){
 			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['usuario']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
 			<input type="hidden" name="volver" value="1">
 			<input type="submit" value="Quitar">
-		</form>)<br/>';
+		</form>) Seleccionar una versión / usar siempre la última (automático)<br/>';
 }
 ?>
 
