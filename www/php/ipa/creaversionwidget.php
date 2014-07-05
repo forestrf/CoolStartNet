@@ -1,5 +1,7 @@
 <?php
 
+header('Content-Type: text/html; charset=UTF-8');
+
 if(!isset($_POST['widgetID']) || !isset($_POST['accion']) || !isset($_POST['token'])){
 	exit;
 }
