@@ -54,13 +54,25 @@ if(count($versiones) > 0){
 		echo '['.$version['version'].']',$version['publico']?'+ ':' ';
 		
 		if($version['publico'] === '1'){
-			echo '<input type="submit" value="Convertir en versión actual"> ',
-			'<input type="submit" value="Ocultar de publicaciones">';
+			echo '
+			<form>
+				<input type="submit" value="Convertir en versión actual">
+			</form>
+			<form>
+				<input type="submit" value="Ocultar de publicaciones">
+			</form>';
 		}
 		else{
-			echo '<input type="submit" value="Editar"> ',
-			'<input type="submit" value="Borrar"> ',
-			'<input type="submit" value="Publicar">';
+			echo '
+			<form>
+				<input type="submit" value="Editar">
+			</form>
+			<form>
+				<input type="submit" value="Borrar">
+			</form>
+			<form>
+				<input type="submit" value="Publicar">
+			</form>';
 		}
 		echo '
 		'.($version['publico'] === '1' && $primera?'Versión actual':'').'
