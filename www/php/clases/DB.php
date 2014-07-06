@@ -214,7 +214,13 @@ class DB {
 			$new_version = 0;
 		}
 		++$new_version;
-		return $this->consulta("INSERT INTO `widgets-variables` (`IDwidget`, `variables`, `version`) VALUES ('{$widgetID}', '{$variables}', '{$new_version}')");
+		return $this->consulta("INSERT INTO `widgets-variables` (`IDwidget`, `variables`, `version`) VALUES ('{$widgetID}', '{$variables}', '{$new_version}');");
+	}
+	
+	function borraWidgetVersion($widgetID, $version){
+		$widgetID = mysql_escape_mimic($widgetID);
+		$version = mysql_escape_mimic($version);
+		return $this->consulta("DELETE FROM `widgets-variables` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}' AND `publico` = '0';");
 	}
 	
 	// Version puede ser un número o un array de números (aunque no creo que se use)

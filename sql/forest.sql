@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-07-2014 a las 02:34:36
+-- Tiempo de generación: 07-07-2014 a las 01:19:43
 -- Versión del servidor: 5.5.32
 -- Versión de PHP: 5.4.25
 
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `widgets` (
   `publicado` tinyint(1) NOT NULL COMMENT 'Si se publica cambiar a 1 desde php. Nunca volver a 0',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `nombre` (`nombre`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -107,6 +107,8 @@ CREATE TABLE IF NOT EXISTS `widgets-contenido` (
 CREATE TABLE IF NOT EXISTS `widgets-usuario` (
   `IDusuario` int(11) NOT NULL,
   `IDwidget` int(11) NOT NULL,
+  `autoupdate` tinyint(1) NOT NULL DEFAULT '1',
+  `version` int(11) NOT NULL COMMENT 'Mirar cuando autoupdate = 0',
   KEY `IDusuario` (`IDusuario`,`IDwidget`),
   KEY `IDusuario_2` (`IDusuario`),
   KEY `IDwidget` (`IDwidget`)
@@ -124,8 +126,9 @@ CREATE TABLE IF NOT EXISTS `widgets-variables` (
   `variables` text COLLATE utf8_bin NOT NULL,
   `version` int(11) NOT NULL,
   `publico` tinyint(1) NOT NULL COMMENT '0 = privada, 1 = pública',
+  `visible` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 = oculto, 1 = visible',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=41 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=42 ;
 
 --
 -- Restricciones para tablas volcadas

@@ -55,19 +55,8 @@ foreach($posibles_referers as $referer_temp){
 						$db->agregarWidgetAlUsuario($_POST['widgetID']);
 					break;
 				}
-				if(isset($_POST['volver']) && $_POST['volver'] === '1'){
-					header('HTTP/1.1 302 Moved Temporarily');
-					header('Location: '.$_SERVER['HTTP_REFERER']); 
-				}
-				else{
-					echo 'Completado';
-				}
-				exit;
 			}
-			echo 'Ha ocurrido un error.';
-			exit;
+			break 2;
 		}
 	}
 }
-
-echo 'Ha ocurrido un error.';

@@ -53,23 +53,14 @@ foreach($posibles_referers as $referer_temp){
 							$db->creaWidgetVersion($_POST['widgetID']);
 						break;
 						case '2':
-							//$db->borraWidget($_POST['widgetID']);
+							if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
+								$db->borraWidgetVersion($_POST['widgetID'], $_POST['widgetVersion']);
+							}
 						break;
 					}
 				}
 			}
-			if(isset($_POST['volver']) && $_POST['volver'] === '1'){
-				header('HTTP/1.1 302 Moved Temporarily');
-				header('Location: '.$_SERVER['HTTP_REFERER']); 
-			}
-			else{
-				echo 'Completado';
-				exit;
-			}
-			echo 'Ha ocurrido un error.';
-			exit;
+			break 2;
 		}
 	}
 }
-
-echo 'Ha ocurrido un error.';

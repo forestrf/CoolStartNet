@@ -54,25 +54,33 @@ if(count($versiones) > 0){
 		echo '['.$version['version'].']',$version['publico']?'+ ':' ';
 		
 		if($version['publico'] === '1'){
-			echo '
+			?>
 			<form>
 				<input type="submit" value="Convertir en versión actual">
 			</form>
 			<form>
 				<input type="submit" value="Ocultar de publicaciones">
-			</form>';
+			</form>
+			<?php
 		}
 		else{
-			echo '
+			?>
 			<form>
 				<input type="submit" value="Editar">
 			</form>
-			<form>
+			<form method="POST" action="ipa.php">
+				<input type="hidden" name="switch" value="3">
+				<input type="hidden" name="accion" value="2">
+				<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
+				<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
+				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+				<input type="hidden" name="volver" value="1">
 				<input type="submit" value="Borrar">
 			</form>
 			<form>
 				<input type="submit" value="Publicar">
-			</form>';
+			</form>
+			<?php
 		}
 		echo '
 		'.($version['publico'] === '1' && $primera?'Versión actual':'').'

@@ -29,3 +29,9 @@ switch($_POST['switch']){
 		require 'php/ipa/adminversioneswidget.php';
 	break;
 }
+
+
+if(isset($_POST['volver']) && $_POST['volver'] === '1'){
+	header('HTTP/1.1 302 Moved Temporarily');
+	header('Location: '.$_SERVER['HTTP_REFERER']); 
+}
