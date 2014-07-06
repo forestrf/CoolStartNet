@@ -9,6 +9,7 @@ if(!isset($_POST['switch'])){
 2 => crear o borrar widgets
 3 => generar una versión para el widget
 4 => editar una versión existente de un widget (subir un archivo con su nombre, editar nombre de un archivo, agregar o quitar un archivo o cambiar las variables)
+5 => administrar versiones
 */
 
 switch($_POST['switch']){
@@ -23,5 +24,8 @@ switch($_POST['switch']){
 	break;
 	case '4':
 		require 'php/ipa/editaversionwidget.php';
+	break;
+	case '5':
+		require 'php/ipa/adminversioneswidget.php';
 	break;
 }
