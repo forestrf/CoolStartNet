@@ -47,15 +47,21 @@ Tirar de post<br/><br/>
 	<input type="submit" value="Crear nueva versión">
 </form><br/>
 <?php
+$widget = $db->getWidgetPorID($widgetID);
 $versiones = $db->getWidgetVersiones($widgetID);
 if(count($versiones) > 0){
-	$primera = true;
 	foreach($versiones as $version){
 		echo '['.$version['version'].']',$version['publico']?'+ ':' ';
 		
 		if($version['publico'] === '1'){
 			?>
-			<form>
+			<form method="POST" action="ipa.php">
+				<input type="hidden" name="switch" value="5">
+				<input type="hidden" name="accion" value="1">
+				<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
+				<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
+				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+				<input type="hidden" name="volver" value="1">
 				<input type="submit" value="Convertir en versión actual">
 			</form>
 			<form>
@@ -82,14 +88,12 @@ if(count($versiones) > 0){
 			</form>
 			<?php
 		}
-		echo '
-		'.($version['publico'] === '1' && $primera?'Versión actual':'').'
 		
-		<br/>';
-		
-		if($version['publico'] === '1'){
-			$primera = false;
+		if($widget['publicado'] === $version['version']){
+			echo 'Versión actual';
 		}
+		
+		echo '<br/>';
 	}
 	/*
 	$version = 1;

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-07-2014 a las 01:19:43
+-- Tiempo de generación: 08-07-2014 a las 01:24:43
 -- Versión del servidor: 5.5.32
 -- Versión de PHP: 5.4.25
 
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `widgets` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(30) COLLATE utf8_bin NOT NULL,
   `propietarioID` int(11) NOT NULL,
-  `publicado` tinyint(1) NOT NULL COMMENT 'Si se publica cambiar a 1 desde php. Nunca volver a 0',
+  `publicado` int(11) NOT NULL DEFAULT '-1' COMMENT 'Si se publica cambiar a 0 o + desde php. Nunca volver a -1',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `nombre` (`nombre`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;

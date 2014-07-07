@@ -1,5 +1,7 @@
 <?php
 
+header('Content-Type: text/html; charset=UTF-8');
+
 if(!isset($_POST['switch'])){
 	exit;
 }
@@ -7,7 +9,7 @@ if(!isset($_POST['switch'])){
 /*
 1 => quitar o poner widgets en en la página del usuario
 2 => crear o borrar widgets
-3 => generar una versión para el widget
+3 => generar o quitar una versión para el widget
 4 => editar una versión existente de un widget (subir un archivo con su nombre, editar nombre de un archivo, agregar o quitar un archivo o cambiar las variables)
 5 => administrar versiones
 */
