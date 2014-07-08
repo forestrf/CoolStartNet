@@ -63,6 +63,18 @@ foreach($widgets as &$widget){
 			<input type="submit" value="Borrar">
 		</form>';
 	}
+	else{
+		?>
+		<form method="POST" action="ipa.php">
+			<input type="hidden" name="switch" value="5">
+			<input type="hidden" name="accion" value="5">
+			<input type="hidden" name="widgetID" value="<?php echo $widget['ID']?>">
+			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA)?>">
+			<input type="hidden" name="volver" value="1">
+			<input type="submit" value="Ocultar de público">
+		</form>
+		<?php
+	}
 	echo ')<br/>';
 }
 

@@ -28,6 +28,7 @@ Acciones:
 2 => Hacer versión pública oculta
 3 => Hacer versión pública visible
 4 => Publicar versión
+5 => ocultar todas las versiones
 */
 
 // Por continuar. Comprobar referer y de coincidir, recoger datos, comprobar hash y de coincidir de nuevo, cambiar datos.
@@ -36,7 +37,8 @@ Acciones:
 // Comprobar referer
 
 $posibles_referers = array(
-	'widgetedit.php'
+	'widgetedit.php',
+	'widgetlist.php'
 );
 
 foreach($posibles_referers as $referer_temp){
@@ -68,6 +70,9 @@ foreach($posibles_referers as $referer_temp){
 							if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
 								$db->publicaWidgetVersion($_POST['widgetID'], $_POST['widgetVersion'], true);
 							}
+						break;
+						case '5':
+							$db->ocultarTodasVersionesWidget($_POST['widgetID']);
 						break;
 					}
 				}

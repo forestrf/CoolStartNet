@@ -285,6 +285,12 @@ class DB {
 		return $this->consulta("UPDATE `widgets-variables` SET `visible` = '{$visible}' WHERE `IDwidget` = '{$widgetID}' AND `publico` = '1' AND `version` = '{$version}';");
 	}
 	
+	// Marcar todas las versiones como invisibles
+	function ocultarTodasVersionesWidget($widgetID){
+		$widgetID = mysql_escape_mimic($widgetID);
+		$this->consulta("UPDATE `widgets-variables` SET `visible` = '0' WHERE `IDwidget` = '{$widgetID}';");
+	}
+	
 	// Version puede ser un número o un array de números (aunque no creo que se use)
 	function getWidgetContenidoVersion($widgetID, $version){
 		$widgetID = mysql_escape_mimic($widgetID);
