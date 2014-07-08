@@ -22,6 +22,9 @@ $widgetID = &$_GET['widgetID'];
 
 $db = new DB();
 
+$widget = $db->getWidgetPorID($widgetID);
+$versiones = $db->getWidgetVersiones($widgetID);
+
 ?>
 <!doctype html>
 <html>
@@ -36,14 +39,13 @@ $db = new DB();
 </head>
 <body>
 
-Edita una versión de un widget agregando y quitando archivos y versiones<br/>
+Edita una versión de un widget agregando y quitando archivos.<br/>
 Tirar de post<br/><br/>
 
 Comprobar que el widget tiene la versión y dicha versión no es pública<br/><br/>
 
-Variables
-
-Archivos
+Archivos:
+Es obligatorio el archivo "main.js" ya que será el único que se incruste. Mediante la api se pueden llamar otros archivos. (por hacer)
 
 </body>
 </html>
