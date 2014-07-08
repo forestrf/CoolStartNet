@@ -33,9 +33,11 @@ $db = new DB();
 </head>
 <body>
 
-Edita un widget agregando archivos y versiones y variables<br/>
+Edita un widget administrando sus versiones<br/>
 No se pueden borrar ni modificar versiones públicas pero se puede ocultar. Aquellos que lo tengan lo seguirán teniendo pero nadie más lo podrá agregar.<br/>
 Tirar de post<br/><br/>
+
+¿Posibilidad de renombrar?<br/><br/>
 
 
 <form method="POST" action="ipa.php">
@@ -79,7 +81,9 @@ if(count($versiones) > 0){
 		}
 		else{
 			?>
-			<form>
+			<form method="GET" action="widgeteditversion.php">
+				<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
+				<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
 				<input type="submit" value="Editar">
 			</form>
 			<form method="POST" action="ipa.php">
