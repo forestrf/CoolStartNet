@@ -238,7 +238,7 @@ class DB {
 		return $this->consulta("INSERT INTO `widgets-versiones` (`IDwidget`, `variables`, `version`) VALUES ('{$widgetID}', '{$variables}', '{$new_version}');");
 	}
 	
-	// Borrar una versión no publicada del widget
+	// Publicar una versión del widget (no se puede deshacer)
 	function publicaWidgetVersion($widgetID, $version){
 		$widgetID = mysql_escape_mimic($widgetID);
 		if(!isInteger($version) || $version < 0){
@@ -252,6 +252,16 @@ class DB {
 			return true;
 		}
 		return false;
+	}
+	
+	// Editar comentario de una versión del widget
+	function editarWidgetComentario($widgetID, $version, $comentario){
+		$widgetID = mysql_escape_mimic($widgetID);
+		if(!isInteger($version) || $version < 0){
+			return false;
+		}
+		$comentario = mysql_escape_mimic($comentario);
+		return $this->consulta("UPDATE `widgets-versiones` SET `comentario` = '{$comentario}' WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';");
 	}
 	
 	// Borrar una versión no publicada del widget

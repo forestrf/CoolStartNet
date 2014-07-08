@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-07-2014 a las 16:26:36
+-- Tiempo de generación: 08-07-2014 a las 18:18:43
 -- Versión del servidor: 5.5.32
 -- Versión de PHP: 5.4.25
 
@@ -126,6 +126,7 @@ CREATE TABLE IF NOT EXISTS `widgets-versiones` (
   `version` int(11) NOT NULL,
   `publico` tinyint(1) NOT NULL COMMENT '0 = privada, 1 = pública',
   `visible` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 = oculto, 1 = visible',
+  `comentario` tinytext COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=58 ;
 

@@ -50,30 +50,29 @@ foreach($posibles_referers as $referer_temp){
 			if(isset($_POST['widgetID']) && isInteger($_POST['widgetID']) && $_POST['widgetID'] >= 0){
 				// Comprobar token
 				if($_POST['token'] === hash_ipa($_SESSION['usuario']['RND'], $_POST['widgetID'], PASSWORD_TOKEN_IPA)){
-					switch($_POST['accion']){
-						case '1':
-							if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
+					if($_POST['accion'] === '5'){
+						$db->ocultarTodasVersionesWidget($_POST['widgetID']);
+					}
+					else if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
+						switch($_POST['accion']){
+							case '1':
 								$db->versionWidgetDefault($_POST['widgetID'], $_POST['widgetVersion']);
-							}
-						break;
-						case '2':
-							if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
+							break;
+							case '2':
 								$db->versionWidgetVisibilidad($_POST['widgetID'], $_POST['widgetVersion'], false);
-							}
-						break;
-						case '3':
-							if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
+							break;
+							case '3':
 								$db->versionWidgetVisibilidad($_POST['widgetID'], $_POST['widgetVersion'], true);
-							}
-						break;
-						case '4':
-							if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
+							break;
+							case '4':
 								$db->publicaWidgetVersion($_POST['widgetID'], $_POST['widgetVersion'], true);
-							}
-						break;
-						case '5':
-							$db->ocultarTodasVersionesWidget($_POST['widgetID']);
-						break;
+							break;
+							case '6':
+								if(isset($_POST['comentario'])){
+									$db->editarWidgetComentario($_POST['widgetID'], $_POST['widgetVersion'], $_POST['comentario']);
+								}
+							break;
+						}
 					}
 				}
 			}

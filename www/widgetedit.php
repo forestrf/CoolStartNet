@@ -55,6 +55,18 @@ if(count($versiones) > 0){
 	foreach($versiones as $version){
 		echo '['.$version['version'].']',$version['publico']?($version['visible']?'+ ':'- '):' ';
 		
+		?>
+		<form method="POST" action="ipa.php">
+			<input type="hidden" name="switch" value="5">
+			<input type="hidden" name="accion" value="6">
+			<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
+			<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
+			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+			<input type="text" name="comentario" value="<?php echo $version['comentario']?>">
+			<input type="submit" value="comentar" maxlength="250">
+			<input type="hidden" name="volver" value="1">
+		</form>
+		<?php
 		if($version['publico'] === '1'){
 			if($widget['publicado'] !== $version['version']){
 			?>
