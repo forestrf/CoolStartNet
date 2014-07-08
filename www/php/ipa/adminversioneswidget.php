@@ -25,6 +25,9 @@ $db = new DB();
 /*
 Acciones:
 1 => marcar la versión como default
+2 => Hacer versión pública oculta
+3 => Hacer versión pública visible
+4 => Publicar versión
 */
 
 // Por continuar. Comprobar referer y de coincidir, recoger datos, comprobar hash y de coincidir de nuevo, cambiar datos.
@@ -49,6 +52,21 @@ foreach($posibles_referers as $referer_temp){
 						case '1':
 							if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
 								$db->versionWidgetDefault($_POST['widgetID'], $_POST['widgetVersion']);
+							}
+						break;
+						case '2':
+							if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
+								$db->versionWidgetVisibilidad($_POST['widgetID'], $_POST['widgetVersion'], false);
+							}
+						break;
+						case '3':
+							if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
+								$db->versionWidgetVisibilidad($_POST['widgetID'], $_POST['widgetVersion'], true);
+							}
+						break;
+						case '4':
+							if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
+								$db->publicaWidgetVersion($_POST['widgetID'], $_POST['widgetVersion'], true);
 							}
 						break;
 					}

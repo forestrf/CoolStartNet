@@ -201,11 +201,29 @@ class DB {
 		return $this->consulta("SELECT * FROM `widgets-variables` WHERE `IDwidget` = '{$widgetID}' ORDER BY `version` DESC;");
 	}
 	
-	// Retorna la última versión
+	// Retorna la última versión. $publico = true = debe ser público, false = puede o no ser público
 	function getWidgetLastVersion($widgetID, $publico = true){
 		$widgetID = mysql_escape_mimic($widgetID);
-		$publico = $publico?true:false;
-		return $this->consulta("SELECT * FROM `widgets-variables` WHERE `IDwidget` = '{$widgetID}' AND `publico` = '{$publico}' ORDER BY `version` DESC LIMIT 1;")[0];
+		$publico = $publico?" AND `publico` = '1' ":'';
+		return $this->consulta("SELECT * FROM `widgets-variables` WHERE `IDwidget` = '{$widgetID}' {$publico} ORDER BY `version` DESC LIMIT 1;")[0];
+	}
+	
+	// POR TESTEAR
+	// Retorna la versión default o de lo contrario la versión pública más avanzada
+	function getWidgetDefaultVersion($widgetID){
+		$widgetID = mysql_escape_mimic($widgetID);
+		$version_publica = $this->consulta("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `publicado` > -1;");
+		if($version_publica){
+			$version_publica = $version_publica[0]['publicado'];
+			$version_publica_concreta = $this->consulta("SELECT * FROM `widgets-variables` WHERE `IDwidget` = '{$widgetID}' AND `publico` = '1' AND `visible` = '1' AND `version` = '{$version_publica}' ORDER BY `version`;");
+			if($version_publica_concreta){
+				return $version_publica_concreta[0];
+			}
+			else{
+				return getWidgetLastVersion($widgetID, true);
+			}
+		}
+		return false;
 	}
 	
 	// Crear una versión del widget
@@ -220,13 +238,31 @@ class DB {
 	}
 	
 	// Borrar una versión no publicada del widget
+	function publicaWidgetVersion($widgetID, $version){
+		$widgetID = mysql_escape_mimic($widgetID);
+		if(!isInteger($version) || $version < 0){
+			return false;
+		}
+		if($this->consulta("SELECT * FROM `widgets-variables` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';")){
+			$this->consulta("UPDATE `widgets-variables` SET `publico` = '1' WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';");
+			if($this->consulta("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `publicado` = '-1';")){
+				$this->consulta("UPDATE `widgets` SET `publicado` = '{$version}' WHERE `ID` = '{$widgetID}';");
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	// Borrar una versión no publicada del widget
 	function borraWidgetVersion($widgetID, $version){
 		$widgetID = mysql_escape_mimic($widgetID);
-		$version = mysql_escape_mimic($version);
+		if(!isInteger($version) || $version < 0){
+			return false;
+		}
 		return $this->consulta("DELETE FROM `widgets-variables` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}' AND `publico` = '0';");
 	}
 	
-	// Version puede ser un número o un array de números (aunque no creo que se use)
+	// Hacer de una versión pública la default
 	function versionWidgetDefault($widgetID, $version){
 		$widgetID = mysql_escape_mimic($widgetID);
 		if(!isInteger($version) || $version < 0){
@@ -237,6 +273,16 @@ class DB {
 			return $this->consulta("UPDATE `widgets` SET `publicado` = '{$version}' WHERE `ID` = '{$widgetID}';");
 		}
 		return false;
+	}
+	
+	// Marcar versión pública como visible o invisible. $visible = true o false
+	function versionWidgetVisibilidad($widgetID, $version, $visible){
+		$widgetID = mysql_escape_mimic($widgetID);
+		if(!isInteger($version) || $version < 0){
+			return false;
+		}
+		$visible = $visible?1:0;
+		return $this->consulta("UPDATE `widgets-variables` SET `visible` = '{$visible}' WHERE `IDwidget` = '{$widgetID}' AND `publico` = '1' AND `version` = '{$version}';");
 	}
 	
 	// Version puede ser un número o un array de números (aunque no creo que se use)

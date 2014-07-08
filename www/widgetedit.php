@@ -51,9 +51,10 @@ $widget = $db->getWidgetPorID($widgetID);
 $versiones = $db->getWidgetVersiones($widgetID);
 if(count($versiones) > 0){
 	foreach($versiones as $version){
-		echo '['.$version['version'].']',$version['publico']?'+ ':' ';
+		echo '['.$version['version'].']',$version['publico']?($version['visible']?'+ ':'- '):' ';
 		
 		if($version['publico'] === '1'){
+			if($widget['publicado'] !== $version['version']){
 			?>
 			<form method="POST" action="ipa.php">
 				<input type="hidden" name="switch" value="5">
@@ -64,8 +65,15 @@ if(count($versiones) > 0){
 				<input type="hidden" name="volver" value="1">
 				<input type="submit" value="Convertir en versión actual">
 			</form>
-			<form>
-				<input type="submit" value="Ocultar de publicaciones">
+			<?php } ?>
+			<form method="POST" action="ipa.php">
+				<input type="hidden" name="switch" value="5">
+				<input type="hidden" name="accion" value="<?php echo $version['visible']?2:3?>">
+				<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
+				<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
+				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+				<input type="hidden" name="volver" value="1">
+				<input type="submit" value="<?php echo $version['visible']?'Ocultar de publicaciones':'Hacer visible'?>">
 			</form>
 			<?php
 		}
@@ -83,7 +91,13 @@ if(count($versiones) > 0){
 				<input type="hidden" name="volver" value="1">
 				<input type="submit" value="Borrar">
 			</form>
-			<form>
+			<form method="POST" action="ipa.php">
+				<input type="hidden" name="switch" value="5">
+				<input type="hidden" name="accion" value="4">
+				<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
+				<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
+				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+				<input type="hidden" name="volver" value="1">
 				<input type="submit" value="Publicar">
 			</form>
 			<?php
