@@ -53,7 +53,7 @@ foreach($widgets as &$widget){
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
 			<input type="submit" value="Editar">
 		</form>';
-	if($widget['publicado'] === '0'){
+	if($widget['publicado'] === '-1'){
 		echo '<form method="POST" action="ipa.php">
 			<input type="hidden" name="switch" value="2">
 			<input type="hidden" name="accion" value="2">
