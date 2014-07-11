@@ -55,8 +55,11 @@ foreach($posibles_referers as $referer_temp){
 											$fp      = fopen($_FILES['archivo']['tmp_name'], 'rb');
 											$content = fread($fp, filesize($_FILES['archivo']['tmp_name']));
 											fclose($fp);
-											$db->widgetVersionGuardarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_POST['nombre'], $content);
+											
+											// Innecesario borrarlo, php lo borra automaticamente.
 											unlink($_FILES['archivo']['tmp_name']);
+											
+											$db->widgetVersionGuardarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_POST['nombre'], $content);
 										}
 									}
 								}

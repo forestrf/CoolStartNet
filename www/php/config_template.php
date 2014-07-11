@@ -21,5 +21,8 @@ define('PASSWORD_TOKEN_IPA', 'write random characters here');
 # path to the web with / in the end, starting with the subdomain (if there is) and without protocol.
 define('WEB_PATH', 'www.mywebhere.com/folder/to/site/');
 
-# Tamaño máximo para los archivos subidos para los widgets.
-define('TAM_BYTES_ARCHIVOS_MAX', '5242880');
+# Tamaño máximo para los archivos subidos para los widgets. 500Kb
+define('TAM_BYTES_ARCHIVOS_MAX', '512000');
+
+define('NICK_MAX_LENGTH', '15');
+define('PASSWORD_MAX_LENGTH', '30');
