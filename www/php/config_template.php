@@ -20,3 +20,6 @@ define('PASSWORD_TOKEN_IPA', 'write random characters here');
 # Ruta de la web con / final, empezando desde el subdominio (de tener) y sin protocolo.
 # path to the web with / in the end, starting with the subdomain (if there is) and without protocol.
 define('WEB_PATH', 'www.mywebhere.com/folder/to/site/');
+
+# Tamaño máximo para los archivos subidos para los widgets.
+define('TAM_BYTES_ARCHIVOS_MAX', '5242880');

@@ -32,6 +32,10 @@ function hash_ipa($usuarioRND, $widgetID, $password){
 	return md5($usuarioRND.'-'.$widgetID.'-'.$password);
 }
 
+function file_hash(&$content){
+	return md5($content);
+}
+
 function random_string($size, $chr_start=34, $chr_end=255){
 	$cadena = '';
 	for($i=0; $i<$size; ++$i){

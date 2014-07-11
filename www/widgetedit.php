@@ -125,10 +125,6 @@ if(count($versiones) > 0){
 		
 		echo '<br/>';
 	}
-	/*
-	$version = 1;
-	var_dump($db->getWidgetContenidoVersion($widgetID, $version));
-	*/
 }
 else{
 	echo 'Este widget no cuenta con ninguna versión.';

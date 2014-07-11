@@ -146,6 +146,7 @@ class DB {
 	
 	// $insert_o_update = 'I' / 'U'
 	// No comprueba si la variable está definida. Sin límites
+	// POR HACER: Limitar tamaño de lo que se puede guardar
 	function setVariable($widgetID, $variable, $valor, $ID = null, $insert_o_update = null){
 		$widgetID = mysql_escape_mimic($widgetID);
 		$variable = mysql_escape_mimic($variable);
@@ -183,17 +184,18 @@ class DB {
 	// Solo se puede borrar widgets públicos si se es admin
 	// Borrar un widget es drástico. Borra las variables y lo desenlaza de los usuarios. PELIGROSO
 	// No borra el contenido ya que este puede coincidir por hash. El contenido se borrará mediante un proceso rutinario que comprueba la no vinculación de un hash.
-	function borraWidget($widgetID, $admin = false){
-		$widgetID = mysql_escape_mimic($widgetID);
-		$ID = $_SESSION['usuario']['ID'];
-		if(!$admin){
-			$extra_consulta = "AND `propietarioID` = '{$ID}' AND `publicado` = '-1'";
+	function borraWidget($widgetID){
+		if(!$this->tengoControlSobreWidget($widgetID)){
+			return false;
 		}
-		$this->consulta("DELETE FROM `widgets` WHERE `ID` = '{$widgetID}' {$extra_consulta};");
-		$this->consulta("DELETE FROM `variables` WHERE `IDwidget` = '{$widgetID}' {$extra_consulta};");
-		$this->consulta("DELETE FROM `widgets-contenido` WHERE `IDwidget` = '{$widgetID}' {$extra_consulta};");
-		$this->consulta("DELETE FROM `widgets-usuario` WHERE `IDwidget` = '{$widgetID}' {$extra_consulta};");
-		$this->consulta("DELETE FROM `widgets-versiones` WHERE `IDwidget` = '{$widgetID}' {$extra_consulta};");
+		$widgetID = mysql_escape_mimic($widgetID);
+		if($this->consulta("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `publicado` = '-1';")){
+			$this->consulta("DELETE FROM `widgets` WHERE `ID` = '{$widgetID}';");
+			$this->consulta("DELETE FROM `variables` WHERE `IDwidget` = '{$widgetID}';");
+			$this->consulta("DELETE FROM `widgets-contenido` WHERE `IDwidget` = '{$widgetID}';");
+			$this->consulta("DELETE FROM `widgets-usuario` WHERE `IDwidget` = '{$widgetID}';");
+			$this->consulta("DELETE FROM `widgets-versiones` WHERE `IDwidget` = '{$widgetID}';");
+		}
 	}
 	
 	// Retorna un array con las versiones existentes del widget, de la última a la primera
@@ -228,18 +230,24 @@ class DB {
 	}
 	
 	// Crear una versión del widget
-	function creaWidgetVersion($widgetID, $variables = '[]'){
+	function creaWidgetVersion($widgetID){
+		if(!$this->tengoControlSobreWidget($widgetID)){
+			return false;
+		}
 		$widgetID = mysql_escape_mimic($widgetID);
 		$new_version = $this->getWidgetLastVersion($widgetID, false)['version'];
 		if(!$new_version){
 			$new_version = 0;
 		}
 		++$new_version;
-		return $this->consulta("INSERT INTO `widgets-versiones` (`IDwidget`, `variables`, `version`) VALUES ('{$widgetID}', '{$variables}', '{$new_version}');");
+		return $this->consulta("INSERT INTO `widgets-versiones` (`IDwidget`, `version`) VALUES ('{$widgetID}', '{$new_version}');");
 	}
 	
 	// Publicar una versión del widget (no se puede deshacer)
 	function publicaWidgetVersion($widgetID, $version){
+		if(!$this->tengoControlSobreWidget($widgetID)){
+			return false;
+		}
 		$widgetID = mysql_escape_mimic($widgetID);
 		if(!isInteger($version) || $version < 0){
 			return false;
@@ -256,6 +264,9 @@ class DB {
 	
 	// Editar comentario de una versión del widget
 	function editarWidgetComentario($widgetID, $version, $comentario){
+		if(!$this->tengoControlSobreWidget($widgetID)){
+			return false;
+		}
 		$widgetID = mysql_escape_mimic($widgetID);
 		if(!isInteger($version) || $version < 0){
 			return false;
@@ -266,6 +277,9 @@ class DB {
 	
 	// Borrar una versión no publicada del widget
 	function borraWidgetVersion($widgetID, $version){
+		if(!$this->tengoControlSobreWidget($widgetID)){
+			return false;
+		}
 		$widgetID = mysql_escape_mimic($widgetID);
 		if(!isInteger($version) || $version < 0){
 			return false;
@@ -275,6 +289,9 @@ class DB {
 	
 	// Hacer de una versión pública la default
 	function versionWidgetDefault($widgetID, $version){
+		if(!$this->tengoControlSobreWidget($widgetID)){
+			return false;
+		}
 		$widgetID = mysql_escape_mimic($widgetID);
 		if(!isInteger($version) || $version < 0){
 			return false;
@@ -288,6 +305,9 @@ class DB {
 	
 	// Marcar versión pública como visible o invisible. $visible = true o false
 	function versionWidgetVisibilidad($widgetID, $version, $visible){
+		if(!$this->tengoControlSobreWidget($widgetID)){
+			return false;
+		}
 		$widgetID = mysql_escape_mimic($widgetID);
 		if(!isInteger($version) || $version < 0){
 			return false;
@@ -298,6 +318,9 @@ class DB {
 	
 	// Marcar todas las versiones como invisibles
 	function ocultarTodasVersionesWidget($widgetID){
+		if(!$this->tengoControlSobreWidget($widgetID)){
+			return false;
+		}
 		$widgetID = mysql_escape_mimic($widgetID);
 		$this->consulta("UPDATE `widgets-versiones` SET `visible` = '0' WHERE `IDwidget` = '{$widgetID}';");
 	}
@@ -317,7 +340,19 @@ class DB {
 		}
 	}
 	
-	
+	// Guardar archivo para un widget y versión específica. Comprobar antes que se puede subir un archivo para esa versión
+	function widgetVersionGuardarArchivo($widgetID, $widgetVersion, $nombre, &$content){
+		if(!$this->tengoControlSobreWidget($widgetID)){
+			return false;
+		}
+		$widgetID = mysql_escape_mimic($widgetID);
+		$widgetVersion = mysql_escape_mimic($widgetVersion);
+		$nombre = mysql_escape_mimic($nombre);
+		$content = mysql_escape_mimic($content);
+		$hash = file_hash($content);
+		$this->consulta("INSERT INTO `widgets-contenido` (`IDwidget`, `version`, `nombre`, `hash`) VALUES ('{$widgetID}', '{$widgetVersion}', '{$nombre}', '{$hash}');");
+		$this->consulta("INSERT INTO `contenido` (`hash`, `data`) VALUES ('{$hash}', '{$content}');");
+	}
 	
 	
 	
@@ -349,6 +384,11 @@ class DB {
 		else{
 			return $this->consulta("SELECT * FROM `widgets` WHERE `propietarioID` = '{$ID}';");
 		}
+	}
+	
+	// Retorna true si se puede manipular el widget por el usuario
+	function tengoControlSobreWidget($widgetID){
+		return $this->consulta("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `propietarioID` = '{$_SESSION['usuario']['ID']}'")?true:false;
 	}
 	
 	// Quitar un widget de un usuario no borra la configuraciones del widget de ese usuario.

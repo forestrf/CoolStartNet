@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-07-2014 a las 18:18:43
+-- Tiempo de generación: 11-07-2014 a las 03:37:41
 -- Versión del servidor: 5.5.32
 -- Versión de PHP: 5.4.25
 
@@ -27,11 +27,10 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `contenido` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `data` mediumblob NOT NULL,
   `hash` varchar(32) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+  `data` mediumblob NOT NULL,
+  PRIMARY KEY (`hash`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -41,10 +40,11 @@ CREATE TABLE IF NOT EXISTS `contenido` (
 
 CREATE TABLE IF NOT EXISTS `usuarios` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `nick` text COLLATE utf8_bin NOT NULL,
-  `password` text COLLATE utf8_bin NOT NULL,
+  `nick` varchar(15) COLLATE utf8_bin NOT NULL,
+  `password` varchar(30) COLLATE utf8_bin NOT NULL,
   `RND` varchar(32) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`ID`)
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `nick` (`nick`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=13 ;
 
 -- --------------------------------------------------------
@@ -54,17 +54,14 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 --
 
 CREATE TABLE IF NOT EXISTS `variables` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `IDusuario` int(11) NOT NULL,
   `IDwidget` int(11) NOT NULL,
   `variable` varchar(30) COLLATE utf8_bin NOT NULL,
   `valor` text COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDWidget` (`IDwidget`,`variable`),
-  KEY `IDWidget_2` (`IDwidget`),
+  PRIMARY KEY (`IDusuario`,`IDwidget`,`variable`),
   KEY `IDUsuario` (`IDusuario`),
-  KEY `IDUsuario_2` (`IDusuario`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
+  KEY `IDWidget` (`IDwidget`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -79,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `widgets` (
   `publicado` int(11) NOT NULL DEFAULT '-1' COMMENT 'Si se publica cambiar a 0 o + desde php. Nunca volver a -1',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `nombre` (`nombre`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=5 ;
 
 -- --------------------------------------------------------
 
@@ -88,15 +85,13 @@ CREATE TABLE IF NOT EXISTS `widgets` (
 --
 
 CREATE TABLE IF NOT EXISTS `widgets-contenido` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `IDwidget` int(11) NOT NULL,
   `version` int(11) NOT NULL,
-  `nombre` text COLLATE utf8_bin NOT NULL,
+  `nombre` varchar(30) COLLATE utf8_bin NOT NULL,
   `hash` varchar(32) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `ID` (`ID`),
-  KEY `ID_2` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+  PRIMARY KEY (`IDwidget`,`version`,`nombre`),
+  KEY `IDwidget` (`IDwidget`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -109,9 +104,7 @@ CREATE TABLE IF NOT EXISTS `widgets-usuario` (
   `IDwidget` int(11) NOT NULL,
   `autoupdate` tinyint(1) NOT NULL DEFAULT '1',
   `version` int(11) NOT NULL COMMENT 'Mirar cuando autoupdate = 0',
-  KEY `IDusuario` (`IDusuario`,`IDwidget`),
-  KEY `IDusuario_2` (`IDusuario`),
-  KEY `IDwidget` (`IDwidget`)
+  PRIMARY KEY (`IDusuario`,`IDwidget`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
@@ -121,14 +114,14 @@ CREATE TABLE IF NOT EXISTS `widgets-usuario` (
 --
 
 CREATE TABLE IF NOT EXISTS `widgets-versiones` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `IDwidget` int(11) NOT NULL,
   `version` int(11) NOT NULL,
   `publico` tinyint(1) NOT NULL COMMENT '0 = privada, 1 = pública',
   `visible` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 = oculto, 1 = visible',
   `comentario` tinytext COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=58 ;
+  PRIMARY KEY (`IDwidget`,`version`),
+  KEY `IDwidget` (`IDwidget`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Restricciones para tablas volcadas
