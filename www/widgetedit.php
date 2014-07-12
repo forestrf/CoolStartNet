@@ -132,17 +132,5 @@ else{
 
 ?>
 
-PONER ESTO EN EL PHP ABIERTO POR BOTÓN EDITAR LA VERSIÓN.
-Script:
-Hueco para adjuntar el script.
-Elementos:
-Hueco para adjuntar elementos.
-
-<?php
-
-// Widgets del usuario
-
-?>
-
 </body>
 </html>

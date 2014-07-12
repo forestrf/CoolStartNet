@@ -363,7 +363,20 @@ class DB {
 		$content = mysql_escape_mimic($content);
 		$hash = file_hash($content);
 		$this->consulta("INSERT INTO `widgets-contenido` (`IDwidget`, `version`, `nombre`, `hash`) VALUES ('{$widgetID}', '{$widgetVersion}', '{$nombre}', '{$hash}');");
-		$this->consulta("INSERT INTO `contenido` (`hash`, `data`) VALUES ('{$hash}', '{$content}');");
+		if(!$this->consulta("SELECT * FROM `contenido` WHERE `hash` = '{$hash}';")){
+			$this->consulta("INSERT INTO `contenido` (`hash`, `data`) VALUES ('{$hash}', '{$content}');");
+		}
+	}
+	
+	// Borrar archivo de un widget y versión específica.
+	function widgetVersionBorrarArchivo($widgetID, $widgetVersion, $hash){
+		if(!$this->tengoControlSobreWidget($widgetID)){
+			return false;
+		}
+		$widgetID = mysql_escape_mimic($widgetID);
+		$widgetVersion = mysql_escape_mimic($widgetVersion);
+		$hash = mysql_escape_mimic($hash);
+		return $this->consulta("DELETE FROM `widgets-contenido` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$widgetVersion}' AND `hash` = '{$hash}';");
 	}
 	
 	

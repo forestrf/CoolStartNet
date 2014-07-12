@@ -49,19 +49,22 @@ foreach($posibles_referers as $referer_temp){
 					if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
 						switch($_POST['accion']){
 							case '1':
-								if(isset($_POST['nombre'])){
-									if(isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0){
-										if($_FILES['archivo']['size'] <= TAM_BYTES_ARCHIVOS_MAX){
-											$fp      = fopen($_FILES['archivo']['tmp_name'], 'rb');
-											$content = fread($fp, filesize($_FILES['archivo']['tmp_name']));
-											fclose($fp);
-											
-											// Innecesario borrarlo, php lo borra automaticamente.
-											unlink($_FILES['archivo']['tmp_name']);
-											
-											$db->widgetVersionGuardarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_FILES['archivo']['name'], $content);
-										}
+								if(isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0){
+									if($_FILES['archivo']['size'] <= TAM_BYTES_ARCHIVOS_MAX){
+										$fp      = fopen($_FILES['archivo']['tmp_name'], 'rb');
+										$content = fread($fp, filesize($_FILES['archivo']['tmp_name']));
+										fclose($fp);
+										
+										// Innecesario borrarlo, php lo borra automaticamente.
+										unlink($_FILES['archivo']['tmp_name']);
+										
+										$db->widgetVersionGuardarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_FILES['archivo']['name'], $content);
 									}
+								}
+							break;
+							case '2':
+								if(isset($_POST['hash'])){
+									$db->widgetVersionBorrarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_POST['hash']);
 								}
 							break;
 						}
