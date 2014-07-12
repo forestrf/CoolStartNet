@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-07-2014 a las 03:37:41
+-- Tiempo de generación: 12-07-2014 a las 16:56:56
 -- Versión del servidor: 5.5.32
 -- Versión de PHP: 5.4.25
 
@@ -29,6 +29,7 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS `contenido` (
   `hash` varchar(32) COLLATE utf8_bin NOT NULL,
   `data` mediumblob NOT NULL,
+  `tipo` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT 'text/plain',
   PRIMARY KEY (`hash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -87,7 +88,7 @@ CREATE TABLE IF NOT EXISTS `widgets` (
 CREATE TABLE IF NOT EXISTS `widgets-contenido` (
   `IDwidget` int(11) NOT NULL,
   `version` int(11) NOT NULL,
-  `nombre` varchar(30) COLLATE utf8_bin NOT NULL,
+  `nombre` varchar(50) COLLATE utf8_bin NOT NULL,
   `hash` varchar(32) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`IDwidget`,`version`,`nombre`),
   KEY `IDwidget` (`IDwidget`)

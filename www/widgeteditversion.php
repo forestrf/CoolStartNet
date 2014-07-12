@@ -75,17 +75,16 @@ foreach($archivos as $archivo){
 	
 	(
 		VER |
-		Actualizar archivo |
 		<form method="POST" action="ipa.php">
-		<input type="hidden" name="switch" value="4">
-		<input type="hidden" name="accion" value="2">
-		<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
-		<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
-		<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
-		<input type="hidden" name="hash" value="<?php echo $archivo['hash']?>">
-		<input type="submit" value="Borrar">
-		<input type="hidden" name="volver" value="1">
-	</form>
+			<input type="hidden" name="switch" value="4">
+			<input type="hidden" name="accion" value="2">
+			<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
+			<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
+			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+			<input type="hidden" name="hash" value="<?php echo $archivo['hash']?>">
+			<input type="submit" value="Borrar">
+			<input type="hidden" name="volver" value="1">
+		</form>
 	)<br/>
 	<?php
 }

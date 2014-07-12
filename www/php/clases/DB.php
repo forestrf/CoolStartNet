@@ -345,7 +345,7 @@ class DB {
 	}
 	
 	// Guardar archivo para un widget y versión específica. Comprobar antes que se puede subir un archivo para esa versión
-	function widgetVersionGuardarArchivo($widgetID, $widgetVersion, $nombre, &$content){
+	function widgetVersionGuardarArchivo($widgetID, $widgetVersion, $nombre, $tipo, &$content){
 		if(!$this->tengoControlSobreWidget($widgetID)){
 			return false;
 		}
@@ -355,7 +355,7 @@ class DB {
 		$hash = file_hash($content);
 		$this->consulta("INSERT INTO `widgets-contenido` (`IDwidget`, `version`, `nombre`, `hash`) VALUES ('{$widgetID}', '{$widgetVersion}', '{$nombre}', '{$hash}');");
 		if(!$this->consulta("SELECT * FROM `contenido` WHERE `hash` = '{$hash}';")){
-			$this->consulta("INSERT INTO `contenido` (`hash`, `data`) VALUES ('{$hash}', '{$content}');");
+			$this->consulta("INSERT INTO `contenido` (`hash`, `data`, `tipo`) VALUES ('{$hash}', '{$content}', '{$tipo}');");
 		}
 	}
 	

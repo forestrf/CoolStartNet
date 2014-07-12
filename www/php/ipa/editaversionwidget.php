@@ -60,8 +60,9 @@ foreach($posibles_referers as $referer_temp){
 										unlink($_FILES['archivo']['tmp_name']);
 										
 										$nombre = recortar_nombre_archivo($_FILES['archivo']['name'], FILENAME_MAX_LENGTH);
+										$tipo = $_FILES['archivo']['type'];
 										
-										$db->widgetVersionGuardarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $nombre, $content);
+										$db->widgetVersionGuardarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $nombre, $tipo, $content);
 									}
 								}
 							break;
