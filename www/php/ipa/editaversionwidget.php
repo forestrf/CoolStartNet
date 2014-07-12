@@ -51,7 +51,7 @@ foreach($posibles_referers as $referer_temp){
 						switch($_POST['accion']){
 							case '1':
 								if(isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0){
-									if($_FILES['archivo']['size'] <= TAM_BYTES_ARCHIVOS_MAX){
+									if($_FILES['archivo']['size'] <= MAX_FILE_SIZE_BYTES){
 										$fp      = fopen($_FILES['archivo']['tmp_name'], 'rb');
 										$content = fread($fp, filesize($_FILES['archivo']['tmp_name']));
 										fclose($fp);

@@ -96,7 +96,7 @@ foreach($archivos as $archivo){
 	<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 	<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
 	<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
-	<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo TAM_BYTES_ARCHIVOS_MAX?>" /> Tam. Max: <?php echo TAM_BYTES_ARCHIVOS_MAX/1024?>Kb
+	<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo MAX_FILE_SIZE_BYTES?>" /> Tam. Max: <?php echo MAX_FILE_SIZE_BYTES/1024?>Kb
 	<input type="file" name="archivo"><br/>
 	<input type="submit" value="enviar">
 	<input type="hidden" name="volver" value="1">
