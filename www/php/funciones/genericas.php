@@ -4,15 +4,15 @@ function isInteger($input){
     return ctype_digit(strval($input));
 }
 
-function custom_hmac($algo='md5', $data, $key, $raw_output=false){
-	$algo = strtolower($algo);
-	$pack = 'H'.strlen($algo('test'));
+function custom_hmac($hash_func='md5', $data, $key, $raw_output=false){
+	$hash_func = strtolower($hash_func);
+	$pack = 'H'.strlen($hash_func('test'));
 	$size = 64;
 	$opad = str_repeat(chr(0x5C), $size);
 	$ipad = str_repeat(chr(0x36), $size);
 	
 	if(strlen($key) > $size){
-		$key = str_pad(pack($pack, $algo($key)), $size, chr(0x00));
+		$key = str_pad(pack($pack, $hash_func($key)), $size, chr(0x00));
 	}
 	else{
 		$key = str_pad($key, $size, chr(0x00));
@@ -23,13 +23,13 @@ function custom_hmac($algo='md5', $data, $key, $raw_output=false){
 		$ipad[$i] = $ipad[$i] ^ $key[$i];
 	}
 	
-	$output = $algo($opad.pack($pack, $algo($ipad.$data)));
+	$output = $hash_func($opad.pack($pack, $hash_func($ipad.$data)));
 	
 	return ($raw_output) ? pack($pack, $output) : $output;
 }
 
-function hash_ipa($usuarioRND, $widgetID, $password){
-	return md5($usuarioRND.'-'.$widgetID.'-'.$password);
+function hash_ipa($userRND, $widgetID, $password){
+	return md5($userRND.'-'.$widgetID.'-'.$password);
 }
 
 function file_hash(&$content){
@@ -44,19 +44,19 @@ function random_string($size, $chr_start=34, $chr_end=255){
 	return $cadena;
 }
 
-function recortar_nombre_archivo($nombre, $maximo){
-	if(strlen($nombre) > $maximo){
-		if(strpos($nombre, '.') !== false){
-			$punto      = strrpos($nombre, '.');
-			$nombre_ext = substr($nombre, $punto +1);
-			$nombre     = substr($nombre, 0, $maximo -1 -strlen($nombre_ext)).
-						  '.'.$nombre_ext;
+function truncate_filename($name, $max){
+	if(strlen($name) > $max){
+		if(strpos($name, '.') !== false){
+			$dot      = strrpos($name, '.');
+			$name_ext = substr($name, $punto +1);
+			$name     = substr($name, 0, $max -1 -strlen($nombre_ext)).
+						'.'.$nombre_ext;
 		}
 		else{
-			$nombre     = substr($nombre, 0, $maximo);
+			$name     = substr($name, 0, $max);
 		}
 	}
-	return $nombre;
+	return $name;
 }
 
 

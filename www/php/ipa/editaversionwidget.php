@@ -59,7 +59,7 @@ foreach($posibles_referers as $referer_temp){
 										// Innecesario borrarlo, php lo borra automaticamente.
 										unlink($_FILES['archivo']['tmp_name']);
 										
-										$nombre = recortar_nombre_archivo($_FILES['archivo']['name'], FILENAME_MAX_LENGTH);
+										$nombre = truncate_filename($_FILES['archivo']['name'], FILENAME_MAX_LENGTH);
 										$tipo = $_FILES['archivo']['type'];
 										
 										$db->widgetVersionGuardarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $nombre, $tipo, $content);
@@ -74,7 +74,7 @@ foreach($posibles_referers as $referer_temp){
 							case '3':
 								if(isset($_POST['hash'])){
 									if(isset($_POST['nombre'])){
-										$nombre = recortar_nombre_archivo($_POST['nombre'], FILENAME_MAX_LENGTH);
+										$nombre = truncate_filename($_POST['nombre'], FILENAME_MAX_LENGTH);
 										$db->widgetVersionRenombraArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_POST['hash'], $nombre);
 									}
 								}
