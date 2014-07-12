@@ -51,35 +51,39 @@ Tirar de post<br/><br/>
 Archivos:<br/>
 Es obligatorio el archivo "main.js" ya que será el único que se incruste. Mediante la api se pueden llamar otros archivos. (por hacer)<br/><br/>
 
-<input type="submit" value="Copiar archivos de la versión anterior">
+<form>
+	<input type="submit" value="Copiar archivos de la versión anterior"> Esto borrará los archivos actuales
+</form>
+<br/><br/>
 
+Archivos:<br/>
 <?php
 $archivos = $db->getWidgetContenidoVersion($widgetID, $version['version']);
 foreach($archivos as $archivo){
 	?>
-	<form method="POST" action="ipa.php" enctype="multipart/form-data">
+	<form method="POST" action="ipa.php">
 		<input type="hidden" name="switch" value="4">
-		<input type="hidden" name="accion" value="1">
+		<input type="hidden" name="accion" value="?">
 		<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 		<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
 		<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 		<input type="hidden" name="hash" value="<?php echo $archivo['hash']?>">
-		<input type="text" name="nombre" value="<?php echo $archivo['nombre']?>"><br/>
+		<input type="text" name="nombre" value="<?php echo $archivo['nombre']?>">
 		<input type="submit" value="Cambiar nombre">
 		<input type="hidden" name="volver" value="1">
 	</form>
 	
+	(Cambiar nombre | Actualizar archivo | Borrar)<br/>
 	<?php
-	echo $archivo['nombre'].' (Cambiar nombre | Actualizar archivo | Borrar)<br/>';
 }
 ?>
+<br/>
 <form method="POST" action="ipa.php" enctype="multipart/form-data">
 	<input type="hidden" name="switch" value="4">
 	<input type="hidden" name="accion" value="1">
 	<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 	<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
 	<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
-	<input type="text" name="nombre" value="archivo.extension"><br/>
 	<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo TAM_BYTES_ARCHIVOS_MAX?>" /> Tam. Max: <?php echo TAM_BYTES_ARCHIVOS_MAX/1024?>Kb
 	<input type="file" name="archivo"><br/>
 	<input type="submit" value="enviar">

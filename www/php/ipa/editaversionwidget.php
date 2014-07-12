@@ -51,7 +51,7 @@ foreach($posibles_referers as $referer_temp){
 							case '1':
 								if(isset($_POST['nombre'])){
 									if(isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0){
-										if($_FILES['userfile']['size'] <= TAM_BYTES_ARCHIVOS_MAX){
+										if($_FILES['archivo']['size'] <= TAM_BYTES_ARCHIVOS_MAX){
 											$fp      = fopen($_FILES['archivo']['tmp_name'], 'rb');
 											$content = fread($fp, filesize($_FILES['archivo']['tmp_name']));
 											fclose($fp);
@@ -59,7 +59,7 @@ foreach($posibles_referers as $referer_temp){
 											// Innecesario borrarlo, php lo borra automaticamente.
 											unlink($_FILES['archivo']['tmp_name']);
 											
-											$db->widgetVersionGuardarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_POST['nombre'], $content);
+											$db->widgetVersionGuardarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_FILES['archivo']['name'], $content);
 										}
 									}
 								}
