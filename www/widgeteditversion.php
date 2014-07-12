@@ -63,7 +63,7 @@ foreach($archivos as $archivo){
 	?>
 	<form method="POST" action="ipa.php">
 		<input type="hidden" name="switch" value="4">
-		<input type="hidden" name="accion" value="?">
+		<input type="hidden" name="accion" value="3">
 		<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 		<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
 		<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">

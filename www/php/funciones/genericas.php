@@ -44,6 +44,21 @@ function random_string($size, $chr_start=34, $chr_end=255){
 	return $cadena;
 }
 
+function recortar_nombre_archivo($nombre, $maximo){
+	if(strlen($nombre) > $maximo){
+		if(strpos($nombre, '.') !== false){
+			$punto      = strrpos($nombre, '.');
+			$nombre_ext = substr($nombre, $punto +1);
+			$nombre     = substr($nombre, 0, $maximo -1 -strlen($nombre_ext)).
+						  '.'.$nombre_ext;
+		}
+		else{
+			$nombre     = substr($nombre, 0, $maximo);
+		}
+	}
+	return $nombre;
+}
+
 
 
 // Para pruebas de rendimiento. Se le pasa una función y retorna el tiempo que tarda en ejecutarse:

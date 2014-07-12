@@ -188,7 +188,6 @@ class DB {
 		if(!$this->tengoControlSobreWidget($widgetID)){
 			return false;
 		}
-		$widgetID = mysql_escape_mimic($widgetID);
 		if($this->consulta("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `publicado` = '-1';")){
 			$this->consulta("DELETE FROM `widgets` WHERE `ID` = '{$widgetID}';");
 			$this->consulta("DELETE FROM `variables` WHERE `IDwidget` = '{$widgetID}';");
@@ -241,7 +240,6 @@ class DB {
 		if(!$this->tengoControlSobreWidget($widgetID)){
 			return false;
 		}
-		$widgetID = mysql_escape_mimic($widgetID);
 		$new_version = $this->getWidgetLastVersion($widgetID, false)['version'];
 		if(!$new_version){
 			$new_version = 0;
@@ -255,7 +253,6 @@ class DB {
 		if(!$this->tengoControlSobreWidget($widgetID)){
 			return false;
 		}
-		$widgetID = mysql_escape_mimic($widgetID);
 		if(!isInteger($version) || $version < 0){
 			return false;
 		}
@@ -274,7 +271,6 @@ class DB {
 		if(!$this->tengoControlSobreWidget($widgetID)){
 			return false;
 		}
-		$widgetID = mysql_escape_mimic($widgetID);
 		if(!isInteger($version) || $version < 0){
 			return false;
 		}
@@ -287,7 +283,6 @@ class DB {
 		if(!$this->tengoControlSobreWidget($widgetID)){
 			return false;
 		}
-		$widgetID = mysql_escape_mimic($widgetID);
 		if(!isInteger($version) || $version < 0){
 			return false;
 		}
@@ -304,7 +299,6 @@ class DB {
 		if(!$this->tengoControlSobreWidget($widgetID)){
 			return false;
 		}
-		$widgetID = mysql_escape_mimic($widgetID);
 		if(!isInteger($version) || $version < 0){
 			return false;
 		}
@@ -320,7 +314,6 @@ class DB {
 		if(!$this->tengoControlSobreWidget($widgetID)){
 			return false;
 		}
-		$widgetID = mysql_escape_mimic($widgetID);
 		if(!isInteger($version) || $version < 0){
 			return false;
 		}
@@ -333,7 +326,6 @@ class DB {
 		if(!$this->tengoControlSobreWidget($widgetID)){
 			return false;
 		}
-		$widgetID = mysql_escape_mimic($widgetID);
 		$this->consulta("UPDATE `widgets-versiones` SET `visible` = '0' WHERE `IDwidget` = '{$widgetID}';");
 	}
 	
@@ -357,7 +349,6 @@ class DB {
 		if(!$this->tengoControlSobreWidget($widgetID)){
 			return false;
 		}
-		$widgetID = mysql_escape_mimic($widgetID);
 		$widgetVersion = mysql_escape_mimic($widgetVersion);
 		$nombre = mysql_escape_mimic($nombre);
 		$content = mysql_escape_mimic($content);
@@ -373,10 +364,20 @@ class DB {
 		if(!$this->tengoControlSobreWidget($widgetID)){
 			return false;
 		}
-		$widgetID = mysql_escape_mimic($widgetID);
 		$widgetVersion = mysql_escape_mimic($widgetVersion);
 		$hash = mysql_escape_mimic($hash);
 		return $this->consulta("DELETE FROM `widgets-contenido` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$widgetVersion}' AND `hash` = '{$hash}';");
+	}
+	
+	// Borrar archivo de un widget y versión específica.
+	function widgetVersionRenombraArchivo($widgetID, $widgetVersion, $hash, $nombre){
+		if(!$this->tengoControlSobreWidget($widgetID)){
+			return false;
+		}
+		$widgetVersion = mysql_escape_mimic($widgetVersion);
+		$hash = mysql_escape_mimic($hash);
+		$nombre = mysql_escape_mimic($nombre);
+		return $this->consulta("UPDATE `widgets-contenido` SET `nombre` = '{$nombre}' WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$widgetVersion}' AND `hash` = '{$hash}';");
 	}
 	
 	
@@ -412,7 +413,8 @@ class DB {
 	}
 	
 	// Retorna true si se puede manipular el widget por el usuario
-	function tengoControlSobreWidget($widgetID){
+	function tengoControlSobreWidget(&$widgetID){
+		$widgetID = mysql_escape_mimic($widgetID);
 		return $this->consulta("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `propietarioID` = '{$_SESSION['usuario']['ID']}'")?true:false;
 	}
 	

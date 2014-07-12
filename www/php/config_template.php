@@ -22,7 +22,8 @@ define('PASSWORD_TOKEN_IPA', 'write random characters here');
 define('WEB_PATH', 'www.mywebhere.com/folder/to/site/');
 
 # Tamaño máximo para los archivos subidos para los widgets. 500Kb
-define('TAM_BYTES_ARCHIVOS_MAX', '512000');
+define('TAM_BYTES_ARCHIVOS_MAX', 512000);
 
-define('NICK_MAX_LENGTH', '15');
-define('PASSWORD_MAX_LENGTH', '30');
+define('NICK_MAX_LENGTH', 15);
+define('PASSWORD_MAX_LENGTH', 30);
+define('FILENAME_MAX_LENGTH', 50);

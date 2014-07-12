@@ -26,6 +26,7 @@ $db = new DB();
 Acciones:
 1 => Subir un archivo
 2 => Borrar un archivo
+3 => Renombrar archivo
 */
 
 // Por continuar. Comprobar referer y de coincidir, recoger datos, comprobar hash y de coincidir de nuevo, cambiar datos.
@@ -58,13 +59,23 @@ foreach($posibles_referers as $referer_temp){
 										// Innecesario borrarlo, php lo borra automaticamente.
 										unlink($_FILES['archivo']['tmp_name']);
 										
-										$db->widgetVersionGuardarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_FILES['archivo']['name'], $content);
+										$nombre = recortar_nombre_archivo($_FILES['archivo']['name'], FILENAME_MAX_LENGTH);
+										
+										$db->widgetVersionGuardarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $nombre, $content);
 									}
 								}
 							break;
 							case '2':
 								if(isset($_POST['hash'])){
 									$db->widgetVersionBorrarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_POST['hash']);
+								}
+							break;
+							case '3':
+								if(isset($_POST['hash'])){
+									if(isset($_POST['nombre'])){
+										$nombre = recortar_nombre_archivo($_POST['nombre'], FILENAME_MAX_LENGTH);
+										$db->widgetVersionRenombraArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_POST['hash'], $nombre);
+									}
 								}
 							break;
 						}
