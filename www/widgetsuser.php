@@ -3,7 +3,7 @@
 header('Content-Type: text/html; charset=UTF-8');
 
 session_start();
-if(!isset($_SESSION['usuario'])){
+if(!isset($_SESSION['user'])){
 	exit;
 }
 
@@ -40,7 +40,7 @@ foreach($widgets_usuario as &$widget){
 			<input type="hidden" name="switch" value="1">
 			<input type="hidden" name="accion" value="1">
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
-			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['usuario']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
+			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
 			<input type="hidden" name="volver" value="1">
 			<input type="submit" value="Quitar">
 		</form>) Seleccionar una versión / usar siempre la última (automático)<br/>';
@@ -62,7 +62,7 @@ if($widgets_disponibles){
 					<input type="hidden" name="switch" value="1">
 					<input type="hidden" name="accion" value="2">
 					<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
-					<input type="hidden" name="token" value="'.hash_ipa($_SESSION['usuario']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
+					<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
 					<input type="hidden" name="volver" value="1">
 					<input type="submit" value="Usar">
 				</form>)<br/>';

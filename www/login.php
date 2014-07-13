@@ -4,10 +4,10 @@ if(isset($_POST['submit'])){
 	require_once 'php/class/DB.php';
 	
 	$db = new DB();
-	$valido = $db -> NickPasswordValidacion($_POST['nick'], $_POST['password']);
+	$valid = $db -> NickPasswordValidacion($_POST['nick'], $_POST['password']);
 	
-	if($valido !== false){
-		$_SESSION['usuario'] = $valido;
+	if($valid !== false){
+		$_SESSION['user'] = $valid;
 	}
 	else{
 		echo 'login inválido<br>';
@@ -16,7 +16,7 @@ if(isset($_POST['submit'])){
 
 var_dump($_SESSION);
 
-if(isset($_SESSION['usuario'])){
+if(isset($_SESSION['user'])){
 	exit;
 }
 ?>

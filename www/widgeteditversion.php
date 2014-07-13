@@ -3,7 +3,7 @@
 header('Content-Type: text/html; charset=UTF-8');
 
 session_start();
-if(!isset($_SESSION['usuario'])){
+if(!isset($_SESSION['user'])){
 	exit;
 }
 
@@ -66,7 +66,7 @@ foreach($archivos as $archivo){
 		<input type="hidden" name="accion" value="3">
 		<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 		<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
-		<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+		<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 		<input type="hidden" name="hash" value="<?php echo $archivo['hash']?>">
 		<input type="text" name="nombre" value="<?php echo $archivo['nombre']?>">
 		<input type="submit" value="Cambiar nombre">
@@ -80,7 +80,7 @@ foreach($archivos as $archivo){
 			<input type="hidden" name="accion" value="2">
 			<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 			<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
-			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 			<input type="hidden" name="hash" value="<?php echo $archivo['hash']?>">
 			<input type="submit" value="Borrar">
 			<input type="hidden" name="volver" value="1">
@@ -95,7 +95,7 @@ foreach($archivos as $archivo){
 	<input type="hidden" name="accion" value="1">
 	<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 	<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
-	<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+	<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 	<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo MAX_FILE_SIZE_BYTES?>" /> Tam. Max: <?php echo MAX_FILE_SIZE_BYTES/1024?>Kb
 	<input type="file" name="archivo"><br/>
 	<input type="submit" value="enviar">

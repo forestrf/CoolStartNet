@@ -5,7 +5,7 @@ if(!isset($_POST['widgetID']) || !isset($_POST['accion']) || !isset($_POST['toke
 }
 
 session_start();
-if(!isset($_SESSION['usuario'])){
+if(!isset($_SESSION['user'])){
 	exit;
 }
 
@@ -29,7 +29,7 @@ Acciones:
 */
 
 // Por continuar. Comprobar referer y de coincidir, recoger datos, comprobar hash y de coincidir de nuevo, cambiar datos.
-// hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA);
+// hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA);
 
 // Comprobar referer
 
@@ -44,7 +44,7 @@ foreach($posibles_referers as $referer_temp){
 			
 			// Comprobar token
 			//print_r($_POST);
-			$token_objetivo = hash_ipa($_SESSION['usuario']['RND'], $_POST['widgetID'], PASSWORD_TOKEN_IPA);
+			$token_objetivo = hash_ipa($_SESSION['user']['RND'], $_POST['widgetID'], PASSWORD_TOKEN_IPA);
 			if($_POST['token'] === $token_objetivo){
 				
 				switch($_POST['accion']){

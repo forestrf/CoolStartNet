@@ -5,7 +5,7 @@ if(!isset($_POST['nombre']) && !isset($_POST['widgetID'])){
 }
 
 session_start();
-if(!isset($_SESSION['usuario'])){
+if(!isset($_SESSION['user'])){
 	exit;
 }
 
@@ -29,7 +29,7 @@ Acciones:
 */
 
 // Por continuar. Comprobar referer y de coincidir, recoger datos, comprobar hash y de coincidir de nuevo, cambiar datos.
-// hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA);
+// hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA);
 
 // Comprobar referer
 
@@ -45,7 +45,7 @@ foreach($posibles_referers as $referer_temp){
 			switch($_POST['accion']){
 				case '1':
 					// Comprobar token
-					if($_POST['token'] === hash_ipa($_SESSION['usuario']['RND'], -1, PASSWORD_TOKEN_IPA)){
+					if($_POST['token'] === hash_ipa($_SESSION['user']['RND'], -1, PASSWORD_TOKEN_IPA)){
 						// Comprobar nombre
 						if(isset($_POST['nombre']) && $_POST['nombre'] !== '' && preg_match('@[a-zA-Z0-9 ]{1,30}@', $_POST['nombre'])){
 							$db->creaWidget($_POST['nombre']);
@@ -56,7 +56,7 @@ foreach($posibles_referers as $referer_temp){
 					// Comprobar id
 					if(isset($_POST['widgetID']) && isInteger($_POST['widgetID']) && $_POST['widgetID'] >= 0){
 						// Comprobar token
-						if($_POST['token'] === hash_ipa($_SESSION['usuario']['RND'], $_POST['widgetID'], PASSWORD_TOKEN_IPA)){
+						if($_POST['token'] === hash_ipa($_SESSION['user']['RND'], $_POST['widgetID'], PASSWORD_TOKEN_IPA)){
 							$db->borraWidget($_POST['widgetID']);
 						}
 					}

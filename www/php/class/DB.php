@@ -139,7 +139,7 @@ class DB {
 	function getVariable($widgetID, $variable, $ID = null){
 		$widgetID = mysql_escape_mimic($widgetID);
 		$variable = mysql_escape_mimic($variable);
-		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		$result = $this->consulta("SELECT `valor` FROM `variables` WHERE `IDusuario` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
 		return count($result) > 0 ? $result[0]['valor'] : false;
 	}
@@ -151,7 +151,7 @@ class DB {
 		$widgetID = mysql_escape_mimic($widgetID);
 		$variable = mysql_escape_mimic($variable);
 		$valor = mysql_escape_mimic($valor);
-		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		
 		if($insert_o_update === null){
 			$result = $this->consulta("SELECT `ID` FROM `variables` WHERE `IDusuario` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
@@ -160,10 +160,10 @@ class DB {
 		
 		switch($insert_o_update){
 			case 'I':
-				return $this->consulta("INSERT INTO `variables` (`IDusuario`, `IDwidget`, `variable`, `valor`) VALUES ('{$_SESSION['usuario']['ID']}', '{$widgetID}', '{$variable}', '{$valor}');");
+				return $this->consulta("INSERT INTO `variables` (`IDusuario`, `IDwidget`, `variable`, `valor`) VALUES ('{$_SESSION['user']['ID']}', '{$widgetID}', '{$variable}', '{$valor}');");
 			break;
 			case 'U':
-				return $this->consulta("UPDATE `variables` SET `valor` = '{$valor}' WHERE `IDusuario` = '{$_SESSION['usuario']['ID']}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
+				return $this->consulta("UPDATE `variables` SET `valor` = '{$valor}' WHERE `IDusuario` = '{$_SESSION['user']['ID']}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
 			break;
 		}
 		
@@ -173,7 +173,7 @@ class DB {
 	// Crear un nuevo widget
 	function creaWidget($nombre){
 		$nombre = mysql_escape_mimic($nombre);
-		$ID = $_SESSION['usuario']['ID'];
+		$ID = $_SESSION['user']['ID'];
 		$result = $this->consulta("SELECT `ID` FROM `widgets` WHERE `nombre` = '{$nombre}';");
 		if(!$result){
 			return $this->consulta("INSERT INTO `widgets` (`nombre`, `propietarioID`) VALUES ('{$nombre}', '{$ID}');");
@@ -390,20 +390,20 @@ class DB {
 	
 	// Retorna un listado con los widgets que tiene el usuario. Si se especifica ID se buscará los widgets del usuario con esa id, de lo contrario se usa el actual usuario.
 	function getWidgetsDelUsuario($ID = null){
-		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		return $this->consulta("SELECT `widgets`.* FROM `widgets-usuario` LEFT JOIN `widgets` ON `widgets-usuario`.`IDwidget` = `widgets`.`ID` WHERE `IDusuario` = '{$ID}'");
 	}
 	
 	// Retorna un listado con los widgets que puede usar el usuario en la página principal.
 	function getWidgetsDisponiblesUsuario($ID = null){
-		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		return $this->consulta("SELECT * FROM `widgets` WHERE `propietarioID` = '-1' OR `propietarioID` = '{$ID}' OR `publicado` > -1;"); // Por poner filtrado de widgets privados
 	}
 	
 	// Retorna un listado con los widgets propiedad del usuario sobre los cuales tiene el control, como borrarlos o editarlos
 	// ID puede dejarse null si se llama con $admin = true
 	function getWidgetsControlUsuario($ID = null, $admin = false){
-		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		if($admin){
 			return $this->consulta("SELECT * FROM `widgets`;");
 		}
@@ -415,20 +415,20 @@ class DB {
 	// Retorna true si se puede manipular el widget por el usuario
 	function tengoControlSobreWidget(&$widgetID){
 		$widgetID = mysql_escape_mimic($widgetID);
-		return $this->consulta("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `propietarioID` = '{$_SESSION['usuario']['ID']}'")?true:false;
+		return $this->consulta("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `propietarioID` = '{$_SESSION['user']['ID']}'")?true:false;
 	}
 	
 	// Quitar un widget de un usuario no borra la configuraciones del widget de ese usuario.
 	function quitarWidgetDelUsuario($widgetID, $ID = null){
 		$widgetID = mysql_escape_mimic($widgetID);
-		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		$this->consulta("DELETE FROM `widgets-usuario` WHERE `IDwidget` = '{$widgetID}' AND `IDusuario` = '{$ID}'");
 	}
 	
 	// Agregar un widget a un usuario.
 	function agregarWidgetAlUsuario($widgetID, $ID = null){
 		$widgetID = mysql_escape_mimic($widgetID);
-		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['usuario']['ID'];
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		
 		// Comprobar si el usuario ya tenía el widget
 		if(count($this->consulta("SELECT * FROM `widgets-usuario` WHERE `IDwidget` = '{$widgetID}' AND `IDusuario` = '{$ID}'")) === 0){

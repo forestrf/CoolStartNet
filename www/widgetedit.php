@@ -3,7 +3,7 @@
 header('Content-Type: text/html; charset=UTF-8');
 
 session_start();
-if(!isset($_SESSION['usuario'])){
+if(!isset($_SESSION['user'])){
 	exit;
 }
 
@@ -44,7 +44,7 @@ Tirar de post<br/><br/>
 	<input type="hidden" name="switch" value="3">
 	<input type="hidden" name="accion" value="1">
 	<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
-	<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+	<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 	<input type="hidden" name="volver" value="1">
 	<input type="submit" value="Crear nueva versión">
 </form><br/>
@@ -61,7 +61,7 @@ if(count($versiones) > 0){
 			<input type="hidden" name="accion" value="6">
 			<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 			<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
-			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 			<input type="text" name="comentario" value="<?php echo $version['comentario']?>">
 			<input type="submit" value="comentar" maxlength="250">
 			<input type="hidden" name="volver" value="1">
@@ -75,7 +75,7 @@ if(count($versiones) > 0){
 				<input type="hidden" name="accion" value="1">
 				<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 				<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
-				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 				<input type="hidden" name="volver" value="1">
 				<input type="submit" value="Convertir en versión actual">
 			</form>
@@ -85,7 +85,7 @@ if(count($versiones) > 0){
 				<input type="hidden" name="accion" value="<?php echo $version['visible']?2:3?>">
 				<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 				<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
-				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 				<input type="hidden" name="volver" value="1">
 				<input type="submit" value="<?php echo $version['visible']?'Ocultar de publicaciones':'Hacer visible'?>">
 			</form>
@@ -103,7 +103,7 @@ if(count($versiones) > 0){
 				<input type="hidden" name="accion" value="2">
 				<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 				<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
-				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 				<input type="hidden" name="volver" value="1">
 				<input type="submit" value="Borrar">
 			</form>
@@ -112,7 +112,7 @@ if(count($versiones) > 0){
 				<input type="hidden" name="accion" value="4">
 				<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 				<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
-				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['usuario']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 				<input type="hidden" name="volver" value="1">
 				<input type="submit" value="Publicar">
 			</form>
