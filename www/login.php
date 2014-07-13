@@ -1,7 +1,7 @@
 <?php
 session_start();
 if(isset($_POST['submit'])){
-	require_once 'php/clases/DB.php';
+	require_once 'php/class/DB.php';
 	
 	$db = new DB();
 	$valido = $db -> NickPasswordValidacion($_POST['nick'], $_POST['password']);

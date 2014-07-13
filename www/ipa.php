@@ -16,19 +16,19 @@ if(!isset($_POST['switch'])){
 
 switch($_POST['switch']){
 	case '1':
-		require 'php/ipa/quitarponerwidgetsuser.php';
+		require 'php/ipa/user_widget_list.php';
 	break;
 	case '2':
-		require 'php/ipa/creaborrawidgets.php';
+		require 'php/ipa/widget_creator_destructor.php';
 	break;
 	case '3':
-		require 'php/ipa/creaversionwidget.php';
+		require 'php/ipa/widget_version_creator_destructor.php';
 	break;
 	case '4':
-		require 'php/ipa/editaversionwidget.php';
+		require 'php/ipa/edit_widget_version.php';
 	break;
 	case '5':
-		require 'php/ipa/adminversioneswidget.php';
+		require 'php/ipa/manage_widget_versions.php';
 	break;
 }
 

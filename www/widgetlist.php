@@ -9,8 +9,8 @@ if(!isset($_SESSION['usuario'])){
 
 
 require_once 'php/config.php';
-require_once 'php/clases/DB.php';
-require_once 'php/funciones/genericas.php';
+require_once 'php/class/DB.php';
+require_once 'php/functions/generic.php';
 
 $db = new DB();
 

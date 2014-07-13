@@ -6,7 +6,7 @@
 
 <?php
 if(isset($_POST['submit'])){
-	require_once 'php/clases/DB.php';
+	require_once 'php/class/DB.php';
 	
 	$db = new DB();
 	$db -> insertaUsuario($_POST['nick'], $_POST['password']);
