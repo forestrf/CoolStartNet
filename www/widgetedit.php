@@ -61,7 +61,7 @@ if(count($versiones) > 0){
 			<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 			<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
 			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
-			<input type="text" name="comentario" value="<?php echo $version['comentario']?>">
+			<input type="text" name="comentario" value="<?php echo $version['coment']?>">
 			<input type="submit" value="Comment" maxlength="<?php echo WIDGET_VERSION_COMMENT_MAX_LENGTH?>">
 			<input type="hidden" name="volver" value="1">
 		</form>
