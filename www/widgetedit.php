@@ -23,7 +23,7 @@ $db = new DB();
 <!doctype html>
 <html>
 <head>
-	<title>Editar widget</title>
+	<title>Edit widget</title>
 	<!--<link rel="stylesheet" href="css/reset.min.css"/>-->
 	<style>
 		form {
@@ -33,9 +33,8 @@ $db = new DB();
 </head>
 <body>
 
-Edita un widget administrando sus versiones<br/>
-No se pueden borrar ni modificar versiones públicas pero se puede ocultar. Aquellos que lo tengan lo seguirán teniendo pero nadie más lo podrá agregar.<br/>
-Tirar de post<br/><br/>
+Edit a widget managing its versiones<br/>
+You can't delete or modify public versions but it can be hidden. Anyone with the widget will continue having it but it will no be disponible for new users.<br/>
 
 ¿Posibilidad de renombrar?<br/><br/>
 
@@ -46,7 +45,7 @@ Tirar de post<br/><br/>
 	<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 	<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 	<input type="hidden" name="volver" value="1">
-	<input type="submit" value="Crear nueva versión">
+	<input type="submit" value="Create new version">
 </form><br/>
 <?php
 $widget = $db->getWidgetPorID($widgetID);
@@ -63,7 +62,7 @@ if(count($versiones) > 0){
 			<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
 			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 			<input type="text" name="comentario" value="<?php echo $version['comentario']?>">
-			<input type="submit" value="comentar" maxlength="250">
+			<input type="submit" value="Comment" maxlength="<?php echo WIDGET_VERSION_COMMENT_MAX_LENGTH?>">
 			<input type="hidden" name="volver" value="1">
 		</form>
 		<?php
@@ -77,7 +76,7 @@ if(count($versiones) > 0){
 				<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
 				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 				<input type="hidden" name="volver" value="1">
-				<input type="submit" value="Convertir en versión actual">
+				<input type="submit" value="As default version">
 			</form>
 			<?php } ?>
 			<form method="POST" action="ipa.php">
@@ -87,7 +86,7 @@ if(count($versiones) > 0){
 				<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
 				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 				<input type="hidden" name="volver" value="1">
-				<input type="submit" value="<?php echo $version['visible']?'Ocultar de publicaciones':'Hacer visible'?>">
+				<input type="submit" value="<?php echo $version['visible']?'Hide from the public':'Show to the public'?>">
 			</form>
 			<?php
 		}
@@ -96,7 +95,7 @@ if(count($versiones) > 0){
 			<form method="GET" action="widgeteditversion.php">
 				<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 				<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
-				<input type="submit" value="Editar">
+				<input type="submit" value="Edit">
 			</form>
 			<form method="POST" action="ipa.php">
 				<input type="hidden" name="switch" value="3">
@@ -105,7 +104,7 @@ if(count($versiones) > 0){
 				<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
 				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 				<input type="hidden" name="volver" value="1">
-				<input type="submit" value="Borrar">
+				<input type="submit" value="Delete">
 			</form>
 			<form method="POST" action="ipa.php">
 				<input type="hidden" name="switch" value="5">
@@ -114,20 +113,20 @@ if(count($versiones) > 0){
 				<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
 				<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
 				<input type="hidden" name="volver" value="1">
-				<input type="submit" value="Publicar">
+				<input type="submit" value="Publicate">
 			</form>
 			<?php
 		}
 		
 		if($widget['publicado'] === $version['version']){
-			echo 'Versión actual';
+			echo 'Default version';
 		}
 		
 		echo '<br/>';
 	}
 }
 else{
-	echo 'Este widget no cuenta con ninguna versión.';
+	echo 'This widget hasn\'t versions.';
 }
 
 ?>

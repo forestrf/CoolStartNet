@@ -207,14 +207,16 @@ class DB {
 	function getWidgetVersion($widgetID, $version){
 		$widgetID = mysql_escape_mimic($widgetID);
 		$version = mysql_escape_mimic($version);
-		return $this->consulta("SELECT * FROM `widgets-versiones` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';")[0];
+		$result = $this->consulta("SELECT * FROM `widgets-versiones` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';");
+		return count($result) > 0 ? $result[0] : false;
 	}
 	
 	// Retorna la última versión. $publico = true = debe ser público, false = puede o no ser público
 	function getWidgetLastVersion($widgetID, $publico = true){
 		$widgetID = mysql_escape_mimic($widgetID);
 		$publico = $publico?" AND `publico` = '1' ":'';
-		return $this->consulta("SELECT * FROM `widgets-versiones` WHERE `IDwidget` = '{$widgetID}' {$publico} ORDER BY `version` DESC LIMIT 1;")[0];
+		$result = $this->consulta("SELECT * FROM `widgets-versiones` WHERE `IDwidget` = '{$widgetID}' {$publico} ORDER BY `version` DESC LIMIT 1;");
+		return count($result) > 0 ? $result[0] : false;
 	}
 	
 	// POR TESTEAR

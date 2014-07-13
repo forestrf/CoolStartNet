@@ -18,7 +18,7 @@ $db = new DB();
 <!doctype html>
 <html>
 <head>
-	<title>Widgets con los que cuenta el usuario</title>
+	<title>Widgets used by the user</title>
 	<!--<link rel="stylesheet" href="css/reset.min.css"/>-->
 	<style>
 		form {
@@ -28,10 +28,9 @@ $db = new DB();
 </head>
 <body>
 
-Agregar y quitar widgets para el usuario.<br/>
-Tirar de post<br/><br/>
+Add and remove widgets for the user.<br/>
 
-En uso:<br/>
+In use:<br/>
 <?php
 $widgets_usuario = $db->getWidgetsDelUsuario();
 
@@ -42,13 +41,13 @@ foreach($widgets_usuario as &$widget){
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
 			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
 			<input type="hidden" name="volver" value="1">
-			<input type="submit" value="Quitar">
-		</form>) Seleccionar una versión / usar siempre la última (automático)<br/>';
+			<input type="submit" value="Remove">
+		</form>) Select a version from the widget | Use always the last version<br/>';
 }
 ?>
 
 <br/><br/>
-Disponibles:<br/>
+Available widgets:<br/>
 <?php
 $widgets_disponibles = $db->getWidgetsDisponiblesUsuario();
 
@@ -64,20 +63,11 @@ if($widgets_disponibles){
 					<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
 					<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
 					<input type="hidden" name="volver" value="1">
-					<input type="submit" value="Usar">
+					<input type="submit" value="Use">
 				</form>)<br/>';
 		}
 	}
 }
-?>
-
-
-
-
-<?php
-
-// Widgets del usuario
-
 ?>
 
 </body>

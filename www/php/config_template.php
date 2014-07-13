@@ -28,3 +28,6 @@ define('PASSWORD_MAX_LENGTH', 30);
 
 # Max filename length
 define('FILENAME_MAX_LENGTH', 50);
+
+# Max comment length of widget versions
+define('WIDGET_VERSION_COMMENT_MAX_LENGTH', 250);
