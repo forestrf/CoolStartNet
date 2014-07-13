@@ -11,7 +11,7 @@ if(!isset($_SESSION['usuario'])){
 
 
 require_once __DIR__.'/../config.php';
-require_once __DIR__.'/../funciones/genericas.php';
+require_once __DIR__.'/../functions/genericas.php';
 require_once __DIR__.'/../class/DB.php';
 
 $db = new DB();
