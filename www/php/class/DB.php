@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__.'/../config.php';
-require_once __DIR__.'/../functions/genericas.php';
+require_once __DIR__.'/../functions/generic.php';
 
 // En caso de mudar de base de datos sería necesario modificar la clase siguiente. Las funciones para la aplicación deben permanecer definidas y con los mismos parámetros
 // Pero puede variar su contenido para adaptarse a la nueva base de datos
