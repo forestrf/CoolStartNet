@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-07-2014 a las 16:56:56
+-- Tiempo de generación: 13-07-2014 a las 15:53:04
 -- Versión del servidor: 5.5.32
 -- Versión de PHP: 5.4.25
 
@@ -23,26 +23,26 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `contenido`
+-- Estructura de tabla para la tabla `files`
 --
 
-CREATE TABLE IF NOT EXISTS `contenido` (
+CREATE TABLE IF NOT EXISTS `files` (
   `hash` varchar(32) COLLATE utf8_bin NOT NULL,
   `data` mediumblob NOT NULL,
-  `tipo` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT 'text/plain',
+  `mimetype` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT 'text/plain',
   PRIMARY KEY (`hash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `usuarios`
+-- Estructura de tabla para la tabla `users`
 --
 
-CREATE TABLE IF NOT EXISTS `usuarios` (
+CREATE TABLE IF NOT EXISTS `users` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `nick` varchar(15) COLLATE utf8_bin NOT NULL,
-  `password` varchar(30) COLLATE utf8_bin NOT NULL,
+  `password` varchar(32) COLLATE utf8_bin NOT NULL,
   `RND` varchar(32) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `nick` (`nick`)
@@ -55,13 +55,11 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 --
 
 CREATE TABLE IF NOT EXISTS `variables` (
-  `IDusuario` int(11) NOT NULL,
+  `IDuser` int(11) NOT NULL,
   `IDwidget` int(11) NOT NULL,
   `variable` varchar(30) COLLATE utf8_bin NOT NULL,
-  `valor` text COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`IDusuario`,`IDwidget`,`variable`),
-  KEY `IDUsuario` (`IDusuario`),
-  KEY `IDWidget` (`IDwidget`)
+  `value` text COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`IDuser`,`IDwidget`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
@@ -72,68 +70,56 @@ CREATE TABLE IF NOT EXISTS `variables` (
 
 CREATE TABLE IF NOT EXISTS `widgets` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(30) COLLATE utf8_bin NOT NULL,
-  `propietarioID` int(11) NOT NULL,
-  `publicado` int(11) NOT NULL DEFAULT '-1' COMMENT 'Si se publica cambiar a 0 o + desde php. Nunca volver a -1',
+  `name` varchar(30) COLLATE utf8_bin NOT NULL,
+  `ownerID` int(11) NOT NULL,
+  `published` int(11) NOT NULL DEFAULT '-1' COMMENT 'Si se publica cambiar a 0 o + desde php. Nunca volver a -1',
   PRIMARY KEY (`ID`),
-  UNIQUE KEY `nombre` (`nombre`)
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=5 ;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `widgets-contenido`
+-- Estructura de tabla para la tabla `widgets-content`
 --
 
-CREATE TABLE IF NOT EXISTS `widgets-contenido` (
+CREATE TABLE IF NOT EXISTS `widgets-content` (
   `IDwidget` int(11) NOT NULL,
   `version` int(11) NOT NULL,
-  `nombre` varchar(50) COLLATE utf8_bin NOT NULL,
+  `name` varchar(50) COLLATE utf8_bin NOT NULL,
   `hash` varchar(32) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`IDwidget`,`version`,`nombre`),
-  KEY `IDwidget` (`IDwidget`)
+  PRIMARY KEY (`IDwidget`,`version`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `widgets-usuario`
+-- Estructura de tabla para la tabla `widgets-user`
 --
 
-CREATE TABLE IF NOT EXISTS `widgets-usuario` (
-  `IDusuario` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `widgets-user` (
+  `IDuser` int(11) NOT NULL,
   `IDwidget` int(11) NOT NULL,
   `autoupdate` tinyint(1) NOT NULL DEFAULT '1',
   `version` int(11) NOT NULL COMMENT 'Mirar cuando autoupdate = 0',
-  PRIMARY KEY (`IDusuario`,`IDwidget`)
+  PRIMARY KEY (`IDuser`,`IDwidget`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `widgets-versiones`
+-- Estructura de tabla para la tabla `widgets-versions`
 --
 
-CREATE TABLE IF NOT EXISTS `widgets-versiones` (
+CREATE TABLE IF NOT EXISTS `widgets-versions` (
   `IDwidget` int(11) NOT NULL,
   `version` int(11) NOT NULL,
-  `publico` tinyint(1) NOT NULL COMMENT '0 = privada, 1 = pública',
+  `public` tinyint(1) NOT NULL COMMENT '0 = privada, 1 = pública',
   `visible` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 = oculto, 1 = visible',
-  `comentario` tinytext COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`IDwidget`,`version`),
-  KEY `IDwidget` (`IDwidget`)
+  `coment` tinytext COLLATE utf8_bin NOT NULL,
+  `creation_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`IDwidget`,`version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `variables`
---
-ALTER TABLE `variables`
-  ADD CONSTRAINT `variables_ibfk_1` FOREIGN KEY (`IDUsuario`) REFERENCES `usuarios` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `variables_ibfk_2` FOREIGN KEY (`IDWidget`) REFERENCES `widgets` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

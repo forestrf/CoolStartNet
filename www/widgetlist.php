@@ -47,12 +47,12 @@ Widgets that I created:<br/>
 $widgets = $db->getWidgetsControlUsuario();
 
 foreach($widgets as &$widget){
-	echo $widget['nombre'].' (
+	echo $widget['name'].' (
 		<form method="GET" action="widgetedit.php">
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
 			<input type="submit" value="Edit">
 		</form>';
-	if($widget['publicado'] === '-1'){
+	if($widget['published'] === '-1'){
 		echo '<form method="POST" action="ipa.php">
 			<input type="hidden" name="switch" value="2">
 			<input type="hidden" name="accion" value="2">

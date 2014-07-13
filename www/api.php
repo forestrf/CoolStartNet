@@ -32,7 +32,7 @@ Tablas:
 		Variables => json
 	Variables:
 		ID => int
-		IDUsuario => int
+		IDuser => int
 		IDWidget => int (-1 = interno, 0..infinito = widgets)
 		Variable => string
 		Valor => ""/json/string/filtrado segun variable widget

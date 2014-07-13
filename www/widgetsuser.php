@@ -35,7 +35,7 @@ In use:<br/>
 $widgets_usuario = $db->getWidgetsDelUsuario();
 
 foreach($widgets_usuario as &$widget){
-	echo $widget['nombre'].' (<form method="POST" action="ipa.php">
+	echo $widget['name'].' (<form method="POST" action="ipa.php">
 			<input type="hidden" name="switch" value="1">
 			<input type="hidden" name="accion" value="1">
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
@@ -54,10 +54,10 @@ $widgets_disponibles = $db->getWidgetsDisponiblesUsuario();
 if($widgets_disponibles){
 	foreach($widgets_disponibles as &$widget){
 		if(in_array($widget, $widgets_usuario)){
-			echo $widget['nombre'].' (in use).<br/>';
+			echo $widget['name'].' (in use).<br/>';
 		}
 		else{
-			echo $widget['nombre'].' (<form method="POST" action="ipa.php">
+			echo $widget['name'].' (<form method="POST" action="ipa.php">
 					<input type="hidden" name="switch" value="1">
 					<input type="hidden" name="accion" value="2">
 					<input type="hidden" name="widgetID" value="'.$widget['ID'].'">

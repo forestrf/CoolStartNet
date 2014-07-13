@@ -52,7 +52,7 @@ $widget = $db->getWidgetPorID($widgetID);
 $versiones = $db->getWidgetVersiones($widgetID);
 if(count($versiones) > 0){
 	foreach($versiones as $version){
-		echo '['.$version['version'].']',$version['publico']?($version['visible']?'+ ':'- '):' ';
+		echo '['.$version['version'].']',$version['public']?($version['visible']?'+ ':'- '):' ';
 		
 		?>
 		<form method="POST" action="ipa.php">
@@ -66,8 +66,8 @@ if(count($versiones) > 0){
 			<input type="hidden" name="volver" value="1">
 		</form>
 		<?php
-		if($version['publico'] === '1'){
-			if($widget['publicado'] !== $version['version']){
+		if($version['public'] === '1'){
+			if($widget['published'] !== $version['version']){
 			?>
 			<form method="POST" action="ipa.php">
 				<input type="hidden" name="switch" value="5">
@@ -118,7 +118,7 @@ if(count($versiones) > 0){
 			<?php
 		}
 		
-		if($widget['publicado'] === $version['version']){
+		if($widget['published'] === $version['version']){
 			echo 'Default version';
 		}
 		
