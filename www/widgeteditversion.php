@@ -24,7 +24,13 @@ $version = &$_GET['widgetVersion'];
 $db = new DB();
 
 $widget = $db->getWidgetPorID($widgetID);
+if(!$widget){
+	exit;
+}
 $version = $db->getWidgetVersion($widgetID, $version);
+if(!$version){
+	exit;
+}
 
 // Si la versión es pública no se puede editar.
 if($version['public'] === '1'){
@@ -35,7 +41,7 @@ if($version['public'] === '1'){
 <!doctype html>
 <html>
 <head>
-	<title>Editar widget</title>
+	<title>Edit widget</title>
 	<!--<link rel="stylesheet" href="css/reset.min.css"/>-->
 	<style>
 		form {
@@ -45,8 +51,7 @@ if($version['public'] === '1'){
 </head>
 <body>
 
-Edita una versión de un widget agregando y quitando archivos.<br/>
-Tirar de post<br/><br/>
+Edit a widget version adding or removing files to it.<br/>
 
 Files:<br/>
 Es obligatorio el archivo "main.js" ya que será el único que se incruste. Mediante la api se pueden llamar otros archivos. (por hacer)<br/><br/>

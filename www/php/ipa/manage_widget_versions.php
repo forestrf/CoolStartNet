@@ -68,8 +68,8 @@ foreach($posibles_referers as $referer_temp){
 								$db->publicaWidgetVersion($_POST['widgetID'], $_POST['widgetVersion'], true);
 							break;
 							case '6':
-								if(isset($_POST['coment'])){
-									$db->editarWidgetComentario($_POST['widgetID'], $_POST['widgetVersion'], $_POST['coment']);
+								if(isset($_POST['comment'])){
+									$db->editarWidgetComentario($_POST['widgetID'], $_POST['widgetVersion'], $_POST['comment']);
 								}
 							break;
 						}

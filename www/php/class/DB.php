@@ -277,7 +277,7 @@ class DB {
 			return false;
 		}
 		$comentario = mysql_escape_mimic($comentario);
-		return $this->query("UPDATE `widgets-versions` SET `coment` = '{$comentario}' WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';");
+		return $this->query("UPDATE `widgets-versions` SET `comment` = '{$comentario}' WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';");
 	}
 	
 	// Borrar una versión no publicada del widget
