@@ -10,7 +10,7 @@ if(isset($_POST['submit'])){
 		$_SESSION['user'] = $valid;
 	}
 	else{
-		echo 'login inválido<br>';
+		echo 'Invalid login<br>';
 	}
 }
 
@@ -24,6 +24,5 @@ if(isset($_SESSION['user'])){
 <form method="POST" action="">
 	<input type="text" name="nick" placeholder="nick"><br>
 	<input type="password" name="password" placeholder="password"><br>
-	<input name="submit" type="submit" value="Entrar">
+	<input name="submit" type="submit" value="Login">
 </form>
-
