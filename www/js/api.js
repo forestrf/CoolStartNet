@@ -202,7 +202,13 @@ API = (function(){
 	
 	
 	
+	var getUrl = function(widget, filename){
+		return 'widgetfile.php?widgetID='+widget+'&widgetVersion='+API.versions[widget]+'&name='+escape(filename);
+	}
+	
 	return {
 		"call":precall,
+		"url":getUrl,
+		"versions":[]
 	};
 })();
