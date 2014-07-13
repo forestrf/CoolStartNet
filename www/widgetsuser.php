@@ -54,7 +54,7 @@ $widgets_disponibles = $db->getWidgetsDisponiblesUsuario();
 if($widgets_disponibles){
 	foreach($widgets_disponibles as &$widget){
 		if(in_array($widget, $widgets_usuario)){
-			echo $widget['nombre'].' (en uso).<br/>';
+			echo $widget['nombre'].' (in use).<br/>';
 		}
 		else{
 			echo $widget['nombre'].' (<form method="POST" action="ipa.php">
