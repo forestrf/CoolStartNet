@@ -231,8 +231,14 @@ class DB {
 				return $version_publica_concreta[0];
 			}
 			else{
-				return getWidgetLastVersion($widgetID, true);
+				return $this->getWidgetLastVersion($widgetID, true);
 			}
+		}
+		else{
+			$ID = &$_SESSION['user']['ID'];
+			if($this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `ownerID` = '{$ID}';")){
+				return $this->getWidgetLastVersion($widgetID, false);
+			}	
 		}
 		return false;
 	}
@@ -414,7 +420,7 @@ class DB {
 	// Retorna un listado con los widgets que tiene el usuario. Si se especifica ID se buscará los widgets del usuario con esa id, de lo contrario se usa el actual usuario.
 	function getWidgetsDelUsuario($ID = null){
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
-		return $this->query("SELECT `widgets`.* FROM `widgets-user` LEFT JOIN `widgets` ON `widgets-user`.`IDwidget` = `widgets`.`ID` WHERE `IDuser` = '{$ID}';");
+		return $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` ON `widgets-user`.`IDwidget` = `widgets`.`ID` WHERE `IDuser` = '{$ID}';");
 	}
 	
 	// Retorna un listado con los widgets que puede usar el usuario en la página principal.

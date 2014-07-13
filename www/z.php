@@ -46,7 +46,12 @@ Si es necesario imágenes, se usará base64 en el js (lo siento...)
 // Widgets del usuario
 $widgets_usuario = $db->getWidgetsDelUsuario();
 foreach($widgets_usuario as &$widget){
+	if($widget['autoupdate'] === '1'){
+		$version = $db->getWidgetDefaultVersion($widget['ID']);
+		var_dump($version);
+	}
 	print_r($widget);
+	
 }
 ?>
 
