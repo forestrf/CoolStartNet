@@ -65,7 +65,10 @@ foreach($posibles_referers as $referer_temp){
 								$db->versionWidgetVisibilidad($_POST['widgetID'], $_POST['widgetVersion'], true);
 							break;
 							case '4':
-								$db->publicaWidgetVersion($_POST['widgetID'], $_POST['widgetVersion'], true);
+								// If the version as a file called "main.js" it can be made public
+								if($db->canPublicWidgetVersion($_POST['widgetID'], $_POST['widgetVersion'])){
+									$db->publicaWidgetVersion($_POST['widgetID'], $_POST['widgetVersion']);
+								}
 							break;
 							case '6':
 								if(isset($_POST['comment'])){

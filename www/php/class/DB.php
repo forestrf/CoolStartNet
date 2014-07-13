@@ -251,6 +251,17 @@ class DB {
 	}
 	
 	// Publicar una versión del widget (no se puede deshacer)
+	function canPublicWidgetVersion($widgetID, $version){
+		if(!$this->CanIModifyWidget($widgetID)){
+			return false;
+		}
+		if(!isInteger($version) || $version < 0){
+			return false;
+		}
+		return $this->query("SELECT `name` FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}' AND `name` = 'main.js';") ? true : false;
+	}
+	
+	// Publicar una versión del widget (no se puede deshacer)
 	function publicaWidgetVersion($widgetID, $version){
 		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
