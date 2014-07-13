@@ -185,7 +185,7 @@ class DB {
 	// Borrar un widget es drástico. Borra las variables y lo desenlaza de los usuarios. PELIGROSO
 	// No borra el contenido ya que este puede coincidir por hash. El contenido se borrará mediante un proceso rutinario que comprueba la no vinculación de un hash.
 	function borraWidget($widgetID){
-		if(!$this->tengoControlSobreWidget($widgetID)){
+		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
 		}
 		if($this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `published` = '-1';")){
@@ -239,7 +239,7 @@ class DB {
 	
 	// Crear una versión del widget
 	function creaWidgetVersion($widgetID){
-		if(!$this->tengoControlSobreWidget($widgetID)){
+		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
 		}
 		$new_version = $this->getWidgetLastVersion($widgetID, false)['version'];
@@ -252,7 +252,7 @@ class DB {
 	
 	// Publicar una versión del widget (no se puede deshacer)
 	function publicaWidgetVersion($widgetID, $version){
-		if(!$this->tengoControlSobreWidget($widgetID)){
+		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
 		}
 		if(!isInteger($version) || $version < 0){
@@ -270,7 +270,7 @@ class DB {
 	
 	// Editar comentario de una versión del widget
 	function editarWidgetComentario($widgetID, $version, $comentario){
-		if(!$this->tengoControlSobreWidget($widgetID)){
+		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
 		}
 		if(!isInteger($version) || $version < 0){
@@ -282,7 +282,7 @@ class DB {
 	
 	// Borrar una versión no publicada del widget
 	function borraWidgetVersion($widgetID, $version){
-		if(!$this->tengoControlSobreWidget($widgetID)){
+		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
 		}
 		if(!isInteger($version) || $version < 0){
@@ -298,7 +298,7 @@ class DB {
 	
 	// Hacer de una versión pública la default
 	function versionWidgetDefault($widgetID, $version){
-		if(!$this->tengoControlSobreWidget($widgetID)){
+		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
 		}
 		if(!isInteger($version) || $version < 0){
@@ -313,7 +313,7 @@ class DB {
 	
 	// Marcar versión pública como visible o invisible. $visible = true o false
 	function versionWidgetVisibilidad($widgetID, $version, $visible){
-		if(!$this->tengoControlSobreWidget($widgetID)){
+		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
 		}
 		if(!isInteger($version) || $version < 0){
@@ -325,7 +325,7 @@ class DB {
 	
 	// Marcar todas las versiones como invisibles
 	function ocultarTodasVersionesWidget($widgetID){
-		if(!$this->tengoControlSobreWidget($widgetID)){
+		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
 		}
 		$this->query("UPDATE `widgets-versions` SET `visible` = '0' WHERE `IDwidget` = '{$widgetID}';");
@@ -347,15 +347,15 @@ class DB {
 	}
 	
 	// Guardar archivo para un widget y versión específica. Comprobar antes que se puede subir un archivo para esa versión
-	function widgetVersionGuardarArchivo($widgetID, $widgetVersion, $nombre, $tipo, &$content){
-		if(!$this->tengoControlSobreWidget($widgetID)){
+	function widgetVersionGuardarArchivo($widgetID, $widgetVersion, $name, $tipo, &$content){
+		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
 		}
 		$widgetVersion = mysql_escape_mimic($widgetVersion);
-		$nombre = mysql_escape_mimic($nombre);
+		$name = mysql_escape_mimic($name);
 		$content = mysql_escape_mimic($content);
 		$hash = file_hash($content);
-		$this->query("INSERT INTO `widgets-content` (`IDwidget`, `version`, `name`, `hash`) VALUES ('{$widgetID}', '{$widgetVersion}', '{$nombre}', '{$hash}');");
+		$this->query("INSERT INTO `widgets-content` (`IDwidget`, `version`, `name`, `hash`) VALUES ('{$widgetID}', '{$widgetVersion}', '{$name}', '{$hash}');");
 		if(!$this->query("SELECT * FROM `files` WHERE `hash` = '{$hash}';")){
 			$this->query("INSERT INTO `files` (`hash`, `data`, `mimetype`) VALUES ('{$hash}', '{$content}', '{$tipo}');");
 		}
@@ -363,7 +363,7 @@ class DB {
 	
 	// Borrar archivo de un widget y versión específica.
 	function widgetVersionBorrarArchivo($widgetID, $widgetVersion, $hash){
-		if(!$this->tengoControlSobreWidget($widgetID)){
+		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
 		}
 		$widgetVersion = mysql_escape_mimic($widgetVersion);
@@ -372,14 +372,24 @@ class DB {
 	}
 	
 	// Borrar archivo de un widget y versión específica.
-	function widgetVersionRenombraArchivo($widgetID, $widgetVersion, $hash, $nombre){
-		if(!$this->tengoControlSobreWidget($widgetID)){
+	function widgetVersionRenombraArchivo($widgetID, $widgetVersion, $hash, $name){
+		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
 		}
 		$widgetVersion = mysql_escape_mimic($widgetVersion);
 		$hash = mysql_escape_mimic($hash);
-		$nombre = mysql_escape_mimic($nombre);
-		return $this->query("UPDATE `widgets-content` SET `name` = '{$nombre}' WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$widgetVersion}' AND `hash` = '{$hash}';");
+		$name = mysql_escape_mimic($name);
+		return $this->query("UPDATE `widgets-content` SET `name` = '{$name}' WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$widgetVersion}' AND `hash` = '{$hash}';");
+	}
+	
+	// Guardar archivo para un widget y versión específica. Comprobar antes que se puede subir un archivo para esa versión
+	function widgetVersionGetArchivo($widgetID, $widgetVersion, $name){
+		if($this->CanIModifyWidget($widgetID) || $this->widgetEnListaUsuario($widgetID)){
+			$widgetVersion = mysql_escape_mimic($widgetVersion);
+			$name = mysql_escape_mimic($name);
+			return $this->query("SELECT * FROM `files` WHERE `hash` = (SELECT `hash` FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$widgetVersion}' AND `name` = '{$name}');");
+		}
+		return false;
 	}
 	
 	
@@ -393,7 +403,7 @@ class DB {
 	// Retorna un listado con los widgets que tiene el usuario. Si se especifica ID se buscará los widgets del usuario con esa id, de lo contrario se usa el actual usuario.
 	function getWidgetsDelUsuario($ID = null){
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
-		return $this->query("SELECT `widgets`.* FROM `widgets-user` LEFT JOIN `widgets` ON `widgets-user`.`IDwidget` = `widgets`.`ID` WHERE `IDuser` = '{$ID}'");
+		return $this->query("SELECT `widgets`.* FROM `widgets-user` LEFT JOIN `widgets` ON `widgets-user`.`IDwidget` = `widgets`.`ID` WHERE `IDuser` = '{$ID}';");
 	}
 	
 	// Retorna un listado con los widgets que puede usar el usuario en la página principal.
@@ -415,16 +425,16 @@ class DB {
 	}
 	
 	// Retorna true si se puede manipular el widget por el usuario
-	function tengoControlSobreWidget(&$widgetID){
+	function CanIModifyWidget(&$widgetID){
 		$widgetID = mysql_escape_mimic($widgetID);
-		return $this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `ownerID` = '{$_SESSION['user']['ID']}'")?true:false;
+		return $this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `ownerID` = '{$_SESSION['user']['ID']}';")?true:false;
 	}
 	
 	// Quitar un widget de un usuario no borra la configuraciones del widget de ese usuario.
 	function quitarWidgetDelUsuario($widgetID, $ID = null){
 		$widgetID = mysql_escape_mimic($widgetID);
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
-		$this->query("DELETE FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}' AND `IDuser` = '{$ID}'");
+		$this->query("DELETE FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}' AND `IDuser` = '{$ID}';");
 	}
 	
 	// Agregar un widget a un usuario.
@@ -433,9 +443,15 @@ class DB {
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		
 		// Comprobar si el usuario ya tenía el widget
-		if(count($this->query("SELECT * FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}' AND `IDuser` = '{$ID}'")) === 0){
-			$this->query("INSERT INTO `widgets-user` (`IDwidget`, `IDuser`) VALUES ('{$widgetID}', '{$ID}')");
+		if(count($this->query("SELECT * FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}' AND `IDuser` = '{$ID}';")) === 0){
+			$this->query("INSERT INTO `widgets-user` (`IDwidget`, `IDuser`) VALUES ('{$widgetID}', '{$ID}');");
 		}
+	}
+	
+	// Retorna true si el usuario usa el widget, false de lo contrario.
+	function widgetEnListaUsuario(&$widgetID){
+		$widgetID = mysql_escape_mimic($widgetID);
+		return $this->query("SELECT * FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}' AND `IDuser` = '{$ID}';")?true:false;
 	}
 	
 	

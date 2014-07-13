@@ -74,7 +74,12 @@ foreach($archivos as $archivo){
 	</form>
 	
 	(
-		VER |
+		<form method="GET" action="widgetfile.php" target="_blank">
+			<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
+			<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
+			<input type="hidden" name="name" value="<?php echo $archivo['name']?>">
+			<input type="submit" value="VER">
+		</form> 
 		<form method="POST" action="ipa.php">
 			<input type="hidden" name="switch" value="4">
 			<input type="hidden" name="accion" value="2">
