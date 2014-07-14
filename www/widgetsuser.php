@@ -53,7 +53,14 @@ $widgets_disponibles = $db->getWidgetsDisponiblesUsuario();
 
 if($widgets_disponibles){
 	foreach($widgets_disponibles as &$widget){
-		if(in_array($widget, $widgets_usuario)){
+		$widget_en_uso = false;
+		foreach($widgets_usuario as &$widget_uso){
+			if($widget['ID'] === $widget_uso['ID']){
+				$widget_en_uso = true;
+				break;
+			}
+		}
+		if($widget_en_uso){
 			echo $widget['name'].' (in use).<br/>';
 		}
 		else{
