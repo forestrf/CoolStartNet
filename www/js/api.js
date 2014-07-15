@@ -173,7 +173,9 @@ API = (function(){
 							
 						break;
 						case 'set':
+							var respuesta = JSON.parse(req.responseText);
 							
+							callbacksConsulta[i]['callback'](respuesta['content']);
 						break;
 					}
 					if(action === 'get'){

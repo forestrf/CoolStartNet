@@ -1,5 +1,8 @@
 <?php
 
+// Ignore warnings. They can be harmful for the json response
+error_reporting(E_ALL ^ E_WARNING);
+
 session_start();
 if(!isset($_SESSION['user'])){
 	exit;
@@ -70,16 +73,17 @@ widgetVariablesValido($data_json);
 switch(isset($action)?$action:null){
 	case 'get':
 		// Simple
-		$respuesta = getHandler($data_json);
-		perfect(json_encode($respuesta));
+		$response = getHandler($data_json);
+		perfect(json_encode($response));
 	break;
 	case 'set':
 		// Comprobar bloqueos
-		if(setHandler($data_json)){
-			perfect(1);
+		$response = setHandler($data_json);
+		if($response){
+			perfect(json_encode($response));
 		}
 		else{
-			fail(7);
+			fail(json_encode($response));
 		}
 	break;
 	default:
@@ -111,22 +115,6 @@ function widgetVariablesValido(&$widgets){
 		}
 		else{
 			$widgets_array[$widgetID] = $result;
-			/*
-			$widgets_array[$widgetID]['variables'] = json_decode($result['variables']);
-			
-			foreach($widgets[$widgetID] as $variable => &$no_importa){
-				$borrar = true;
-				foreach($widgets_array[$widgetID]['variables'] as &$posible_variable){
-					if($variable === $posible_variable){
-						$borrar = false;
-						break;
-					}
-				}
-				if($borrar){
-					unset($widgets[$widgetID][$variable]);
-				}
-			}
-			*/
 		}
 	}
 }
@@ -157,15 +145,13 @@ function getHandler(&$widgets){
 // true/false -> fallos al grabar
 function setHandler(&$widgets){
 	global $db,$widgets_array;
+	$respuesta_array = array();
 	foreach($widgets as $widgetID => &$variables_widget){
 		foreach($variables_widget as $variable => &$valor){
-			$resp = $db->setVariable($widgetID, $variable, $valor);
-			/*if($resp === false){
-				return false;
-			}*/
+			$respuesta_array[$widgetID][$variable] = $db->setVariable($widgetID, $variable, $valor);
 		}
 	}
-	return true;
+	return $respuesta_array;
 }
 
 

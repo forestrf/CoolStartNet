@@ -36,7 +36,7 @@ class DB {
 		// To open a persistent connection you must prepend p: to the hostname when connecting. 
 		$this->mysqli = new mysqli('p:'.$this->host, $this->user, $this->pass, $this->bd);
 		if ($this->mysqli->connect_errno) {
-			echo "Fallo al contectar a MySQL: (" . $this->mysqli->connect_errno . ") " . $this->mysqli->connect_error;
+			// echo "Fallo al contectar a MySQL: (" . $this->mysqli->connect_errno . ") " . $this->mysqli->connect_error;
 			return false;
 		}
 		$this->mysqli->set_charset("utf8");
@@ -54,7 +54,9 @@ class DB {
 		}
 		
 		if($this->conexionAbierta === false){
-			$this->Open();
+			if(!$this->Open()){
+				return false;
+			}
 			$this->conexionAbierta = true;
 		}
 		
