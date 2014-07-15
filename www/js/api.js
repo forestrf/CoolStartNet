@@ -147,6 +147,7 @@ API = (function(){
 									obj[widget] = {};
 									switch(action){
 										case 'get':
+											// Array pattern ['var1', 'var2']
 											for(var j in callbacksConsulta[i]['widgets'][widget]){
 												var variable = callbacksConsulta[i]['widgets'][widget][j];
 												// Si se pidió la variable
@@ -156,6 +157,7 @@ API = (function(){
 											}
 										break;
 										case 'set':
+											// Object pattern {'var1':'', 'var2':''}
 											for(var variable in callbacksConsulta[i]['widgets'][widget]){
 												// Si se pidió la variable
 												if(typeof respuesta['content'][widget][variable] !== 'undefined'){
@@ -165,8 +167,8 @@ API = (function(){
 										break;
 									}
 								}
+								callbacksConsulta[i]['callback'](obj[widget]);
 							}
-							callbacksConsulta[i]['callback'](obj[widget]);
 						}
 					}
 					else{
