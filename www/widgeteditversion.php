@@ -42,12 +42,6 @@ if($version['public'] === '1'){
 <html>
 <head>
 	<title>Edit widget</title>
-	<!--<link rel="stylesheet" href="css/reset.min.css"/>-->
-	<style>
-		form {
-			display: inline;
-		}
-	</style>
 </head>
 <body>
 
@@ -85,6 +79,18 @@ foreach($archivos as $archivo){
 			<input type="hidden" name="name" value="<?php echo $archivo['name']?>">
 			<input type="submit" value="VER">
 		</form> 
+		<form method="POST" action="ipa.php" enctype="multipart/form-data">
+			<input type="hidden" name="switch" value="4">
+			<input type="hidden" name="accion" value="4">
+			<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
+			<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
+			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+			<input type="hidden" name="hash" value="<?php echo $archivo['hash']?>">
+			<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo MAX_FILE_SIZE_BYTES?>" /> Max size: <?php echo MAX_FILE_SIZE_BYTES/1024?>Kb
+			<input type="file" name="archivo">
+			<input type="submit" value="Reenviar">
+			<input type="hidden" name="volver" value="1">
+		</form>
 		<form method="POST" action="ipa.php">
 			<input type="hidden" name="switch" value="4">
 			<input type="hidden" name="accion" value="2">

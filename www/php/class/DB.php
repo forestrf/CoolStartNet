@@ -199,8 +199,12 @@ class DB {
 	
 	// Retorna un array con las versiones existentes del widget, de la última a la primera
 	function getWidgetVersiones($widgetID){
-		$widgetID = mysql_escape_mimic($widgetID);
-		return $this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' ORDER BY `version` DESC;");
+		if(!$this->CanIModifyWidget($widgetID)){
+			return $this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' ORDER BY `version` DESC;");
+		}
+		else{
+			return $this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `public` = '1' AND `visible` = '1' ORDER BY `version` DESC;");
+		}
 	}
 	
 	// Retorna una de las versiones existentes del widget (la solicitada)

@@ -27,6 +27,7 @@ Acciones:
 1 => Subir un archivo
 2 => Borrar un archivo
 3 => Renombrar archivo
+4 => Resubir un archivo
 */
 
 // Por continuar. Comprobar referer y de coincidir, recoger datos, comprobar hash y de coincidir de nuevo, cambiar datos.
@@ -51,19 +52,7 @@ foreach($posibles_referers as $referer_temp){
 						switch($_POST['accion']){
 							case '1':
 								if(isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0){
-									if($_FILES['archivo']['size'] <= MAX_FILE_SIZE_BYTES){
-										$fp      = fopen($_FILES['archivo']['tmp_name'], 'rb');
-										$content = fread($fp, filesize($_FILES['archivo']['tmp_name']));
-										fclose($fp);
-										
-										// Innecesario borrarlo, php lo borra automaticamente.
-										unlink($_FILES['archivo']['tmp_name']);
-										
-										$nombre = truncate_filename($_FILES['archivo']['name'], FILENAME_MAX_LENGTH);
-										$tipo = $_FILES['archivo']['type'];
-										
-										$db->widgetVersionGuardarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $nombre, $tipo, $content);
-									}
+									file_upload_widget_version($db, $_POST['widgetID'], $_POST['widgetVersion'], $_FILES['archivo']);
 								}
 							break;
 							case '2':
@@ -79,11 +68,35 @@ foreach($posibles_referers as $referer_temp){
 									}
 								}
 							break;
+							case '4':
+								if(isset($_POST['hash'])){
+									if(isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0){
+										$db->widgetVersionBorrarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_POST['hash']);
+										file_upload_widget_version($db, $_POST['widgetID'], $_POST['widgetVersion'], $_FILES['archivo']);
+									}
+								}
+							break;
 						}
 					}
 				}
 			}
 			break 2;
 		}
+	}
+}
+
+function file_upload_widget_version(&$db, $widgetID, $widgetVersion, &$FILE_REFERENCE){
+	if($FILE_REFERENCE['size'] <= MAX_FILE_SIZE_BYTES){
+		$fp      = fopen($FILE_REFERENCE['tmp_name'], 'rb');
+		$content = fread($fp, filesize($FILE_REFERENCE['tmp_name']));
+		fclose($fp);
+		
+		// Innecesario borrarlo, php lo borra automaticamente.
+		unlink($FILE_REFERENCE['tmp_name']);
+		
+		$nombre = truncate_filename($FILE_REFERENCE['name'], FILENAME_MAX_LENGTH);
+		$tipo = $FILE_REFERENCE['type'];
+		
+		$db->widgetVersionGuardarArchivo($widgetID, $widgetVersion, $nombre, $tipo, $content);
 	}
 }
