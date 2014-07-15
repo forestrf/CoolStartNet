@@ -42,6 +42,11 @@ if($version['public'] === '1'){
 <html>
 <head>
 	<title>Edit widget</title>
+	<style>
+		form {
+			display: inline;
+		}
+	</style>
 </head>
 <body>
 

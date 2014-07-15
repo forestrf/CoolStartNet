@@ -430,7 +430,8 @@ class DB {
 	// Retorna un widget que tiene el usuario. Si se especifica ID se buscará los widgets del usuario con esa id, de lo contrario se usa el actual usuario.
 	function getWidgetDelUsuario($widgetID, $ID = null){
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
-		return $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` ON `widgets-user`.`IDwidget` = `widgets`.`ID` WHERE `IDuser` = '{$ID}' AND `widgets`.`ID` = '{$widgetID}';");
+		$result = $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` ON `widgets-user`.`IDwidget` = `widgets`.`ID` WHERE `IDuser` = '{$ID}' AND `widgets`.`ID` = '{$widgetID}';");
+		return $result ? $result[0] : false;
 	}
 	
 	// Retorna un listado con los widgets que puede usar el usuario en la página principal.
@@ -487,7 +488,6 @@ class DB {
 		if(!is_array($WidgetID_o_widgetObject)){
 			// WidgetID = $WidgetID_o_widgetObject
 			$widgetObject = $this->getWidgetDelUsuario($WidgetID_o_widgetObject);
-			$widgetObject = &$widgetObject[0];
 		}
 		else{
 			$widgetObject = &$WidgetID_o_widgetObject;
@@ -500,6 +500,28 @@ class DB {
 		else{
 			return $widgetObject['version'];
 		}
+	}
+	
+	function setUserWidgetVersion($widgetID, $widgetVersion){
+		$widgetID = mysql_escape_mimic($widgetID);
+		if(!isInteger($widgetVersion) || $widgetVersion < 0){
+			return false;
+		}
+		$ID = $_SESSION['user']['ID'];
+		
+		// Check if the user has the rights to have emy version of the widget, if the version exists and the privileges of the version.
+		if(!$this->CanIModifyWidget($widgetID)){
+			if(!$this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$widgetVersion}' AND `public` = '1' AND `visible` = '1';")){
+				return false;
+			}
+		}
+		else{
+			if(!$this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$widgetVersion}';")){
+				return false;
+			}
+		}
+		
+		return $this->query("UPDATE `widgets-user` SET `autoupdate` = '0', `version` = '{$widgetVersion}' WHERE `IDuser` = '{$ID}' AND `IDwidget` = '{$widgetID}';");
 	}
 	
 	

@@ -19,7 +19,6 @@ $db = new DB();
 <html>
 <head>
 	<title>Widgets used by the user</title>
-	<!--<link rel="stylesheet" href="css/reset.min.css"/>-->
 	<style>
 		form {
 			display: inline;
@@ -42,7 +41,12 @@ foreach($widgets_usuario as &$widget){
 			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
 			<input type="hidden" name="volver" value="1">
 			<input type="submit" value="Remove">
-		</form>) Select a version | Use always the last version | Configure<br/>';
+		</form>)
+		<form method="GET" action="widgetsuserversion.php">
+			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
+			<input type="submit" value="Select a version">
+		</form>
+		| Use always the last version (If there is no public version, user the last private version) | Configure<br/>';
 }
 ?>
 

@@ -24,8 +24,9 @@ $db = new DB();
 
 /*
 Acciones:
-1 => Quitar
-2 => Poner
+1 => Add widget to the user
+2 => Remove widget from the user
+3 => Manually set the widget version
 */
 
 // Por continuar. Comprobar referer y de coincidir, recoger datos, comprobar hash y de coincidir de nuevo, cambiar datos.
@@ -34,7 +35,8 @@ Acciones:
 // Comprobar referer
 
 $posibles_referers = array(
-	'widgetsuser.php'
+	'widgetsuser.php',
+	'widgetsuserversion.php'
 );
 
 foreach($posibles_referers as $referer_temp){
@@ -53,6 +55,11 @@ foreach($posibles_referers as $referer_temp){
 					break;
 					case '2':
 						$db->agregarWidgetAlUsuario($_POST['widgetID']);
+					break;
+					case '3':
+						if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
+							$db->setUserWidgetVersion($_POST['widgetID'], $_POST['widgetVersion']);
+						}
 					break;
 				}
 			}
