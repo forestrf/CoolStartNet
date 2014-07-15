@@ -1,4 +1,4 @@
-Forest
+MyHomePage
 ======
 
 Página principal customizable multiusuario.
