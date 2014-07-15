@@ -104,38 +104,39 @@ function widgetVariablesValido(&$widgets){
 	global $widgets_array;
 	$widgets_array = array();
 	
-	foreach($widgets as $widget => &$variables){
-		$result = widgetValido($widget);
+	foreach($widgets as $widgetID => &$variables){
+		$result = widgetValido($widgetID);
 		if($result === false){
-			unset($widgets[$widget]);
+			unset($widgets[$widgetID]);
 		}
 		else{
-			$widgets_array[$widget] = $result;
+			$widgets_array[$widgetID] = $result;
+			/*
+			$widgets_array[$widgetID]['variables'] = json_decode($result['variables']);
 			
-			$widgets_array[$widget]['variables'] = json_decode($result['variables']);
-			
-			foreach($widgets[$widget] as $variable => &$no_importa){
+			foreach($widgets[$widgetID] as $variable => &$no_importa){
 				$borrar = true;
-				foreach($widgets_array[$widget]['variables'] as &$posible_variable){
+				foreach($widgets_array[$widgetID]['variables'] as &$posible_variable){
 					if($variable === $posible_variable){
 						$borrar = false;
 						break;
 					}
 				}
 				if($borrar){
-					unset($widgets[$widget][$variable]);
+					unset($widgets[$widgetID][$variable]);
 				}
 			}
+			*/
 		}
 	}
 }
 
 // Validar un solo widget
-function widgetValido(&$widget){
+function widgetValido(&$widgetID){
 	// Únicamente mirar en la base de datos si existe el widget
 	// Aprovechar para cargar la información mínima del widget para las futuras preguntas
 	global $db;
-	return $db->getWidget($widget);
+	return $db->getWidgetPorID($widgetID);
 }
 
 
@@ -144,9 +145,9 @@ function widgetValido(&$widget){
 function getHandler(&$widgets){
 	global $db,$widgets_array;
 	$respuesta_array = array();
-	foreach($widgets as $nombre => &$variables_widget){
+	foreach($widgets as $widgetID => &$variables_widget){
 		foreach($variables_widget as $variable => $no_importa){
-			$respuesta_array[$nombre][$variable] = $db->getVariable($widgets_array[$nombre]['ID'], $variable);
+			$respuesta_array[$widgetID][$variable] = $db->getVariable($widgetID, $variable);
 		}
 	}
 	return $respuesta_array;
@@ -156,9 +157,9 @@ function getHandler(&$widgets){
 // true/false -> fallos al grabar
 function setHandler(&$widgets){
 	global $db,$widgets_array;
-	foreach($widgets as $nombre => &$variables_widget){
+	foreach($widgets as $widgetID => &$variables_widget){
 		foreach($variables_widget as $variable => &$valor){
-			$resp = $db->setVariable($widgets_array[$nombre]['ID'], $variable, $valor);
+			$resp = $db->setVariable($widgetID, $variable, $valor);
 			/*if($resp === false){
 				return false;
 			}*/

@@ -141,29 +141,29 @@ class DB {
 		$variable = mysql_escape_mimic($variable);
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		$result = $this->query("SELECT `value` FROM `variables` WHERE `IDuser` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
-		return count($result) > 0 ? $result[0]['valor'] : false;
+		return count($result) > 0 ? $result[0]['value'] : false;
 	}
 	
 	// $insert_o_update = 'I' / 'U'
 	// No comprueba si la variable está definida. Sin límites
 	// POR HACER: Limitar tamaño de lo que se puede guardar
-	function setVariable($widgetID, $variable, $valor, $ID = null, $insert_o_update = null){
+	function setVariable($widgetID, $variable, $value, $ID = null, $insert_o_update = null){
 		$widgetID = mysql_escape_mimic($widgetID);
 		$variable = mysql_escape_mimic($variable);
-		$valor = mysql_escape_mimic($valor);
+		$value = mysql_escape_mimic($value);
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		
 		if($insert_o_update === null){
-			$result = $this->query("SELECT `ID` FROM `variables` WHERE `IDuser` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
+			$result = $this->query("SELECT `IDuser` FROM `variables` WHERE `IDuser` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
 			$insert_o_update = $result?'U':'I';
 		}
 		
 		switch($insert_o_update){
 			case 'I':
-				return $this->query("INSERT INTO `variables` (`IDuser`, `IDwidget`, `variable`, `value`) VALUES ('{$_SESSION['user']['ID']}', '{$widgetID}', '{$variable}', '{$valor}');");
+				return $this->query("INSERT INTO `variables` (`IDuser`, `IDwidget`, `variable`, `value`) VALUES ('{$ID}', '{$widgetID}', '{$variable}', '{$value}');");
 			break;
 			case 'U':
-				return $this->query("UPDATE `variables` SET `value` = '{$valor}' WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
+				return $this->query("UPDATE `variables` SET `value` = '{$value}' WHERE `IDuser` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
 			break;
 		}
 		
