@@ -1,13 +1,13 @@
-//alert(API.url(widgetID,'main.js'));
+//console.log(API.url(widgetID,'main.js'));
 
-alert('Test 1');
+console.log('Test 1');
 
 /////////////////////////////
 // SET test
 /////////////////////////////
 
 var text_rnd = Math.random();
-alert('Saving the text: '+text_rnd);
+console.log('Saving the text: '+text_rnd);
 
 var comando = {
 	'action':'set',
@@ -17,10 +17,10 @@ var comando = {
 
 API.call(comando, function(entrada){
 	if(entrada['test']){
-		alert('Text Saved.');
+		console.log('Text Saved.');
 	}
 	else{
-		alert('Text NOT saved.');
+		console.log('Text NOT saved.');
 	}
 });
 
@@ -38,10 +38,10 @@ var comando = {
 
 API.call(comando, function(entrada){
 	if(entrada['test']){
-		alert('Got the text: '+entrada['test']);
+		console.log('Got the text: '+entrada['test']);
 	}
 	else{
-		alert('There is not a saved variable with that name.');
+		console.log('There is not a saved variable with that name.');
 	}
 });
 
@@ -49,7 +49,7 @@ API.call(comando, function(entrada){
 
 
 
-alert('Test 2');
+console.log('Test 2');
 
 /////////////////////////////
 // Multiple SET test
@@ -58,7 +58,7 @@ alert('Test 2');
 var text_rnd1 = Math.random();
 var text_rnd2 = Math.random();
 var text_rnd3 = Math.random();
-alert('Saving the texts:\n'+text_rnd1+'\n'+text_rnd2+'\n'+text_rnd3);
+console.log('Saving the texts:\n'+text_rnd1+'\n'+text_rnd2+'\n'+text_rnd3);
 
 var comando = {
 	'action':'set',
@@ -69,10 +69,10 @@ var comando = {
 API.call(comando, function(entrada){
 	for(var i in entrada){
 		if(entrada[i]){
-			alert('Text Saved ('+i+').');
+			console.log('Text Saved ('+i+').');
 		}
 		else{
-			alert('Text NOT saved ('+i+').');
+			console.log('Text NOT saved ('+i+').');
 		}
 	}
 });
@@ -92,10 +92,10 @@ var comando = {
 API.call(comando, function(entrada){
 	for(var i in entrada){
 		if(entrada[i]){
-			alert('Got the text ('+i+'): '+entrada[i]);
+			console.log('Got the text ('+i+'): '+entrada[i]);
 		}
 		else{
-			alert('There is not a saved variable with that name ('+i+').');
+			console.log('There is not a saved variable with that name ('+i+').');
 		}
 	}
 });

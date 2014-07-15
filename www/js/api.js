@@ -127,24 +127,26 @@ API = (function(){
 			if(req.readyState == 4){
 				if(req.status == 200){
 					//console.log(req.responseText);
-					switch(action){
-						case 'get':
-							var respuesta = JSON.parse(req.responseText);
+					var respuesta = JSON.parse(req.responseText);
+					
+					if(action === 'set'){
+						var a = 'a';
+					}
+					
+					// Recorrer los callback y generar respuesta
+					if(respuesta['response']==='OK'){
+						for(var i in callbacksConsulta){
 							
-							// Recorrer los callback y generar respuesta
-							if(respuesta['response']==='OK'){
-								for(var i in callbacksConsulta){
-									
-									var obj = {};
-									var widget_contador = 0;
-									var widget = '';
-									
-									// Por cada widget pedido
-									for(widget in callbacksConsulta[i]['widgets']){
-										++widget_contador;
-										// Si está recibido
-										if(typeof respuesta['content'][widget] !== 'undefined'){
-											obj[widget] = {};
+							var obj = {};
+							var widget = '';
+							
+							// Por cada widget pedido
+							for(widget in callbacksConsulta[i]['widgets']){
+								// Si está recibido
+								if(typeof respuesta['content'][widget] !== 'undefined'){
+									obj[widget] = {};
+									switch(action){
+										case 'get':
 											for(var j in callbacksConsulta[i]['widgets'][widget]){
 												var variable = callbacksConsulta[i]['widgets'][widget][j];
 												// Si se pidió la variable
@@ -152,38 +154,30 @@ API = (function(){
 													obj[widget][variable] = respuesta['content'][widget][variable];
 												}
 											}
-										}
-									}
-									
-									if(widget_contador === 1){
-										callbacksConsulta[i]['callback'](obj[widget]);
-									}
-									else{
-										callbacksConsulta[i]['callback'](obj);
+										break;
+										case 'set':
+											for(var variable in callbacksConsulta[i]['widgets'][widget]){
+												// Si se pidió la variable
+												if(typeof respuesta['content'][widget][variable] !== 'undefined'){
+													obj[widget][variable] = respuesta['content'][widget][variable];
+												}
+											}
+										break;
 									}
 								}
 							}
-							else{
-								for(var i in callbacksConsulta){
-									callbacksConsulta[i]['callback'](respuesta);
-								}
-							}
-							
-							
-							
-						break;
-						case 'set':
-							var respuesta = JSON.parse(req.responseText);
-							
-							callbacksConsulta[i]['callback'](respuesta['content']);
-						break;
+							callbacksConsulta[i]['callback'](obj[widget]);
+						}
 					}
-					if(action === 'get'){
-					
+					else{
+						for(var i in callbacksConsulta){
+							callbacksConsulta[i]['callback'](respuesta);
+						}
 					}
 				}
-				else
-					console.log("Error loading page\n");
+				else{
+					console.log("Error loading page");
+				}
 			}
 		};
 		var data = 'action='+action+'&data='+encodeURIComponent(JSON.stringify(proximaConsulta));
