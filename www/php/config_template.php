@@ -31,3 +31,9 @@ define('FILENAME_MAX_LENGTH', 50);
 
 # Max comment length of widget versions
 define('WIDGET_VERSION_COMMENT_MAX_LENGTH', 250);
+
+# Max number of files for a widget version
+define('WIDGET_VERSION_MAX_FILES_NUMBER', 50);
+
+# Max user data stored in form of variables. In bytes.
+define('USER_MAX_MB_STORED_DB', 20480000);

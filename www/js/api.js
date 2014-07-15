@@ -203,12 +203,11 @@ API = (function(){
 	
 	
 	var getUrl = function(widget, filename){
-		return 'widgetfile.php?widgetID='+widget+'&widgetVersion='+API.versions[widget]+'&name='+escape(filename);
+		return 'widgetfile.php?widgetID='+widget+'&api=1&name='+escape(filename);
 	}
 	
 	return {
 		"call":precall,
-		"url":getUrl,
-		"versions":[]
+		"url":getUrl
 	};
 })();

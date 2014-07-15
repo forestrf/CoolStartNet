@@ -423,6 +423,12 @@ class DB {
 		return $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` ON `widgets-user`.`IDwidget` = `widgets`.`ID` WHERE `IDuser` = '{$ID}';");
 	}
 	
+	// Retorna un widget que tiene el usuario. Si se especifica ID se buscará los widgets del usuario con esa id, de lo contrario se usa el actual usuario.
+	function getWidgetDelUsuario($widgetID, $ID = null){
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
+		return $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` ON `widgets-user`.`IDwidget` = `widgets`.`ID` WHERE `IDuser` = '{$ID}' AND `widgets`.`ID` = '{$widgetID}';");
+	}
+	
 	// Retorna un listado con los widgets que puede usar el usuario en la página principal.
 	function getWidgetsDisponiblesUsuario($ID = null){
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
@@ -468,10 +474,29 @@ class DB {
 	// Retorna true si el usuario usa el widget, false de lo contrario.
 	function widgetEnListaUsuario(&$widgetID){
 		$widgetID = mysql_escape_mimic($widgetID);
+		$ID = $_SESSION['user']['ID'];
 		return $this->query("SELECT * FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}' AND `IDuser` = '{$ID}';")?true:false;
 	}
 	
-	
+	// Retorna la versión que usa el usuario de un widget dada la ID o el objeto widget retornado por getWidgetsDelUsuario()
+	function getWidgetUserVersion(&$WidgetID_o_widgetObject){
+		if(!is_array($WidgetID_o_widgetObject)){
+			// WidgetID = $WidgetID_o_widgetObject
+			$widgetObject = $this->getWidgetDelUsuario($WidgetID_o_widgetObject);
+			$widgetObject = &$widgetObject[0];
+		}
+		else{
+			$widgetObject = &$WidgetID_o_widgetObject;
+		}
+		
+		if($widgetObject['autoupdate'] === '1'){
+			$version = $this->getWidgetDefaultVersion($widgetObject['ID']);
+			return $version['version'];
+		}
+		else{
+			return $widgetObject['version'];
+		}
+	}
 	
 	
 	

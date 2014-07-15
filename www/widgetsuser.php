@@ -42,7 +42,7 @@ foreach($widgets_usuario as &$widget){
 			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
 			<input type="hidden" name="volver" value="1">
 			<input type="submit" value="Remove">
-		</form>) Select a version from the widget | Use always the last version<br/>';
+		</form>) Select a version | Use always the last version | Configure<br/>';
 }
 ?>
 

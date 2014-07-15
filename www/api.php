@@ -21,24 +21,6 @@ $_GET['action'] => get/set
 */
 
 /*
-Tablas:
-	Usuarios
-		ID => int
-		Nick => string
-		Password => string
-	Widgets
-		ID => int
-		Nombre => string
-		Variables => json
-	Variables:
-		ID => int
-		IDuser => int
-		IDWidget => int (-1 = interno, 0..infinito = widgets)
-		Variable => string
-		Valor => ""/json/string/filtrado segun variable widget
-*/
-
-/*
 Fallos:
 1 => Faltan variables por especificar
 5 => La variable action debe valer "set" o "get"
