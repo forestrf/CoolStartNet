@@ -128,17 +128,10 @@ function widgetValido(&$widgetID){
 function getHandler(&$widgets){
 	global $db;
 	$respuesta_array = array();
-	foreach($widgets as $widgetID => &$variables_widget){
-		// Global widget handler here
-		if($widgetID === 'global'){
-			$widgetID_calc = '-1'; //global is a invisible widget with id -1
-		}
-		else{
-			$widgetID_calc = $widgetID;
-		}
-		foreach($variables_widget as $variable => $no_importa){
-			$respuesta_array[$widgetID][$variable] = $db->getVariable($widgetID_calc, $variable);
-		}
+	$response = $db->getVariable($widgets);
+	foreach($response as $result){
+		$widgetID = $result['IDwidget'] === '-1' ? 'global' : $result['IDwidget']; //global is a invisible widget with id -1
+		$respuesta_array[$widgetID][$result['variable']] = $result['value'];
 	}
 	return $respuesta_array;
 }

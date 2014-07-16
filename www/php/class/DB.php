@@ -138,12 +138,32 @@ class DB {
 	}
 	
 	// Retorna una variable del usuario
-	function getVariable($widgetID, $variable, $ID = null){
-		$widgetID = mysql_escape_mimic($widgetID);
-		$variable = mysql_escape_mimic($variable);
+	/*
+		array(
+			'widgetID' => array(
+				'variable' => '', ...
+			), ...
+		);
+	*/
+	function getVariable($widgetID_variable, $ID = null){
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
-		$result = $this->query("SELECT `value` FROM `variables` WHERE `IDuser` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
-		return count($result) > 0 ? $result[0]['value'] : false;
+		
+		// Make all the operations in one sql call.
+		$SQL_statement = array();
+		foreach($widgetID_variable as $widgetID => &$variables){
+			$widgetID = mysql_escape_mimic($widgetID);
+			
+			// Global widget handler here
+			$widgetID_calc = $widgetID === 'global' ? '-1' : $widgetID; //global is a invisible widget with id -1
+			
+			// Ignore value
+			foreach($variables as $variable => &$value){
+				$variable = mysql_escape_mimic($variable);
+				$SQL_statement[] = "(`IDuser` = '{$ID}' AND `IDwidget` = '{$widgetID_calc}' AND `variable` = '{$variable}')";
+			}
+		}
+		
+		return $this->query("SELECT `IDwidget`, `variable`, `value` FROM `variables` WHERE ".implode('OR', $SQL_statement).";");
 	}
 	
 	// $insert_o_update = 'I' / 'U'
@@ -153,8 +173,8 @@ class DB {
 	/*
 		array(
 			'widgetID' => array(
-				'variable' => 'value'
-			);
+				'variable' => 'value', ...
+			), ...
 		);
 	*/
 	function setVariable($widgetID_variable_value, $ID = null){
