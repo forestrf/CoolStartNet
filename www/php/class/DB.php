@@ -138,9 +138,8 @@ class DB {
 	}
 	
 	// Retorna una variable del usuario
-	// No valida $widgetID para comprobar si contiene un ataque
 	function getVariable($widgetID, $variable, $ID = null){
-		// $widgetID = mysql_escape_mimic($widgetID);
+		$widgetID = mysql_escape_mimic($widgetID);
 		$variable = mysql_escape_mimic($variable);
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		$result = $this->query("SELECT `value` FROM `variables` WHERE `IDuser` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
@@ -150,15 +149,33 @@ class DB {
 	// $insert_o_update = 'I' / 'U'
 	// No comprueba si la variable está definida. Sin límites
 	// No comprueba si el widget existe, de ello se debe encargar api.php
-	// No valida $widgetID para comprobar si contiene un ataque
 	// POR HACER: Limitar tamaño de lo que se puede guardar
-	function setVariable($widgetID, $variable, $value, $ID = null){
-		// $widgetID = mysql_escape_mimic($widgetID);
-		$variable = mysql_escape_mimic($variable);
-		$value = mysql_escape_mimic($value);
+	/*
+		array(
+			'widgetID' => array(
+				'variable' => 'value'
+			);
+		);
+	*/
+	function setVariable($widgetID_variable_value, $ID = null){
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		
-		return $this->query("INSERT INTO `variables` (`IDuser`, `IDwidget`, `variable`, `value`) VALUES ('{$ID}', '{$widgetID}', '{$variable}', '{$value}') ON DUPLICATE KEY UPDATE `value` = '{$value}';");
+		// Make all the operations in one sql call.
+		$SQL_statement = array();
+		foreach($widgetID_variable_value as $widgetID => &$variable_value){
+			$widgetID = mysql_escape_mimic($widgetID);
+			
+			// Global widget handler here
+			$widgetID_calc = $widgetID === 'global' ? '-1' : $widgetID; //global is a invisible widget with id -1
+			
+			foreach($variable_value as $variable => &$value){
+				$variable = mysql_escape_mimic($variable);
+				$value = mysql_escape_mimic($value);
+				$SQL_statement[] = "('{$ID}', '{$widgetID_calc}', '{$variable}', '{$value}')";
+			}
+		}
+		
+		return $this->query("INSERT INTO `variables` (`IDuser`, `IDwidget`, `variable`, `value`) VALUES ".implode(',', $SQL_statement)." ON DUPLICATE KEY UPDATE `value` = VALUES(`value`);");
 	}
 	
 	// Crear un nuevo widget
