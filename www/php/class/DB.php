@@ -138,8 +138,9 @@ class DB {
 	}
 	
 	// Retorna una variable del usuario
+	// No valida $widgetID para comprobar si contiene un ataque
 	function getVariable($widgetID, $variable, $ID = null){
-		$widgetID = mysql_escape_mimic($widgetID);
+		// $widgetID = mysql_escape_mimic($widgetID);
 		$variable = mysql_escape_mimic($variable);
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		$result = $this->query("SELECT `value` FROM `variables` WHERE `IDuser` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
@@ -149,28 +150,15 @@ class DB {
 	// $insert_o_update = 'I' / 'U'
 	// No comprueba si la variable está definida. Sin límites
 	// No comprueba si el widget existe, de ello se debe encargar api.php
+	// No valida $widgetID para comprobar si contiene un ataque
 	// POR HACER: Limitar tamaño de lo que se puede guardar
-	function setVariable($widgetID, $variable, $value, $ID = null, $insert_o_update = null){
-		$widgetID = mysql_escape_mimic($widgetID);
+	function setVariable($widgetID, $variable, $value, $ID = null){
+		// $widgetID = mysql_escape_mimic($widgetID);
 		$variable = mysql_escape_mimic($variable);
 		$value = mysql_escape_mimic($value);
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		
-		if($insert_o_update === null){
-			$result = $this->query("SELECT `IDuser` FROM `variables` WHERE `IDuser` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
-			$insert_o_update = $result?'U':'I';
-		}
-		
-		switch($insert_o_update){
-			case 'I':
-				return $this->query("INSERT INTO `variables` (`IDuser`, `IDwidget`, `variable`, `value`) VALUES ('{$ID}', '{$widgetID}', '{$variable}', '{$value}');");
-			break;
-			case 'U':
-				return $this->query("UPDATE `variables` SET `value` = '{$value}' WHERE `IDuser` = '{$ID}' AND `IDwidget` = '{$widgetID}' AND `variable` = '{$variable}';");
-			break;
-		}
-		
-		return false;
+		return $this->query("INSERT INTO `variables` (`IDuser`, `IDwidget`, `variable`, `value`) VALUES ('{$ID}', '{$widgetID}', '{$variable}', '{$value}') ON DUPLICATE KEY UPDATE `value` = '{$value}';");
 	}
 	
 	// Crear un nuevo widget

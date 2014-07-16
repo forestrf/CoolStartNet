@@ -134,7 +134,7 @@ function getHandler(&$widgets){
 			$widgetID_calc = '-1'; //global is a invisible widget with id -1
 		}
 		else{
-			$widgetID_calc = $widgetID;
+			$widgetID_calc = mysql_escape_mimic($widgetID);
 		}
 		foreach($variables_widget as $variable => $no_importa){
 			$respuesta_array[$widgetID][$variable] = $db->getVariable($widgetID_calc, $variable);
@@ -154,7 +154,7 @@ function setHandler(&$widgets){
 			$widgetID_calc = '-1'; //global is a invisible widget with id -1
 		}
 		else{
-			$widgetID_calc = $widgetID;
+			$widgetID_calc = mysql_escape_mimic($widgetID);
 		}
 		foreach($variables_widget as $variable => &$valor){
 			$respuesta_array[$widgetID][$variable] = $db->setVariable($widgetID_calc, $variable, $valor);
