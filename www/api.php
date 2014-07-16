@@ -105,16 +105,11 @@ switch(isset($action)?$action:null){
 // Validar una cantidad de widgets determinada por size
 // true/false
 function widgetVariablesValido(&$widgets){
-	global $widgets_array;
-	$widgets_array = array();
-	
 	foreach($widgets as $widgetID => &$variables){
-		$result = widgetValido($widgetID);
-		if($result === false){
-			unset($widgets[$widgetID]);
-		}
-		else{
-			$widgets_array[$widgetID] = $result;
+		if($widgetID !== 'global'){
+			if(widgetValido($widgetID) === false){
+				unset($widgets[$widgetID]);
+			}
 		}
 	}
 }
@@ -124,18 +119,25 @@ function widgetValido(&$widgetID){
 	// Únicamente mirar en la base de datos si existe el widget
 	// Aprovechar para cargar la información mínima del widget para las futuras preguntas
 	global $db;
-	return $db->getWidgetPorID($widgetID);
+	return $db->getWidgetPorID($widgetID) ? true : false;
 }
 
 
 // Llamar antes a widgetValidoHandler y variableDeWidgetHandler ya que no se valida aquí
 // array con el contenido/false -> fallos al consultar o consulta
 function getHandler(&$widgets){
-	global $db,$widgets_array;
+	global $db;
 	$respuesta_array = array();
 	foreach($widgets as $widgetID => &$variables_widget){
+		// Global widget handler here
+		if($widgetID === 'global'){
+			$widgetID_calc = '-1'; //global is a invisible widget with id -1
+		}
+		else{
+			$widgetID_calc = $widgetID;
+		}
 		foreach($variables_widget as $variable => $no_importa){
-			$respuesta_array[$widgetID][$variable] = $db->getVariable($widgetID, $variable);
+			$respuesta_array[$widgetID][$variable] = $db->getVariable($widgetID_calc, $variable);
 		}
 	}
 	return $respuesta_array;
@@ -144,11 +146,18 @@ function getHandler(&$widgets){
 // Llamar antes a widgetValidoHandler y variableDeWidgetHandler ya que no se valida aquí
 // true/false -> fallos al grabar
 function setHandler(&$widgets){
-	global $db,$widgets_array;
+	global $db;
 	$respuesta_array = array();
 	foreach($widgets as $widgetID => &$variables_widget){
+		// Global widget handler here
+		if($widgetID === 'global'){
+			$widgetID_calc = '-1'; //global is a invisible widget with id -1
+		}
+		else{
+			$widgetID_calc = $widgetID;
+		}
 		foreach($variables_widget as $variable => &$valor){
-			$respuesta_array[$widgetID][$variable] = $db->setVariable($widgetID, $variable, $valor);
+			$respuesta_array[$widgetID][$variable] = $db->setVariable($widgetID_calc, $variable, $valor);
 		}
 	}
 	return $respuesta_array;

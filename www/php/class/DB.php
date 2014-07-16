@@ -148,6 +148,7 @@ class DB {
 	
 	// $insert_o_update = 'I' / 'U'
 	// No comprueba si la variable está definida. Sin límites
+	// No comprueba si el widget existe, de ello se debe encargar api.php
 	// POR HACER: Limitar tamaño de lo que se puede guardar
 	function setVariable($widgetID, $variable, $value, $ID = null, $insert_o_update = null){
 		$widgetID = mysql_escape_mimic($widgetID);

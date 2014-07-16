@@ -1,40 +1,62 @@
 /*
-1000 => Debe especificarse un atributo "action" con valor "set" o "get"
-1001 => Debe de llamarse a call con un objeto consulta
-1002 => debe de especificarse un action en el objeto consulta
-1003 => debe de especificarse un nombre de widget en el objeto consulta
+1000 => Attribute "action" with value "set" or "get" not present
+1001 => "call" needs to be called with a "Consult" object
+1002 => Attribute "action" not present or not a string
+1003 => Attribute "widget" not present or incorrect
 */
 
 /*
-parametros => (
-	action => get/set,
-	widget => (
-		'widget1' => (
-			'variable1'
-		)
-	)
-)
+Consult pattern:
+
+var consult = {
+	'action'    : 'get',
+	'widget'    : widgetID | 'global',
+	'variables' : 'variable1'
+}
+
+var consult = {
+	'action'    : 'get',
+	'widget'    : widgetID | 'global',
+	'variables' : ['variable1', ...]
+}
+
+var consult = {
+	'action'    : 'set',
+	'widget'    : widgetID | 'global',
+	'variables' : {'variable1':'value1', ...}
+}
 */
 
 
 API = (function(){
-	var precall = function(parametros, callback){
-				
-		var comando = {
-			'action':parametros['action'],
+	var max_wait_GET_request = 100; //ms
+	var max_wait_SET_request = 100; //ms
+	
+	var timeout_GET = 0;
+	var timeout_SET = 0;
+	
+	var callbacks_GET_request = [];
+	var callbacks_SET_request = [];
+	
+	var next_GET_request = {};
+	var next_SET_request = {};
+	
+	var precall = function(parameters, callback){
+		var command = {
+			'action':parameters['action'],
 			'widgets':{}
 		};
-		comando['widgets'][parametros['widget']] = parametros['variables'];
+		command['widgets'][parameters['widget']] = parameters['variables'];
 		
-		call(comando, callback);
+		call(command, callback);
 	}
 	
-	var call = function(parametros, callback){
-		if(parametros){
-			if(typeof parametros["action"] === "string"){
-				if(typeof parametros["widgets"] === "object"){
+	var call = function(parameters, callback){
+		if(parameters){
+			if(typeof parameters["action"] === "string"){
+				if(typeof parameters["widgets"] === "object"){
 					// Una variable
-					get_o_set(parametros["action"], callback, parametros["widgets"]);
+					get_or_set(parameters["action"], callback, parameters["widgets"]);
 				}
 				else{
 					callback(fail(1003));
@@ -49,28 +71,28 @@ API = (function(){
 		}
 	}
 	
-	var get_o_set = function(modo, callback, widgets){
+	var get_or_set = function(mode, callback, widgets){
 		for(var widget in widgets){
 			if(typeof widgets[widget] === 'string'){
 				widgets[widget] = [widgets[widget]];
 			}
 		}
-		switch(modo){
+		switch(mode){
 			case 'get':
 				for(var widget in widgets){
-					agregaAConsultaGet(widget, widgets[widget]);
+					add_to_GET_request(widget, widgets[widget]);
 				}
-				callbacksConsultaGet.push({"callback":callback,"widgets":widgets});
-				clearTimeout(timeoutGet);
-				timeoutGet = setTimeout(procesaGet, 100);
+				callbacks_GET_request.push({"callback":callback,"widgets":widgets});
+				clearTimeout(timeout_GET);
+				timeout_GET = setTimeout(execute_GET, max_wait_GET_request);
 			break;
 			case 'set':
 				for(var widget in widgets){
-					agregaAConsultaSet(widget, widgets[widget]);
+					add_to_SET_request(widget, widgets[widget]);
 				}
-				callbacksConsultaSet.push({"callback":callback,"widgets":widgets});
-				clearTimeout(timeoutSet);
-				timeoutSet = setTimeout(procesaSet, 100);
+				callbacks_SET_request.push({"callback":callback,"widgets":widgets});
+				clearTimeout(timeout_SET);
+				timeout_SET = setTimeout(execute_SET, max_wait_SET_request);
 			break;
 			default:
 				callback(fail(1000));
@@ -78,48 +100,31 @@ API = (function(){
 		}
 	}
 	
-	
-	
-	
-	// OK
-	// string, []
-	var agregaAConsultaGet = function(widget, array_variables){
-		if(proximaConsultaGet[widget] === undefined){
-			proximaConsultaGet[widget] = {};
+	// array_variables -> string | []
+	var add_to_GET_request = function(widget, array_variables){
+		if(next_GET_request[widget] === undefined){
+			next_GET_request[widget] = {};
 		}
 		for(var i in array_variables){
-			proximaConsultaGet[widget][array_variables[i]] = null;
+			next_GET_request[widget][array_variables[i]] = null;
 		}
 	}
 	
-	// OK
-	// string, [], []
-	var agregaAConsultaSet = function(widget, array_variables){
-		if(proximaConsultaSet[widget] === undefined){
-			proximaConsultaSet[widget] = {};
+	// array_variables -> {}
+	var add_to_SET_request = function(widget, array_variables){
+		if(next_SET_request[widget] === undefined){
+			next_SET_request[widget] = {};
 		}
 		for(var i in array_variables){
-			proximaConsultaSet[widget][i] = array_variables[i];
+			next_SET_request[widget][i] = array_variables[i];
 		}
 	}
-	
-	
-	
-	var timeoutGet = 0;
-	var timeoutSet = 0;
-	
-	var callbacksConsultaGet = [];
-	var callbacksConsultaSet = [];
-	
-	var proximaConsultaGet = {};
-	var proximaConsultaSet = {};
 	
 	var fail = function(n){
 		return {'response':'FAIL',"content":n};
 	}
 	
-	
-	var procesa = function(action, proximaConsulta, callbacksConsulta){
+	var execute = function(action, next_request, callbacksConsulta){
 		var req = new XMLHttpRequest();
 		req.open('POST', 'api.php', true);
 		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -127,41 +132,37 @@ API = (function(){
 			if(req.readyState == 4){
 				if(req.status == 200){
 					//console.log(req.responseText);
-					var respuesta = JSON.parse(req.responseText);
+					var response = JSON.parse(req.responseText);
 					
-					if(action === 'set'){
-						var a = 'a';
-					}
-					
-					// Recorrer los callback y generar respuesta
-					if(respuesta['response']==='OK'){
+					// Go over the callbacks and generate a response
+					if(response['response']==='OK'){
 						for(var i in callbacksConsulta){
 							
 							var obj = {};
 							var widget = '';
 							
-							// Por cada widget pedido
+							// For each esquested widget
 							for(widget in callbacksConsulta[i]['widgets']){
-								// Si está recibido
-								if(typeof respuesta['content'][widget] !== 'undefined'){
+								// If received
+								if(typeof response['content'][widget] !== 'undefined'){
 									obj[widget] = {};
 									switch(action){
 										case 'get':
 											// Array pattern ['var1', 'var2']
 											for(var j in callbacksConsulta[i]['widgets'][widget]){
 												var variable = callbacksConsulta[i]['widgets'][widget][j];
-												// Si se pidió la variable
-												if(typeof respuesta['content'][widget][variable] !== 'undefined'){
-													obj[widget][variable] = respuesta['content'][widget][variable];
+												// If variable requested
+												if(typeof response['content'][widget][variable] !== 'undefined'){
+													obj[widget][variable] = response['content'][widget][variable];
 												}
 											}
 										break;
 										case 'set':
 											// Object pattern {'var1':'', 'var2':''}
 											for(var variable in callbacksConsulta[i]['widgets'][widget]){
-												// Si se pidió la variable
-												if(typeof respuesta['content'][widget][variable] !== 'undefined'){
-													obj[widget][variable] = respuesta['content'][widget][variable];
+												// If variable requested
+												if(typeof response['content'][widget][variable] !== 'undefined'){
+													obj[widget][variable] = response['content'][widget][variable];
 												}
 											}
 										break;
@@ -173,7 +174,7 @@ API = (function(){
 					}
 					else{
 						for(var i in callbacksConsulta){
-							callbacksConsulta[i]['callback'](respuesta);
+							callbacksConsulta[i]['callback'](response);
 						}
 					}
 				}
@@ -182,24 +183,25 @@ API = (function(){
 				}
 			}
 		};
-		var data = 'action='+action+'&data='+encodeURIComponent(JSON.stringify(proximaConsulta));
+		var data = 'action='+action+'&data='+encodeURIComponent(JSON.stringify(next_request));
 		req.send(data);
 	}
 	
-	var procesaGet = function(){
-		procesa('get', proximaConsultaGet, callbacksConsultaGet);
-		proximaConsultaGet = {};
-		callbacksConsultaGet = [];
+	// Execute and clean cache
+	var execute_GET = function(){
+		execute('get', next_GET_request, callbacks_GET_request);
+		next_GET_request = {};
+		callbacks_GET_request = [];
 	}
 	
-	var procesaSet = function(){
-		procesa('set', proximaConsultaSet, callbacksConsultaSet);
-		proximaConsultaSet = {};
-		callbacksConsultaSet = [];
+	// Execute and clean cache
+	var execute_SET = function(){
+		execute('set', next_SET_request, callbacks_SET_request);
+		next_SET_request = {};
+		callbacks_SET_request = [];
 	}
 	
-	
-	
+	// Return an url to get a file of the widget
 	var getUrl = function(widget, filename){
 		return 'widgetfile.php?widgetID='+widget+'&api=1&name='+escape(filename);
 	}

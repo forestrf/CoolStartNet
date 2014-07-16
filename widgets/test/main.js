@@ -7,7 +7,7 @@ console.log('Test 1');
 /////////////////////////////
 
 var text_rnd = Math.random();
-console.log('Saving the text: '+text_rnd);
+console.log('Test 1 Saving the text: '+text_rnd);
 
 var comando = {
 	'action':'set',
@@ -17,10 +17,10 @@ var comando = {
 
 API.call(comando, function(entrada){
 	if(entrada['test']){
-		console.log('Text Saved.');
+		console.log('Test 1 Text Saved.');
 	}
 	else{
-		console.log('Text NOT saved.');
+		console.log('Test 1 Text NOT saved.');
 	}
 });
 
@@ -38,10 +38,10 @@ var comando = {
 
 API.call(comando, function(entrada){
 	if(entrada['test']){
-		console.log('Got the text: '+entrada['test']);
+		console.log('Test 1 Got the text: '+entrada['test']);
 	}
 	else{
-		console.log('There is not a saved variable with that name.');
+		console.log('Test 1 There is not a saved variable with that name.');
 	}
 });
 
@@ -58,7 +58,7 @@ console.log('Test 2');
 var text_rnd1 = Math.random();
 var text_rnd2 = Math.random();
 var text_rnd3 = Math.random();
-console.log('Saving the texts:\n'+text_rnd1+'\n'+text_rnd2+'\n'+text_rnd3);
+console.log('Test 2 Saving the texts:\n'+text_rnd1+'\n'+text_rnd2+'\n'+text_rnd3);
 
 var comando = {
 	'action':'set',
@@ -69,10 +69,10 @@ var comando = {
 API.call(comando, function(entrada){
 	for(var i in entrada){
 		if(entrada[i]){
-			console.log('Text Saved ('+i+').');
+			console.log('Test 2 Text Saved ('+i+').');
 		}
 		else{
-			console.log('Text NOT saved ('+i+').');
+			console.log('Test 2 Text NOT saved ('+i+').');
 		}
 	}
 });
@@ -92,10 +92,59 @@ var comando = {
 API.call(comando, function(entrada){
 	for(var i in entrada){
 		if(entrada[i]){
-			console.log('Got the text ('+i+'): '+entrada[i]);
+			console.log('Test 2 Got the text ('+i+'): '+entrada[i]);
 		}
 		else{
-			console.log('There is not a saved variable with that name ('+i+').');
+			console.log('Test 2 There is not a saved variable with that name ('+i+').');
 		}
+	}
+});
+
+// ----------------------------------------------------------------------------------------------------------------
+
+
+
+console.log('Test 3');
+
+/////////////////////////////
+// Global variable SET test
+/////////////////////////////
+
+var text_rnd = Math.random();
+console.log('Test 3 Saving the text: '+text_rnd);
+
+var comando = {
+	'action':'set',
+	'widget':'global',
+	'variables':{'test':text_rnd}
+};
+
+API.call(comando, function(entrada){
+	if(entrada['test']){
+		console.log('Test 3 Text Saved.');
+	}
+	else{
+		console.log('Test 3 Text NOT saved.');
+	}
+});
+
+
+
+/////////////////////////////
+// Global variable GET test
+/////////////////////////////
+
+var comando = {
+	'action':'get',
+	'widget':'global',
+	'variables':'test'
+};
+
+API.call(comando, function(entrada){
+	if(entrada['test']){
+		console.log('Test 3 Got the text: '+entrada['test']);
+	}
+	else{
+		console.log('Test 3 There is not a saved variable with that name.');
 	}
 });
