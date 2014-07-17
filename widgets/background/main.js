@@ -113,3 +113,10 @@ function setBackground(div, background){
 	div.style[relations[4]] = relations[background[4]];
 	div.style[relations[5]] = relations[background[5]];
 }
+
+
+// Function for the config widgetID. It returns the html object to append on the config window
+var CONFIG_function = function(){
+	var div = document.createElement('div');
+	return div;
+}

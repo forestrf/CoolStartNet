@@ -1,15 +1,44 @@
 .config_buttongear {
+	top: 5px;
+	right: 8px;
 	color: #dadada;
 	cursor: pointer;
-	font-size: 2em;
 	position: fixed;
-	right: 8px;
-	text-shadow: 3px 3px #000;
-	top: 5px;
+	font-size: 2em;
 	transition: all 0.5s ease 0s;
+	text-shadow: 3px 3px #000;
 }
 
 .config_buttongear:hover {
-	color: #ffffff;
+	color: #fff;
 	text-shadow: 3px 3px 3px #000;
+}
+
+.config_contentdiv {
+    top: -100%;
+    left: 0;
+	color: #fff;
+    width: 100%;
+    height: 100%;
+	opacity: 0;
+    position: fixed;
+    transition: opacity 0.5s ease 0s, top 0s ease 0.5s;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+.config_contentdiv.visible {
+	top: 0;
+	opacity: 1;
+	transition: opacity 0.5s ease 0s;
+}
+
+.config_contentdiv .closebutton {
+    top: 1%;
+    right: 1%;
+	color: #ccc;
+    cursor: pointer;
+    position: absolute;
+    font-size: 2em;
+}
+.config_contentdiv .closebutton:hover {
+    color: #fff;
 }
