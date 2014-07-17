@@ -1,0 +1,21 @@
+.background_widget_bg1 {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	z-index: -99999;
+}
+
+.background_widget_bg2 {
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	transition: opacity 3s ease;
+}
+
+.background_widget_transparent {
+	opacity: 0;
+	transition: all 0s !important;
+}
