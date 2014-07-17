@@ -1,0 +1,15 @@
+.config_buttongear {
+	color: #dadada;
+	cursor: pointer;
+	font-size: 2em;
+	position: fixed;
+	right: 8px;
+	text-shadow: 3px 3px #000;
+	top: 5px;
+	transition: all 0.5s ease 0s;
+}
+
+.config_buttongear:hover {
+	color: #ffffff;
+	text-shadow: 3px 3px 3px #000;
+}
