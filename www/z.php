@@ -16,6 +16,7 @@
 #	 along with MyHomePage.  If not, see <http://www.gnu.org/licenses/>.
 
 
+header('Content-Type: text/html; charset=UTF-8');
 
 
 session_start();

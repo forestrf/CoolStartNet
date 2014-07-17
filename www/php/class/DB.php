@@ -159,11 +159,11 @@ class DB {
 			// Ignore value
 			foreach($variables as $variable => &$value){
 				$variable = mysql_escape_mimic($variable);
-				$SQL_statement[] = "(`IDuser` = '{$ID}' AND `IDwidget` = '{$widgetID_calc}' AND `variable` = '{$variable}')";
+				$SQL_statement[] = "(`IDwidget` = '{$widgetID_calc}' AND `variable` = '{$variable}')";
 			}
 		}
 		
-		return $this->query("SELECT `IDwidget`, `variable`, `value` FROM `variables` WHERE ".implode('OR', $SQL_statement).";");
+		return $this->query("SELECT `IDwidget`, `variable`, `value` FROM `variables` WHERE `IDuser` = '{$ID}' AND ".implode('OR', $SQL_statement).";");
 	}
 	
 	// $insert_o_update = 'I' / 'U'
