@@ -50,7 +50,7 @@ if($version['public'] === '1'){
 </head>
 <body>
 
-Edit a widget version adding or removing files to it.<br/>
+Edit a version of the widget <b>"<?php echo $widget['name']?>"</b> adding or removing files to it.<br/>
 
 Files:<br/>
 Es obligatorio el archivo "main.js" ya que será el único que se incruste. Mediante la api se pueden llamar otros archivos. (por hacer)<br/><br/>
