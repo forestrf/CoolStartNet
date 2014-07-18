@@ -35,29 +35,30 @@ contentDiv.className = 'config_contentdiv';
 // Append the config window to the body
 document.body.appendChild(contentDiv);
 
-// Make the div container for the widgets in the config window
+// Make the div container for the widgets in the config window and append the container for the widgets in the config window
 var contentwidgetsDiv = document.createElement('div');
 contentwidgetsDiv.className = 'contentwidgets';
-
-// Append the container for the widgets in the config window
 contentDiv.appendChild(contentwidgetsDiv);
 
-// Make the div container for the result of the configuration function of each widget (share the div)
+// Make the div container for the result of the configuration function of each widget (share the div) and append the container for the widgets in the config window
 var configwidgetDiv = document.createElement('div');
 configwidgetDiv.className = 'configwidget';
-
-// Append the container for the widgets in the config window
 contentDiv.appendChild(configwidgetDiv);
+
+// Placeholder for the back button variable
+var backbutton;
 
 // Create the close button for the config window
 var closebutton = document.createElement('i');
 closebutton.className = 'fa fa-times closebutton';
 contentDiv.appendChild(closebutton);
 closebutton.onclick = function(){
-	// Hide window
-	contentDiv.className = contentDiv.className.split('visible').join('').trim();
 	// Reset content
 	contentwidgetsDiv.innerHTML = '';
+	configwidgetDiv.innerHTML = '';
+	backbutton.remove();
+	// Hide window
+	contentDiv.className = contentDiv.className.split('visible').join('').trim();
 };
 
 
@@ -85,7 +86,7 @@ gearDiv.onclick = function(){
 			configwidgetDiv.appendChild(CONFIG[widget]['function']());
 			
 			// Create the back button for the widget config window
-			var backbutton = document.createElement('i');
+			backbutton = document.createElement('i');
 			backbutton.className = 'fa fa-reply backbutton';
 			contentDiv.appendChild(backbutton);
 			backbutton.onclick = function(){
