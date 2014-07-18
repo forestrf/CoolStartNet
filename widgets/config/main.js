@@ -82,22 +82,24 @@ gearDiv.onclick = function(){
 		contentwidgetsDiv.appendChild(buttonWidget);
 		
 		// set the onclick for the button. executes the widget function and appends the result to the 
-		buttonWidget.onclick = function(){
-			contentwidgetsDiv.style.display = 'none';
-			// Execute the function and append the result to the corresponding div container
-			configwidgetDiv.appendChild(CONFIG[widget]['function']());
-			
-			// Create the back button for the widget config window
-			backbutton = document.createElement('i');
-			backbutton.className = 'fa fa-reply backbutton';
-			contentDiv.appendChild(backbutton);
-			backbutton.onclick = function(){
-				// Reset content
-				configwidgetDiv.innerHTML = '';
-				contentwidgetsDiv.style.display = '';
-				backbutton.remove();
+		buttonWidget.onclick = (function(widget){
+			return function(){
+				contentwidgetsDiv.style.display = 'none';
+				// Execute the function and append the result to the corresponding div container
+				configwidgetDiv.appendChild(CONFIG[widget]['function']());
+				
+				// Create the back button for the widget config window
+				backbutton = document.createElement('i');
+				backbutton.className = 'fa fa-reply backbutton';
+				contentDiv.appendChild(backbutton);
+				backbutton.onclick = function(){
+					// Reset content
+					configwidgetDiv.innerHTML = '';
+					contentwidgetsDiv.style.display = '';
+					backbutton.remove();
+				};
 			};
-		}
+		})(widget);
 	}
 	
 	
