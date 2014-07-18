@@ -62,11 +62,32 @@
 	display: inline-block;
 	padding: 1em;
 	transition: all 0.2s ease 0s;
-	font-variant: small-caps;
 }
 
 .config_contentdiv .contentwidgets > div:hover {
 	color: #a0f7f7;
 	box-shadow: 0 0 5px #00ffff, 0 0 5px #00ffff inset;
 	border-color: #0ef;
+}
+
+
+
+/*Styles for the widget forms (tables, forms with inputs, etc)*/
+
+.config_contentdiv .configwidget .widgetnamebig {
+    font-size: 3em;
+    padding: 0.5em 0 2em;
+}
+
+.config_contentdiv .configwidget {
+	margin-top: 2.5em;
+	text-align: center;
+}
+
+.config_contentdiv .configwidget table {
+	margin: 0 auto;
+}
+
+.config_contentdiv .configwidget table td {
+	padding: 1em 1em 0;
 }

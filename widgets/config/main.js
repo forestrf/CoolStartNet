@@ -78,15 +78,18 @@ gearDiv.onclick = function(){
 	// Go over the array CONFIG
 	for(widget in CONFIG){
 		var buttonWidget = document.createElement('div');
-		buttonWidget.innerHTML += CONFIG[widget]['name'];
+		buttonWidget.innerHTML += CONFIG[widget]['name'].toUpperCase();
 		contentwidgetsDiv.appendChild(buttonWidget);
 		
 		// set the onclick for the button. executes the widget function and appends the result to the 
 		buttonWidget.onclick = (function(widget){
 			return function(){
 				contentwidgetsDiv.style.display = 'none';
+				configwidgetDiv.innerHTML = '<div class="widgetnamebig">' + CONFIG[widget]['name'].toUpperCase() + ' WIDGET</div>'
 				// Execute the function and append the result to the corresponding div container
-				configwidgetDiv.appendChild(CONFIG[widget]['function']());
+				var divContainerConfigWidget = document.createElement('div');
+				divContainerConfigWidget.appendChild(CONFIG[widget]['function']());
+				configwidgetDiv.appendChild(divContainerConfigWidget);
 				
 				// Create the back button for the widget config window
 				backbutton = document.createElement('i');
