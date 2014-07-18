@@ -147,7 +147,8 @@ var CONFIG_function = function(){
 	tr.appendChild(td);
 	table.appendChild(tr);
 	
-	table.innerHTML += '<br/><br/>';
+	table.appendChild(document.createElement('br'));
+	table.appendChild(document.createElement('br'));
 	
 	div.appendChild(table);
 	
