@@ -51,13 +51,15 @@
 
 .config_contentdiv .contentwidgets {
 	padding: 5%;
+	text-align: center;
 }
 
 .config_contentdiv .contentwidgets > div {
 	color: #d0d0d0;
 	border: 1px solid #a0a0a0;
 	cursor: pointer;
-	display: inline;
+	margin: 0 1em 1em 0;
+	display: inline-block;
 	padding: 1em;
 	transition: all 0.2s ease 0s;
 	font-variant: small-caps;

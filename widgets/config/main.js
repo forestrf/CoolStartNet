@@ -56,7 +56,9 @@ closebutton.onclick = function(){
 	// Reset content
 	contentwidgetsDiv.innerHTML = '';
 	configwidgetDiv.innerHTML = '';
-	backbutton.remove();
+	if(backbutton){
+		backbutton.remove();
+	}
 	// Hide window
 	contentDiv.className = contentDiv.className.split('visible').join('').trim();
 };
@@ -100,3 +102,14 @@ gearDiv.onclick = function(){
 	
 	
 };
+
+
+
+
+
+// Function for the config widgetID. It returns the html object to append on the config window.
+// In this case we only want to allow the user to change the position of the widget.
+var CONFIG_function = function(){
+	var div = document.createElement('div');
+	return div;
+}
