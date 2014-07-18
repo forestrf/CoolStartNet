@@ -39,22 +39,22 @@
 	position: absolute;
 	font-size: 2em;
 }
-.config_contentdiv .closebutton {
+.config_contentdiv > .closebutton {
 	right: 1%;
 }
-.config_contentdiv .backbutton {
+.config_contentdiv > .backbutton {
 	right: 5%;
 }
-.config_contentdiv .closebutton:hover, .config_contentdiv .backbutton:hover {
+.config_contentdiv > .closebutton:hover, .config_contentdiv > .backbutton:hover {
 	color: #fff;
 }
 
-.config_contentdiv .contentwidgets {
+.config_contentdiv > .contentwidgets {
 	padding: 5%;
 	text-align: center;
 }
 
-.config_contentdiv .contentwidgets > div {
+.config_contentdiv > .contentwidgets > div {
 	color: #d0d0d0;
 	border: 1px solid #a0a0a0;
 	cursor: pointer;
@@ -64,9 +64,9 @@
 	transition: all 0.2s ease 0s;
 }
 
-.config_contentdiv .contentwidgets > div:hover {
+.config_contentdiv > .contentwidgets > div:hover {
 	color: #a0f7f7;
-	box-shadow: 0 0 5px #00ffff, 0 0 5px #00ffff inset;
+	box-shadow: 0 0 5px #0ff, 0 0 5px #0ff inset;
 	border-color: #0ef;
 }
 
@@ -74,20 +74,32 @@
 
 /*Styles for the widget forms (tables, forms with inputs, etc)*/
 
-.config_contentdiv .configwidget .widgetnamebig {
-    font-size: 3em;
-    padding: 0.5em 0 2em;
+.config_contentdiv > .configwidget .widgetnamebig {
+	font-size: 3em;
+	padding: 0.5em 0 2em;
 }
 
-.config_contentdiv .configwidget {
+.config_contentdiv > .configwidget {
 	margin-top: 2.5em;
 	text-align: center;
 }
 
-.config_contentdiv .configwidget table {
+.config_contentdiv > .configwidget table {
 	margin: 0 auto;
 }
 
-.config_contentdiv .configwidget table td {
+.config_contentdiv > .configwidget table td {
 	padding: 1em 1em 0;
+}
+
+.config_contentdiv > .configwidget input:hover, .config_contentdiv > .configwidget input:focus {
+	color: #fff;
+	border-color: #fff;
+}
+.config_contentdiv > .configwidget input {
+	color: #d0d0d0;
+	border: 1px solid #a0a0a0;
+	padding: 0.3em;
+	transition: all 0.2s ease 0s;
+	background-color: transparent;
 }
