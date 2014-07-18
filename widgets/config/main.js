@@ -91,6 +91,7 @@ gearDiv.onclick = function(){
 				configwidgetDiv.innerHTML = '<div class="widgetnamebig">' + CONFIG[widget]['name'].toUpperCase() + ' WIDGET</div>'
 				// Execute the function and append the result to the corresponding div container
 				var divContainerConfigWidget = document.createElement('div');
+				divContainerConfigWidget.className = 'widgetcontentconfig';
 				divContainerConfigWidget.appendChild(CONFIG[widget]['function']());
 				configwidgetDiv.appendChild(divContainerConfigWidget);
 				
