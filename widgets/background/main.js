@@ -22,20 +22,20 @@ fondoDiv.appendChild(fondoDiv2);
 
 
 var relations = {
-	'1':'backgroundImage',
-	'2':'backgroundColor',
-	'3':'backgroundPosition',
-	'4':'backgroundRepeat',
-	'5':'backgroundSize',
-	'a':'left left',
+	0:'backgroundImage',
+	1:'backgroundColor',
+	2:'backgroundPosition',
+	3:'backgroundRepeat',
+	4:'backgroundSize',
+	'a':'left top',
 	'b':'left center',
-	'c':'left right',
-	'd':'center left',
+	'c':'left bottom',
+	'd':'center top',
 	'e':'center center',
-	'f':'center right',
-	'g':'right left',
+	'f':'center bottom',
+	'g':'right top',
 	'h':'right center',
-	'i':'right right',
+	'i':'right bottom',
 	'j':'repeat',
 	'k':'repeat-x',
 	'l':'repeat-y',
@@ -49,27 +49,20 @@ var relations = {
 
 
 var backgrounds = [];
-backgrounds.push({
-	'1':'https://dl.dropboxusercontent.com/u/1630604/imagenes%20b/wallpapers/1391803994183.jpg',
-	'2':'#000000',
-	'3':'e',
-	'4':'m',
-	'5':'n'
-});
-backgrounds.push({
-	'1':'https://dl.dropboxusercontent.com/u/1630604/imagenes%20b/wallpapers/1391407706614.jpg',
-	'2':'#000000',
-	'3':'e',
-	'4':'m',
-	'5':'n'
-});
-backgrounds.push({
-	'1':'https://dl.dropboxusercontent.com/u/1630604/imagenes%20b/wallpapers/1390952811479.jpg',
-	'2':'#000000',
-	'3':'e',
-	'4':'m',
-	'5':'n'
-});
+backgrounds.push([
+	'http://static.freepik.com/foto-gratis/poligono-de-fondo_72818.jpg',
+	'#000000',
+	'e',
+	'm',
+	'n'
+]);
+backgrounds.push([
+	'http://img.wallpaperstock.net:81/wallpapers/thumbs1/36523wide.jpg',
+	'#000000',
+	'e',
+	'm',
+	'n'
+]);
 
 var transitionTime = 3000; //ms
 var delayBackground = 60000; //ms
@@ -106,11 +99,11 @@ setInterval(function(){
 
 // Change the style of a div to make it a background with the options of the background variable
 function setBackground(div, background){
-	div.style[relations[1]] = 'url("'+background[1]+'")';
-	div.style[relations[2]] = background[2];
-	div.style[relations[3]] = relations[background[3]];
-	div.style[relations[4]] = relations[background[4]];
-	div.style[relations[5]] = relations[background[5]];
+	div.style[relations[0]] = 'url("'+background[0]+'")';
+	div.style[relations[1]] = background[1];
+	for(var i = 2; i < 5; ++i){
+		div.style[relations[i]] = relations[background[i]];
+	}
 }
 
 
@@ -119,17 +112,17 @@ function setBackground(div, background){
 
 // Function for the config widgetID. It returns the html object to append on the config window
 var CONFIG_function = function(){
+	var div = document.createElement('div');
 	
 	// Each row of the table will be a td with an input and another td with a description and the save button
 	var table = document.createElement('table');
-	var tbody = document.createElement('tbody');
-	table.appendChild(tbody);
 	
 	
 	// Time between transitions
 	var tr = document.createElement('tr');
 	var td = document.createElement('td');
 	var inputDelayBackground = document.createElement('input');
+	inputDelayBackground.type = 'text';
 	inputDelayBackground.value = delayBackground/1000; // ms to s
 	td.appendChild(inputDelayBackground);
 	tr.appendChild(td);
@@ -137,13 +130,14 @@ var CONFIG_function = function(){
 	td = document.createElement('td');
 	td.innerHTML = 'Time between transitions (in seconds)';
 	tr.appendChild(td);
-	tbody.appendChild(tr);
+	table.appendChild(tr);
 	
 	
 	// Time transitioning (in seconds)
 	tr = document.createElement('tr');
 	td = document.createElement('td');
 	var inputTransitionTime = document.createElement('input');
+	inputTransitionTime.type = 'text';
 	inputTransitionTime.value = transitionTime/1000; // ms to s
 	td.appendChild(inputTransitionTime);
 	tr.appendChild(td);
@@ -151,19 +145,157 @@ var CONFIG_function = function(){
 	td = document.createElement('td');
 	td.innerHTML = 'Time transitioning (in seconds)';
 	tr.appendChild(td);
-	tbody.appendChild(tr);
+	table.appendChild(tr);
+	
+	table.innerHTML += '<br/><br/>';
+	
+	div.appendChild(table);
 	
 	
 	
 	
 	
-	
-	var inputDelayBackgroundTime = document.createElement('input');
-	inputDelayBackgroundTime.value = transitionTime;
+	table = document.createElement('table');
 	
 	
 	
+	// Background list
+	for(var i in backgrounds){
+		table.appendChild(createBGTableElement(backgrounds[i]));
+	}
+	
+	div.appendChild(table);
 	
 	
-	return table;
+	
+	
+	
+	// Returns a tr for the table of backgrounds
+	function createBGTableElement(background){
+		var trBody = document.createElement('tr');
+		var td = document.createElement('td');
+		
+		// First TD is for the image, second TD for the inputs and the text (that are in another table)
+		var previewPic = document.createElement('img');
+		previewPic.style.cssFloat = 'right';
+		previewPic.style.height   = '10em';
+		previewPic.style.maxWidth = '25em';
+		if(background){
+			previewPic.src = background[0];
+		}
+		td.appendChild(previewPic);
+		trBody.appendChild(td);
+		
+		td = document.createElement('td');
+		trBody.appendChild(td);
+		
+		// inputs and text
+		var table = document.createElement('table');
+		
+		td.appendChild(table);
+		
+		
+		
+		// URL input
+		var tr = document.createElement('tr');
+		td = document.createElement('td');
+		tr.appendChild(td);
+		var input = document.createElement('input');
+		input.type = 'text';
+		input.value = background ? background[0] : '';
+		input.placeholder = 'http://www.domain.com/image.jpg';
+		input.onchange = input.onkeyup = function(){
+			previewPic.src = this.value;
+		}
+		td.appendChild(input);
+		
+		td = document.createElement('td');
+		td.innerHTML = 'URL of the background';
+		tr.appendChild(td);
+		table.appendChild(tr);
+		
+		
+		
+		// COLOR input
+		tr = document.createElement('tr');
+		td = document.createElement('td');
+		tr.appendChild(td);
+		input = document.createElement('input');
+		input.type = 'text';
+		input.value = background ? background[1] : '#000000';
+		input.placeholder = '#000000';
+		td.appendChild(input);
+		
+		td = document.createElement('td');
+		td.innerHTML = 'Color to fill the background outsides';
+		tr.appendChild(td);
+		table.appendChild(tr);
+		
+		
+		
+		// POSITION input
+		tr = document.createElement('tr');
+		td = document.createElement('td');
+		tr.appendChild(td);
+		input = document.createElement('select');
+		input.innerHTML = '<option value="e">center center</option><option value="d">center top</option><option value="f">center bottom</option><option value="a">left top</option><option value="b">left center</option><option value="c">left bottom</option><option value="g">right top</option><option value="h">right center</option><option value="i">right bottom</option>';
+		td.appendChild(input);
+		
+		td = document.createElement('td');
+		td.innerHTML = 'Position of the background';
+		tr.appendChild(td);
+		table.appendChild(tr);
+		
+		
+		
+		// REPEAT input
+		tr = document.createElement('tr');
+		td = document.createElement('td');
+		tr.appendChild(td);
+		input = document.createElement('select');
+		input.innerHTML = '<option value="j">repeat</option><option value="k">repeat-x</option><option value="l">repeat-y</option><option value="m">no-repeat</option>';
+		td.appendChild(input);
+		
+		td = document.createElement('td');
+		td.innerHTML = 'Background repeating to fill the window';
+		tr.appendChild(td);
+		table.appendChild(tr);
+		
+		
+		
+		// SIZE input
+		tr = document.createElement('tr');
+		td = document.createElement('td');
+		tr.appendChild(td);
+		input = document.createElement('select');
+		input.innerHTML = '<option value="n">cover</option><option value="o">contain</option><option value="p">auto</option>';
+		td.appendChild(input);
+		
+		td = document.createElement('td');
+		td.innerHTML = 'How the background scales to fill the window';
+		tr.appendChild(td);
+		table.appendChild(tr);
+		
+		
+		
+		// REMOVE input
+		tr = document.createElement('tr');
+		td = document.createElement('td');
+		tr.appendChild(td);
+		input = document.createElement('button');
+		input.innerHTML = "Remove";
+		td.appendChild(input);
+		table.appendChild(tr);
+		
+		
+		
+		
+		
+		
+		
+		
+		return trBody;
+	}
+		
+	return div;
 }
