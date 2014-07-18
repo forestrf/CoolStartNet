@@ -15,15 +15,16 @@
 }
 
 .config_contentdiv {
-    top: -100%;
-    left: 0;
+	top: -100%;
+	left: 0;
 	color: #fff;
-    width: 100%;
-    height: 100%;
+	width: 100%;
+	height: 100%;
 	opacity: 0;
-    position: fixed;
-    transition: opacity 0.5s ease 0s, top 0s ease 0.5s;
-    background-color: rgba(0, 0, 0, 0.9);
+	z-index: 999999;
+	position: fixed;
+	transition: opacity 0.5s ease 0s, top 0s ease 0.5s;
+	background-color: rgba(0, 0, 0, 0.9);
 }
 .config_contentdiv.visible {
 	top: 0;
@@ -31,14 +32,39 @@
 	transition: opacity 0.5s ease 0s;
 }
 
-.config_contentdiv .closebutton {
-    top: 1%;
-    right: 1%;
+.config_contentdiv .closebutton, .config_contentdiv .backbutton {
+	top: 1%;
 	color: #ccc;
-    cursor: pointer;
-    position: absolute;
-    font-size: 2em;
+	cursor: pointer;
+	position: absolute;
+	font-size: 2em;
 }
-.config_contentdiv .closebutton:hover {
-    color: #fff;
+.config_contentdiv .closebutton {
+	right: 1%;
+}
+.config_contentdiv .backbutton {
+	right: 5%;
+}
+.config_contentdiv .closebutton:hover, .config_contentdiv .backbutton:hover {
+	color: #fff;
+}
+
+.config_contentdiv .contentwidgets {
+	padding: 5%;
+}
+
+.config_contentdiv .contentwidgets > div {
+	color: #d0d0d0;
+	border: 1px solid #a0a0a0;
+	cursor: pointer;
+	display: inline;
+	padding: 1em;
+	transition: all 0.2s ease 0s;
+	font-variant: small-caps;
+}
+
+.config_contentdiv .contentwidgets > div:hover {
+	color: #a0f7f7;
+	box-shadow: 0 0 5px #00ffff, 0 0 5px #00ffff inset;
+	border-color: #0ef;
 }
