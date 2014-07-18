@@ -43,6 +43,7 @@ contentDiv.appendChild(contentwidgetsDiv);
 // Make the div container for the result of the configuration function of each widget (share the div) and append the container for the widgets in the config window
 var configwidgetDiv = document.createElement('div');
 configwidgetDiv.className = 'configwidget';
+configwidgetDiv.style.display = 'none';
 contentDiv.appendChild(configwidgetDiv);
 
 // Placeholder for the back button variable
@@ -56,6 +57,7 @@ closebutton.onclick = function(){
 	// Reset content
 	contentwidgetsDiv.innerHTML = '';
 	configwidgetDiv.innerHTML = '';
+	configwidgetDiv.style.display = 'none';
 	if(backbutton){
 		backbutton.remove();
 	}
@@ -85,6 +87,7 @@ gearDiv.onclick = function(){
 		buttonWidget.onclick = (function(widget){
 			return function(){
 				contentwidgetsDiv.style.display = 'none';
+				configwidgetDiv.style.display = 'inherit';
 				configwidgetDiv.innerHTML = '<div class="widgetnamebig">' + CONFIG[widget]['name'].toUpperCase() + ' WIDGET</div>'
 				// Execute the function and append the result to the corresponding div container
 				var divContainerConfigWidget = document.createElement('div');
@@ -99,6 +102,7 @@ gearDiv.onclick = function(){
 					// Reset content
 					configwidgetDiv.innerHTML = '';
 					contentwidgetsDiv.style.display = '';
+					configwidgetDiv.style.display = 'none';
 					backbutton.remove();
 				};
 			};

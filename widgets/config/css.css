@@ -24,7 +24,7 @@
 	z-index: 999999;
 	position: fixed;
 	transition: opacity 0.5s ease 0s, top 0s ease 0.5s;
-	background-color: rgba(0, 0, 0, 0.9);
+	background: linear-gradient(to bottom, #171717 0%, rgba(40, 40, 40, 0.8) 100%) transparent;
 }
 .config_contentdiv.visible {
 	top: 0;
@@ -50,7 +50,9 @@
 }
 
 .config_contentdiv > .contentwidgets {
+	width: 90%;
 	padding: 5%;
+	position: absolute;
 	text-align: center;
 }
 
@@ -74,18 +76,24 @@
 
 /*Styles for the widget forms (tables, forms with inputs, etc)*/
 
-.config_contentdiv > .configwidget .widgetnamebig {
-	font-size: 3em;
-	padding: 0.5em 0 2em;
+.config_contentdiv > .configwidget {
+	width: 100%;
+	height: 90%;
+	position: absolute;
+	margin-top: 5%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	text-align: center;
 }
 
-.config_contentdiv > .configwidget {
-	margin-top: 2.5em;
-	text-align: center;
+.config_contentdiv > .configwidget .widgetnamebig {
+	padding: 0.5em 0 2em;
+	font-size: 3em;
 }
 
 .config_contentdiv > .configwidget table {
 	margin: 0 auto;
+	text-align: left;
 }
 
 .config_contentdiv > .configwidget table td {
