@@ -3,11 +3,10 @@
 require_once __DIR__.'/../config.php';
 require_once __DIR__.'/../functions/generic.php';
 
-// En caso de mudar de base de datos sería necesario modificar la clase siguiente. Las funciones para la aplicación deben permanecer definidas y con los mismos parámetros
-// Pero puede variar su contenido para adaptarse a la nueva base de datos
+// All the queries to the database are here. Change the database engine or the queries only have to be made here.
 class DB {
 	
-	// Datos de login por defecto. En caso de necesitar cambiar el login, cambiar aquí
+	// Login data to access the database. change in the config file.
 	private $host = MYSQL_HOST;
 	private $user = MYSQL_USER;
 	private $pass = MYSQL_PASSWORD;
@@ -15,7 +14,7 @@ class DB {
 	
 	private $mysqli;
 	
-	private $conexionAbierta = false;
+	private $opened_connection = false;
 	
 	var $LAST_MYSQL_ID = '';
 	
@@ -31,20 +30,21 @@ class DB {
 		if($bd !== null)
 			$this->bd = $bd;
 			
-		// Conexión persistente:
+		// Persistent connection:
 		// http://www.php.net/manual/en/mysqli.persistconns.php
 		// To open a persistent connection you must prepend p: to the hostname when connecting. 
 		$this->mysqli = new mysqli('p:'.$this->host, $this->user, $this->pass, $this->bd);
 		if ($this->mysqli->connect_errno) {
-			// echo "Fallo al contectar a MySQL: (" . $this->mysqli->connect_errno . ") " . $this->mysqli->connect_error;
+			// echo "Failed to connect to MySQL: (" . $this->mysqli->connect_errno . ") " . $this->mysqli->connect_error;
 			return false;
 		}
 		$this->mysqli->set_charset("utf8");
 		return true;
 	}
 	
-	// Realizar una consulta sql. Retorna false en caso de error, además de imprimir el error en pantalla
-	// Solo aquí se realiza una consulta directamente. De esta forma se puede abrir conexión en caso de ser necesaria o usar una respuesta cacheada
+	// Make a SQL query. Returns false if there is an error, and throws an exception.
+	// Queries are only made here. This way a connection can be opened if necessary or can be used a cached response.
+	// $this->LAST_MYSQL_ID stores the ID of the last insert query
 	private function query($query, $cacheable = false){
 		if($cacheable){
 			$cached = $this->queryCache($query);
@@ -53,11 +53,11 @@ class DB {
 			}
 		}
 		
-		if($this->conexionAbierta === false){
+		if($this->opened_connection === false){
 			if(!$this->Open()){
 				return false;
 			}
-			$this->conexionAbierta = true;
+			$this->opened_connection = true;
 		}
 		
 		try{
@@ -89,7 +89,7 @@ class DB {
 	
 	# ---------------------------------------------------------------------------
 	#
-	# USUARIOS
+	# USERS
 	#
 	# ---------------------------------------------------------------------------
 	
@@ -449,7 +449,7 @@ class DB {
 	
 	# ---------------------------------------------------------------------------
 	#
-	# WIDGETS - USUARIOS
+	# WIDGETS - USERS
 	#
 	# ---------------------------------------------------------------------------
 	
