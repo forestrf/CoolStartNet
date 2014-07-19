@@ -60,6 +60,7 @@ El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo
 <script>
 	// Variables for the config widget
 	var CONFIG = [];
+</script>
 
 <?php
 
@@ -74,18 +75,19 @@ foreach($widgets_usuario as &$widget){
 	$data = $db->widgetVersionGetArchivo($widget['ID'], $version, 'main.js');
 	$data = &$data[0];
 	$data = &$data['data'];
-	echo "(function(widgetID, versionWidget){
-		{$data}
-		if(typeof CONFIG_function !== 'undefined'){
-			CONFIG.push({
-				'name':'".strtr($widget['name'], array("'","\\'"))."',
-				'function':CONFIG_function
-			});
-		}
-		})('{$widget['ID']}', '{$version}');";
+	echo "<script>
+		(function(widgetID){
+			{$data}
+			if(typeof CONFIG_function !== 'undefined'){
+				CONFIG.push({
+					'name':'".strtr($widget['name'], array("'","\\'"))."',
+					'function':CONFIG_function
+				});
+			}
+		})('{$widget['ID']}');
+		</script>";
 }
 ?>
-</script>
 
 </body>
 </html>

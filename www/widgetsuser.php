@@ -46,7 +46,7 @@ foreach($widgets_usuario as &$widget){
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
 			<input type="submit" value="Select a version">
 		</form>
-		| Use always the last version (If there is no public version, user the last private version) | Configure<br/>';
+		| Use always the last version (If there is no public version, user the last private version)<br/>';
 }
 ?>
 
