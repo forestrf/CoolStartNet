@@ -72,6 +72,12 @@ foreach($posibles_referers as $referer_temp){
 							break;
 							case '6':
 								if(isset($_POST['comment'])){
+									if(strlen($_POST['comment']) > WIDGET_VERSION_COMMENT_MAX_LENGTH){
+										$comment = substr($comment, 0, WIDGET_VERSION_COMMENT_MAX_LENGTH);
+									}
+									else{
+										$comment = $_POST['comment'];
+									}
 									$db->set_widget_comment($_POST['widgetID'], $_POST['widgetVersion'], $_POST['comment']);
 								}
 							break;

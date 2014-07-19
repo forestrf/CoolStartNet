@@ -405,6 +405,12 @@ class DB {
 	// Save a file for a widget version with a name and a mimetype. Checks if the file can be uploaded to the version.
 	function upload_widget_version_file($widgetID, $version, $name, $mimetype, &$content){
 		if($this->CanIModifyWidget($widgetID) && can_be_widget_version($version)){
+			
+			// Check if the widget version reached the number of files
+			if(count($this->query("SELECT * FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';")) >= WIDGET_VERSION_MAX_FILES_NUMBER){
+				return false;
+			}
+			
 			$name = mysql_escape_mimic($name);
 			$content = mysql_escape_mimic($content);
 			$hash = file_hash($content);
