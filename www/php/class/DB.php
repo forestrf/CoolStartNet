@@ -169,7 +169,7 @@ class DB {
 	}
 	
 	// Doesn't check if the widget exists. This check is done in api.php
-	// POR HACER: Limitar tamaño de lo que se puede guardar
+	// POR HACER: Limitar tamaño de lo que se puede guardar.
 	// Change $ID to set a variable to a specific user.
 	// $widgetID_variable_value must be an array that follows the next pattern:
 	/*
@@ -200,7 +200,7 @@ class DB {
 		return $this->query("INSERT INTO `variables` (`IDuser`, `IDwidget`, `variable`, `value`) VALUES ".implode(',', $SQL_statement)." ON DUPLICATE KEY UPDATE `value` = VALUES(`value`);");
 	}
 	
-	// Create a widget
+	// Create a widget.
 	function creaWidget($nombre, $ID = null){
 		$nombre = mysql_escape_mimic($nombre);
 		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
@@ -211,14 +211,15 @@ class DB {
 		return false;
 	}
 	
-	// Solo se puede borrar widgets públicos si se es admin
-	// Borrar un widget es drástico. Borra las variables y lo desenlaza de los usuarios. PELIGROSO
-	// No borra el contenido ya que este puede coincidir por hash. El contenido se borrará mediante un proceso rutinario que comprueba la no vinculación de un hash.
-	function borraWidget($widgetID){
+	// Delete a widget given the ID of the widget.
+	// Only if $admin = true a public widget can be deleted.
+	// Deleting a widget also deletes the widget variables of users and users lose it if they are using it.
+	// Doesn't delete from the table 'files' because other file can has the same hash. The unlinked content is deleted from other function that is called from a cronjob.
+	function borraWidget($widgetID, $admin = false){
 		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
 		}
-		if($this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `published` = '-1';")){
+		if($admin || $this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `published` = '-1';")){
 			$this->query("DELETE FROM `widgets` WHERE `ID` = '{$widgetID}';");
 			$this->query("DELETE FROM `variables` WHERE `IDwidget` = '{$widgetID}';");
 			$this->query("DELETE FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}';");
@@ -227,7 +228,7 @@ class DB {
 		}
 	}
 	
-	// Retorna un array con las versiones existentes del widget, de la última a la primera
+	// Returns an array with all the existent versions of a widget given the widget ID, ordered from the last to the first version.
 	function getWidgetVersiones($widgetID){
 		if(!$this->CanIModifyWidget($widgetID)){
 			return $this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `public` = '1' AND `visible` = '1' ORDER BY `version` DESC;");
@@ -237,7 +238,7 @@ class DB {
 		}
 	}
 	
-	// Retorna una de las versiones existentes del widget (la solicitada)
+	// Returns one of the existent versions of a widget given the widget ID and the version number.
 	function getWidgetVersion($widgetID, $version){
 		$widgetID = mysql_escape_mimic($widgetID);
 		$version = mysql_escape_mimic($version);
@@ -245,11 +246,12 @@ class DB {
 		return count($result) > 0 ? $result[0] : false;
 	}
 	
-	// Retorna la última versión. $publico = true = debe ser público, false = puede o no ser público
-	function getWidgetLastVersion($widgetID, $publico = true){
+	// Returns the last version of a widget given the widget ID.
+	// if $public = true then the version must be public, otherwise the version is the latest even if it is not public.
+	function getWidgetLastVersion($widgetID, $public = true){
 		$widgetID = mysql_escape_mimic($widgetID);
-		$publico = $publico?" AND `public` = '1' ":'';
-		$result = $this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' {$publico} ORDER BY `version` DESC LIMIT 1;");
+		$public = $publico?" AND `public` = '1' ":'';
+		$result = $this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' {$public} ORDER BY `version` DESC LIMIT 1;");
 		return count($result) > 0 ? $result[0] : false;
 	}
 	
