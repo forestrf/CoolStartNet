@@ -43,6 +43,8 @@ List of widget versions.<br/>
 <?php
 $widget_versions = $db->get_all_widget_versions($widget['ID']);
 
+$current = false;
+
 foreach($widget_versions as &$widget_version){
 	echo 'Version '.$widget_version['version'],
 		' (<form method="POST" action="ipa.php">
@@ -54,11 +56,12 @@ foreach($widget_versions as &$widget_version){
 			<input type="hidden" name="volver" value="1">
 			<input type="submit" value="Use this version">
 		</form>)';
-	if($widget['autoupdate'] !== '1' && $widget_version['version'] === $widget['version']){
-		echo ' (Current) ';
-	}
-	else if($widget['autoupdate'] === '1' && $widget_version['public'] === '1' && $widget_version['visible'] === '1'){
+	if(!$current && (
+		($widget['autoupdate'] !== '1' && $widget_version['version'] === $widget['version']) || 
+		($widget['autoupdate'] === '1' && $widget_version['public'] === '1' && $widget_version['visible'] === '1')
+	)){
 		echo ' (Current)';
+		$current = true;
 	}
 	echo '<br/>';
 }
