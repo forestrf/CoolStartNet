@@ -529,6 +529,11 @@ class DB {
 		return false;
 	}
 	
+	// Sets the widget version used to autoupdate for the especified widget ID for the user.
+	function set_using_widget_version_autoupdate_user($widgetID){
+		$widgetID = mysql_escape_mimic($widgetID);
+		return $this->query("UPDATE `widgets-user` SET `autoupdate` = '1', `version` = '0' WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND `IDwidget` = '{$widgetID}';");
+	}
 	
 	
 	

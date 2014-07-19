@@ -27,6 +27,7 @@ Acciones:
 1 => Add widget to the user
 2 => Remove widget from the user
 3 => Manually set the widget version
+4 => Automatically set the widget version
 */
 
 // Por continuar. Comprobar referer y de coincidir, recoger datos, comprobar hash y de coincidir de nuevo, cambiar datos.
@@ -60,6 +61,9 @@ foreach($posibles_referers as $referer_temp){
 						if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
 							$db->set_using_widget_version_user($_POST['widgetID'], $_POST['widgetVersion']);
 						}
+					break;
+					case '4':
+						$db->set_using_widget_version_autoupdate_user($_POST['widgetID']);
 					break;
 				}
 			}

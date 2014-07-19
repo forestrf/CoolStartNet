@@ -45,8 +45,23 @@ foreach($widgets_usuario as &$widget){
 		<form method="GET" action="widgetsuserversion.php">
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
 			<input type="submit" value="Select a version">
-		</form>
-		| Use always the last version (If there is no public version, user the last private version)<br/>';
+		</form>';
+	if($widget['autoupdate'] === '0'){
+		echo '<form method="POST" action="ipa.php">
+			<input type="hidden" name="switch" value="1">
+			<input type="hidden" name="accion" value="4">
+			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
+			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
+			<input type="hidden" name="volver" value="1">
+			<input type="submit" value="Use always the latest public version (If there is not a public version, use the last private version)">
+		</form> (using the version ' . $widget['version'] . ')';
+	}
+	else{
+		echo '(using the latest version)';
+	}
+	
+	
+	echo '<br/>';
 }
 ?>
 
