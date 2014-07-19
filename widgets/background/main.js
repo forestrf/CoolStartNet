@@ -112,6 +112,9 @@ function setBackground(div, background){
 
 // Function for the config widgetID. It returns the html object to append on the config window
 var CONFIG_function = function(){
+	// Make a copy of the backgrounds and use it to change configurations without touch the current background setup
+	var backgrounds_copy = backgrounds.slice(0);
+	
 	var div = document.createElement('div');
 	
 	// Each row of the table will be a td with an input and another td with a description and the save button
@@ -147,29 +150,60 @@ var CONFIG_function = function(){
 	tr.appendChild(td);
 	table.appendChild(tr);
 	
-	table.appendChild(document.createElement('br'));
-	table.appendChild(document.createElement('br'));
-	
 	div.appendChild(table);
 	
+	div.appendChild(document.createElement('br'));
+	div.appendChild(document.createElement('br'));
 	
 	
 	
 	
-	table = document.createElement('table');
 	
-	
+	var tableBackgrounds = document.createElement('table');
 	
 	// Background list
-	for(var i in backgrounds){
-		table.appendChild(createBGTableElement(backgrounds[i]));
+	for(var i in backgrounds_copy){
+		tableBackgrounds.appendChild(createBGTableElement(backgrounds_copy[i]));
 	}
 	
-	div.appendChild(table);
+	div.appendChild(tableBackgrounds);
+	
+	
+	
+	div.appendChild(document.createElement('br'));
+	div.appendChild(document.createElement('br'));
+	
+	
+	
+	// Add button
+	input = document.createElement('button');
+	input.innerHTML = "Add background";
+	input.onclick = function(){
+		backgrounds_copy.push(['','#000000','e','m','n']);
+		tableBackgrounds.appendChild(createBGTableElement(backgrounds_copy[backgrounds_copy.length-1]));
+	}
+	div.appendChild(input);
+	
+	
+	
+	div.appendChild(document.createElement('br'));
+	div.appendChild(document.createElement('br'));
+	div.appendChild(document.createElement('br'));
+	
+	
+	
+	// Save button
+	input = document.createElement('button');
+	input.innerHTML = "Save changes";
+	div.appendChild(input);
 	
 	
 	
 	
+	
+	function removeBackground(){
+		
+	}
 	
 	// Returns a tr for the table of backgrounds
 	function createBGTableElement(background){
@@ -178,9 +212,10 @@ var CONFIG_function = function(){
 		
 		// First TD is for the image, second TD for the inputs and the text (that are in another table)
 		var previewPic = document.createElement('img');
-		previewPic.style.cssFloat = 'right';
-		previewPic.style.height   = '10em';
-		previewPic.style.maxWidth = '25em';
+		previewPic.style.cssFloat  = 'right';
+		previewPic.style.height    = '10em';
+		previewPic.style.maxWidth  = '25em';
+		previewPic.style.boxShadow = '0 0 0.5em #151515';
 		if(background){
 			previewPic.src = background[0];
 		}
@@ -228,7 +263,7 @@ var CONFIG_function = function(){
 		td.appendChild(input);
 		
 		td = document.createElement('td');
-		td.innerHTML = 'Color to fill the background outsides';
+		td.innerHTML = 'Hexadecimal color to fill the background outsides';
 		tr.appendChild(td);
 		table.appendChild(tr);
 		
@@ -254,7 +289,7 @@ var CONFIG_function = function(){
 		td = document.createElement('td');
 		tr.appendChild(td);
 		input = document.createElement('select');
-		input.innerHTML = '<option value="j">repeat</option><option value="k">repeat-x</option><option value="l">repeat-y</option><option value="m">no-repeat</option>';
+		input.innerHTML = '<option value="j">Repeat</option><option value="k">Repeat horizontally</option><option value="l">Repeat vertically</option><option value="m">No repeat</option>';
 		td.appendChild(input);
 		
 		td = document.createElement('td');
@@ -269,7 +304,7 @@ var CONFIG_function = function(){
 		td = document.createElement('td');
 		tr.appendChild(td);
 		input = document.createElement('select');
-		input.innerHTML = '<option value="n">cover</option><option value="o">contain</option><option value="p">auto</option>';
+		input.innerHTML = '<option value="n">Cover</option><option value="o">Contain</option><option value="p">Auto</option>';
 		td.appendChild(input);
 		
 		td = document.createElement('td');
