@@ -1,0 +1,130 @@
+.config_buttongear {
+	top: 5px;
+	right: 8px;
+	color: #dadada;
+	cursor: pointer;
+	position: fixed;
+	font-size: 2em;
+	transition: all 0.5s ease 0s;
+	text-shadow: 3px 3px #000;
+}
+
+.config_buttongear:hover {
+	color: #fff;
+	text-shadow: 3px 3px 3px #000;
+}
+
+.config_contentdiv {
+	top: -100%;
+	left: 0;
+	color: #fff;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	z-index: 999999;
+	position: fixed;
+	transition: opacity 0.5s ease 0s, top 0s ease 0.5s;
+	background: linear-gradient(to bottom, #171717 0%, rgba(40, 40, 40, 0.8) 100%) transparent;
+}
+.config_contentdiv.visible {
+	top: 0;
+	opacity: 1;
+	transition: opacity 0.5s ease 0s;
+}
+
+.config_contentdiv .closebutton, .config_contentdiv .backbutton {
+	top: 1%;
+	color: #ccc;
+	cursor: pointer;
+	position: absolute;
+	font-size: 2em;
+}
+.config_contentdiv > .closebutton {
+	right: 1%;
+}
+.config_contentdiv > .backbutton {
+	right: 5%;
+}
+.config_contentdiv > .closebutton:hover, .config_contentdiv > .backbutton:hover {
+	color: #fff;
+}
+
+.config_contentdiv > .contentwidgets {
+	width: 90%;
+	padding: 5%;
+	position: absolute;
+	text-align: center;
+}
+
+.config_contentdiv > .contentwidgets > div {
+	color: #d0d0d0;
+	border: 1px solid #a0a0a0;
+	cursor: pointer;
+	margin: 0 1em 1em 0;
+	display: inline-block;
+	padding: 1em;
+	transition: all 0.2s ease 0s;
+}
+
+.config_contentdiv > .contentwidgets > div:hover {
+	color: #a0f7f7;
+	box-shadow: 0 0 5px #0ff, 0 0 5px #0ff inset;
+	border-color: #0ef;
+}
+
+
+
+/*Styles for the widget forms (tables, forms with inputs, etc)*/
+
+.config_contentdiv > .configwidget > .widgetcontentconfig {
+	padding-bottom: 5em;
+}
+
+.config_contentdiv > .configwidget {
+	width: 100%;
+	height: 90%;
+	position: absolute;
+	margin-top: 5%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	text-align: center;
+}
+
+.config_contentdiv > .configwidget .widgetnamebig {
+	padding: 0.5em 0 2em;
+	font-size: 3em;
+}
+
+.config_contentdiv > .configwidget table {
+	margin: 0 auto;
+	text-align: left;
+}
+
+.config_contentdiv > .configwidget table td {
+	padding: .5em 1em .5em;
+	vertical-align: middle;
+}
+
+.config_contentdiv > .configwidget input {
+	width: 12em;
+	color: #d0d0d0;
+	border: 1px solid #a0a0a0;
+	padding: 0.3em;
+	transition: all 0.2s ease 0s;
+	background-color: transparent;
+}
+
+.config_contentdiv > .configwidget input:hover, .config_contentdiv > .configwidget input:focus {
+	color: #fff;
+	border-color: #fff;
+}
+
+.config_contentdiv > .configwidget select, .config_contentdiv > .configwidget button {
+	width: 12.6em;
+	padding: 0.3em;
+	margin-left: 1px;
+}
+
+.config_contentdiv > .configwidget button {
+	cursor: pointer;
+}

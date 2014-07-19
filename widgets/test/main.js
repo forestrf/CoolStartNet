@@ -1,4 +1,5 @@
 //console.log(API.url(widgetID,'main.js'));
+// Variables are saved as text
 
 console.log('Test 1');
 
@@ -9,13 +10,13 @@ console.log('Test 1');
 var text_rnd = Math.random();
 console.log('Test 1 Saving the text: '+text_rnd);
 
-var comando = {
+var command = {
 	'action':'set',
 	'widget':widgetID,
 	'variables':{'test':text_rnd}
 };
 
-API.call(comando, function(entrada){
+API.call(command, function(entrada){
 	if(entrada['test']){
 		console.log('Test 1 Text Saved.');
 	}
@@ -30,13 +31,13 @@ API.call(comando, function(entrada){
 // GET test
 /////////////////////////////
 
-var comando = {
+var command = {
 	'action':'get',
 	'widget':widgetID,
 	'variables':'test'
 };
 
-API.call(comando, function(entrada){
+API.call(command, function(entrada){
 	if(entrada['test']){
 		console.log('Test 1 Got the text: '+entrada['test']);
 	}
@@ -60,13 +61,13 @@ var text_rnd2 = Math.random();
 var text_rnd3 = Math.random();
 console.log('Test 2 Saving the texts:\n'+text_rnd1+'\n'+text_rnd2+'\n'+text_rnd3);
 
-var comando = {
+var command = {
 	'action':'set',
 	'widget':widgetID,
 	'variables':{'test1':text_rnd1,'test2':text_rnd2,'test3':text_rnd3}
 };
 
-API.call(comando, function(entrada){
+API.call(command, function(entrada){
 	for(var i in entrada){
 		if(entrada[i]){
 			console.log('Test 2 Text Saved ('+i+').');
@@ -83,13 +84,13 @@ API.call(comando, function(entrada){
 // Multiple GET test
 /////////////////////////////
 
-var comando = {
+var command = {
 	'action':'get',
 	'widget':widgetID,
 	'variables':['test1','test2','test3']
 };
 
-API.call(comando, function(entrada){
+API.call(command, function(entrada){
 	for(var i in entrada){
 		if(entrada[i]){
 			console.log('Test 2 Got the text ('+i+'): '+entrada[i]);
@@ -113,13 +114,13 @@ console.log('Test 3');
 var text_rnd = Math.random();
 console.log('Test 3 Saving the text: '+text_rnd);
 
-var comando = {
+var command = {
 	'action':'set',
 	'widget':'global',
 	'variables':{'test':text_rnd}
 };
 
-API.call(comando, function(entrada){
+API.call(command, function(entrada){
 	if(entrada['test']){
 		console.log('Test 3 Text Saved.');
 	}
@@ -134,13 +135,13 @@ API.call(comando, function(entrada){
 // Global variable GET test
 /////////////////////////////
 
-var comando = {
+var command = {
 	'action':'get',
 	'widget':'global',
 	'variables':'test'
 };
 
-API.call(comando, function(entrada){
+API.call(command, function(entrada){
 	if(entrada['test']){
 		console.log('Test 3 Got the text: '+entrada['test']);
 	}
