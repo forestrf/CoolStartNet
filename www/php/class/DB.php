@@ -264,9 +264,11 @@ class DB {
 	
 	// Set a public widget version as the default public widget version.
 	function set_widget_default_version($widgetID, $version){
-		if($this->CanIModifyWidget($widgetID) && can_be_widget_version($version) &&
-		// Check if the version exists and is public
-		$this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `public` = '1' AND `version` = '{$version}';")){
+		if(
+			$this->CanIModifyWidget($widgetID) && can_be_widget_version($version) &&
+			// Check if the version exists and is public
+			$this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `public` = '1' AND `version` = '{$version}';")
+		){
 			return $this->query("UPDATE `widgets` SET `published` = '{$version}' WHERE `ID` = '{$widgetID}';");
 		}
 		return false;
@@ -509,7 +511,7 @@ class DB {
 	
 	// Sets the widget version (number) used for the especified widget ID for the user.
 	function set_using_widget_version_user($widgetID, $version){
-		if(!can_be_widget_version($version)){
+		if(can_be_widget_version($version)){
 			$widgetID = mysql_escape_mimic($widgetID);
 		
 			// Check if the user has the rights to have any version of the widget, if the version exists and the privileges of the version.
