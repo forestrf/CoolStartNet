@@ -63,56 +63,72 @@ var command = {
 };
 
 API.call(command, function(entrada){
-	if(entrada['background_images']){
-		backgrounds = JSON.parse(entrada['background_images']);
-	}
 	if(entrada['background_delay']){
 		delayBackground = entrada['background_delay'];
 	}
 	if(entrada['background_transition_time']){
 		transitionTime = entrada['background_transition_time'];
+		fondoDiv2.style.transition = 'opacity ' + transitionTime/1000 + 's ease';
+	}
+	if(entrada['background_images']){
+		backgrounds = JSON.parse(entrada['background_images']);
+		launch();
 	}
 });
 
 
 
-if(backgrounds.length === 0){
-	backgrounds.push(['','#000000','e','m','n']);
-}
+var launched = false;
+var next = 0;
 
+var intervalPlaceHolder;
 
-
-
-var next = parseInt(Math.random() *backgrounds.length);
-
-
-setBackground(fondoDiv, backgrounds[next]);
-
-if(++next > backgrounds.length -1){
-	next = 0;
-}
-
-setBackground(fondoDiv2, backgrounds[next]);
-
-
-// Interval to change backgrounds over time
-setInterval(function(){
-	fondoDiv2.className = fondoDiv2.className.split("background_widget_transparent").join("");
+function launch(force){
+	if(force === true){
+		if(launched){
+			clearInterval(intervalPlaceHolder);
+		}
+	}
+	else if(launched){
+		return;
+	}
+	launched = true;
 	
-	setTimeout(function(){
-		setBackground(fondoDiv, backgrounds[next]);
+	var next = parseInt(Math.random() *backgrounds.length);
+
+
+	setBackground(fondoDiv, backgrounds[next]);
+
+	if(++next > backgrounds.length -1){
+		next = 0;
+	}
+
+	setBackground(fondoDiv2, backgrounds[next]);
+
+
+	// Interval to change backgrounds over time
+	intervalPlaceHolder = setInterval(function(){
+		fondoDiv2.className = fondoDiv2.className.split("background_widget_transparent").join("");
 		
-		++next;
-		if(next > backgrounds.length -1)
-			next = 0;
+		// Force css redraw to start the transition
+		fondoDiv2.offsetHeight;
 		
 		//Preload the next background
-		fondoDiv2.className += "background_widget_transparent";
-		setBackground(fondoDiv2, backgrounds[next]);
+		setTimeout(function(){
+			setBackground(fondoDiv, backgrounds[next]);
+			
+			if(++next > backgrounds.length -1){
+				next = 0;
+			}
+			fondoDiv2.className += "background_widget_transparent";
+		
+			setBackground(fondoDiv2, backgrounds[next]);
+		}, transitionTime);
 		
 		
-	}, transitionTime);
-}, delayBackground);
+	}, - -delayBackground - -transitionTime);
+}
+
 
 
 // Change the style of a div to make it a background with the options of the background variable
@@ -255,6 +271,8 @@ var CONFIG_function = function(){
 				alert('NOT saved.');
 			}
 		});
+		
+		launch(true);
 	}
 	
 	
