@@ -46,33 +46,51 @@ var relations = {
 };
 
 
-
-
+// Default variables
 var backgrounds = [];
-backgrounds.push([
-	'http://static.freepik.com/foto-gratis/poligono-de-fondo_72818.jpg',
-	'#000000',
-	'e',
-	'm',
-	'n'
-]);
-backgrounds.push([
-	'http://img.wallpaperstock.net:81/wallpapers/thumbs1/36523wide.jpg',
-	'#000000',
-	'e',
-	'm',
-	'n'
-]);
-
 var transitionTime = 3000; //ms
 var delayBackground = 60000; //ms
+
+
+var command = {
+	'action':'get',
+	'widget':'global',
+	'variables':[
+		'background_images',
+		'background_delay',
+		'background_transition_time'
+	]
+};
+
+API.call(command, function(entrada){
+	if(entrada['background_images']){
+		backgrounds = JSON.parse(entrada['background_images']);
+	}
+	if(entrada['background_delay']){
+		delayBackground = entrada['background_delay'];
+	}
+	if(entrada['background_transition_time']){
+		transitionTime = entrada['background_transition_time'];
+	}
+});
+
+
+
+if(backgrounds.length === 0){
+	backgrounds.push(['','#000000','e','m','n']);
+}
+
+
+
+
 var next = parseInt(Math.random() *backgrounds.length);
 
 
 setBackground(fondoDiv, backgrounds[next]);
 
-if(++next > backgrounds.length -1)
+if(++next > backgrounds.length -1){
 	next = 0;
+}
 
 setBackground(fondoDiv2, backgrounds[next]);
 
@@ -192,7 +210,7 @@ var CONFIG_function = function(){
 	// Save button
 	input = document.createElement('button');
 	input.innerHTML = "Save changes";
-	input.onclick = saveBackgrounds();
+	input.onclick = saveBackgrounds;
 	div.appendChild(input);
 	
 	
@@ -219,7 +237,24 @@ var CONFIG_function = function(){
 		transitionTime = inputTransitionTime.value *1000; // s to ms
 		
 		// Save the variables using the API
-		
+		var command = {
+			'action':'set',
+			'widget':'global',
+			'variables':{
+				'background_images':JSON.stringify(backgrounds),
+				'background_delay':delayBackground,
+				'background_transition_time':transitionTime
+			}
+		};
+
+		API.call(command, function(entrada){
+			if(entrada['background_images'] && entrada['background_delay'] && entrada['background_transition_time']){
+				alert('Saved');
+			}
+			else{
+				alert('NOT saved.');
+			}
+		});
 	}
 	
 	
