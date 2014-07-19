@@ -4,7 +4,7 @@ if(isset($_POST['submit'])){
 	require_once 'php/class/DB.php';
 	
 	$db = new DB();
-	$valid = $db -> NickPasswordValidacion($_POST['nick'], $_POST['password']);
+	$valid = $db -> check_nick_password($_POST['nick'], $_POST['password']);
 	
 	if($valid !== false){
 		$_SESSION['user'] = $valid;

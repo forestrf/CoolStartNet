@@ -31,7 +31,7 @@ Add and remove widgets for the user.<br/>
 
 In use:<br/>
 <?php
-$widgets_usuario = $db->getWidgetsDelUsuario();
+$widgets_usuario = $db->get_widgets_user();
 
 foreach($widgets_usuario as &$widget){
 	echo $widget['name'].' (<form method="POST" action="ipa.php">
@@ -53,7 +53,7 @@ foreach($widgets_usuario as &$widget){
 <br/><br/>
 Available widgets:<br/>
 <?php
-$widgets_disponibles = $db->getWidgetsDisponiblesUsuario();
+$widgets_disponibles = $db->get_availabe_widgets_user();
 
 if($widgets_disponibles){
 	foreach($widgets_disponibles as &$widget){

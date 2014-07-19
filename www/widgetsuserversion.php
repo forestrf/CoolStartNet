@@ -20,7 +20,7 @@ $widgetID = &$_GET['widgetID'];
 
 $db = new DB();
 
-$widget = $db->getWidgetDelUsuario($widgetID);
+$widget = $db->get_widget_user($widgetID);
 if(!$widget){
 	exit;
 }
@@ -41,7 +41,7 @@ if(!$widget){
 List of widget versions.<br/>
 
 <?php
-$widget_versions = $db->getWidgetVersiones($widget['ID']);
+$widget_versions = $db->get_all_widget_versions($widget['ID']);
 
 foreach($widget_versions as &$widget_version){
 	echo 'Version '.$widget_version['version'],

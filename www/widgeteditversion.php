@@ -23,11 +23,11 @@ $version = &$_GET['widgetVersion'];
 
 $db = new DB();
 
-$widget = $db->getWidgetPorID($widgetID);
+$widget = $db->get_widget_by_ID($widgetID);
 if(!$widget){
 	exit;
 }
-$version = $db->getWidgetVersion($widgetID, $version);
+$version = $db->get_widget_version($widgetID, $version);
 if(!$version){
 	exit;
 }
@@ -62,7 +62,7 @@ Es obligatorio el archivo "main.js" ya que será el único que se incruste. Medi
 
 Files:<br/>
 <?php
-$archivos = $db->getWidgetContenidoVersion($widgetID, $version['version']);
+$archivos = $db->get_widget_version_contents($widgetID, $version['version']);
 foreach($archivos as $archivo){
 	?>
 	<form method="POST" action="ipa.php">

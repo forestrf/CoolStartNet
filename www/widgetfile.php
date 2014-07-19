@@ -33,7 +33,7 @@ $db = new DB();
 // Si se llama desde la api no se suministra la versión del widget. En su lugar se usa la que está indicada en la db.
 if(isset($_GET['api'])){
 	// widgetVersion
-	$widgetVersion = $db->getWidgetUserVersion($widgetID);
+	$widgetVersion = $db->get_using_widget_version_user($widgetID);
 }
 else{
 	// widgetVersion
@@ -44,7 +44,7 @@ else{
 }
 
 
-$file = $db->widgetVersionGetArchivo($widgetID, $widgetVersion, $name);
+$file = $db->get_widget_version_file($widgetID, $widgetVersion, $name);
 
 if($file){
 	$file = &$file[0];

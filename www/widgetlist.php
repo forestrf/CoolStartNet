@@ -44,7 +44,7 @@ Create and delete widgets<br/>
 <br/><br/>
 Widgets that I created:<br/>
 <?php
-$widgets = $db->getWidgetsControlUsuario();
+$widgets = $db->get_widgetsControlUsuario();
 
 foreach($widgets as &$widget){
 	echo $widget['name'].' (

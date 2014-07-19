@@ -48,8 +48,8 @@ You can't delete or modify public versions but it can be hidden. Anyone with the
 	<input type="submit" value="Create new version">
 </form><br/>
 <?php
-$widget = $db->getWidgetPorID($widgetID);
-$versiones = $db->getWidgetVersiones($widgetID);
+$widget = $db->get_widget_by_ID($widgetID);
+$versiones = $db->get_all_widget_versions($widgetID);
 if(count($versiones) > 0){
 	foreach($versiones as $version){
 		echo '['.$version['version'].']',$version['public']?($version['visible']?'+ ':'- '):' ';

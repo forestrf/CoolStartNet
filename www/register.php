@@ -10,7 +10,7 @@ if(isset($_POST['submit'])){
 	
 	if(strlen($_POST['nick'] <= NICK_MAX_LENGTH) && strlen($_POST['password'] <= PASSWORD_MAX_LENGTH)){
 		$db = new DB();
-		$db -> insertaUsuario($_POST['nick'], $_POST['password']);
+		$db -> create_new_user($_POST['nick'], $_POST['password']);
 		
 		echo '<br/>Account created.';
 	}

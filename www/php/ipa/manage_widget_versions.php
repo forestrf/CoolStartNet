@@ -51,28 +51,28 @@ foreach($posibles_referers as $referer_temp){
 				// Comprobar token
 				if($_POST['token'] === hash_ipa($_SESSION['user']['RND'], $_POST['widgetID'], PASSWORD_TOKEN_IPA)){
 					if($_POST['accion'] === '5'){
-						$db->ocultarTodasVersionesWidget($_POST['widgetID']);
+						$db->hide_all_widget_versions($_POST['widgetID']);
 					}
 					else if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
 						switch($_POST['accion']){
 							case '1':
-								$db->versionWidgetDefault($_POST['widgetID'], $_POST['widgetVersion']);
+								$db->set_widget_default_version($_POST['widgetID'], $_POST['widgetVersion']);
 							break;
 							case '2':
-								$db->versionWidgetVisibilidad($_POST['widgetID'], $_POST['widgetVersion'], false);
+								$db->set_widget_version_visibility($_POST['widgetID'], $_POST['widgetVersion'], false);
 							break;
 							case '3':
-								$db->versionWidgetVisibilidad($_POST['widgetID'], $_POST['widgetVersion'], true);
+								$db->set_widget_version_visibility($_POST['widgetID'], $_POST['widgetVersion'], true);
 							break;
 							case '4':
 								// If the version as a file called "main.js" it can be made public
-								if($db->canPublicWidgetVersion($_POST['widgetID'], $_POST['widgetVersion'])){
-									$db->publicaWidgetVersion($_POST['widgetID'], $_POST['widgetVersion']);
+								if($db->can_publicate_widget_version_check($_POST['widgetID'], $_POST['widgetVersion'])){
+									$db->publicate_widget_version($_POST['widgetID'], $_POST['widgetVersion']);
 								}
 							break;
 							case '6':
 								if(isset($_POST['comment'])){
-									$db->editarWidgetComentario($_POST['widgetID'], $_POST['widgetVersion'], $_POST['comment']);
+									$db->set_widget_comment($_POST['widgetID'], $_POST['widgetVersion'], $_POST['comment']);
 								}
 							break;
 						}

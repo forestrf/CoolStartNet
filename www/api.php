@@ -84,7 +84,7 @@ if($data_json === null){
 }
 
 
-widgetVariablesValido($data_json);
+widget_variablesValido($data_json);
 
 switch(isset($action)?$action:null){
 	case 'get':
@@ -120,7 +120,7 @@ switch(isset($action)?$action:null){
 
 // Validar una cantidad de widgets determinada por size
 // true/false
-function widgetVariablesValido(&$widgets){
+function widget_variablesValido(&$widgets){
 	foreach($widgets as $widgetID => &$variables){
 		if($widgetID !== 'global'){
 			if(widgetValido($widgetID) === false){
@@ -135,7 +135,7 @@ function widgetValido(&$widgetID){
 	// Únicamente mirar en la base de datos si existe el widget
 	// Aprovechar para cargar la información mínima del widget para las futuras preguntas
 	global $db;
-	return $db->getWidgetPorID($widgetID) ? true : false;
+	return $db->get_widget_by_ID($widgetID) ? true : false;
 }
 
 
@@ -144,7 +144,7 @@ function widgetValido(&$widgetID){
 function getHandler(&$widgets){
 	global $db;
 	$respuesta_array = array();
-	$response = $db->getVariable($widgets);
+	$response = $db->get_variable($widgets);
 	foreach($response as $result){
 		$widgetID = $result['IDwidget'] === '-1' ? 'global' : $result['IDwidget']; //global is a invisible widget with id -1
 		$respuesta_array[$widgetID][$result['variable']] = $result['value'];
@@ -157,7 +157,7 @@ function getHandler(&$widgets){
 function setHandler(&$widgets){
 	global $db;
 	$respuesta_array = array();
-	$response = $db->setVariable($widgets);
+	$response = $db->set_variable($widgets);
 	foreach($widgets as $widgetID => &$variables_widget){
 		foreach($variables_widget as $variable => &$value){
 			$respuesta_array[$widgetID][$variable] = $response;

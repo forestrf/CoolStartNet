@@ -48,11 +48,11 @@ foreach($posibles_referers as $referer_temp){
 				if($_POST['token'] === hash_ipa($_SESSION['user']['RND'], $_POST['widgetID'], PASSWORD_TOKEN_IPA)){
 					switch($_POST['accion']){
 						case '1':
-							$db->creaWidgetVersion($_POST['widgetID']);
+							$db->create_widget_version($_POST['widgetID']);
 						break;
 						case '2':
 							if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
-								$db->borraWidgetVersion($_POST['widgetID'], $_POST['widgetVersion']);
+								$db->delete_private_widget_version($_POST['widgetID'], $_POST['widgetVersion']);
 							}
 						break;
 					}

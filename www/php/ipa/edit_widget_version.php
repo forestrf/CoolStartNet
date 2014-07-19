@@ -57,21 +57,21 @@ foreach($posibles_referers as $referer_temp){
 							break;
 							case '2':
 								if(isset($_POST['hash'])){
-									$db->widgetVersionBorrarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_POST['hash']);
+									$db->delete_widget_version_file($_POST['widgetID'], $_POST['widgetVersion'], $_POST['hash']);
 								}
 							break;
 							case '3':
 								if(isset($_POST['hash'])){
 									if(isset($_POST['nombre'])){
 										$nombre = truncate_filename($_POST['nombre'], FILENAME_MAX_LENGTH);
-										$db->widgetVersionRenombraArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_POST['hash'], $nombre);
+										$db->rename_widget_version_file($_POST['widgetID'], $_POST['widgetVersion'], $_POST['hash'], $nombre);
 									}
 								}
 							break;
 							case '4':
 								if(isset($_POST['hash'])){
 									if(isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0){
-										$db->widgetVersionBorrarArchivo($_POST['widgetID'], $_POST['widgetVersion'], $_POST['hash']);
+										$db->delete_widget_version_file($_POST['widgetID'], $_POST['widgetVersion'], $_POST['hash']);
 										file_upload_widget_version($db, $_POST['widgetID'], $_POST['widgetVersion'], $_FILES['archivo']);
 									}
 								}
@@ -97,6 +97,6 @@ function file_upload_widget_version(&$db, $widgetID, $widgetVersion, &$FILE_REFE
 		$nombre = truncate_filename($FILE_REFERENCE['name'], FILENAME_MAX_LENGTH);
 		$tipo = $FILE_REFERENCE['type'];
 		
-		$db->widgetVersionGuardarArchivo($widgetID, $widgetVersion, $nombre, $tipo, $content);
+		$db->upload_widget_version_file($widgetID, $widgetVersion, $nombre, $tipo, $content);
 	}
 }

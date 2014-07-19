@@ -65,14 +65,14 @@ El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo
 <?php
 
 // Widgets del usuario
-$widgets_usuario = $db->getWidgetsDelUsuario();
+$widgets_usuario = $db->get_widgets_user();
 foreach($widgets_usuario as &$widget){
 	// Pick the correct widget version
-	$version = $db->getWidgetUserVersion($widget);
+	$version = $db->get_using_widget_version_user($widget);
 	
 	// Create the html that will call the script
 	//echo "<script src=\"widgetfile.php?widgetID={$widget['ID']}&widgetVersion={$version}&name=main.js\"></script>";
-	$data = $db->widgetVersionGetArchivo($widget['ID'], $version, 'main.js');
+	$data = $db->get_widget_version_file($widget['ID'], $version, 'main.js');
 	$data = &$data[0];
 	$data = &$data['data'];
 	echo "<script>

@@ -51,14 +51,14 @@ foreach($posibles_referers as $referer_temp){
 				
 				switch($_POST['accion']){
 					case '1':
-						$db->quitarWidgetDelUsuario($_POST['widgetID']);
+						$db->remove_using_widget_user($_POST['widgetID']);
 					break;
 					case '2':
-						$db->agregarWidgetAlUsuario($_POST['widgetID']);
+						$db->add_using_widget_user($_POST['widgetID']);
 					break;
 					case '3':
 						if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
-							$db->setUserWidgetVersion($_POST['widgetID'], $_POST['widgetVersion']);
+							$db->set_using_widget_version_user($_POST['widgetID'], $_POST['widgetVersion']);
 						}
 					break;
 				}
