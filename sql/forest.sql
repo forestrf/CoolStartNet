@@ -2,10 +2,10 @@
 -- version 4.1.6
 -- http://www.phpmyadmin.net
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 13-07-2014 a las 20:11:50
--- Versión del servidor: 5.5.32
--- Versión de PHP: 5.4.25
+-- Host: 127.0.0.1
+-- Generation Time: Jul 19, 2014 at 06:02 PM
+-- Server version: 5.5.32
+-- PHP Version: 5.4.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,13 +17,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Base de datos: `forest`
+-- Database: `forest`
 --
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `files`
+-- Table structure for table `files`
 --
 
 CREATE TABLE IF NOT EXISTS `files` (
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `files` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE IF NOT EXISTS `users` (
@@ -46,12 +46,12 @@ CREATE TABLE IF NOT EXISTS `users` (
   `RND` varchar(32) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `nick` (`nick`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=13 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `variables`
+-- Table structure for table `variables`
 --
 
 CREATE TABLE IF NOT EXISTS `variables` (
@@ -59,13 +59,13 @@ CREATE TABLE IF NOT EXISTS `variables` (
   `IDwidget` int(11) NOT NULL,
   `variable` varchar(30) COLLATE utf8_bin NOT NULL,
   `value` text COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`IDuser`,`IDwidget`)
+  PRIMARY KEY (`IDuser`,`IDwidget`,`variable`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `widgets`
+-- Table structure for table `widgets`
 --
 
 CREATE TABLE IF NOT EXISTS `widgets` (
@@ -75,12 +75,12 @@ CREATE TABLE IF NOT EXISTS `widgets` (
   `published` int(11) NOT NULL DEFAULT '-1' COMMENT 'Si se publica cambiar a 0 o + desde php. Nunca volver a -1',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=6 ;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `widgets-content`
+-- Table structure for table `widgets-content`
 --
 
 CREATE TABLE IF NOT EXISTS `widgets-content` (
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `widgets-content` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `widgets-user`
+-- Table structure for table `widgets-user`
 --
 
 CREATE TABLE IF NOT EXISTS `widgets-user` (
@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS `widgets-user` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `widgets-versions`
+-- Table structure for table `widgets-versions`
 --
 
 CREATE TABLE IF NOT EXISTS `widgets-versions` (
