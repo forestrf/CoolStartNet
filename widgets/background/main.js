@@ -178,10 +178,7 @@ var CONFIG_function = function(){
 	// Add button
 	input = document.createElement('button');
 	input.innerHTML = "Add background";
-	input.onclick = function(){
-		backgrounds_copy.push(['','#000000','e','m','n']);
-		tableBackgrounds.appendChild(createBGTableElement(backgrounds_copy[backgrounds_copy.length-1]));
-	}
+	input.onclick = addBackground;
 	div.appendChild(input);
 	
 	
@@ -195,15 +192,39 @@ var CONFIG_function = function(){
 	// Save button
 	input = document.createElement('button');
 	input.innerHTML = "Save changes";
+	input.onclick = saveBackgrounds();
 	div.appendChild(input);
 	
 	
 	
 	
 	
-	function removeBackground(){
+	function addBackground(){
+		// This is the default background
+		backgrounds_copy.push(['','#000000','e','m','n']);
+		tableBackgrounds.appendChild(createBGTableElement(backgrounds_copy[backgrounds_copy.length-1]));
+	}
+	
+	function removeBackground(background){
+		// Remove the object from the array and delete the tr of the table that corresponds to the background
+		var index = backgrounds_copy.indexOf(background);
+		backgrounds_copy.splice(index, 1);
+		tableBackgrounds.childNodes[index].remove();
+	}
+	
+	function saveBackgrounds(){
+		// Change the local variables to the new ones
+		backgrounds = backgrounds_copy;
+		delayBackground = inputDelayBackground.value *1000; // s to ms
+		transitionTime = inputTransitionTime.value *1000; // s to ms
+		
+		// Save the variables using the API
 		
 	}
+	
+	
+	
+	
 	
 	// Returns a tr for the table of backgrounds
 	function createBGTableElement(background){
@@ -241,7 +262,7 @@ var CONFIG_function = function(){
 		input.value = background ? background[0] : '';
 		input.placeholder = 'http://www.domain.com/image.jpg';
 		input.onchange = input.onkeyup = function(){
-			previewPic.src = this.value;
+			previewPic.src = background[0] = this.value;
 		}
 		td.appendChild(input);
 		
@@ -260,6 +281,9 @@ var CONFIG_function = function(){
 		input.type = 'text';
 		input.value = background ? background[1] : '#000000';
 		input.placeholder = '#000000';
+		input.onchange = function(){
+			background[1] = this.value;
+		}
 		td.appendChild(input);
 		
 		td = document.createElement('td');
@@ -275,6 +299,9 @@ var CONFIG_function = function(){
 		tr.appendChild(td);
 		input = document.createElement('select');
 		input.innerHTML = '<option value="e">center center</option><option value="d">center top</option><option value="f">center bottom</option><option value="a">left top</option><option value="b">left center</option><option value="c">left bottom</option><option value="g">right top</option><option value="h">right center</option><option value="i">right bottom</option>';
+		input.onchange = function(){
+			background[2] = this.value;
+		}
 		td.appendChild(input);
 		
 		td = document.createElement('td');
@@ -290,6 +317,9 @@ var CONFIG_function = function(){
 		tr.appendChild(td);
 		input = document.createElement('select');
 		input.innerHTML = '<option value="j">Repeat</option><option value="k">Repeat horizontally</option><option value="l">Repeat vertically</option><option value="m">No repeat</option>';
+		input.onchange = function(){
+			background[3] = this.value;
+		}
 		td.appendChild(input);
 		
 		td = document.createElement('td');
@@ -305,6 +335,9 @@ var CONFIG_function = function(){
 		tr.appendChild(td);
 		input = document.createElement('select');
 		input.innerHTML = '<option value="n">Cover</option><option value="o">Contain</option><option value="p">Auto</option>';
+		input.onchange = function(){
+			background[4] = this.value;
+		}
 		td.appendChild(input);
 		
 		td = document.createElement('td');
@@ -320,6 +353,9 @@ var CONFIG_function = function(){
 		tr.appendChild(td);
 		input = document.createElement('button');
 		input.innerHTML = "Remove";
+		input.onclick = function(){
+			removeBackground(background);
+		}
 		td.appendChild(input);
 		table.appendChild(tr);
 		
@@ -327,11 +363,12 @@ var CONFIG_function = function(){
 		
 		
 		
-		
-		
-		
 		return trBody;
 	}
-		
+	
+	
+	
+	
+	
 	return div;
 }
