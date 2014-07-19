@@ -3,7 +3,7 @@
 require_once __DIR__.'/../config.php';
 require_once __DIR__.'/../functions/generic.php';
 
-// All the queries to the database are here. Change the database engine or the queries only have to be made here.
+// All the queries to the database are here. Change the database engine or the queries only have to be done here.
 class DB {
 	
 	// Login data to access the database. change in the config file.
@@ -43,7 +43,7 @@ class DB {
 	}
 	
 	// Make a SQL query. Returns false if there is an error, and throws an exception.
-	// Queries are only made here. This way a connection can be opened if necessary or can be used a cached response.
+	// Queries are only done here. This way a connection can be opened if necessary or can be used a cached response.
 	// $this->LAST_MYSQL_ID stores the ID of the last insert query
 	private function query($query, $cacheable = false){
 		if($cacheable){
@@ -93,13 +93,13 @@ class DB {
 	#
 	# ---------------------------------------------------------------------------
 	
-	// Consultar si existe un nick en la base de datos
+	// Check if exists a nick.
 	function existeNick($nick){
 		$nick = mysql_escape_mimic($nick);
 		return count($this->query("SELECT * FROM `users` WHERE `nick` = '{$nick}'", true)) > 0;
 	}
 	
-	// Insertar un usuario en la base de datos
+	// Insert a new user.
 	function insertaUsuario($nick, $password){
 		$nick = mysql_escape_mimic($nick);
 		$password = hash_password(mysql_escape_mimic($password));
@@ -107,7 +107,7 @@ class DB {
 		return $this->query("INSERT INTO `users` (`nick`, `password`, `RND`) VALUES ('{$nick}', '{$password}', '{$rnd}')") === true;
 	}
 	
-	// Retorna el usuario
+	// Returns the user after validating the nick and the password or returns false if the user doesn't match.
 	function NickPasswordValidacion($nick, $password){
 		$nick = mysql_escape_mimic($nick);
 		$password = hash_password(mysql_escape_mimic($password));
@@ -123,21 +123,23 @@ class DB {
 	#
 	# ---------------------------------------------------------------------------
 	
-	// Retorna la configuración del widget
+	// Returns the widget configuration given a widget name or false if the widget doesn't exists.
 	function getWidget($nombre){
 		$nombre = mysql_escape_mimic($nombre);
 		$result = $this->query("SELECT * FROM `widgets` WHERE `name` = '{$nombre}';");
 		return count($result) > 0 ? $result[0] : false;
 	}
 	
-	// Retorna la configuración del widget
+	// Returns the widget configuration given a widget ID or false if the widget doesn't exists.
 	function getWidgetPorID($ID){
 		$ID = mysql_escape_mimic($ID);
 		$result = $this->query("SELECT * FROM `widgets` WHERE `ID` = '{$ID}';");
 		return count($result) > 0 ? $result[0] : false;
 	}
 	
-	// Retorna una variable del usuario
+	// Returns a variable of the user.
+	// Change $ID to get a variable from a specific user.
+	// $widgetID_variable must be an array that follows the next pattern:
 	/*
 		array(
 			'widgetID' => array(
@@ -166,10 +168,10 @@ class DB {
 		return $this->query("SELECT `IDwidget`, `variable`, `value` FROM `variables` WHERE `IDuser` = '{$ID}' AND ".implode('OR', $SQL_statement).";");
 	}
 	
-	// $insert_o_update = 'I' / 'U'
-	// No comprueba si la variable está definida. Sin límites
-	// No comprueba si el widget existe, de ello se debe encargar api.php
+	// Doesn't check if the widget exists. This check is done in api.php
 	// POR HACER: Limitar tamaño de lo que se puede guardar
+	// Change $ID to set a variable to a specific user.
+	// $widgetID_variable_value must be an array that follows the next pattern:
 	/*
 		array(
 			'widgetID' => array(
@@ -198,10 +200,10 @@ class DB {
 		return $this->query("INSERT INTO `variables` (`IDuser`, `IDwidget`, `variable`, `value`) VALUES ".implode(',', $SQL_statement)." ON DUPLICATE KEY UPDATE `value` = VALUES(`value`);");
 	}
 	
-	// Crear un nuevo widget
-	function creaWidget($nombre){
+	// Create a widget
+	function creaWidget($nombre, $ID = null){
 		$nombre = mysql_escape_mimic($nombre);
-		$ID = $_SESSION['user']['ID'];
+		$ID = $ID !== null ? mysql_escape_mimic($ID) : $_SESSION['user']['ID'];
 		$result = $this->query("SELECT `ID` FROM `widgets` WHERE `name` = '{$nombre}';");
 		if(!$result){
 			return $this->query("INSERT INTO `widgets` (`name`, `ownerID`) VALUES ('{$nombre}', '{$ID}');");
