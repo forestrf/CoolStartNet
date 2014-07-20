@@ -102,22 +102,7 @@ function generate_position_rect(callback){
 	rectPosition.style.height = '200px';
 	/* STOP DELETING */
 	
-	// Allow the movement through rectPosition.
-	rectPosition.onmousedown = function(e){
-		if(e.target === rectPosition){
-			var extra_position = [
-				e.clientX -rectPosition.offsetLeft,
-				e.clientY -rectPosition.offsetTop
-			];
-			contentDivRect.onmousemove = function(e){
-				rectPosition.style.left = (-extra_position[0] +e.clientX) +'px';
-				rectPosition.style.top  = (-extra_position[1] +e.clientY) +'px';
-			}
-			contentDivRect.onmouseup = function(){
-				contentDivRect.onmousemove = null;
-			}
-		}
-	};
+	resizers_divs["center_center"] = rectPosition;
 	
 	// Allow reescale through resizers_divs.
 	for(var i in resizers_divs){
@@ -133,6 +118,12 @@ function generate_position_rect(callback){
 						parseInt(rectPosition.style.height)
 					];
 					switch(i){
+						case "center_center":
+							contentDivRect.onmousemove = function(e){
+								rectPosition.style.top    = (extra_position[3] -extra_position[1] +e.clientY) +'px';
+								rectPosition.style.left   = (extra_position[2] -extra_position[0] +e.clientX) +'px';
+							};
+						break;
 						case "center_top":
 							contentDivRect.onmousemove = function(e){
 								rectPosition.style.top    = (extra_position[3] -extra_position[1] +e.clientY) +'px';
