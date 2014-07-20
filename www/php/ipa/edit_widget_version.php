@@ -1,6 +1,6 @@
 <?php
 
-if(!isset($_POST['widgetID']) || !isset($_POST['accion']) || !isset($_POST['token'])){
+if(!isset($_POST['widgetID']) || !isset($_POST['action']) || !isset($_POST['token'])){
 	exit;
 }
 
@@ -17,42 +17,35 @@ require_once __DIR__.'/../class/DB.php';
 $db = new DB();
 
 
-// Esta api debe de llamarse solo por mi, no debe de funcionar llamándose desde algo que no sea la configuración de la web.
-// Para controlar que no se haga nada raro se enviará un token y se bloqueará por referer.
-// EL referer debe de ser la página de la que se puede configurar el valor en cuestión (Manejar mediante un array)
-// El token se genera mediante un md5 de la variable que se va a cambiar, una contraseña y una variable que parta de la id del usuario (rnd).
-
 /*
-Acciones:
-1 => Subir un archivo
-2 => Borrar un archivo
-3 => Renombrar archivo
-4 => Resubir un archivo
+Actions:
+1 => Upload a file
+2 => Delete a file
+3 => Rename a file
+4 => Reupload a file
 */
 
-// Por continuar. Comprobar referer y de coincidir, recoger datos, comprobar hash y de coincidir de nuevo, cambiar datos.
-// hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA);
 
-// Comprobar referer
+// Check referer
 
-$posibles_referers = array(
+$possibles_referrer = array(
 	'widgeteditversion.php'
 );
 
-foreach($posibles_referers as $referer_temp){
-	foreach(array('http', 'https') as $protocolo){
-		if(strpos($_SERVER['HTTP_REFERER'], $protocolo.'://'.WEB_PATH.$referer_temp) === 0){
-			// Referer válido
+foreach($possibles_referrer as $referer_temp){
+	foreach(array('http', 'https') as $protocol){
+		if(strpos($_SERVER['HTTP_REFERER'], $protocol.'://'.WEB_PATH.$referer_temp) === 0){
+			// Valid referer
 			
-			// Comprobar id
+			// check widget ID
 			if(isset($_POST['widgetID']) && isInteger($_POST['widgetID']) && $_POST['widgetID'] >= 0){
-				// Comprobar token
+				// Check token
 				if($_POST['token'] === hash_ipa($_SESSION['user']['RND'], $_POST['widgetID'], PASSWORD_TOKEN_IPA)){
 					if(isset($_POST['widgetVersion']) && isInteger($_POST['widgetVersion']) && $_POST['widgetVersion'] >= 0){
-						switch($_POST['accion']){
+						switch($_POST['action']){
 							case '1':
-								if(isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0){
-									file_upload_widget_version($db, $_POST['widgetID'], $_POST['widgetVersion'], $_FILES['archivo']);
+								if(isset($_FILES['file']) && $_FILES['file']['error'] === 0){
+									file_upload_widget_version($db, $_POST['widgetID'], $_POST['widgetVersion'], $_FILES['file']);
 								}
 							break;
 							case '2':
@@ -62,17 +55,17 @@ foreach($posibles_referers as $referer_temp){
 							break;
 							case '3':
 								if(isset($_POST['hash'])){
-									if(isset($_POST['nombre'])){
-										$nombre = truncate_filename($_POST['nombre'], FILENAME_MAX_LENGTH);
-										$db->rename_widget_version_file($_POST['widgetID'], $_POST['widgetVersion'], $_POST['hash'], $nombre);
+									if(isset($_POST['name'])){
+										$name = truncate_filename($_POST['name'], FILENAME_MAX_LENGTH);
+										$db->rename_widget_version_file($_POST['widgetID'], $_POST['widgetVersion'], $_POST['hash'], $name);
 									}
 								}
 							break;
 							case '4':
 								if(isset($_POST['hash'])){
-									if(isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0){
+									if(isset($_FILES['file']) && $_FILES['file']['error'] === 0){
 										$db->delete_widget_version_file($_POST['widgetID'], $_POST['widgetVersion'], $_POST['hash']);
-										file_upload_widget_version($db, $_POST['widgetID'], $_POST['widgetVersion'], $_FILES['archivo']);
+										file_upload_widget_version($db, $_POST['widgetID'], $_POST['widgetVersion'], $_FILES['file']);
 									}
 								}
 							break;
@@ -94,9 +87,9 @@ function file_upload_widget_version(&$db, $widgetID, $widgetVersion, &$FILE_REFE
 		// Innecesario borrarlo, php lo borra automaticamente.
 		unlink($FILE_REFERENCE['tmp_name']);
 		
-		$nombre = truncate_filename($FILE_REFERENCE['name'], FILENAME_MAX_LENGTH);
-		$tipo = $FILE_REFERENCE['type'];
+		$name = truncate_filename($FILE_REFERENCE['name'], FILENAME_MAX_LENGTH);
+		$mimetype = $FILE_REFERENCE['type'];
 		
-		$db->upload_widget_version_file($widgetID, $widgetVersion, $nombre, $tipo, $content);
+		$db->upload_widget_version_file($widgetID, $widgetVersion, $name, $mimetype, $content);
 	}
 }

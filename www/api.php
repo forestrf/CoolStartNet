@@ -33,23 +33,23 @@ $db = new DB();
 /*
 $_GET['data'] => json(
 	widget => (
-		variable => valor
+		variable => value
 	)
 )
 $_GET['action'] => get/set
 */
 
 /*
-Fallos:
-1 => Faltan variables por especificar
-5 => La variable action debe valer "set" o "get"
-7 => Fallo al guardar
-9 => JSON mal formado en la variable data
+Fails:
+1 => There are no specified variables
+5 => The variable "action" must be "set" o "get"
+7 => Problem saving the data
+9 => Bad JSON in the "data" variable
 */
 
 /*
 Perfects:
-1 => Guardado corréctamente
+1 => Saved perfectly
 */
 
 if(!isset($_POST['data']) || !isset($_POST['action'])){
@@ -70,11 +70,8 @@ if($action !== 'set' && $action !== 'get'){
 
 /*
 
-Una petición retorna un json con lo que se ha pedido
-Se pide a partir de un widget y algo concreto del widget
-
-Los widgets se crean dando información sobre qué tipos de datos por nombre guarda y cómo son esos datos para validarlos de ser necesario, límites y más
-Además, se puede incluir datos ya predefinidos por forest.tk por lo que al llamar a widget y marcadores, se darán los marcadores de forest.tk y no los del widget (un hipervínculo).
+A request returns a JSON with all the requested data
+The request needs a widget ID / the text "public" and a variable
 
 */
 
@@ -84,7 +81,7 @@ if($data_json === null){
 }
 
 
-widget_variablesValido($data_json);
+widget_variables_valid($data_json);
 
 switch(isset($action)?$action:null){
 	case 'get':
@@ -93,7 +90,7 @@ switch(isset($action)?$action:null){
 		perfect(json_encode($response));
 	break;
 	case 'set':
-		// Comprobar bloqueos
+		// Check blocks
 		$response = setHandler($data_json);
 		if($response){
 			perfect(json_encode($response));
@@ -103,7 +100,7 @@ switch(isset($action)?$action:null){
 		}
 	break;
 	default:
-		// No debería ocurrir nunca
+		// Never should occur
 		fail(5);
 	break;
 }
@@ -118,52 +115,58 @@ switch(isset($action)?$action:null){
 #
 # --------------------------------------------------------------------------------------------------------------
 
-// Validar una cantidad de widgets determinada por size
-// true/false
-function widget_variablesValido(&$widgets){
+// Validate a widget list
+// returns true or false
+function widget_variables_valid(&$widgets){
+	global $db;
+	$IDs = array();
 	foreach($widgets as $widgetID => &$variables){
 		if($widgetID !== 'global'){
-			if(widgetValido($widgetID) === false){
-				unset($widgets[$widgetID]);
+			$IDs[] = $widgetID;
+		}
+	}
+	$valid_IDs = $db->get_widgets_valid_by_IDs($IDs);
+	foreach($IDs as $ID){
+		$valid = false;
+		foreach($valid_IDs as $valid_ID){
+			if(isset($valid_ID[$ID])){
+				$valid = true;
+				break;
 			}
+		}
+		
+		if(!$valid){
+			unset($widgets[$ID]);
 		}
 	}
 }
 
-// Validar un solo widget
-function widgetValido(&$widgetID){
-	// Únicamente mirar en la base de datos si existe el widget
-	// Aprovechar para cargar la información mínima del widget para las futuras preguntas
-	global $db;
-	return $db->get_widget_by_ID($widgetID) ? true : false;
-}
 
-
-// Llamar antes a widgetValidoHandler y variableDeWidgetHandler ya que no se valida aquí
-// array con el contenido/false -> fallos al consultar o consulta
+// Call before the function widget_variables_valid()
+// returns an array with the content or false -> read failure
 function getHandler(&$widgets){
 	global $db;
-	$respuesta_array = array();
+	$array_response = array();
 	$response = $db->get_variable($widgets);
 	foreach($response as $result){
 		$widgetID = $result['IDwidget'] === '-1' ? 'global' : $result['IDwidget']; //global is a invisible widget with id -1
-		$respuesta_array[$widgetID][$result['variable']] = $result['value'];
+		$array_response[$widgetID][$result['variable']] = $result['value'];
 	}
-	return $respuesta_array;
+	return $array_response;
 }
 
-// Llamar antes a widgetValidoHandler y variableDeWidgetHandler ya que no se valida aquí
-// true/false -> fallos al grabar
+// Call before the function widget_variables_valid()
+// returns true or false -> write failure
 function setHandler(&$widgets){
 	global $db;
-	$respuesta_array = array();
+	$array_response = array();
 	$response = $db->set_variable($widgets);
 	foreach($widgets as $widgetID => &$variables_widget){
 		foreach($variables_widget as $variable => &$value){
-			$respuesta_array[$widgetID][$variable] = $response;
+			$array_response[$widgetID][$variable] = $response;
 		}
 	}
-	return $respuesta_array;
+	return $array_response;
 }
 
 
@@ -172,20 +175,20 @@ function setHandler(&$widgets){
 
 # --------------------------------------------------------------------------------------------------------------
 #
-# RESPUESTAS JSON
+# JSON RESPONSES
 #
 # --------------------------------------------------------------------------------------------------------------
 
 function fail($n){
-	responde('FAIL', $n);
+	respond('FAIL', $n);
 	exit;
 }
 
 function perfect($n){
-	responde('OK', $n);
+	respond('OK', $n);
 	exit;
 }
 
-function responde($response, $content){
+function respond($response, $content){
 	echo '{"response":"'.$response.'","content":'.$content.'}';
 }

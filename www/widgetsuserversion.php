@@ -49,11 +49,11 @@ foreach($widget_versions as &$widget_version){
 	echo 'Version '.$widget_version['version'],
 		' (<form method="POST" action="ipa.php">
 			<input type="hidden" name="switch" value="1">
-			<input type="hidden" name="accion" value="3">
+			<input type="hidden" name="action" value="3">
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
 			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
 			<input type="hidden" name="widgetVersion" value="'.$widget_version['version'].'">
-			<input type="hidden" name="volver" value="1">
+			<input type="hidden" name="goback" value="1">
 			<input type="submit" value="Use this version">
 		</form>)';
 	if(!$current && (

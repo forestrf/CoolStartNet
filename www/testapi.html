@@ -13,7 +13,7 @@ body{
 <table>
 	<tbody>
 		<tr>
-			<td>Widget Nombre</td>
+			<td>Widget name</td>
 			<td><input type="text" id="widget"></td>
 		</tr>
 		<tr>
@@ -21,7 +21,7 @@ body{
 			<td><input type="text" id="variable"></td>
 		</tr>
 		<tr>
-			<td>Acción</td>
+			<td>Action</td>
 			<td>
 				<select id="action">
 					<option name="get">get</option>
@@ -30,11 +30,11 @@ body{
 			</td>
 		</tr>
 		<tr>
-			<td>Valor</td>
-			<td><input type="text" id="valor"></td>
+			<td>Value</td>
+			<td><input type="text" id="value"></td>
 		</tr>
 		<tr>
-			<td colspan="2"><input type="button" id="enviar" value="Consultar"></td>
+			<td colspan="2"><input type="button" id="send" value="Query"></td>
 		</tr>
 	</tbody>
 </table>
@@ -46,9 +46,9 @@ body{
 var action = document.getElementById('action');
 var widget = document.getElementById('widget');
 var variable = document.getElementById('variable');
-var valor = document.getElementById('valor');
+var value = document.getElementById('value');
 
-document.getElementById('enviar').onclick = function(){
+document.getElementById('send').onclick = function(){
 	var comando = {
 		'action':action.value,
 		'widget':widget.value,
@@ -57,20 +57,20 @@ document.getElementById('enviar').onclick = function(){
 	
 	if(comando['action'] === 'set'){
 		comando['variables'] = {};
-		comando['variables'][variable.value] = valor.value;
+		comando['variables'][variable.value] = value.value;
 	}
 	
-	API.call(comando, function(entrada){
-		if(typeof entrada !== 'undefined'){
-			if(typeof entrada[variable.value] !== 'undefined'){
-				valor.value = entrada[variable.value];
+	API.call(comando, function(input){
+		if(typeof input !== 'undefined'){
+			if(typeof input[variable.value] !== 'undefined'){
+				value.value = input[variable.value];
 			}
 			else{
-				valor.value = "";
+				value.value = "";
 			}
 		}
 		else{
-			valor.value = "";
+			value.value = "";
 		}
 	});
 }

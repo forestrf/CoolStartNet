@@ -36,10 +36,10 @@ $widgets_usuario = $db->get_widgets_user();
 foreach($widgets_usuario as &$widget){
 	echo $widget['name'].' (<form method="POST" action="ipa.php">
 			<input type="hidden" name="switch" value="1">
-			<input type="hidden" name="accion" value="1">
+			<input type="hidden" name="action" value="1">
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
 			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
-			<input type="hidden" name="volver" value="1">
+			<input type="hidden" name="goback" value="1">
 			<input type="submit" value="Remove">
 		</form>)
 		<form method="GET" action="widgetsuserversion.php">
@@ -49,10 +49,10 @@ foreach($widgets_usuario as &$widget){
 	if($widget['autoupdate'] === '0'){
 		echo '<form method="POST" action="ipa.php">
 			<input type="hidden" name="switch" value="1">
-			<input type="hidden" name="accion" value="4">
+			<input type="hidden" name="action" value="4">
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
 			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
-			<input type="hidden" name="volver" value="1">
+			<input type="hidden" name="goback" value="1">
 			<input type="submit" value="Use always the latest public version (If there is not a public version, use the last private version)">
 		</form> (using the version ' . $widget['version'] . ')';
 	}
@@ -85,10 +85,10 @@ if($widgets_disponibles){
 		else{
 			echo $widget['name'].' (<form method="POST" action="ipa.php">
 					<input type="hidden" name="switch" value="1">
-					<input type="hidden" name="accion" value="2">
+					<input type="hidden" name="action" value="2">
 					<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
 					<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
-					<input type="hidden" name="volver" value="1">
+					<input type="hidden" name="goback" value="1">
 					<input type="submit" value="Use">
 				</form>)<br/>';
 		}

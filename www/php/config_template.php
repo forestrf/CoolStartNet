@@ -18,7 +18,7 @@ define('PASSWORD_TOKEN_IPA', 'write random characters here');
 define('WEB_PATH', 'www.mywebhere.com/folder/to/site/');
 
 # Max file size for the uploaded widget files. In bytes.
-define('TAM_BYTES_ARCHIVOS_MAX', 512000);
+define('MAX_FILE_SIZE_BYTES', 512000);
 
 # Max user nickname length
 define('NICK_MAX_LENGTH', 15);
@@ -35,5 +35,6 @@ define('WIDGET_VERSION_COMMENT_MAX_LENGTH', 250);
 # Max number of files for a widget version
 define('WIDGET_VERSION_MAX_FILES_NUMBER', 50);
 
+// Not in use yet
 # Max user data stored in form of variables. In bytes.
 define('USER_MAX_MB_STORED_DB', 20480000);

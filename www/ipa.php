@@ -6,12 +6,17 @@ if(!isset($_POST['switch'])){
 	exit;
 }
 
+// This API must be only called by "me" and not from widgets. Only for configurations of the web.
+// To prevent it, must be send a token and must be an expected referer.
+// The referer must be the page(s) that can configure the value.
+// The token is a md5 generated using the variable to be modified, a password from config.php and the RND of the user. function hash_ipa().
+
 /*
-1 => quitar o poner widgets en en la página del usuario
-2 => crear o borrar widgets
-3 => generar o quitar una versión para el widget
-4 => editar una versión existente de un widget (subir un archivo con su nombre, editar nombre de un archivo, agregar o quitar un archivo o cambiar las variables)
-5 => administrar versiones
+1 => Make the user use or not a widget
+2 => Create or delete widgets
+3 => Create or delete a widget version
+4 => Edit a widget version (upload and edit files)
+5 => Manage widget versions
 */
 
 switch($_POST['switch']){
@@ -33,7 +38,7 @@ switch($_POST['switch']){
 }
 
 
-if(isset($_POST['volver']) && $_POST['volver'] === '1'){
+if(isset($_POST['goback']) && $_POST['goback'] === '1'){
 	header('HTTP/1.1 302 Moved Temporarily');
 	header('Location: '.$_SERVER['HTTP_REFERER']); 
 }

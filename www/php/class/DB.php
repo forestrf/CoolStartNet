@@ -137,6 +137,30 @@ class DB {
 		return count($result) > 0 ? $result[0] : false;
 	}
 	
+	// Returns a list of widgets configurations given a list of widget IDs or 0 sized array if none of them exists.
+	function get_widgets_by_IDs(&$IDs){
+		$SQL_statement = array();
+		foreach($IDs as &$ID){
+			$ID = mysql_escape_mimic($ID);
+		
+			$SQL_statement[] = "`ID` = '{$ID}'";
+		}
+		
+		return $this->query("SELECT * FROM `widgets` WHERE " . implode(' OR ', $SQL_statement) . ";");
+	}
+	
+	// Returns a list of widgets validations given a list of widget IDs or 0 sized array if none of them exists.
+	function get_widgets_valid_by_IDs(&$IDs){
+		$SQL_statement = array();
+		foreach($IDs as &$ID){
+			$ID = mysql_escape_mimic($ID);
+		
+			$SQL_statement[] = "`ID` = '{$ID}'";
+		}
+		
+		return $this->query("SELECT `ID` FROM `widgets` WHERE " . implode(' OR ', $SQL_statement) . ";");
+	}
+	
 	// Returns a variable of the user.
 	// $widgetID_variable must be an array that follows the next pattern:
 	/*
@@ -274,7 +298,7 @@ class DB {
 		return false;
 	}
 	
-	// Crear una versión del widget.
+	// Create a version of the widget.
 	function create_widget_version($widgetID){
 		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
@@ -330,7 +354,7 @@ class DB {
 	// if $public = true then the version must be public, otherwise the version is the latest even if it is not public.
 	function get_widget_last_version($widgetID, $public = true){
 		$widgetID = mysql_escape_mimic($widgetID);
-		$public = $publico?" AND `public` = '1' ":'';
+		$public = $public ? " AND `public` = '1' " : '';
 		$result = $this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' {$public} ORDER BY `version` DESC LIMIT 1;");
 		return count($result) > 0 ? $result[0] : false;
 	}

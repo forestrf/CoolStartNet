@@ -48,9 +48,9 @@ function truncate_filename($name, $max){
 	if(strlen($name) > $max){
 		if(strpos($name, '.') !== false){
 			$dot      = strrpos($name, '.');
-			$name_ext = substr($name, $punto +1);
-			$name     = substr($name, 0, $max -1 -strlen($nombre_ext)).
-						'.'.$nombre_ext;
+			$name_ext = substr($name, $dot +1);
+			$name     = substr($name, 0, $max -1 -strlen($name_ext)).
+						'.'.$name_ext;
 		}
 		else{
 			$name     = substr($name, 0, $max);
@@ -61,7 +61,7 @@ function truncate_filename($name, $max){
 
 
 
-// Para pruebas de rendimiento. Se le pasa una función y retorna el tiempo que tarda en ejecutarse:
+// To make benchmarks. Receives a function and returns the time it takes to execute the function:
 /*
 echo test(function(){for($i=0;$i<100000; ++$i){
 	// Hacer algo 100.000 veces

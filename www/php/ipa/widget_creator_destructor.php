@@ -1,6 +1,6 @@
 <?php
 
-if(!isset($_POST['nombre']) && !isset($_POST['widgetID'])){
+if(!isset($_POST['name']) && !isset($_POST['widgetID'])){
 	exit;
 }
 
@@ -17,45 +17,38 @@ require_once __DIR__.'/../class/DB.php';
 $db = new DB();
 
 
-// Esta api debe de llamarse solo por mi, no debe de funcionar llamándose desde algo que no sea la configuración de la web.
-// Para controlar que no se haga nada raro se enviará un token y se bloqueará por referer.
-// EL referer debe de ser la página de la que se puede configurar el valor en cuestión (Manejar mediante un array)
-// El token se genera mediante un md5 de la variable que se va a cambiar, una contraseña y una variable que parta de la id del usuario (rnd).
-
 /*
-Acciones:
-1 => Crear
-2 => Borrar
+Actions:
+1 => Create
+2 => Delete
 */
 
-// Por continuar. Comprobar referer y de coincidir, recoger datos, comprobar hash y de coincidir de nuevo, cambiar datos.
-// hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA);
 
-// Comprobar referer
+// Check referer
 
-$posibles_referers = array(
+$possibles_referrer = array(
 	'widgetlist.php'
 );
-print_r($_POST);
-foreach($posibles_referers as $referer_temp){
-	foreach(array('http', 'https') as $protocolo){
-		if(strpos($_SERVER['HTTP_REFERER'], $protocolo.'://'.WEB_PATH.$referer_temp) === 0){
-			// Referer válido
+
+foreach($possibles_referrer as $referer_temp){
+	foreach(array('http', 'https') as $protocol){
+		if(strpos($_SERVER['HTTP_REFERER'], $protocol.'://'.WEB_PATH.$referer_temp) === 0){
+			// Valid referer
 			
-			switch($_POST['accion']){
+			switch($_POST['action']){
 				case '1':
-					// Comprobar token
+					// Check token
 					if($_POST['token'] === hash_ipa($_SESSION['user']['RND'], -1, PASSWORD_TOKEN_IPA)){
-						// Comprobar nombre
-						if(isset($_POST['nombre']) && $_POST['nombre'] !== '' && preg_match('@[a-zA-Z0-9 ]{1,30}@', $_POST['nombre'])){
-							$db->create_widget($_POST['nombre']);
+						// Check name
+						if(isset($_POST['name']) && $_POST['name'] !== '' && preg_match('@[a-zA-Z0-9 ]{1,30}@', $_POST['name'])){
+							$db->create_widget($_POST['name']);
 						}
 					}
 				break;
 				case '2':
-					// Comprobar id
+					// check widget ID
 					if(isset($_POST['widgetID']) && isInteger($_POST['widgetID']) && $_POST['widgetID'] >= 0){
-						// Comprobar token
+						// Check token
 						if($_POST['token'] === hash_ipa($_SESSION['user']['RND'], $_POST['widgetID'], PASSWORD_TOKEN_IPA)){
 							$db->delete_widget($_POST['widgetID']);
 						}
