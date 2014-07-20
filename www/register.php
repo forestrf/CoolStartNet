@@ -8,7 +8,7 @@
 if(isset($_POST['submit'])){
 	require_once 'php/class/DB.php';
 	
-	if(strlen($_POST['nick'] <= NICK_MAX_LENGTH) && strlen($_POST['password'] <= PASSWORD_MAX_LENGTH)){
+	if(strlen($_POST['nick']) <= NICK_MAX_LENGTH && strlen($_POST['password']) <= PASSWORD_MAX_LENGTH){
 		$db = new DB();
 		$db -> create_new_user($_POST['nick'], $_POST['password']);
 		
