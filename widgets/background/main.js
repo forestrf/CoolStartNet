@@ -13,7 +13,8 @@ var fondoDiv2 = document.createElement('div');
 fondoDiv.className = 'background_widget_bg1';
 
 // Style of the inner background div (used for transitioning backgrounds)
-fondoDiv2.className = 'background_widget_bg2 background_widget_transparent';
+fondoDiv2.className = 'background_widget_bg2';
+fondoDiv2.style.opacity = 0;
 
 // Append the divs
 document.body.appendChild(fondoDiv);
@@ -94,7 +95,8 @@ function launch(force){
 	}
 	launched = true;
 	
-	var next = parseInt(Math.random() *backgrounds.length);
+	// next === backgrounds.length => nearly impossible
+	var next = Math.floor(Math.random() *backgrounds.length);
 
 
 	setBackground(fondoDiv, backgrounds[next]);
@@ -108,23 +110,22 @@ function launch(force){
 
 	// Interval to change backgrounds over time
 	intervalPlaceHolder = setInterval(function(){
-		fondoDiv2.className = fondoDiv2.className.split("background_widget_transparent").join("");
-		
-		// Force css redraw to start the transition
-		fondoDiv2.offsetHeight;
+		if(++next > backgrounds.length -1){
+			next = 0;
+		}
+		if(fondoDiv2.style.opacity === '1'){
+			fondoDiv2.style.opacity = 0;
+			var nextDiv = fondoDiv2;
+		}
+		else{
+			fondoDiv2.style.opacity = 1;
+			var nextDiv = fondoDiv;
+		}
 		
 		//Preload the next background
 		setTimeout(function(){
-			setBackground(fondoDiv, backgrounds[next]);
-			
-			if(++next > backgrounds.length -1){
-				next = 0;
-			}
-			fondoDiv2.className += "background_widget_transparent";
-		
-			setBackground(fondoDiv2, backgrounds[next]);
+			setBackground(nextDiv, backgrounds[next]);
 		}, transitionTime);
-		
 		
 	}, - -delayBackground - -transitionTime);
 }
@@ -387,7 +388,7 @@ var CONFIG_function = function(){
 		td = document.createElement('td');
 		tr.appendChild(td);
 		input = document.createElement('select');
-		input.innerHTML = '<option value="n">Cover</option><option value="o">Contain</option><option value="p">Auto</option>';
+		input.innerHTML = '<option value="n">Fit Best and maintain Aspect Ratio (Clip Edges)</option><option value="o">Fit Best and maintain Aspect Ratio (No Clipping)</option><option value="p">Original size</option>';
 		input.onchange = function(){
 			background[4] = this.value;
 		}
