@@ -110,35 +110,15 @@
 	bottom: -41px;
 	cursor: ns-resize;
 }
-.config_contentDivRect .config_rectPosition > div.left_top {
-	top: -41px;
-	left: -41px;
-	cursor: se-resize;
-}
 .config_contentDivRect .config_rectPosition > div.left_center {
 	left: -41px;
 	height: 100%;
 	cursor: ew-resize;
 }
-.config_contentDivRect .config_rectPosition > div.left_bottom {
-	left: -41px;
-	bottom: -41px;
-	cursor: sw-resize;
-}
-.config_contentDivRect .config_rectPosition > div.right_top {
-	top: -41px;
-	right: -41px;
-	cursor: sw-resize;
-}
 .config_contentDivRect .config_rectPosition > div.right_center {
 	right: -41px;
 	height: 100%;
 	cursor: ew-resize;
-}
-.config_contentDivRect .config_rectPosition > div.right_bottom {
-	right: -41px;
-	bottom: -41px;
-	cursor: se-resize;
 }
 
 

@@ -88,7 +88,7 @@ function generate_position_rect(callback){
 	contentDivRect.appendChild(rectPosition);
 	
 	// Make the resizers divs
-	var resizers = ["center_top", "center_bottom", "left_top", "left_center", "left_bottom", "right_top", "right_center", "right_bottom"];
+	var resizers = ["center_top", "center_bottom", "left_center", "right_center"];
 	var resizers_divs = {};
 	for(var i in resizers){
 		resizers_divs[resizers[i]] = document.createElement('div');
@@ -102,7 +102,7 @@ function generate_position_rect(callback){
 	rectPosition.style.height = '200px';
 	/* STOP DELETING */
 	
-	// JS for the divs to allow the movement.
+	// Allow the movement through rectPosition.
 	rectPosition.onmousedown = function(e){
 		if(e.target === rectPosition){
 			var extra_position = [
@@ -119,9 +119,51 @@ function generate_position_rect(callback){
 		}
 	};
 	
-	A.onmousemove = function(e){
-		//console.log(e);
+	// Allow reescale through resizers_divs.
+	for(var i in resizers_divs){
+		(function(resizers_divs, i){
+			resizers_divs[i].onmousedown = function(e){
+				if(e.target === resizers_divs[i]){
+					var extra_position = [
+						e.clientX,
+						e.clientY,
+						rectPosition.offsetLeft,
+						rectPosition.offsetTop,
+						parseInt(rectPosition.style.width),
+						parseInt(rectPosition.style.height)
+					];
+					switch(i){
+						case "center_top":
+							contentDivRect.onmousemove = function(e){
+								rectPosition.style.top    = (extra_position[3] -extra_position[1] +e.clientY) +'px';
+								rectPosition.style.height = (extra_position[5] +extra_position[1] -e.clientY) +'px';
+							};
+						break;
+						case "center_bottom":
+							contentDivRect.onmousemove = function(e){
+								rectPosition.style.height = (extra_position[5] -extra_position[1] +e.clientY) +'px';
+							};
+						break;
+						case "left_center":
+							contentDivRect.onmousemove = function(e){
+								rectPosition.style.left   = (extra_position[2] -extra_position[0] +e.clientX) +'px';
+								rectPosition.style.width  = (extra_position[4] +extra_position[0] -e.clientX) +'px';
+							};
+						break;
+						case "right_center":
+							contentDivRect.onmousemove = function(e){
+								rectPosition.style.width  = (extra_position[4] -extra_position[0] +e.clientX) +'px';
+							};
+						break;
+					}
+					contentDivRect.onmouseup = function(){
+						contentDivRect.onmousemove = null;
+					}
+				}
+			};
+		})(resizers_divs, i);
 	}
+	
 	
 }
 
