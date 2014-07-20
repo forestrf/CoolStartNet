@@ -119,24 +119,11 @@ switch(isset($action)?$action:null){
 // returns true or false
 function widget_variables_valid(&$widgets){
 	global $db;
-	$IDs = array();
 	foreach($widgets as $widgetID => &$variables){
 		if($widgetID !== 'global'){
-			$IDs[] = $widgetID;
-		}
-	}
-	$valid_IDs = $db->get_widgets_valid_by_IDs($IDs);
-	foreach($IDs as $ID){
-		$valid = false;
-		foreach($valid_IDs as $valid_ID){
-			if(isset($valid_ID[$ID])){
-				$valid = true;
-				break;
+			if(!$db->get_widget_by_ID($widgetID)){
+				unset($widgets[$widgetID]);
 			}
-		}
-		
-		if(!$valid){
-			unset($widgets[$ID]);
 		}
 	}
 }
