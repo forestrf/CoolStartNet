@@ -162,7 +162,7 @@ class DB {
 			}
 		}
 		
-		return $this->query("SELECT `IDwidget`, `variable`, `value` FROM `variables` WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND ".implode('OR', $SQL_statement).";");
+		return $this->query("SELECT `IDwidget`, `variable`, `value` FROM `variables` WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND (".implode('OR', $SQL_statement).");");
 	}
 	
 	// Doesn't check if the widget exists. This check is done in api.php
