@@ -67,6 +67,65 @@ closebutton.onclick = function(){
 
 
 
+// Function that cleans the config window and shows redimensionable and movible rectangle.
+// Calls callback with the position and size of the rectangle once the user is done or false if the user canceled the operation.
+// Used by the widgets that can and wants to change their position and size.
+function generate_position_rect(callback){
+	// CREATE AND APPEND CONTENT CONFIGURATION DIV
+
+	// Make the div container for the rect
+	var contentDivRect = document.createElement('div');
+	contentDivRect.className = 'config_contentDivRect';
+	contentDivRect.style.backgroundImage = 'url(' + API.url(widgetID,'grid.png') + ')';
+	document.body.appendChild(contentDivRect);
+	
+	// Hide contentDiv
+	contentDiv.style.display = 'none';
+	
+	// Make the movible rect
+	var rectPosition = document.createElement('div');
+	rectPosition.className = 'config_rectPosition';
+	contentDivRect.appendChild(rectPosition);
+	
+	// Make the resizers divs
+	var resizers = ["center_top", "center_bottom", "left_top", "left_center", "left_bottom", "right_top", "right_center", "right_bottom"];
+	var resizers_divs = {};
+	for(var i in resizers){
+		resizers_divs[resizers[i]] = document.createElement('div');
+		resizers_divs[resizers[i]].className = resizers[i];
+		rectPosition.appendChild(resizers_divs[resizers[i]]);
+	}
+	
+	/* DELETE*/
+	A = rectPosition;
+	rectPosition.style.width = '200px';
+	rectPosition.style.height = '200px';
+	/* STOP DELETING */
+	
+	// JS for the divs to allow the movement.
+	rectPosition.onmousedown = function(e){
+		if(e.target === rectPosition){
+			var extra_position = [
+				e.clientX -rectPosition.offsetLeft,
+				e.clientY -rectPosition.offsetTop
+			];
+			contentDivRect.onmousemove = function(e){
+				rectPosition.style.left = (-extra_position[0] +e.clientX) +'px';
+				rectPosition.style.top  = (-extra_position[1] +e.clientY) +'px';
+			}
+			contentDivRect.onmouseup = function(){
+				contentDivRect.onmousemove = null;
+			}
+		}
+	};
+	
+	A.onmousemove = function(e){
+		//console.log(e);
+	}
+	
+}
+
+generate_position_rect();
 
 
 // SET GEAR BUTTON ACTION
@@ -92,7 +151,9 @@ gearDiv.onclick = function(){
 				// Execute the function and append the result to the corresponding div container
 				var divContainerConfigWidget = document.createElement('div');
 				divContainerConfigWidget.className = 'widgetcontentconfig';
-				divContainerConfigWidget.appendChild(CONFIG[widget]['function']());
+				divContainerConfigWidget.appendChild(CONFIG[widget]['function']({
+					'positioning':generate_position_rect
+				}));
 				configwidgetDiv.appendChild(divContainerConfigWidget);
 				
 				// Create the back button for the widget config window

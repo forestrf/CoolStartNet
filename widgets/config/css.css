@@ -39,24 +39,24 @@
 	position: absolute;
 	font-size: 2em;
 }
-.config_contentdiv > .closebutton {
+.config_contentdiv .closebutton {
 	right: 1%;
 }
-.config_contentdiv > .backbutton {
+.config_contentdiv .backbutton {
 	right: 5%;
 }
-.config_contentdiv > .closebutton:hover, .config_contentdiv > .backbutton:hover {
+.config_contentdiv .closebutton:hover, .config_contentdiv .backbutton:hover {
 	color: #fff;
 }
 
-.config_contentdiv > .contentwidgets {
+.config_contentdiv .contentwidgets {
 	width: 90%;
 	padding: 5%;
 	position: absolute;
 	text-align: center;
 }
 
-.config_contentdiv > .contentwidgets > div {
+.config_contentdiv .contentwidgets > div {
 	color: #d0d0d0;
 	border: 1px solid #a0a0a0;
 	cursor: pointer;
@@ -66,7 +66,7 @@
 	transition: all 0.2s ease 0s;
 }
 
-.config_contentdiv > .contentwidgets > div:hover {
+.config_contentdiv .contentwidgets > div:hover {
 	color: #a0f7f7;
 	box-shadow: 0 0 5px #0ff, 0 0 5px #0ff inset;
 	border-color: #0ef;
@@ -74,13 +74,82 @@
 
 
 
-/*Styles for the widget forms (tables, forms with inputs, etc)*/
+/* Styles for the blueprint rect positioning for the widgets */
 
-.config_contentdiv > .configwidget > .widgetcontentconfig {
+.config_contentDivRect {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	background-color: rgba(4, 72, 145, 0.9);
+}
+
+.config_contentDivRect .config_rectPosition {
+	cursor: move;
+	border: 1px solid #fff;
+	position: fixed;
+	box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
+	background-color: rgba(255, 255, 255, 0.35);
+}
+
+.config_contentDivRect .config_rectPosition > div {
+	width: 40px;
+	height: 40px;
+	position: absolute;
+	background-color: transparent;
+}
+.config_contentDivRect .config_rectPosition > div:hover {
+	background-color: rgba(0, 0, 0, 0.3);
+}
+.config_contentDivRect .config_rectPosition > div.center_top {
+	top: -41px;
+	width: 100%;
+	cursor: ns-resize;
+}
+.config_contentDivRect .config_rectPosition > div.center_bottom {
+	width: 100%;
+	bottom: -41px;
+	cursor: ns-resize;
+}
+.config_contentDivRect .config_rectPosition > div.left_top {
+	top: -41px;
+	left: -41px;
+	cursor: se-resize;
+}
+.config_contentDivRect .config_rectPosition > div.left_center {
+	left: -41px;
+	height: 100%;
+	cursor: ew-resize;
+}
+.config_contentDivRect .config_rectPosition > div.left_bottom {
+	left: -41px;
+	bottom: -41px;
+	cursor: sw-resize;
+}
+.config_contentDivRect .config_rectPosition > div.right_top {
+	top: -41px;
+	right: -41px;
+	cursor: sw-resize;
+}
+.config_contentDivRect .config_rectPosition > div.right_center {
+	right: -41px;
+	height: 100%;
+	cursor: ew-resize;
+}
+.config_contentDivRect .config_rectPosition > div.right_bottom {
+	right: -41px;
+	bottom: -41px;
+	cursor: se-resize;
+}
+
+
+
+/* Styles for the widget forms (tables, forms with inputs, etc) */
+
+.config_contentdiv .configwidget > .widgetcontentconfig {
 	padding-bottom: 5em;
 }
 
-.config_contentdiv > .configwidget {
+.config_contentdiv .configwidget {
 	width: 100%;
 	height: 90%;
 	position: absolute;
@@ -90,22 +159,22 @@
 	text-align: center;
 }
 
-.config_contentdiv > .configwidget .widgetnamebig {
+.config_contentdiv .configwidget .widgetnamebig {
 	padding: 0.5em 0 2em;
 	font-size: 3em;
 }
 
-.config_contentdiv > .configwidget table {
+.config_contentdiv .configwidget table {
 	margin: 0 auto;
 	text-align: left;
 }
 
-.config_contentdiv > .configwidget table td {
+.config_contentdiv .configwidget table td {
 	padding: .5em 1em .5em;
 	vertical-align: middle;
 }
 
-.config_contentdiv > .configwidget input {
+.config_contentdiv .configwidget input {
 	width: 12em;
 	color: #d0d0d0;
 	border: 1px solid #a0a0a0;
@@ -114,17 +183,17 @@
 	background-color: transparent;
 }
 
-.config_contentdiv > .configwidget input:hover, .config_contentdiv > .configwidget input:focus {
+.config_contentdiv .configwidget input:hover, .config_contentdiv .configwidget input:focus {
 	color: #fff;
 	border-color: #fff;
 }
 
-.config_contentdiv > .configwidget select, .config_contentdiv > .configwidget button {
+.config_contentdiv .configwidget select, .config_contentdiv .configwidget button {
 	width: 12.6em;
 	padding: 0.3em;
 	margin-left: 1px;
 }
 
-.config_contentdiv > .configwidget button {
+.config_contentdiv .configwidget button {
 	cursor: pointer;
 }
