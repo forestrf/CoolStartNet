@@ -127,6 +127,7 @@
 	color: #fff;
 	bottom: 2%;
 	height: 8em;
+	z-index: 1;
 	padding: 1em;
 	position: absolute;
 	text-align: right;

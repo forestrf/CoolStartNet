@@ -91,6 +91,25 @@ function generate_position_rect(callback){
 	var inputs = []; // W, H, L ,R
 	for(var i = 0; i < 4; ++i){
 		inputs[i] = document.createElement("input");
+		inputs[i].onkeyup = inputs[i].onblur = (function(i){
+			return function(){
+				switch(i){
+					case 0:
+						rectPosition.style.width = percentaje_to_screen(inputs[i].value, 'x') +'px';
+					break;
+					case 1:
+						rectPosition.style.height = percentaje_to_screen(inputs[i].value, 'y') +'px';
+					break;
+					case 2:
+						rectPosition.style.left = percentaje_to_screen(inputs[i].value, 'x') +'px';
+					break;
+					case 3:
+						rectPosition.style.top = percentaje_to_screen(inputs[i].value, 'y') +'px';
+					break;
+					percentaje_to_screen
+				}
+			}
+		})(i);
 	}
 	
 	infoDiv.appendChild(document.createTextNode("Width "));
@@ -200,12 +219,12 @@ function generate_position_rect(callback){
 	// Set the values for the inputs of the Info div in percentage and also truncates the values to 3 decimal places
 	// If rectPosition.style.left in % > 50 then moves infoDiv to the left, otherwise to the right  
 	function set_info_inputs_values(){
-		inputs[0].value = Math.floor(screen_percentaje(parseInt(rectPosition.style.width), 'x')*1000)/1000;
-		inputs[1].value = Math.floor(screen_percentaje(parseInt(rectPosition.style.height), 'y')*1000)/1000;
-		inputs[2].value = Math.floor(screen_percentaje(parseInt(rectPosition.style.left), 'x')*1000)/1000;
-		inputs[3].value = Math.floor(screen_percentaje(parseInt(rectPosition.style.top), 'y')*1000)/1000;
+		inputs[0].value = Math.floor(screen_to_percentaje(parseInt(rectPosition.style.width), 'x')*1000)/1000;
+		inputs[1].value = Math.floor(screen_to_percentaje(parseInt(rectPosition.style.height), 'y')*1000)/1000;
+		inputs[2].value = Math.floor(screen_to_percentaje(parseInt(rectPosition.style.left), 'x')*1000)/1000;
+		inputs[3].value = Math.floor(screen_to_percentaje(parseInt(rectPosition.style.top), 'y')*1000)/1000;
 		
-		if(screen_percentaje(parseInt(rectPosition.style.left), 'x') > 50){
+		if(screen_to_percentaje(parseInt(rectPosition.style.left), 'x') > 50){
 			if(infoDiv.style.left === ''){
 				infoDiv.style.right = '';
 				infoDiv.style.left  = '2%';
@@ -219,13 +238,24 @@ function generate_position_rect(callback){
 		}
 	}
 
-	function screen_percentaje(input, axis){
+	function screen_to_percentaje(px, axis){
 		switch(axis){
 			case 'x':
-				return input/window.innerWidth*100;
+				return px/window.innerWidth*100; //(px/window.innerWidth)*100
 			break;
 			case 'y':
-				return input/window.innerHeight*100;
+				return px/window.innerHeight*100; //(px/window.innerHeight)*100
+			break;
+		}
+	}
+	
+	function percentaje_to_screen(percentage, axis){
+		switch(axis){
+			case 'x':
+				return percentage*window.innerWidth/100; //(percentage*window.innerWidth)/100
+			break;
+			case 'y':
+				return percentage*window.innerHeight/100; //(percentage*window.innerHeight)/100
 			break;
 		}
 	}
