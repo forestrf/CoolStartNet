@@ -121,6 +121,30 @@
 	cursor: ew-resize;
 }
 
+.config_contentDivRect .config_rectInfo {
+	right: 2%;
+	width: 15em;
+	color: #fff;
+	bottom: 2%;
+	height: 8em;
+	padding: 1em;
+	position: absolute;
+	text-align: right;
+	line-height: 2em;
+	background-color: rgba(0, 0, 0, 0.59);
+}
+
+.config_contentDivRect .config_rectInfo > input {
+	color: #fff;
+	width: 5em;
+	margin: 0 0.5em 0 1em;
+	padding: 0.2em;
+	border-color: #fff;
+	border-style: solid;
+	border-width: 0 0 1px;
+	background-color: transparent;
+}
+
 
 
 /* Styles for the widget forms (tables, forms with inputs, etc) */

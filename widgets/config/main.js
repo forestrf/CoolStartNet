@@ -82,6 +82,35 @@ function generate_position_rect(callback){
 	// Hide contentDiv
 	contentDiv.style.display = 'none';
 	
+	// Make the Info div
+	var infoDiv = document.createElement('div');
+	infoDiv.className = 'config_rectInfo';
+	contentDivRect.appendChild(infoDiv);
+	
+	// Generate the interior of the Info div
+	var inputs = []; // W, H, L ,R
+	for(var i = 0; i < 4; ++i){
+		inputs[i] = document.createElement("input");
+	}
+	
+	infoDiv.appendChild(document.createTextNode("Width "));
+		infoDiv.appendChild(inputs[0]);
+			infoDiv.appendChild(document.createTextNode(" %"));
+				infoDiv.appendChild(document.createElement("br"));
+	infoDiv.appendChild(document.createTextNode("Height "));
+		infoDiv.appendChild(inputs[1]);
+			infoDiv.appendChild(document.createTextNode(" %"));
+				infoDiv.appendChild(document.createElement("br"));
+	infoDiv.appendChild(document.createTextNode("Left "));
+		infoDiv.appendChild(inputs[2]);
+			infoDiv.appendChild(document.createTextNode(" %"));
+				infoDiv.appendChild(document.createElement("br"));
+	infoDiv.appendChild(document.createTextNode("Top "));
+		infoDiv.appendChild(inputs[3]);
+			infoDiv.appendChild(document.createTextNode(" %"));
+	
+	
+	
 	// Make the movible rect
 	var rectPosition = document.createElement('div');
 	rectPosition.className = 'config_rectPosition';
@@ -96,11 +125,19 @@ function generate_position_rect(callback){
 		rectPosition.appendChild(resizers_divs[resizers[i]]);
 	}
 	
+	// Asign the initial sizes and position
 	/* DELETE*/
 	A = rectPosition;
 	rectPosition.style.width = '200px';
 	rectPosition.style.height = '200px';
+	rectPosition.style.top = '200px';
+	rectPosition.style.left = '200px';
 	/* STOP DELETING */
+	
+	// Setting the values to the inputs
+	set_info_inputs_values();
+	
+	
 	
 	resizers_divs["center_center"] = rectPosition;
 	
@@ -122,28 +159,33 @@ function generate_position_rect(callback){
 							contentDivRect.onmousemove = function(e){
 								rectPosition.style.top    = (extra_position[3] -extra_position[1] +e.clientY) +'px';
 								rectPosition.style.left   = (extra_position[2] -extra_position[0] +e.clientX) +'px';
+								set_info_inputs_values();
 							};
 						break;
 						case "center_top":
 							contentDivRect.onmousemove = function(e){
 								rectPosition.style.top    = (extra_position[3] -extra_position[1] +e.clientY) +'px';
 								rectPosition.style.height = (extra_position[5] +extra_position[1] -e.clientY) +'px';
+								set_info_inputs_values();
 							};
 						break;
 						case "center_bottom":
 							contentDivRect.onmousemove = function(e){
 								rectPosition.style.height = (extra_position[5] -extra_position[1] +e.clientY) +'px';
+								set_info_inputs_values();
 							};
 						break;
 						case "left_center":
 							contentDivRect.onmousemove = function(e){
 								rectPosition.style.left   = (extra_position[2] -extra_position[0] +e.clientX) +'px';
 								rectPosition.style.width  = (extra_position[4] +extra_position[0] -e.clientX) +'px';
+								set_info_inputs_values();
 							};
 						break;
 						case "right_center":
 							contentDivRect.onmousemove = function(e){
 								rectPosition.style.width  = (extra_position[4] -extra_position[0] +e.clientX) +'px';
+								set_info_inputs_values();
 							};
 						break;
 					}
@@ -155,8 +197,41 @@ function generate_position_rect(callback){
 		})(resizers_divs, i);
 	}
 	
+	// Set the values for the inputs of the Info div in percentage and also truncates the values to 3 decimal places
+	// If rectPosition.style.left in % > 50 then moves infoDiv to the left, otherwise to the right  
+	function set_info_inputs_values(){
+		inputs[0].value = Math.floor(screen_percentaje(parseInt(rectPosition.style.width), 'x')*1000)/1000;
+		inputs[1].value = Math.floor(screen_percentaje(parseInt(rectPosition.style.height), 'y')*1000)/1000;
+		inputs[2].value = Math.floor(screen_percentaje(parseInt(rectPosition.style.left), 'x')*1000)/1000;
+		inputs[3].value = Math.floor(screen_percentaje(parseInt(rectPosition.style.top), 'y')*1000)/1000;
+		
+		if(screen_percentaje(parseInt(rectPosition.style.left), 'x') > 50){
+			if(infoDiv.style.left === ''){
+				infoDiv.style.right = '';
+				infoDiv.style.left  = '2%';
+			}
+		}
+		else{
+			if(infoDiv.style.right === ''){
+				infoDiv.style.right = '2%';
+				infoDiv.style.left  = '';
+			}
+		}
+	}
+
+	function screen_percentaje(input, axis){
+		switch(axis){
+			case 'x':
+				return input/window.innerWidth*100;
+			break;
+			case 'y':
+				return input/window.innerHeight*100;
+			break;
+		}
+	}
 	
 }
+
 
 generate_position_rect();
 
