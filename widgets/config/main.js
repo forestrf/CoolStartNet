@@ -70,7 +70,7 @@ closebutton.onclick = function(){
 // Function that cleans the config window and shows redimensionable and movible rectangle.
 // Calls callback with the position and size of the rectangle once the user is done or false if the user canceled the operation.
 // Used by the widgets that can and wants to change their position and size.
-// Parameters:
+// Parameters (also, what callback parameter contains):
 /*
 {
 	"width"  : number, // %
@@ -78,6 +78,16 @@ closebutton.onclick = function(){
 	"left"   : number, // %
 	"top"    : number  // %
 }
+
+generate_position_rect(
+	{
+		"width"  : 50,
+		"height" : 60,
+		"left"   : 20,
+		"top"    : 30
+	},
+	console.log
+);
 */
 function generate_position_rect(parameters, callback){
 	// CREATE AND APPEND CONTENT CONFIGURATION DIV
@@ -88,7 +98,7 @@ function generate_position_rect(parameters, callback){
 	contentDivRect.style.backgroundImage = 'url(' + API.url(widgetID,'grid.png') + ')';
 	document.body.appendChild(contentDivRect);
 	
-	// Hide contentDiv
+	// Hide contentDiv. Undo this before calling callback
 	contentDiv.style.display = 'none';
 	
 	// Make the Info div
@@ -108,6 +118,27 @@ function generate_position_rect(parameters, callback){
 	var buttonCANCEL = document.createElement('button');
 	buttonCANCEL.innerHTML = 'Cancel';
 	buttonsDiv.appendChild(buttonCANCEL);
+	
+	// Callbacks
+	buttonOK.onclick = function(){
+		contentDivRect.remove();
+		contentDiv.style.display = '';
+		if(typeof callback === "function"){
+			callback({
+				"width"  : inputs[0].value, // %
+				"height" : inputs[1].value, // %
+				"left"   : inputs[2].value, // %
+				"top"    : inputs[3].value  // %
+			});
+		}
+	}
+	buttonCANCEL.onclick = function(){
+		contentDivRect.remove();
+		contentDiv.style.display = '';
+		if(typeof callback === "function"){
+			callback(false);
+		}
+	}
 	
 	// Make the div container for the inputs
 	var inputsDiv = document.createElement('div');
@@ -277,13 +308,6 @@ function generate_position_rect(parameters, callback){
 	
 }
 
-
-generate_position_rect({
-	"width"  : 60,
-	"height" : 60,
-	"left"   : 20,
-	"top"    : 20
-});
 
 
 // SET GEAR BUTTON ACTION
