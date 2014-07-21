@@ -70,15 +70,21 @@ closebutton.onclick = function(){
 // Function that cleans the config window and shows redimensionable and movible rectangle.
 // Calls callback with the position and size of the rectangle once the user is done or false if the user canceled the operation.
 // Used by the widgets that can and wants to change their position and size.
-// Parameters (also, what callback parameter contains):
 /*
+Parameters:
 {
-	"width"  : number, // %
-	"height" : number, // %
-	"left"   : number, // %
-	"top"    : number  // %
+	"width"   : number, // %
+	"height"  : number, // %
+	"left"    : number, // %
+	"top"     : number, // %
+	"fixed"   : ["width", "height", "left", "top"], // Optative. Array with fixed parameters (they will not be changeable)
+	"minimum" : {"width":"x%", ...}, // Optative. Minimum percetage that the value can reach.
+	"maximum" : {"width":"x%", ...},  // Optative. Máximum percetage that the value can reach.
+	"show_bg" : true/false, // Optative. Show the background or hide it.
+	"realtime": callback // Optional. If setted, it is called with an objet that gives the position and size of the movement to allow the user to move the widget in realtime.
 }
 
+Example:
 generate_position_rect(
 	{
 		"width"  : 50,
@@ -88,14 +94,36 @@ generate_position_rect(
 	},
 	console.log
 );
+
+console.log receives:
+{
+	"width"  : number, // %
+	"height" : number, // %
+	"left"   : number, // %
+	"top"    : number  // %
+}
+
 */
 function generate_position_rect(parameters, callback){
+	// Parse parameters
+	var p_fixed = typeof parameters["fixed"] === "object";
+	var p_minimum = typeof parameters["minimum"] === "object";
+	var p_maximum = typeof parameters["maximum"] === "object";
+	var p_show_bg = typeof parameters["show_bg"] === "boolean";
+	var p_realtime = typeof parameters["realtime"] === "function";
+	
+	
 	// CREATE AND APPEND CONTENT CONFIGURATION DIV
 
 	// Make the div container for the rect
 	var contentDivRect = document.createElement('div');
 	contentDivRect.className = 'config_contentDivRect';
-	contentDivRect.style.backgroundImage = 'url(' + API.url(widgetID, 'grid.png') + ')';
+	if(p_show_bg && parameters["show_bg"] === false){
+		contentDivRect.style.backgroundColor = 'transparent';
+	}
+	else{
+		contentDivRect.style.backgroundImage = 'url(' + API.url(widgetID, 'grid.png') + ')';
+	}
 	document.body.appendChild(contentDivRect);
 	
 	// Hide contentDiv. Undo this before calling callback
@@ -151,11 +179,17 @@ function generate_position_rect(parameters, callback){
 	for(var i = 0; i < 4; ++i){
 		inputs[i] = document.createElement("input");
 		// Allows to write to the inputs
-		inputs[i].onkeyup = inputs[i].onblur = (function(i){
-			return function(){
-				rectPosition.style[inputs_relation[i]] = inputs[i].value +'%';
-			}
-		})(i);
+		if(p_fixed && parameters["fixed"].indexOf(inputs_relation[i]) !== -1){
+			inputs[i].setAttribute("disabled", "disabled");
+		}
+		else{
+			inputs[i].onkeyup = inputs[i].onblur = (function(i){
+				return function(){
+					change_rectPosition_value(inputs[i].value, inputs_relation[i]);
+					set_info_inputs_values();
+				}
+			})(i);
+		}
 	}
 	
 	inputsDiv.appendChild(document.createTextNode("Width "));
@@ -218,34 +252,34 @@ function generate_position_rect(parameters, callback){
 					switch(i){
 						case "center_center":
 							contentDivRect.onmousemove = function(e){
-								rectPosition.style.top    = screen_to_percentaje(extra_position[3] -extra_position[1] +e.clientY, 'y') +'%';
-								rectPosition.style.left   = screen_to_percentaje(extra_position[2] -extra_position[0] +e.clientX, 'x') +'%';
+								change_rectPosition_value(screen_to_percentaje(extra_position[3] -extra_position[1] +e.clientY, 'y'), "top");
+								change_rectPosition_value(screen_to_percentaje(extra_position[2] -extra_position[0] +e.clientX, 'x'), "left");
 								set_info_inputs_values();
 							};
 						break;
 						case "center_top":
 							contentDivRect.onmousemove = function(e){
-								rectPosition.style.top    = screen_to_percentaje(extra_position[3] -extra_position[1] +e.clientY, 'y') +'%';
-								rectPosition.style.height = screen_to_percentaje(extra_position[5] +extra_position[1] -e.clientY, 'y') +'%';
+								change_rectPosition_value(screen_to_percentaje(extra_position[3] -extra_position[1] +e.clientY, 'y'), "top");
+								change_rectPosition_value(screen_to_percentaje(extra_position[5] +extra_position[1] -e.clientY, 'y'), "height");
 								set_info_inputs_values();
 							};
 						break;
 						case "center_bottom":
 							contentDivRect.onmousemove = function(e){
-								rectPosition.style.height = screen_to_percentaje(extra_position[5] -extra_position[1] +e.clientY, 'y') +'%';
+								change_rectPosition_value(screen_to_percentaje(extra_position[5] -extra_position[1] +e.clientY, 'y'), "height");
 								set_info_inputs_values();
 							};
 						break;
 						case "left_center":
 							contentDivRect.onmousemove = function(e){
-								rectPosition.style.left   = screen_to_percentaje(extra_position[2] -extra_position[0] +e.clientX, 'x') +'%';
-								rectPosition.style.width  = screen_to_percentaje(extra_position[4] +extra_position[0] -e.clientX, 'x') +'%';
+								change_rectPosition_value(screen_to_percentaje(extra_position[2] -extra_position[0] +e.clientX, 'x'), "left");
+								change_rectPosition_value(screen_to_percentaje(extra_position[4] +extra_position[0] -e.clientX, 'x'), "width");
 								set_info_inputs_values();
 							};
 						break;
 						case "right_center":
 							contentDivRect.onmousemove = function(e){
-								rectPosition.style.width  = screen_to_percentaje(extra_position[4] -extra_position[0] +e.clientX, 'x') +'%';
+								change_rectPosition_value(screen_to_percentaje(extra_position[4] -extra_position[0] +e.clientX, 'x'), "width");
 								set_info_inputs_values();
 							};
 						break;
@@ -293,6 +327,33 @@ function generate_position_rect(parameters, callback){
 		return axis === 'x' ? percentage*window.innerWidth/100 : percentage*window.innerHeight/100;
 	}
 	*/
+	
+	function change_rectPosition_value(value, name){
+		if(p_fixed && parameters["fixed"].indexOf(name) !== -1){
+			return;
+		}
+		if(p_minimum && typeof parameters["minimum"][name] === "number" && parameters["minimum"][name] > value){
+			rectPosition.style[name] = parameters["minimum"][name] + "%";
+		}
+		else if(p_maximum && typeof parameters["maximum"][name] === "number" && parameters["maximum"][name] < value){
+			rectPosition.style[name] = parameters["maximum"][name] + "%";
+		}
+		else{
+			rectPosition.style[name] = value + "%";
+		}
+		send_realtime_calback();
+	}
+	
+	function send_realtime_calback(){
+		if(p_realtime){
+			parameters["realtime"]({
+				"width"  : inputs[0].value, // %
+				"height" : inputs[1].value, // %
+				"left"   : inputs[2].value, // %
+				"top"    : inputs[3].value  // %
+			});
+		}
+	}
 }
 
 

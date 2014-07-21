@@ -77,8 +77,11 @@
 /* Styles for the blueprint rect positioning for the widgets */
 
 .config_contentDivRect {
+	top: 0;
+	left: 0;
 	width: 100%;
 	height: 100%;
+	z-index: 999999;
 	position: fixed;
 	background-color: rgba(4, 72, 145, 0.9);
 }
@@ -164,6 +167,11 @@
 	border-style: solid;
 	border-width: 0 0 1px;
 	background-color: transparent;
+}
+
+.config_contentDivRect .config_rectInfo .config_rectInfo_inputs input[disabled] {
+	border-color: #999;
+	color: #999;
 }
 
 
