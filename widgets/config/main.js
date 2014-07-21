@@ -95,7 +95,7 @@ function generate_position_rect(parameters, callback){
 	// Make the div container for the rect
 	var contentDivRect = document.createElement('div');
 	contentDivRect.className = 'config_contentDivRect';
-	contentDivRect.style.backgroundImage = 'url(' + API.url(widgetID,'grid.png') + ')';
+	contentDivRect.style.backgroundImage = 'url(' + API.url(widgetID, 'grid.png') + ')';
 	document.body.appendChild(contentDivRect);
 	
 	// Hide contentDiv. Undo this before calling callback
@@ -150,11 +150,12 @@ function generate_position_rect(parameters, callback){
 	var inputs_relation = {0:"width",1:"height",2:"left",3:"top"};
 	for(var i = 0; i < 4; ++i){
 		inputs[i] = document.createElement("input");
-		inputs[i].onkeyup = inputs[i].onblur = (function(i, dimension){
+		// Allows to write to the inputs
+		inputs[i].onkeyup = inputs[i].onblur = (function(i){
 			return function(){
-				rectPosition.style[dimension] = inputs[i].value +'%';
+				rectPosition.style[inputs_relation[i]] = inputs[i].value +'%';
 			}
-		})(i, inputs_relation[i]);
+		})(i);
 	}
 	
 	inputsDiv.appendChild(document.createTextNode("Width "));
@@ -190,10 +191,9 @@ function generate_position_rect(parameters, callback){
 	}
 	
 	// Asign the initial sizes and position
-	rectPosition.style.width  = parameters["width"]+"%";
-	rectPosition.style.height = parameters["height"]+"%";
-	rectPosition.style.left   = parameters["left"]+"%";
-	rectPosition.style.top    = parameters["top"]+"%";
+	for(var i in inputs_relation){
+		rectPosition.style[inputs_relation[i]]  = parameters[inputs_relation[i]]+"%";
+	}
 	
 	// Setting the values to the inputs
 	set_info_inputs_values();
@@ -202,9 +202,9 @@ function generate_position_rect(parameters, callback){
 	
 	resizers_divs["center_center"] = rectPosition;
 	
-	// Allow reescale through resizers_divs.
+	// Allow escalating through dragging resizers_divs.
 	for(var i in resizers_divs){
-		(function(resizers_divs, i){
+		(function(i){
 			resizers_divs[i].onmousedown = function(e){
 				if(e.target === resizers_divs[i]){
 					var extra_position = [
@@ -212,8 +212,8 @@ function generate_position_rect(parameters, callback){
 						e.clientY,
 						rectPosition.offsetLeft,
 						rectPosition.offsetTop,
-						percentaje_to_screen(parsePercentage(rectPosition.style.width), 'x'),
-						percentaje_to_screen(parsePercentage(rectPosition.style.height), 'y')
+						rectPosition.clientWidth,
+						rectPosition.clientHeight
 					];
 					switch(i){
 						case "center_center":
@@ -255,28 +255,26 @@ function generate_position_rect(parameters, callback){
 					}
 				}
 			};
-		})(resizers_divs, i);
+		})(i);
 	}
 	
 	// Set the values for the inputs of the Info div in percentage and also truncates the values to 3 decimal places
 	// If rectPosition.style.left in % > 50 then moves infoDiv to the left, otherwise to the right  
 	function set_info_inputs_values(){
-		inputs[0].value = Math.floor(parsePercentage(rectPosition.style.width)*1000)/1000;
-		inputs[1].value = Math.floor(parsePercentage(rectPosition.style.height)*1000)/1000;
-		inputs[2].value = Math.floor(parsePercentage(rectPosition.style.left)*1000)/1000;
-		inputs[3].value = Math.floor(parsePercentage(rectPosition.style.top)*1000)/1000;
+		for(var i in inputs_relation){
+			inputs[i].value = Math.floor(parsePercentage(rectPosition.style[inputs_relation[i]])*1000)/1000;
+		}
 		
-		if(parsePercentage(rectPosition.style.left) > 50){
+		// Change the position of infoDiv to not block the view of rectPosition
+		if(parsePercentage(rectPosition.style.left) + parsePercentage(rectPosition.style.width)/2 > 50){
 			if(infoDiv.style.left === ''){
 				infoDiv.style.right = '';
 				infoDiv.style.left  = '2%';
 			}
 		}
-		else{
-			if(infoDiv.style.right === ''){
-				infoDiv.style.right = '2%';
-				infoDiv.style.left  = '';
-			}
+		else if(infoDiv.style.right === ''){
+			infoDiv.style.right = '2%';
+			infoDiv.style.left  = '';
 		}
 	}
 	
@@ -285,27 +283,16 @@ function generate_position_rect(parameters, callback){
 	}
 	
 	function screen_to_percentaje(px, axis){
-		switch(axis){
-			case 'x':
-				return px/window.innerWidth*100; //(px/window.innerWidth)*100
-			break;
-			case 'y':
-				return px/window.innerHeight*100; //(px/window.innerHeight)*100
-			break;
-		}
+		//(px/window.innerWidth)*100
+		return axis === 'x' ? px/window.innerWidth*100 : px/window.innerHeight*100;
 	}
-	
+	/*
+	// Not in use
 	function percentaje_to_screen(percentage, axis){
-		switch(axis){
-			case 'x':
-				return percentage*window.innerWidth/100; //(percentage*window.innerWidth)/100
-			break;
-			case 'y':
-				return percentage*window.innerHeight/100; //(percentage*window.innerHeight)/100
-			break;
-		}
+		//(percentage*window.innerWidth)/100
+		return axis === 'x' ? percentage*window.innerWidth/100 : percentage*window.innerHeight/100;
 	}
-	
+	*/
 }
 
 
