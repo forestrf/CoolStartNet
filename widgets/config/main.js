@@ -85,12 +85,16 @@ Parameters:
 }
 
 Example:
-generate_position_rect(
-	{
-		"width"  : 50,
-		"height" : 60,
-		"left"   : 20,
-		"top"    : 30
+generate_position_rect({
+	"width"   : 50,
+	"height"  : 20,
+	"left"    : 0,
+	"top"     : 30,
+	"fixed"   : ["height","left"],
+	"minimum" : {"width":30},
+	"maximum" : {"width":60, "top":80},
+	"show_bg" : false,
+	"realtime": console.log
 	},
 	console.log
 );
@@ -403,14 +407,3 @@ gearDiv.onclick = function(){
 	
 	
 };
-
-
-
-
-
-// Function for the config widgetID. It returns the html object to append on the config window.
-// In this case we only want to allow the user to change the position of the widget.
-var CONFIG_function = function(){
-	var div = document.createElement('div');
-	return div;
-}
