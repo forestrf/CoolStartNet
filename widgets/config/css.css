@@ -135,7 +135,27 @@
 	background-color: rgba(0, 0, 0, 0.59);
 }
 
-.config_contentDivRect .config_rectInfo > input {
+.config_contentDivRect .config_rectInfo .config_rectInfo_buttons {
+	width: 30%;
+	height: 100%;
+	display: inline-block;
+	position: relative;
+	vertical-align: top;
+}
+
+.config_contentDivRect .config_rectInfo button {
+	width: 100%;
+	height: 35%;
+	margin: 12.5% 0;
+}
+
+.config_contentDivRect .config_rectInfo .config_rectInfo_inputs {
+	width: 70%;
+	display: inline-block;
+	position: relative;
+}
+
+.config_contentDivRect .config_rectInfo .config_rectInfo_inputs input {
 	color: #fff;
 	width: 5em;
 	margin: 0 0.5em 0 1em;

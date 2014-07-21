@@ -91,10 +91,28 @@ function generate_position_rect(parameters, callback){
 	// Hide contentDiv
 	contentDiv.style.display = 'none';
 	
-	// Make the Info div // NEEDS THE BUTTONS OK AND CANCEL
+	// Make the Info div
 	var infoDiv = document.createElement('div');
 	infoDiv.className = 'config_rectInfo';
 	contentDivRect.appendChild(infoDiv);
+	
+	// Make the div container for the buttons
+	var buttonsDiv = document.createElement('div');
+	buttonsDiv.className = 'config_rectInfo_buttons';
+	infoDiv.appendChild(buttonsDiv);
+	
+	// "Ok" and "Cancel" buttons
+	var buttonOK = document.createElement('button');
+	buttonOK.innerHTML = 'Ok';
+	buttonsDiv.appendChild(buttonOK);
+	var buttonCANCEL = document.createElement('button');
+	buttonCANCEL.innerHTML = 'Cancel';
+	buttonsDiv.appendChild(buttonCANCEL);
+	
+	// Make the div container for the inputs
+	var inputsDiv = document.createElement('div');
+	inputsDiv.className = 'config_rectInfo_inputs';
+	infoDiv.appendChild(inputsDiv);
 	
 	// Generate the interior of the Info div
 	var inputs = []; // W, H, L ,R
@@ -108,21 +126,21 @@ function generate_position_rect(parameters, callback){
 		})(i, inputs_relation[i]);
 	}
 	
-	infoDiv.appendChild(document.createTextNode("Width "));
-		infoDiv.appendChild(inputs[0]);
-			infoDiv.appendChild(document.createTextNode(" %"));
-				infoDiv.appendChild(document.createElement("br"));
-	infoDiv.appendChild(document.createTextNode("Height "));
-		infoDiv.appendChild(inputs[1]);
-			infoDiv.appendChild(document.createTextNode(" %"));
-				infoDiv.appendChild(document.createElement("br"));
-	infoDiv.appendChild(document.createTextNode("Left "));
-		infoDiv.appendChild(inputs[2]);
-			infoDiv.appendChild(document.createTextNode(" %"));
-				infoDiv.appendChild(document.createElement("br"));
-	infoDiv.appendChild(document.createTextNode("Top "));
-		infoDiv.appendChild(inputs[3]);
-			infoDiv.appendChild(document.createTextNode(" %"));
+	inputsDiv.appendChild(document.createTextNode("Width "));
+		inputsDiv.appendChild(inputs[0]);
+			inputsDiv.appendChild(document.createTextNode(" %"));
+				inputsDiv.appendChild(document.createElement("br"));
+	inputsDiv.appendChild(document.createTextNode("Height "));
+		inputsDiv.appendChild(inputs[1]);
+			inputsDiv.appendChild(document.createTextNode(" %"));
+				inputsDiv.appendChild(document.createElement("br"));
+	inputsDiv.appendChild(document.createTextNode("Left "));
+		inputsDiv.appendChild(inputs[2]);
+			inputsDiv.appendChild(document.createTextNode(" %"));
+				inputsDiv.appendChild(document.createElement("br"));
+	inputsDiv.appendChild(document.createTextNode("Top "));
+		inputsDiv.appendChild(inputs[3]);
+			inputsDiv.appendChild(document.createTextNode(" %"));
 	
 	
 	
@@ -217,7 +235,7 @@ function generate_position_rect(parameters, callback){
 		inputs[2].value = Math.floor(parsePercentage(rectPosition.style.left)*1000)/1000;
 		inputs[3].value = Math.floor(parsePercentage(rectPosition.style.top)*1000)/1000;
 		
-		if(parseInt(rectPosition.style.left) > 50){
+		if(parsePercentage(rectPosition.style.left) > 50){
 			if(infoDiv.style.left === ''){
 				infoDiv.style.right = '';
 				infoDiv.style.left  = '2%';
