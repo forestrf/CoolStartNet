@@ -70,7 +70,16 @@ closebutton.onclick = function(){
 // Function that cleans the config window and shows redimensionable and movible rectangle.
 // Calls callback with the position and size of the rectangle once the user is done or false if the user canceled the operation.
 // Used by the widgets that can and wants to change their position and size.
-function generate_position_rect(callback){
+// Parameters:
+/*
+{
+	"width"  : number, // %
+	"height" : number, // %
+	"left"   : number, // %
+	"top"    : number  // %
+}
+*/
+function generate_position_rect(parameters, callback){
 	// CREATE AND APPEND CONTENT CONFIGURATION DIV
 
 	// Make the div container for the rect
@@ -82,34 +91,21 @@ function generate_position_rect(callback){
 	// Hide contentDiv
 	contentDiv.style.display = 'none';
 	
-	// Make the Info div
+	// Make the Info div // NEEDS THE BUTTONS OK AND CANCEL
 	var infoDiv = document.createElement('div');
 	infoDiv.className = 'config_rectInfo';
 	contentDivRect.appendChild(infoDiv);
 	
 	// Generate the interior of the Info div
 	var inputs = []; // W, H, L ,R
+	var inputs_relation = {0:"width",1:"height",2:"left",3:"top"};
 	for(var i = 0; i < 4; ++i){
 		inputs[i] = document.createElement("input");
-		inputs[i].onkeyup = inputs[i].onblur = (function(i){
+		inputs[i].onkeyup = inputs[i].onblur = (function(i, dimension){
 			return function(){
-				switch(i){
-					case 0:
-						rectPosition.style.width = percentaje_to_screen(inputs[i].value, 'x') +'px';
-					break;
-					case 1:
-						rectPosition.style.height = percentaje_to_screen(inputs[i].value, 'y') +'px';
-					break;
-					case 2:
-						rectPosition.style.left = percentaje_to_screen(inputs[i].value, 'x') +'px';
-					break;
-					case 3:
-						rectPosition.style.top = percentaje_to_screen(inputs[i].value, 'y') +'px';
-					break;
-					percentaje_to_screen
-				}
+				rectPosition.style[dimension] = inputs[i].value +'%';
 			}
-		})(i);
+		})(i, inputs_relation[i]);
 	}
 	
 	infoDiv.appendChild(document.createTextNode("Width "));
@@ -145,13 +141,10 @@ function generate_position_rect(callback){
 	}
 	
 	// Asign the initial sizes and position
-	/* DELETE*/
-	A = rectPosition;
-	rectPosition.style.width = '200px';
-	rectPosition.style.height = '200px';
-	rectPosition.style.top = '200px';
-	rectPosition.style.left = '200px';
-	/* STOP DELETING */
+	rectPosition.style.width  = parameters["width"]+"%";
+	rectPosition.style.height = parameters["height"]+"%";
+	rectPosition.style.left   = parameters["left"]+"%";
+	rectPosition.style.top    = parameters["top"]+"%";
 	
 	// Setting the values to the inputs
 	set_info_inputs_values();
@@ -170,40 +163,40 @@ function generate_position_rect(callback){
 						e.clientY,
 						rectPosition.offsetLeft,
 						rectPosition.offsetTop,
-						parseInt(rectPosition.style.width),
-						parseInt(rectPosition.style.height)
+						percentaje_to_screen(parsePercentage(rectPosition.style.width), 'x'),
+						percentaje_to_screen(parsePercentage(rectPosition.style.height), 'y')
 					];
 					switch(i){
 						case "center_center":
 							contentDivRect.onmousemove = function(e){
-								rectPosition.style.top    = (extra_position[3] -extra_position[1] +e.clientY) +'px';
-								rectPosition.style.left   = (extra_position[2] -extra_position[0] +e.clientX) +'px';
+								rectPosition.style.top    = screen_to_percentaje(extra_position[3] -extra_position[1] +e.clientY, 'y') +'%';
+								rectPosition.style.left   = screen_to_percentaje(extra_position[2] -extra_position[0] +e.clientX, 'x') +'%';
 								set_info_inputs_values();
 							};
 						break;
 						case "center_top":
 							contentDivRect.onmousemove = function(e){
-								rectPosition.style.top    = (extra_position[3] -extra_position[1] +e.clientY) +'px';
-								rectPosition.style.height = (extra_position[5] +extra_position[1] -e.clientY) +'px';
+								rectPosition.style.top    = screen_to_percentaje(extra_position[3] -extra_position[1] +e.clientY, 'y') +'%';
+								rectPosition.style.height = screen_to_percentaje(extra_position[5] +extra_position[1] -e.clientY, 'y') +'%';
 								set_info_inputs_values();
 							};
 						break;
 						case "center_bottom":
 							contentDivRect.onmousemove = function(e){
-								rectPosition.style.height = (extra_position[5] -extra_position[1] +e.clientY) +'px';
+								rectPosition.style.height = screen_to_percentaje(extra_position[5] -extra_position[1] +e.clientY, 'y') +'%';
 								set_info_inputs_values();
 							};
 						break;
 						case "left_center":
 							contentDivRect.onmousemove = function(e){
-								rectPosition.style.left   = (extra_position[2] -extra_position[0] +e.clientX) +'px';
-								rectPosition.style.width  = (extra_position[4] +extra_position[0] -e.clientX) +'px';
+								rectPosition.style.left   = screen_to_percentaje(extra_position[2] -extra_position[0] +e.clientX, 'x') +'%';
+								rectPosition.style.width  = screen_to_percentaje(extra_position[4] +extra_position[0] -e.clientX, 'x') +'%';
 								set_info_inputs_values();
 							};
 						break;
 						case "right_center":
 							contentDivRect.onmousemove = function(e){
-								rectPosition.style.width  = (extra_position[4] -extra_position[0] +e.clientX) +'px';
+								rectPosition.style.width  = screen_to_percentaje(extra_position[4] -extra_position[0] +e.clientX, 'x') +'%';
 								set_info_inputs_values();
 							};
 						break;
@@ -219,12 +212,12 @@ function generate_position_rect(callback){
 	// Set the values for the inputs of the Info div in percentage and also truncates the values to 3 decimal places
 	// If rectPosition.style.left in % > 50 then moves infoDiv to the left, otherwise to the right  
 	function set_info_inputs_values(){
-		inputs[0].value = Math.floor(screen_to_percentaje(parseInt(rectPosition.style.width), 'x')*1000)/1000;
-		inputs[1].value = Math.floor(screen_to_percentaje(parseInt(rectPosition.style.height), 'y')*1000)/1000;
-		inputs[2].value = Math.floor(screen_to_percentaje(parseInt(rectPosition.style.left), 'x')*1000)/1000;
-		inputs[3].value = Math.floor(screen_to_percentaje(parseInt(rectPosition.style.top), 'y')*1000)/1000;
+		inputs[0].value = Math.floor(parsePercentage(rectPosition.style.width)*1000)/1000;
+		inputs[1].value = Math.floor(parsePercentage(rectPosition.style.height)*1000)/1000;
+		inputs[2].value = Math.floor(parsePercentage(rectPosition.style.left)*1000)/1000;
+		inputs[3].value = Math.floor(parsePercentage(rectPosition.style.top)*1000)/1000;
 		
-		if(screen_to_percentaje(parseInt(rectPosition.style.left), 'x') > 50){
+		if(parseInt(rectPosition.style.left) > 50){
 			if(infoDiv.style.left === ''){
 				infoDiv.style.right = '';
 				infoDiv.style.left  = '2%';
@@ -237,7 +230,11 @@ function generate_position_rect(callback){
 			}
 		}
 	}
-
+	
+	function parsePercentage(value){
+		return - -value.substr(0, value.length -1);
+	}
+	
 	function screen_to_percentaje(px, axis){
 		switch(axis){
 			case 'x':
@@ -263,7 +260,12 @@ function generate_position_rect(callback){
 }
 
 
-generate_position_rect();
+generate_position_rect({
+	"width"  : 60,
+	"height" : 60,
+	"left"   : 20,
+	"top"    : 20
+});
 
 
 // SET GEAR BUTTON ACTION
