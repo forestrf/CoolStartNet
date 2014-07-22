@@ -64,9 +64,12 @@ var API_F = (function(){
 			
 			callbacks_GET_SET_request[mode].push({"callback":callback,"widgets":widgets});
 			clearTimeout(timeout_GET_SET[mode]);
-			timeout_GET_SET[mode] = mode === 0 ?
-				setTimeout(execute_GET, max_wait_GET_SET_request[mode]) :
-				setTimeout(execute_SET, max_wait_GET_SET_request[mode]);
+			if(mode === 0){
+				timeout_GET_SET[mode] = setTimeout(execute_GET, max_wait_GET_SET_request[mode]);
+			}
+			else{
+				timeout_GET_SET[mode] = setTimeout(execute_SET, max_wait_GET_SET_request[mode]);
+			}
 		}
 		else{
 			callback(undefined);
@@ -109,17 +112,18 @@ var API_F = (function(){
 					}
 					else{
 						for(var i in callbacksConsulta){
-							callbacksConsulta[i]['callback'](response);
+							callbacksConsulta[i]['callback'](undefined);
 						}
 					}
 				}
 				else{
-					console.log("Error loading page");
+					for(var i in callbacksConsulta){
+						callbacksConsulta[i]['callback'](undefined);
+					}
 				}
 			}
 		};
-		var actions = ['get', 'set'];
-		var data = 'action='+actions[action]+'&data='+encodeURIComponent(JSON.stringify(next_request));
+		var data = 'action='+['get', 'set'][action]+'&data='+encodeURIComponent(JSON.stringify(next_request));
 		req.send(data);
 	}
 	
@@ -141,9 +145,172 @@ var API_F = (function(){
 	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	function widget_base(div){
+		div["div"] = div;
+		div["hide"] = function(){
+			div.style.display = 'none';
+			return div;
+		};
+		div["unHide"] = function(){
+			div.style.display = '';
+			return div;
+		};
+			
+		div["setPosition"] = function(left, top){
+			div.style.left = left + "%";
+			div.style.top = top + "%";
+			return div;
+		};
+		div.setPosition["left"] = function(left){div.style.left = left + "%"; return div;};
+		div.setPosition["top"] = function(top){div.style.top = top + "%"; return div;};
+		
+		div["getPosition"] = function(){
+			return {"left":div.style.left.split("%")[0], "top":div.style.top.split("%")[0]};
+		};
+		div.getPosition["left"] = function(left){return div.style.left.split("%")[0]};
+		div.getPosition["top"] = function(top){return div.style.top.split("%")[0]};
+		
+		div["setSize"] = function(width, height){
+			div.style.width = width + "%";
+			div.style.height = height + "%";
+			return div;
+		};
+		div.setSize["width"] = function(width){div.style.width = width + "%"; return div;};
+		div.setSize["height"] = function(height){div.style.height = height + "%"; return div;};
+		
+		div["getSize"] = function(){
+			return {"width":div.style.width.split("%")[0], "height":div.style.height.split("%")[0]};
+		};
+		div.getSize["width"] = function(width){return div.style.width.split("%")[0]};
+		div.getSize["height"] = function(height){return div.style.height.split("%")[0]};
+		
+		div["setPositionSize"] = function(left, top, width, height){
+			return div.setPosition(left, top).setSize(width, height);
+		};
+		
+		div["getPositionSize"] = function(left, top, width, height){
+			var p = div.getPosition();
+			var s = div.getSize();
+			return {
+				"left": p.left,
+				"top": p.top,
+				"width": s.width,
+				"height": s.height
+			}
+		};
+		
+		div["addClass"] = function(className){
+			div.className += " "+className;
+			return div;
+		};
+		div["removeClass"] = function(className){
+			div.className = div.className.split(className).join("").trim();
+			return div;
+		};
+		div["setPriority"] = function(zIndex){
+			div.style.zIndex = zIndex;
+			return div;
+		};
+		div["getPriority"] = function(zIndex){
+			return div.style.zIndex;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	function Storage(widgetID){
+		return {
+			"localStorage": {
+				/*"set"(key, value, callback) -> Storage.localStorage
+				"get"(key, callback) -> value
+				"delete"(key, callback) -> Storage.localStorage
+				"deleteAll"(callback) -> Storage.localStorage
+				"exists"(key, callback) -> bool*/
+			},
+			"remoteStorage": {
+				"set":function(key, value, callback){
+					var c = {}; c[key] = value;
+					var command = {'action':1,'widget':widgetID,'variables':c};
+					API_F.call(command, function(e){callback(e[key]);});
+					return this; //API.Storage.remoteStorage;
+				},
+				"get":function(key, callback){
+					var c = {}; c[key] = null;
+					var command = {'action':0,'widget':widgetID,'variables':c};
+					API_F.call(command, function(e){callback(e[key]);});
+					return this; //API.Storage.remoteStorage;
+				}/*,
+				"delete"(key, callback) -> Storage.remoteStorage
+				"deleteAll"(callback) -> Storage.remoteStorage
+				"exists"(key, callback) -> bool*/
+			},
+			"sharedStorage": {
+				"set":function(key, value, callback){
+					var c = {}; c[key] = value;
+					var command = {'action':1,'widget':'global','variables':c};
+					API_F.call(command, function(e){callback(e[key]);});
+					return this; //API.Storage.sharedStorage;
+				},
+				"get":function(key, callback){
+					var c = {}; c[key] = null;
+					var command = {'action':0,'widget':'global','variables':c};
+					API_F.call(command, function(e){callback(e[key]);});
+					return this; //API.Storage.sharedStorage;
+				}
+				/*
+				"delete"(key, callback) -> Storage.sharedStorage
+				"exists"(key, callback) -> bool*/
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	Widget = {
+		"create": function(){
+			var div = document.createElement("div");
+			div.style.display = "block";
+			div.style.position = "fixed";
+			document.body.appendChild(div);
+			API_F.widget_base(div);
+			return div;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	return {
-		"call":precall,
-		"url":getUrl
+		"call": precall,
+		"url": getUrl,
+		"widget_base": widget_base,
+		"Storage": Storage,
+		"Widget": Widget
 	};
 })();
 

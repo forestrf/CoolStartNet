@@ -6,19 +6,15 @@ link.setAttribute("href", API.url('bgcss.css'));
 document.getElementsByTagName("head")[0].appendChild(link);
 
 // Make the div container for the background and style it.
-var fondoDiv = document.createElement('div');
-var fondoDiv2 = document.createElement('div');
+var fondoDiv = API.Widget.create();
+var fondoDiv2 = API.Widget.create();
 
 // Style the background div
-fondoDiv.className = 'background_widget_bg1';
+fondoDiv.addClass('background_widget_bg1');
 
 // Style of the inner background div (used for transitioning backgrounds)
-fondoDiv2.className = 'background_widget_bg2';
+fondoDiv2.addClass('background_widget_bg2');
 fondoDiv2.style.opacity = 0;
-
-// Append the divs
-document.body.appendChild(fondoDiv);
-fondoDiv.appendChild(fondoDiv2);
 
 
 

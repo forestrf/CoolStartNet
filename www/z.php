@@ -84,52 +84,8 @@ El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo
 		(function(API_F){
 			var API = (function(API_F, widgetID){
 				return {
-					"Storage": {
-						"localStorage": {
-							/*"set"(key, value, callback) -> Storage.localStorage
-							"get"(key, callback) -> value
-							"delete"(key, callback) -> Storage.localStorage
-							"deleteAll"(callback) -> Storage.localStorage
-							"exists"(key, callback) -> bool*/
-						},
-						"remoteStorage": {
-							"set":function(key, value, callback){
-								var c = {}; c[key] = value;
-								var command = {'action':1,'widget':widgetID,'variables':c};
-								API_F.call(command, function(e){callback(e[key]);});
-								return API.Storage.remoteStorage;
-							},
-							"get":function(key, callback){
-								var c = {}; c[key] = null;
-								var command = {'action':0,'widget':widgetID,'variables':c};
-								API_F.call(command, function(e){callback(e[key]);});
-								return API.Storage.remoteStorage;
-							}/*,
-							"delete"(key, callback) -> Storage.remoteStorage
-							"deleteAll"(callback) -> Storage.remoteStorage
-							"exists"(key, callback) -> bool*/
-						},
-						"sharedStorage": {
-							"set":function(key, value, callback){
-								var c = {}; c[key] = value;
-								var command = {'action':1,'widget':'global','variables':c};
-								API_F.call(command, function(e){callback(e[key]);});
-								return API.Storage.sharedStorage;
-							},
-							"get":function(key, callback){
-								var c = {}; c[key] = null;
-								var command = {'action':0,'widget':'global','variables':c};
-								API_F.call(command, function(e){callback(e[key]);});
-								return API.Storage.sharedStorage;
-							}
-							/*
-							"delete"(key, callback) -> Storage.sharedStorage
-							"exists"(key, callback) -> bool*/
-						}
-					},
-					
-					
-					
+					"Storage": API_F.Storage(widgetID),
+					"Widget": API_F.Widget,
 					
 					
 					"url": function(name){return API_F.url(widgetID, name);}

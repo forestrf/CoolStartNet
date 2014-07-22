@@ -14,13 +14,10 @@ link.setAttribute("type", "text/css");
 link.setAttribute("href", API.url('css.css'));
 document.getElementsByTagName("head")[0].appendChild(link);
 
-// Make the div container for the gear button
-var gearDiv = document.createElement('div');
-gearDiv.className = 'config_buttongear';
+// Make the gear button
+var gearDiv = API.Widget.create();
+gearDiv.addClass('config_buttongear');
 gearDiv.innerHTML = '<i class="fa fa-cog"></i>';
-
-// Append the gear to the body
-document.body.appendChild(gearDiv);
 
 
 
@@ -29,11 +26,8 @@ document.body.appendChild(gearDiv);
 // CREATE AND APPEND CONTENT CONFIGURATION DIV
 
 // Make the div container for the config window
-var contentDiv = document.createElement('div');
-contentDiv.className = 'config_contentdiv';
-
-// Append the config window to the body
-document.body.appendChild(contentDiv);
+var contentDiv = API.Widget.create();
+contentDiv.addClass('config_contentdiv');
 
 // Make the div container for the widgets in the config window and append the container for the widgets in the config window
 var contentwidgetsDiv = document.createElement('div');
@@ -62,7 +56,7 @@ closebutton.onclick = function(){
 		backbutton.remove();
 	}
 	// Hide window
-	contentDiv.className = contentDiv.className.split('visible').join('').trim();
+	contentDiv.removeClass('visible');
 };
 
 
@@ -108,6 +102,7 @@ console.log receives:
 }
 
 */
+a = generate_position_rect;
 function generate_position_rect(parameters, callback){
 	// Parse parameters
 	var p_fixed = typeof parameters["fixed"] === "object";
@@ -120,18 +115,17 @@ function generate_position_rect(parameters, callback){
 	// CREATE AND APPEND CONTENT CONFIGURATION DIV
 
 	// Make the div container for the rect
-	var contentDivRect = document.createElement('div');
-	contentDivRect.className = 'config_contentDivRect';
+	var contentDivRect = API.Widget.create();
+	contentDivRect.addClass('config_contentDivRect');
 	if(p_show_bg && parameters["show_bg"] === false){
 		contentDivRect.style.backgroundColor = 'transparent';
 	}
 	else{
 		contentDivRect.style.backgroundImage = 'url(' + API.url('grid.png') + ')';
 	}
-	document.body.appendChild(contentDivRect);
 	
 	// Hide contentDiv. Undo this before calling callback
-	contentDiv.style.display = 'none';
+	contentDiv.hide();
 	
 	// Make the Info div
 	var infoDiv = document.createElement('div');
@@ -154,7 +148,7 @@ function generate_position_rect(parameters, callback){
 	// Callbacks
 	buttonOK.onclick = function(){
 		contentDivRect.remove();
-		contentDiv.style.display = '';
+		contentDiv.unHide();
 		if(typeof callback === "function"){
 			callback({
 				"width"  : inputs[0].value, // %
@@ -166,7 +160,7 @@ function generate_position_rect(parameters, callback){
 	}
 	buttonCANCEL.onclick = function(){
 		contentDivRect.remove();
-		contentDiv.style.display = '';
+		contentDiv.unHide();
 		if(typeof callback === "function"){
 			callback(false);
 		}
@@ -365,7 +359,7 @@ function generate_position_rect(parameters, callback){
 // SET GEAR BUTTON ACTION
 
 gearDiv.onclick = function(){
-	contentDiv.className += ' visible';
+	contentDiv.addClass('visible');
 	contentwidgetsDiv.style.display = '';
 	
 	// Fill the config window
