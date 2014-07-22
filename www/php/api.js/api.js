@@ -27,19 +27,16 @@ var consult = {
 }
 */
 
-
-API = (function(){
-	var max_wait_GET_request = 100; //ms
-	var max_wait_SET_request = 100; //ms
+// 0 = get
+// 1 = set
+var API_F = (function(){
+	var max_wait_GET_SET_request = [100, 100]; //ms
 	
-	var timeout_GET = 0;
-	var timeout_SET = 0;
+	var timeout_GET_SET = [0, 0];
 	
-	var callbacks_GET_request = [];
-	var callbacks_SET_request = [];
+	var callbacks_GET_SET_request = [[],[]];
 	
-	var next_GET_request = {};
-	var next_SET_request = {};
+	var next_GET_SET_request = [{}, {}];
 	
 	var precall = function(parameters, callback){
 		var command = {
@@ -53,7 +50,7 @@ API = (function(){
 	
 	var call = function(parameters, callback){
 		if(parameters){
-			if(typeof parameters["action"] === "string"){
+			if(parameters["action"] === 0 || parameters["action"] === 1){
 				if(typeof parameters["widgets"] === "object"){
 					// Una variable
 					get_or_set(parameters["action"], callback, parameters["widgets"]);
@@ -77,46 +74,32 @@ API = (function(){
 				widgets[widget] = [widgets[widget]];
 			}
 		}
-		switch(mode){
-			case 'get':
-				for(var widget in widgets){
-					add_to_GET_request(widget, widgets[widget]);
-				}
-				callbacks_GET_request.push({"callback":callback,"widgets":widgets});
-				clearTimeout(timeout_GET);
-				timeout_GET = setTimeout(execute_GET, max_wait_GET_request);
-			break;
-			case 'set':
-				for(var widget in widgets){
-					add_to_SET_request(widget, widgets[widget]);
-				}
-				callbacks_SET_request.push({"callback":callback,"widgets":widgets});
-				clearTimeout(timeout_SET);
-				timeout_SET = setTimeout(execute_SET, max_wait_SET_request);
-			break;
-			default:
-				callback(fail(1000));
-			break;
+		if(mode === 0 || mode === 1){
+			for(var widget in widgets){
+				add_to_GET_SET_request(widget, widgets[widget], mode);
+			}
+			callbacks_GET_SET_request[mode].push({"callback":callback,"widgets":widgets});
+			clearTimeout(timeout_GET_SET[mode]);
+			timeout_GET_SET[mode] = setTimeout(function(){execute_GET_SET(mode);}, max_wait_GET_SET_request[mode]);
+		}
+		else{
+			callback(fail(1000));
 		}
 	}
 	
-	// array_variables -> string | []
-	var add_to_GET_request = function(widget, array_variables){
-		if(next_GET_request[widget] === undefined){
-			next_GET_request[widget] = {};
+	// get => array_variables -> string | []
+	// set => array_variables -> {}
+	var add_to_GET_SET_request = function(widget, array_variables, mode){
+		if(next_GET_SET_request[mode][widget] === undefined){
+			next_GET_SET_request[mode][widget] = {};
 		}
 		for(var i in array_variables){
-			next_GET_request[widget][array_variables[i]] = null;
-		}
-	}
-	
-	// array_variables -> {}
-	var add_to_SET_request = function(widget, array_variables){
-		if(next_SET_request[widget] === undefined){
-			next_SET_request[widget] = {};
-		}
-		for(var i in array_variables){
-			next_SET_request[widget][i] = array_variables[i];
+			if(mode === 0){
+				next_GET_SET_request[mode][widget][array_variables[i]] = null;
+			}
+			else if(mode === 1){
+				next_GET_SET_request[mode][widget][i] = array_variables[i];
+			}
 		}
 	}
 	
@@ -147,7 +130,7 @@ API = (function(){
 								if(typeof response['content'][widget] !== 'undefined'){
 									obj[widget] = {};
 									switch(action){
-										case 'get':
+										case 0:
 											// Array pattern ['var1', 'var2']
 											for(var j in callbacksConsulta[i]['widgets'][widget]){
 												var variable = callbacksConsulta[i]['widgets'][widget][j];
@@ -157,7 +140,7 @@ API = (function(){
 												}
 											}
 										break;
-										case 'set':
+										case 1:
 											// Object pattern {'var1':'', 'var2':''}
 											for(var variable in callbacksConsulta[i]['widgets'][widget]){
 												// If variable requested
@@ -183,31 +166,60 @@ API = (function(){
 				}
 			}
 		};
-		var data = 'action='+action+'&data='+encodeURIComponent(JSON.stringify(next_request));
+		var actions = ['get', 'set'];
+		var data = 'action='+actions[action]+'&data='+encodeURIComponent(JSON.stringify(next_request));
 		req.send(data);
 	}
 	
-	// Execute and clean cache
-	var execute_GET = function(){
-		execute('get', next_GET_request, callbacks_GET_request);
-		next_GET_request = {};
-		callbacks_GET_request = [];
-	}
 	
 	// Execute and clean cache
-	var execute_SET = function(){
-		execute('set', next_SET_request, callbacks_SET_request);
-		next_SET_request = {};
-		callbacks_SET_request = [];
+	var execute_GET_SET = function(mode){
+		execute(mode, next_GET_SET_request[mode], callbacks_GET_SET_request[mode]);
+		next_GET_SET_request[mode] = {};
+		callbacks_GET_SET_request[mode] = [];
 	}
+	
+	
+	
 	
 	// Return an url to get a file of the widget
-	var getUrl = function(widget, filename){
-		return 'widgetfile.php?widgetID='+widget+'&api=1&name='+escape(filename);
+	var getUrl = function(widgetID, filename){
+		return 'widgetfile.php?widgetID='+widgetID+'&api=1&name='+escape(filename);
 	}
+	
 	
 	return {
 		"call":precall,
 		"url":getUrl
 	};
 })();
+
+
+
+
+
+
+
+
+/*
+Net;
+
+Widget = (function(){
+	function create(){
+		
+	}
+	
+	function includeCssFile(filename){
+		var link = document.createElement("link");
+		link.setAttribute("rel", "stylesheet");
+		link.setAttribute("type", "text/css");
+		link.setAttribute("href", API.url(widgetID, filename));
+		document.getElementsByTagName("head")[0].appendChild(link);
+	}
+	
+	return {
+		"create":create,
+		"includeCssFile":null
+	}
+})();
+*/

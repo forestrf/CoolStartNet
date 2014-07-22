@@ -11,7 +11,7 @@ document.getElementsByTagName("head")[0].appendChild(link);
 link = document.createElement("link");
 link.setAttribute("rel", "stylesheet");
 link.setAttribute("type", "text/css");
-link.setAttribute("href", API.url(widgetID,'css.css'));
+link.setAttribute("href", API.url('css.css'));
 document.getElementsByTagName("head")[0].appendChild(link);
 
 // Make the div container for the gear button
@@ -126,7 +126,7 @@ function generate_position_rect(parameters, callback){
 		contentDivRect.style.backgroundColor = 'transparent';
 	}
 	else{
-		contentDivRect.style.backgroundImage = 'url(' + API.url(widgetID, 'grid.png') + ')';
+		contentDivRect.style.backgroundImage = 'url(' + API.url('grid.png') + ')';
 	}
 	document.body.appendChild(contentDivRect);
 	

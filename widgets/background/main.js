@@ -2,7 +2,7 @@
 var link = document.createElement("link");
 link.setAttribute("rel", "stylesheet");
 link.setAttribute("type", "text/css");
-link.setAttribute("href", API.url(widgetID,'bgcss.css'));
+link.setAttribute("href", API.url('bgcss.css'));
 document.getElementsByTagName("head")[0].appendChild(link);
 
 // Make the div container for the background and style it.
@@ -63,19 +63,27 @@ var command = {
 	]
 };
 
-API.call(command, function(entrada){
-	if(entrada['background_delay']){
-		delayBackground = entrada['background_delay'];
+API.Storage.sharedStorage.get('background_delay', function(entrada){
+	if(entrada){
+		delayBackground = entrada;
 	}
-	if(entrada['background_transition_time']){
-		transitionTime = entrada['background_transition_time'];
+});
+
+API.Storage.sharedStorage.get('background_transition_time', function(entrada){
+	if(entrada){
+		transitionTime = entrada;
 		fondoDiv2.style.transition = 'opacity ' + transitionTime/1000 + 's ease';
 	}
-	if(entrada['background_images']){
-		backgrounds = JSON.parse(entrada['background_images']);
+});
+
+API.Storage.sharedStorage.get('background_images', function(entrada){
+	if(entrada){
+		backgrounds = JSON.parse(entrada);
 		launch();
 	}
 });
+
+
 
 
 
