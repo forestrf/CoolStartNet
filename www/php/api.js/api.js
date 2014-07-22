@@ -1,11 +1,4 @@
 /*
-1000 => Attribute "action" with value "set" or "get" not present
-1001 => "call" needs to be called with a "Consult" object
-1002 => Attribute "action" not present or not a string
-1003 => Attribute "widget" not present or incorrect
-*/
-
-/*
 Consult pattern:
 
 var consult = {
@@ -31,11 +24,8 @@ var consult = {
 // 1 = set
 var API_F = (function(){
 	var max_wait_GET_SET_request = [100, 100]; //ms
-	
 	var timeout_GET_SET = [0, 0];
-	
 	var callbacks_GET_SET_request = [[],[]];
-	
 	var next_GET_SET_request = [{}, {}];
 	
 	var precall = function(parameters, callback){
@@ -49,49 +39,38 @@ var API_F = (function(){
 	}
 	
 	var call = function(parameters, callback){
-		if(parameters){
-			if(parameters["action"] === 0 || parameters["action"] === 1){
-				if(typeof parameters["widgets"] === "object"){
-					// Una variable
-					var mode = parameters["action"];
-					var widgets = parameters["widgets"];
-					for(var widget in widgets){
-						if(typeof widgets[widget] === 'string'){
-							widgets[widget] = [widgets[widget]];
-						}
-					}
-					
-					for(var widget in widgets){
-						if(next_GET_SET_request[mode][widget] === undefined){
-							next_GET_SET_request[mode][widget] = {};
-						}
-						for(var i in widgets[widget]){
-							next_GET_SET_request[mode][widget][i] = widgets[widget][i];
-						}
-					}
-					
-					callbacks_GET_SET_request[mode].push({"callback":callback,"widgets":widgets});
-					clearTimeout(timeout_GET_SET[mode]);
-					timeout_GET_SET[mode] = mode === 0 ?
-						setTimeout(execute_GET, max_wait_GET_SET_request[mode]) :
-						setTimeout(execute_SET, max_wait_GET_SET_request[mode]);
-				}
-				else{
-					callback(fail(1003));
+		if(
+			parameters &&
+			(parameters["action"] === 0 || parameters["action"] === 1) &&
+			typeof parameters["widgets"] === "object"
+		){
+			// Una variable
+			var mode = parameters["action"];
+			var widgets = parameters["widgets"];
+			for(var widget in widgets){
+				if(typeof widgets[widget] === 'string'){
+					widgets[widget] = [widgets[widget]];
 				}
 			}
-			else{
-				callback(fail(1002));
+			
+			for(var widget in widgets){
+				if(next_GET_SET_request[mode][widget] === undefined){
+					next_GET_SET_request[mode][widget] = {};
+				}
+				for(var i in widgets[widget]){
+					next_GET_SET_request[mode][widget][i] = widgets[widget][i];
+				}
 			}
+			
+			callbacks_GET_SET_request[mode].push({"callback":callback,"widgets":widgets});
+			clearTimeout(timeout_GET_SET[mode]);
+			timeout_GET_SET[mode] = mode === 0 ?
+				setTimeout(execute_GET, max_wait_GET_SET_request[mode]) :
+				setTimeout(execute_SET, max_wait_GET_SET_request[mode]);
 		}
 		else{
-			callback(fail(1001));
+			callback(undefined);
 		}
-	}
-	
-	
-	var fail = function(n){
-		return {'response':'FAIL',"content":n};
 	}
 	
 	var execute = function(action, next_request, callbacksConsulta){
