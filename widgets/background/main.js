@@ -53,32 +53,19 @@ var transitionTime = 3000; //ms
 var delayBackground = 60000; //ms
 
 
-var command = {
-	'action':'get',
-	'widget':'global',
-	'variables':[
-		'background_images',
-		'background_delay',
-		'background_transition_time'
-	]
-};
 
 API.Storage.sharedStorage.get('background_delay', function(entrada){
 	if(entrada){
 		delayBackground = entrada;
 	}
-});
-
-API.Storage.sharedStorage.get('background_transition_time', function(entrada){
+}).get('background_transition_time', function(entrada){
 	if(entrada){
 		transitionTime = entrada;
 		fondoDiv2.style.transition = 'opacity ' + transitionTime/1000 + 's ease';
 	}
-});
-
-API.Storage.sharedStorage.get('background_images', function(entrada){
+}).get('background_images', function(entrada){
 	if(entrada){
-		backgrounds = JSON.parse(entrada);
+		backgrounds = entrada;
 		launch();
 	}
 });

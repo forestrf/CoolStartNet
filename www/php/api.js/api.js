@@ -53,7 +53,28 @@ var API_F = (function(){
 			if(parameters["action"] === 0 || parameters["action"] === 1){
 				if(typeof parameters["widgets"] === "object"){
 					// Una variable
-					get_or_set(parameters["action"], callback, parameters["widgets"]);
+					var mode = parameters["action"];
+					var widgets = parameters["widgets"];
+					for(var widget in widgets){
+						if(typeof widgets[widget] === 'string'){
+							widgets[widget] = [widgets[widget]];
+						}
+					}
+					
+					for(var widget in widgets){
+						if(next_GET_SET_request[mode][widget] === undefined){
+							next_GET_SET_request[mode][widget] = {};
+						}
+						for(var i in widgets[widget]){
+							next_GET_SET_request[mode][widget][i] = widgets[widget][i];
+						}
+					}
+					
+					callbacks_GET_SET_request[mode].push({"callback":callback,"widgets":widgets});
+					clearTimeout(timeout_GET_SET[mode]);
+					timeout_GET_SET[mode] = mode === 0 ?
+						setTimeout(execute_GET, max_wait_GET_SET_request[mode]) :
+						setTimeout(execute_SET, max_wait_GET_SET_request[mode]);
 				}
 				else{
 					callback(fail(1003));
@@ -68,40 +89,6 @@ var API_F = (function(){
 		}
 	}
 	
-	var get_or_set = function(mode, callback, widgets){
-		for(var widget in widgets){
-			if(typeof widgets[widget] === 'string'){
-				widgets[widget] = [widgets[widget]];
-			}
-		}
-		if(mode === 0 || mode === 1){
-			for(var widget in widgets){
-				add_to_GET_SET_request(widget, widgets[widget], mode);
-			}
-			callbacks_GET_SET_request[mode].push({"callback":callback,"widgets":widgets});
-			clearTimeout(timeout_GET_SET[mode]);
-			timeout_GET_SET[mode] = setTimeout(function(){execute_GET_SET(mode);}, max_wait_GET_SET_request[mode]);
-		}
-		else{
-			callback(fail(1000));
-		}
-	}
-	
-	// get => array_variables -> string | []
-	// set => array_variables -> {}
-	var add_to_GET_SET_request = function(widget, array_variables, mode){
-		if(next_GET_SET_request[mode][widget] === undefined){
-			next_GET_SET_request[mode][widget] = {};
-		}
-		for(var i in array_variables){
-			if(mode === 0){
-				next_GET_SET_request[mode][widget][array_variables[i]] = null;
-			}
-			else if(mode === 1){
-				next_GET_SET_request[mode][widget][i] = array_variables[i];
-			}
-		}
-	}
 	
 	var fail = function(n){
 		return {'response':'FAIL',"content":n};
@@ -129,26 +116,12 @@ var API_F = (function(){
 								// If received
 								if(typeof response['content'][widget] !== 'undefined'){
 									obj[widget] = {};
-									switch(action){
-										case 0:
-											// Array pattern ['var1', 'var2']
-											for(var j in callbacksConsulta[i]['widgets'][widget]){
-												var variable = callbacksConsulta[i]['widgets'][widget][j];
-												// If variable requested
-												if(typeof response['content'][widget][variable] !== 'undefined'){
-													obj[widget][variable] = response['content'][widget][variable];
-												}
-											}
-										break;
-										case 1:
-											// Object pattern {'var1':'', 'var2':''}
-											for(var variable in callbacksConsulta[i]['widgets'][widget]){
-												// If variable requested
-												if(typeof response['content'][widget][variable] !== 'undefined'){
-													obj[widget][variable] = response['content'][widget][variable];
-												}
-											}
-										break;
+									// Object pattern {'var1':'', 'var2':''}
+									for(var variable in callbacksConsulta[i]['widgets'][widget]){
+										// If variable requested
+										if(typeof response['content'][widget][variable] !== 'undefined'){
+											obj[widget][variable] = JSON.parse(response['content'][widget][variable]);
+										}
 									}
 								}
 								callbacksConsulta[i]['callback'](obj[widget]);
@@ -177,8 +150,9 @@ var API_F = (function(){
 		execute(mode, next_GET_SET_request[mode], callbacks_GET_SET_request[mode]);
 		next_GET_SET_request[mode] = {};
 		callbacks_GET_SET_request[mode] = [];
-	}
-	
+	};
+	var execute_GET = function(){execute_GET_SET(0);};
+	var execute_SET = function(){execute_GET_SET(1);};
 	
 	
 	

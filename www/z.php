@@ -94,12 +94,16 @@ El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo
 						},
 						"remoteStorage": {
 							"set":function(key, value, callback){
-								var command = {'action':1,'widget':widgetID,'variables':{key:value}};
+								var c = {}; c[key] = value;
+								var command = {'action':1,'widget':widgetID,'variables':c};
 								API_F.call(command, function(e){callback(e[key]);});
+								return API.Storage.remoteStorage;
 							},
 							"get":function(key, callback){
-								var command = {'action':0,'widget':widgetID,'variables':key};
+								var c = {}; c[key] = null;
+								var command = {'action':0,'widget':widgetID,'variables':c};
 								API_F.call(command, function(e){callback(e[key]);});
+								return API.Storage.remoteStorage;
 							}/*,
 							"delete"(key, callback) -> Storage.remoteStorage
 							"deleteAll"(callback) -> Storage.remoteStorage
@@ -107,15 +111,18 @@ El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo
 						},
 						"sharedStorage": {
 							"set":function(key, value, callback){
-								var command = {'action':1,'widget':'global','variables':{key:value}};
+								var c = {}; c[key] = value;
+								var command = {'action':1,'widget':'global','variables':c};
 								API_F.call(command, function(e){callback(e[key]);});
+								return API.Storage.sharedStorage;
 							},
 							"get":function(key, callback){
-								var command = {'action':0,'widget':'global','variables':key};
+								var c = {}; c[key] = null;
+								var command = {'action':0,'widget':'global','variables':c};
 								API_F.call(command, function(e){callback(e[key]);});
+								return API.Storage.sharedStorage;
 							}
-							/*"set"(key, value, callback) -> Storage.sharedStorage
-							"get"(key, callback) -> Storage.sharedStorage
+							/*
 							"delete"(key, callback) -> Storage.sharedStorage
 							"exists"(key, callback) -> bool*/
 						}
