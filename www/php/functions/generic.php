@@ -32,6 +32,10 @@ function hash_ipa($userRND, $widgetID, $password){
 	return md5($userRND.'-'.$widgetID.'-'.$password);
 }
 
+function hash_api($userRND, $widgetID, $password){
+	return hash_ipa($userRND, $widgetID, $password);
+}
+
 function file_hash(&$content){
 	return md5($content);
 }

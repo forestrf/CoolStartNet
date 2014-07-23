@@ -56,9 +56,11 @@ El javascript tendrá acceso a la API para leer y escribir variables de cualquie
 El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo ya que serán variables accesibles desde la API
 -->
 
-<script>
+<script id = "delete_me">
 	
 (function(){
+	// prevent innerHTML from reading the widgetID + secret to prevent widgets manipulate other widgets without consent
+	document.getElementById("delete_me").remove();
 
 	// Variables for the config widget
 	var CONFIG = [];
@@ -82,7 +84,7 @@ El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo
 		?>
 		
 		(function(API_F){
-			var API = (function(API_F, widgetID){
+			var API = (function(API_F, widgetID, secret){
 				return {
 					"Storage": API_F.Storage(widgetID),
 					"Widget": API_F.Widget,
@@ -90,8 +92,10 @@ El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo
 					
 					"url": function(name){return API_F.url(widgetID, name);}
 				}
-			})(API_F, '<?php echo $widget['ID'];?>');
+			})(API_F, "<?php echo $widget['ID'];?>", "<?php echo hash_api($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_API);?>");
 			API_F = null;
+			
+			console.log(document.body.innerHTML);
 			
 			<?php echo $data;?>
 			

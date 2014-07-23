@@ -14,6 +14,9 @@ define('USER_PASSWORD_HMAC_SEED', 'write random characters here');
 # Seed to generate the hash of the token.
 define('PASSWORD_TOKEN_IPA', 'write random characters here');
 
+# Seed to generate the hash of the api token.
+define('PASSWORD_TOKEN_API', 'write random characters here');
+
 # path to the web with / in the end, starting with the subdomain (if there is) and without protocol.
 define('WEB_PATH', 'www.mywebhere.com/folder/to/site/');
 
