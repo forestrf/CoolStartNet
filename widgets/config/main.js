@@ -145,12 +145,7 @@ function generate_position_rect(params, callback){
 		contentDivRect.remove();
 		contentDiv.unHide();
 		if(typeof callback === "function"){
-			callback({
-				"width"  : inputs[0].value, // %
-				"height" : inputs[1].value, // %
-				"left"   : inputs[2].value, // %
-				"top"    : inputs[3].value  // %
-			});
+			callback(rectPosition.getPositionSize());
 		}
 	}
 	buttonCANCEL.onclick = function(){
@@ -280,7 +275,7 @@ function generate_position_rect(params, callback){
 	// Set the values for the inputs of the Info div in percentage and also truncates the values to 3 decimal places
 	// If rectPosition.style.left in % > 50 then moves infoDiv to the left, otherwise to the right  
 	function set_info_inputs_values(){
-		var inputs_v = rectPosition.getPositionSize(2); 
+		var inputs_v = rectPosition.getPositionSize(); 
 		for(var i in inputs_relation){
 			inputs[i].value = inputs_v[inputs_relation[i]];
 		}
@@ -332,12 +327,7 @@ function generate_position_rect(params, callback){
 	
 	function send_realtime_calback(){
 		if(p_realtime){
-			params["realtime"]({
-				"width"  : inputs[0].value, // %
-				"height" : inputs[1].value, // %
-				"left"   : inputs[2].value, // %
-				"top"    : inputs[3].value  // %
-			});
+			params["realtime"](rectPosition.getPositionSize());
 		}
 	}
 }

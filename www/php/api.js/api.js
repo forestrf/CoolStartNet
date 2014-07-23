@@ -140,8 +140,8 @@ var API_F = (function(){
 	
 	function div_base(div){
 	
-		function parseFloatRounded(number, roundedTo){
-			return roundedTo === undefined ? parseFloat(number) : parseFloat(number).toFixed(roundedTo);
+		function cRound(number, roundedTo){
+			return roundedTo === undefined ? number : (- -number).toFixed(roundedTo);
 		}
 	
 		div["div"] = div;
@@ -164,12 +164,12 @@ var API_F = (function(){
 		
 		div["getPosition"] = function(roundedTo){
 			return {
-				"left": parseFloatRounded(div.style.left.split("%")[0], roundedTo),
-				"top":  parseFloatRounded(div.style.top.split("%")[0], roundedTo)
+				"left": cRound(div.style.left.split("%")[0], roundedTo),
+				"top":  cRound(div.style.top.split("%")[0], roundedTo)
 			};
 		};
-		div.getPosition["left"] = function(roundedTo){return parseFloatRounded(div.style.left.split("%")[0], roundedTo)};
-		div.getPosition["top"] = function(roundedTo){return parseFloatRounded(div.style.top.split("%")[0], roundedTo)};
+		div.getPosition["left"] = function(roundedTo){return cRound(div.style.left.split("%")[0], roundedTo)};
+		div.getPosition["top"] = function(roundedTo){return cRound(div.style.top.split("%")[0], roundedTo)};
 		
 		div["setSize"] = function(width, height){
 			div.style.width = width + "%";
@@ -181,12 +181,12 @@ var API_F = (function(){
 		
 		div["getSize"] = function(roundedTo){
 			return {
-				"width":  parseFloatRounded(div.style.width.split("%")[0], roundedTo),
-				"height": parseFloatRounded(div.style.height.split("%")[0], roundedTo)
+				"width":  cRound(div.style.width.split("%")[0], roundedTo),
+				"height": cRound(div.style.height.split("%")[0], roundedTo)
 			};
 		};
-		div.getSize["width"] = function(roundedTo){return parseFloatRounded(div.style.width.split("%")[0], roundedTo)};
-		div.getSize["height"] = function(roundedTo){return parseFloatRounded(div.style.height.split("%")[0], roundedTo)};
+		div.getSize["width"] = function(roundedTo){return cRound(div.style.width.split("%")[0], roundedTo)};
+		div.getSize["height"] = function(roundedTo){return cRound(div.style.height.split("%")[0], roundedTo)};
 		
 		div["setPositionSize"] = function(left, top, width, height){
 			return div.setPosition(left, top).setSize(width, height);
