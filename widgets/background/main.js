@@ -245,7 +245,10 @@ var CONFIG_function = function(){
 		transitionTime = inputTransitionTime.value *1000; // s to ms
 		
 		// Save the variables using the API
-		var command = {
+		API.Storage.sharedStorage.set('background_images', backgrounds).
+		set('background_delay', delayBackground).
+		set('background_transition_time', transitionTime);
+		/*var command = {
 			'action':'set',
 			'widget':'global',
 			'variables':{
@@ -262,7 +265,7 @@ var CONFIG_function = function(){
 			else{
 				alert('NOT saved.');
 			}
-		});
+		});*/
 		
 		launch(true);
 	}

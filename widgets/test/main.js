@@ -10,14 +10,8 @@ console.log('Test 1');
 var text_rnd = Math.random();
 console.log('Test 1 Saving the text: '+text_rnd);
 
-var command = {
-	'action':'set',
-	'widget':widgetID,
-	'variables':{'test':text_rnd}
-};
-
-API.call(command, function(entrada){
-	if(entrada['test']){
+API.Storage.remoteStorage.set('test', text_rnd, function(entrada){
+	if(entrada){
 		console.log('Test 1 Text Saved.');
 	}
 	else{
@@ -31,15 +25,9 @@ API.call(command, function(entrada){
 // GET test
 /////////////////////////////
 
-var command = {
-	'action':'get',
-	'widget':widgetID,
-	'variables':'test'
-};
-
-API.call(command, function(entrada){
-	if(entrada['test']){
-		console.log('Test 1 Got the text: '+entrada['test']);
+API.Storage.remoteStorage.get('test', function(entrada){
+	if(entrada){
+		console.log('Test 1 Got the text: '+entrada);
 	}
 	else{
 		console.log('Test 1 There is not a saved variable with that name.');
@@ -47,7 +35,7 @@ API.call(command, function(entrada){
 });
 
 // ----------------------------------------------------------------------------------------------------------------
-
+/*
 
 
 console.log('Test 2');
@@ -100,7 +88,7 @@ API.call(command, function(entrada){
 		}
 	}
 });
-
+*/
 // ----------------------------------------------------------------------------------------------------------------
 
 
@@ -114,14 +102,8 @@ console.log('Test 3');
 var text_rnd = Math.random();
 console.log('Test 3 Saving the text: '+text_rnd);
 
-var command = {
-	'action':'set',
-	'widget':'global',
-	'variables':{'test':text_rnd}
-};
-
-API.call(command, function(entrada){
-	if(entrada['test']){
+API.Storage.sharedStorage.set('test', text_rnd, function(entrada){
+	if(entrada){
 		console.log('Test 3 Text Saved.');
 	}
 	else{
@@ -135,15 +117,9 @@ API.call(command, function(entrada){
 // Global variable GET test
 /////////////////////////////
 
-var command = {
-	'action':'get',
-	'widget':'global',
-	'variables':'test'
-};
-
-API.call(command, function(entrada){
-	if(entrada['test']){
-		console.log('Test 3 Got the text: '+entrada['test']);
+API.Storage.sharedStorage.get('test', function(entrada){
+	if(entrada){
+		console.log('Test 3 Got the text: '+entrada);
 	}
 	else{
 		console.log('Test 3 There is not a saved variable with that name.');

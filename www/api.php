@@ -92,7 +92,7 @@ switch(isset($action)?$action:null){
 	case 'set':
 		// Check blocks
 		$response = setHandler($data_json);
-		if($response){
+		if(is_array($response) && count($response) > 0){
 			perfect(json_encode($response));
 		}
 		else{
@@ -128,15 +128,35 @@ function widget_variables_valid(&$widgets){
 	}
 }
 
+function widget_add_secret(&$widgetID, &$secret){
+	return $widgetID . '-' . $secret;
+}
+
+function widget_remove_secret(&$widgetSecret, &$widgetID, &$secret){
+	$secret = substr($widgetSecret, strpos($widgetSecret, '-')+1);
+	$widgetID = substr($widgetSecret, 0, strpos($widgetSecret, '-'));
+}
 
 // Call before the function widget_variables_valid()
 // returns an array with the content or false -> read failure
 function getHandler(&$widgets){
 	global $db;
+	$hashes = array();
 	$array_response = array();
+	foreach($widgets as $widgetID => &$content){
+		if($widgetID !== 'global'){
+			widget_remove_secret($widgetID, $widgetID, $secret);
+			if(!validateWidget($widgetID, $secret, $hash)){
+				unset($widgets[$widgetID]);
+			}
+			else{
+				$hashes[$widgetID] = widget_add_secret($widgetID, $hash);
+			}
+		}
+	}
 	$response = $db->get_variable($widgets);
-	foreach($response as $result){
-		$widgetID = $result['IDwidget'] === '-1' ? 'global' : $result['IDwidget']; //global is a invisible widget with id -1
+	foreach($response as &$result){
+		$widgetID = $result['IDwidget'] === '-1' ? 'global' : $hashes[$result['IDwidget']]; //global is a invisible widget with id -1
 		$array_response[$widgetID][$result['variable']] = $result['value'];
 	}
 	return $array_response;
@@ -149,13 +169,28 @@ function setHandler(&$widgets){
 	$array_response = array();
 	$response = $db->set_variable($widgets);
 	foreach($widgets as $widgetID => &$variables_widget){
-		foreach($variables_widget as $variable => &$value){
-			$array_response[$widgetID][$variable] = $response;
+		if($widgetID !== 'global'){
+			$secret = substr($widgetID, strpos($widgetID, '-')+1);
+			$widgetID = substr($widgetID, 0, strpos($widgetID, '-'));
+			if(validateWidget($widgetID, $secret, $hash)){
+				foreach($variables_widget as $variable => &$value){
+					$array_response[widget_add_secret($widgetID, $hash)][$variable] = $response;
+				}
+			}
+		}
+		else{
+			foreach($variables_widget as $variable => &$value){
+				$array_response[$widgetID][$variable] = $response;
+			}
 		}
 	}
 	return $array_response;
 }
 
+function validateWidget($widgetID, $secret, &$hash){
+	$hash = hash_api($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_API);
+	return $secret === $hash;
+}
 
 
 

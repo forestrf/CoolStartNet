@@ -28,51 +28,35 @@ var API_F = (function(){
 	var callbacks_GET_SET_request = [[],[]];
 	var next_GET_SET_request = [{}, {}];
 	
-	var precall = function(parameters, callback){
-		var command = {
-			'action':parameters['action'],
-			'widgets':{}
-		};
-		command['widgets'][parameters['widget']] = parameters['variables'];
-		
-		call(command, callback);
+	function widget_add_secret(widgetID, secret){
+		return widgetID + '-' + secret;
 	}
 	
-	var call = function(parameters, callback){
-		if(
-			parameters &&
-			(parameters["action"] === 0 || parameters["action"] === 1) &&
-			typeof parameters["widgets"] === "object"
-		){
-			// Una variable
-			var mode = parameters["action"];
-			var widgets = parameters["widgets"];
-			for(var widget in widgets){
-				if(typeof widgets[widget] === 'string'){
-					widgets[widget] = [widgets[widget]];
-				}
+	var precall = function(mode, widgetID, secret, key, value, callback){
+		if(secret){
+			widgetID = widget_add_secret(widgetID, secret);
+		}
+		
+		if(mode === 0 || mode === 1){
+			
+			if(next_GET_SET_request[mode][widgetID] === undefined){
+				next_GET_SET_request[mode][widgetID] = {};
 			}
 			
-			for(var widget in widgets){
-				if(next_GET_SET_request[mode][widget] === undefined){
-					next_GET_SET_request[mode][widget] = {};
-				}
-				for(var i in widgets[widget]){
-					next_GET_SET_request[mode][widget][i] = widgets[widget][i];
-				}
-			}
+			next_GET_SET_request[mode][widgetID][key] = value;
 			
-			callbacks_GET_SET_request[mode].push({"callback":callback,"widgets":widgets});
+			
+			callbacks_GET_SET_request[mode].push({"callback":callback,"widgetID":widgetID,"key":key});
 			clearTimeout(timeout_GET_SET[mode]);
 			if(mode === 0){
 				timeout_GET_SET[mode] = setTimeout(execute_GET, max_wait_GET_SET_request[mode]);
 			}
-			else{
+			else if(mode === 1){
 				timeout_GET_SET[mode] = setTimeout(execute_SET, max_wait_GET_SET_request[mode]);
 			}
 		}
 		else{
-			callback(undefined);
+			callback(null);
 		}
 	}
 	
@@ -90,35 +74,28 @@ var API_F = (function(){
 					if(response['response']==='OK'){
 						for(var i in callbacksConsulta){
 							
-							var obj = {};
-							var widget = '';
+							var widgetID = callbacksConsulta[i]['widgetID'];
+							var key    = callbacksConsulta[i]['key'];
 							
-							// For each esquested widget
-							for(widget in callbacksConsulta[i]['widgets']){
-								// If received
-								if(typeof response['content'][widget] !== 'undefined'){
-									obj[widget] = {};
-									// Object pattern {'var1':'', 'var2':''}
-									for(var variable in callbacksConsulta[i]['widgets'][widget]){
-										// If variable requested
-										if(typeof response['content'][widget][variable] !== 'undefined'){
-											obj[widget][variable] = JSON.parse(response['content'][widget][variable]);
-										}
-									}
+							// If received
+							if(typeof response['content'][widgetID] !== 'undefined'){
+								var response_cache = response['content'][widgetID];
+								// If key requested
+								if(typeof response_cache[key] !== 'undefined'){
+									callbacksConsulta[i]['callback'](JSON.parse(response_cache[key]));
 								}
-								callbacksConsulta[i]['callback'](obj[widget]);
 							}
 						}
 					}
 					else{
 						for(var i in callbacksConsulta){
-							callbacksConsulta[i]['callback'](undefined);
+							callbacksConsulta[i]['callback'](null);
 						}
 					}
 				}
 				else{
 					for(var i in callbacksConsulta){
-						callbacksConsulta[i]['callback'](undefined);
+						callbacksConsulta[i]['callback'](null);
 					}
 				}
 			}
@@ -232,7 +209,7 @@ var API_F = (function(){
 	
 	
 	
-	function Storage(widgetID){
+	function Storage(widgetID, secret){
 		return {
 			"localStorage": {
 				/*"set"(key, value, callback) -> Storage.localStorage
@@ -243,15 +220,11 @@ var API_F = (function(){
 			},
 			"remoteStorage": {
 				"set":function(key, value, callback){
-					var c = {}; c[key] = value;
-					var command = {'action':1,'widget':widgetID,'variables':c};
-					API_F.call(command, function(e){callback(e[key]);});
+					API_F.call(1, widgetID, secret, key, value, callback);
 					return this; //API.Storage.remoteStorage;
 				},
 				"get":function(key, callback){
-					var c = {}; c[key] = null;
-					var command = {'action':0,'widget':widgetID,'variables':c};
-					API_F.call(command, function(e){callback(e[key]);});
+					API_F.call(0, widgetID, secret, key, null, callback);
 					return this; //API.Storage.remoteStorage;
 				}/*,
 				"delete"(key, callback) -> Storage.remoteStorage
@@ -260,15 +233,11 @@ var API_F = (function(){
 			},
 			"sharedStorage": {
 				"set":function(key, value, callback){
-					var c = {}; c[key] = value;
-					var command = {'action':1,'widget':'global','variables':c};
-					API_F.call(command, function(e){callback(e[key]);});
+					API_F.call(1, 'global', null, key, value, callback);
 					return this; //API.Storage.sharedStorage;
 				},
 				"get":function(key, callback){
-					var c = {}; c[key] = null;
-					var command = {'action':0,'widget':'global','variables':c};
-					API_F.call(command, function(e){callback(e[key]);});
+					API_F.call(0, 'global', null, key, null, callback);
 					return this; //API.Storage.sharedStorage;
 				}
 				/*
