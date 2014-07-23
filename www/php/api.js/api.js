@@ -33,6 +33,9 @@ var API_F = (function(){
 	}
 	
 	var precall = function(mode, widgetID, secret, key, value, callback){
+		if(callback === undefined){
+			callback = function(){};
+		}
 		if(secret){
 			widgetID = widget_add_secret(widgetID, secret);
 		}
@@ -79,10 +82,9 @@ var API_F = (function(){
 							
 							// If received
 							if(typeof response['content'][widgetID] !== 'undefined'){
-								var response_cache = response['content'][widgetID];
 								// If key requested
-								if(typeof response_cache[key] !== 'undefined'){
-									callbacksConsulta[i]['callback'](JSON.parse(response_cache[key]));
+								if(typeof response['content'][widgetID][key] !== 'undefined'){
+									callbacksConsulta[i]['callback'](JSON.parse(response['content'][widgetID][key]));
 								}
 							}
 						}
@@ -253,16 +255,32 @@ var API_F = (function(){
 	
 	
 	
+	function create_link_css(href){
+		var link = document.createElement("link");
+		link.setAttribute("rel", "stylesheet");
+		link.setAttribute("type", "text/css");
+		link.setAttribute("href", href);
+		document.getElementsByTagName("head")[0].appendChild(link);
+	}
 	
-	
-	Widget = {
-		"create": function(){
-			var div = document.createElement("div");
-			div.style.display = "block";
-			div.style.position = "fixed";
-			document.body.appendChild(div);
-			API_F.widget_base(div);
-			return div;
+	function Widget(widgetID, secret){
+		return {
+			"create": function(){
+				var div = document.createElement("div");
+				div.style.display = "block";
+				div.style.position = "fixed";
+				document.body.appendChild(div);
+				API_F.widget_base(div);
+				return div;
+			},
+			"linkMyCSS": function(name){
+				create_link_css(API_F.url(widgetID, name));
+				return this; //API.Widget
+			},
+			"linkExternalCSS": function(href){
+				create_link_css(href);
+				return this; //API.Widget
+			}
 		}
 	}
 	

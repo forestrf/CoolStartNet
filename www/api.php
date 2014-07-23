@@ -28,6 +28,8 @@ if(!isset($_SESSION['user'])){
 require_once 'php/functions/generic.php';
 require_once 'php/class/DB.php';
 
+inser_nocache_headers();
+
 $db = new DB();
 
 /*

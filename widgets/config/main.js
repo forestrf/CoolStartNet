@@ -1,18 +1,10 @@
 // CREATE AND APPEND GEAR TO THE BODY
 
-// Import css (Github icons pack)
-var link = document.createElement("link");
-link.setAttribute("rel", "stylesheet");
-link.setAttribute("type", "text/css");
-link.setAttribute("href", "//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css");
-document.getElementsByTagName("head")[0].appendChild(link);
 
 // Import css (css of the widget)
-link = document.createElement("link");
-link.setAttribute("rel", "stylesheet");
-link.setAttribute("type", "text/css");
-link.setAttribute("href", API.url('css.css'));
-document.getElementsByTagName("head")[0].appendChild(link);
+// Import css (Github icons pack)
+API.Widget.linkMyCSS('css.css').linkExternalCSS("//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css");
+
 
 // Make the gear button
 var gearDiv = API.Widget.create();

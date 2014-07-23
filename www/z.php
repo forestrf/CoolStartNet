@@ -61,6 +61,8 @@ El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo
 (function(){
 	// prevent innerHTML from reading the widgetID + secret to prevent widgets manipulate other widgets without consent
 	document.getElementById("delete_me").remove();
+	// Prevent eval
+	eval = function(){};
 
 	// Variables for the config widget
 	var CONFIG = [];
@@ -87,7 +89,7 @@ El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo
 			var API = (function(API_F, widgetID, secret){
 				return {
 					"Storage": API_F.Storage(widgetID, secret),
-					"Widget": API_F.Widget,
+					"Widget": API_F.Widget(widgetID, secret),
 					
 					
 					"url": function(name){return API_F.url(widgetID, name);}

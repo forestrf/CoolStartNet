@@ -187,7 +187,7 @@ class DB {
 			foreach($variable_value as $variable => &$value){
 				$variable = mysql_escape_mimic($variable);
 				$value = mysql_escape_mimic($value);
-				$SQL_statement[] = "('{$_SESSION['user']['ID']}', '{$widgetID_calc}', '{$variable}', '{$value}')";
+				$SQL_statement[] = "('{$_SESSION['user']['ID']}', '{$widgetID_calc}', '{$variable}', '".json_encode($value)."')";
 			}
 		}
 		

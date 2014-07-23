@@ -1,9 +1,5 @@
 // Import css
-var link = document.createElement("link");
-link.setAttribute("rel", "stylesheet");
-link.setAttribute("type", "text/css");
-link.setAttribute("href", API.url('bgcss.css'));
-document.getElementsByTagName("head")[0].appendChild(link);
+API.Widget.linkMyCSS('bgcss.css');
 
 // Make the div container for the background and style it.
 var fondoDiv = API.Widget.create();
