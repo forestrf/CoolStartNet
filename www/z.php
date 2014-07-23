@@ -90,6 +90,7 @@ El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo
 				return {
 					"Storage": API_F.Storage(widgetID, secret),
 					"Widget": API_F.Widget(widgetID, secret),
+					"document": API_F.document(),
 					
 					
 					"url": function(name){return API_F.url(widgetID, name);}

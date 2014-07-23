@@ -128,10 +128,22 @@ var API_F = (function(){
 	
 	
 	
+	function Document(){
+		return {
+			"createElement": function(tagName){
+				var elem = document.createElement(tagName);
+				div_base(elem);
+				return elem;
+			}
+		};
+	}
 	
+	function div_base(div){
 	
+		function parseFloatRounded(number, roundedTo){
+			return roundedTo === undefined ? parseFloat(number) : parseFloat(number).toFixed(roundedTo);
+		}
 	
-	function widget_base(div){
 		div["div"] = div;
 		div["hide"] = function(){
 			div.style.display = 'none';
@@ -150,11 +162,14 @@ var API_F = (function(){
 		div.setPosition["left"] = function(left){div.style.left = left + "%"; return div;};
 		div.setPosition["top"] = function(top){div.style.top = top + "%"; return div;};
 		
-		div["getPosition"] = function(){
-			return {"left":div.style.left.split("%")[0], "top":div.style.top.split("%")[0]};
+		div["getPosition"] = function(roundedTo){
+			return {
+				"left": parseFloatRounded(div.style.left.split("%")[0], roundedTo),
+				"top":  parseFloatRounded(div.style.top.split("%")[0], roundedTo)
+			};
 		};
-		div.getPosition["left"] = function(left){return div.style.left.split("%")[0]};
-		div.getPosition["top"] = function(top){return div.style.top.split("%")[0]};
+		div.getPosition["left"] = function(roundedTo){return parseFloatRounded(div.style.left.split("%")[0], roundedTo)};
+		div.getPosition["top"] = function(roundedTo){return parseFloatRounded(div.style.top.split("%")[0], roundedTo)};
 		
 		div["setSize"] = function(width, height){
 			div.style.width = width + "%";
@@ -164,26 +179,37 @@ var API_F = (function(){
 		div.setSize["width"] = function(width){div.style.width = width + "%"; return div;};
 		div.setSize["height"] = function(height){div.style.height = height + "%"; return div;};
 		
-		div["getSize"] = function(){
-			return {"width":div.style.width.split("%")[0], "height":div.style.height.split("%")[0]};
+		div["getSize"] = function(roundedTo){
+			return {
+				"width":  parseFloatRounded(div.style.width.split("%")[0], roundedTo),
+				"height": parseFloatRounded(div.style.height.split("%")[0], roundedTo)
+			};
 		};
-		div.getSize["width"] = function(width){return div.style.width.split("%")[0]};
-		div.getSize["height"] = function(height){return div.style.height.split("%")[0]};
+		div.getSize["width"] = function(roundedTo){return parseFloatRounded(div.style.width.split("%")[0], roundedTo)};
+		div.getSize["height"] = function(roundedTo){return parseFloatRounded(div.style.height.split("%")[0], roundedTo)};
 		
 		div["setPositionSize"] = function(left, top, width, height){
 			return div.setPosition(left, top).setSize(width, height);
 		};
+		div.setPositionSize["left"]   = div.setPosition["left"];
+		div.setPositionSize["top"]    = div.setPosition["top"];
+		div.setPositionSize["width"]  = div.setSize["width"];
+		div.setPositionSize["height"] = div.setSize["height"];
 		
-		div["getPositionSize"] = function(left, top, width, height){
-			var p = div.getPosition();
-			var s = div.getSize();
+		div["getPositionSize"] = function(roundedTo){
+			var p = div.getPosition(roundedTo);
+			var s = div.getSize(roundedTo);
 			return {
-				"left": p.left,
-				"top": p.top,
-				"width": s.width,
+				"left":   p.left,     
+				"top":    p.top,
+				"width":  s.width,
 				"height": s.height
 			}
 		};
+		div.setPositionSize["left"]   = div.setPosition["left"];
+		div.setPositionSize["top"]    = div.setPosition["top"];
+		div.setPositionSize["width"]  = div.setSize["width"];
+		div.setPositionSize["height"] = div.setSize["height"];
 		
 		div["addClass"] = function(className){
 			div.className += " "+className;
@@ -270,7 +296,7 @@ var API_F = (function(){
 				div.style.display = "block";
 				div.style.position = "fixed";
 				document.body.appendChild(div);
-				API_F.widget_base(div);
+				API_F.div_base(div);
 				return div;
 			},
 			"linkMyCSS": function(name){
@@ -295,9 +321,10 @@ var API_F = (function(){
 	return {
 		"call": precall,
 		"url": getUrl,
-		"widget_base": widget_base,
+		"div_base": div_base,
 		"Storage": Storage,
-		"Widget": Widget
+		"Widget": Widget,
+		"document": Document
 	};
 })();
 

@@ -22,14 +22,14 @@ var contentDiv = API.Widget.create();
 contentDiv.addClass('config_contentdiv');
 
 // Make the div container for the widgets in the config window and append the container for the widgets in the config window
-var contentwidgetsDiv = document.createElement('div');
-contentwidgetsDiv.className = 'contentwidgets';
+var contentwidgetsDiv = API.document.createElement('div');
+contentwidgetsDiv.addClass('contentwidgets');
 contentDiv.appendChild(contentwidgetsDiv);
 
 // Make the div container for the result of the configuration function of each widget (share the div) and append the container for the widgets in the config window
-var configwidgetDiv = document.createElement('div');
-configwidgetDiv.className = 'configwidget';
-configwidgetDiv.style.display = 'none';
+var configwidgetDiv = API.document.createElement('div');
+configwidgetDiv.addClass('configwidget');
+configwidgetDiv.hide();
 contentDiv.appendChild(configwidgetDiv);
 
 // Placeholder for the back button variable
@@ -43,7 +43,7 @@ closebutton.onclick = function(){
 	// Reset content
 	contentwidgetsDiv.innerHTML = '';
 	configwidgetDiv.innerHTML = '';
-	configwidgetDiv.style.display = 'none';
+	configwidgetDiv.hide();
 	if(backbutton){
 		backbutton.remove();
 	}
@@ -57,7 +57,7 @@ closebutton.onclick = function(){
 // Calls callback with the position and size of the rectangle once the user is done or false if the user canceled the operation.
 // Used by the widgets that can and wants to change their position and size.
 /*
-Parameters:
+params:
 {
 	"width"   : number, // %
 	"height"  : number, // %
@@ -95,13 +95,16 @@ console.log receives:
 
 */
 a = generate_position_rect;
-function generate_position_rect(parameters, callback){
-	// Parse parameters
-	var p_fixed = typeof parameters["fixed"] === "object";
-	var p_minimum = typeof parameters["minimum"] === "object";
-	var p_maximum = typeof parameters["maximum"] === "object";
-	var p_show_bg = typeof parameters["show_bg"] === "boolean";
-	var p_realtime = typeof parameters["realtime"] === "function";
+function generate_position_rect(params, callback){
+	// Preconfigured parameters
+	var default_position_size = 20; // %
+
+	// Parse params
+	var p_fixed = typeof params["fixed"] === "object";
+	var p_minimum = typeof params["minimum"] === "object";
+	var p_maximum = typeof params["maximum"] === "object";
+	var p_show_bg = typeof params["show_bg"] === "boolean";
+	var p_realtime = typeof params["realtime"] === "function";
 	
 	
 	// CREATE AND APPEND CONTENT CONFIGURATION DIV
@@ -109,7 +112,7 @@ function generate_position_rect(parameters, callback){
 	// Make the div container for the rect
 	var contentDivRect = API.Widget.create();
 	contentDivRect.addClass('config_contentDivRect');
-	if(p_show_bg && parameters["show_bg"] === false){
+	if(p_show_bg && params["show_bg"] === false){
 		contentDivRect.style.backgroundColor = 'transparent';
 	}
 	else{
@@ -169,40 +172,32 @@ function generate_position_rect(parameters, callback){
 	for(var i = 0; i < 4; ++i){
 		inputs[i] = document.createElement("input");
 		// Allows to write to the inputs
-		if(p_fixed && parameters["fixed"].indexOf(inputs_relation[i]) !== -1){
+		if(p_fixed && params["fixed"].indexOf(inputs_relation[i]) !== -1){
 			inputs[i].setAttribute("disabled", "disabled");
 		}
 		else{
 			inputs[i].onkeyup = inputs[i].onblur = (function(i){
 				return function(){
 					change_rectPosition_value(inputs[i].value, inputs_relation[i]);
-					set_info_inputs_values();
 				}
 			})(i);
 		}
 	}
 	
-	inputsDiv.appendChild(document.createTextNode("Width "));
-		inputsDiv.appendChild(inputs[0]);
-			inputsDiv.appendChild(document.createTextNode(" %"));
-				inputsDiv.appendChild(document.createElement("br"));
-	inputsDiv.appendChild(document.createTextNode("Height "));
-		inputsDiv.appendChild(inputs[1]);
-			inputsDiv.appendChild(document.createTextNode(" %"));
-				inputsDiv.appendChild(document.createElement("br"));
-	inputsDiv.appendChild(document.createTextNode("Left "));
-		inputsDiv.appendChild(inputs[2]);
-			inputsDiv.appendChild(document.createTextNode(" %"));
-				inputsDiv.appendChild(document.createElement("br"));
-	inputsDiv.appendChild(document.createTextNode("Top "));
-		inputsDiv.appendChild(inputs[3]);
-			inputsDiv.appendChild(document.createTextNode(" %"));
-	
+	var appends = ["Width ","Height ","Left ","Top "];
+	for(var i in appends){
+		inputsDiv.appendChild(document.createTextNode(appends[i]));
+		inputsDiv.appendChild(inputs[i]);
+		inputsDiv.appendChild(document.createTextNode(" %"));
+		if(i !== 3){
+			inputsDiv.appendChild(document.createElement("br"));
+		}
+	}
 	
 	
 	// Make the movible rect
-	var rectPosition = document.createElement('div');
-	rectPosition.className = 'config_rectPosition';
+	var rectPosition = API.document.createElement('div');
+	rectPosition.addClass('config_rectPosition');
 	contentDivRect.appendChild(rectPosition);
 	
 	// Make the resizers divs
@@ -216,7 +211,7 @@ function generate_position_rect(parameters, callback){
 	
 	// Asign the initial sizes and position
 	for(var i in inputs_relation){
-		rectPosition.style[inputs_relation[i]]  = parameters[inputs_relation[i]]+"%";
+		rectPosition.style[inputs_relation[i]] = (params[inputs_relation[i]] ? params[inputs_relation[i]] : default_position_size) + "%";
 	}
 	
 	// Setting the values to the inputs
@@ -285,12 +280,13 @@ function generate_position_rect(parameters, callback){
 	// Set the values for the inputs of the Info div in percentage and also truncates the values to 3 decimal places
 	// If rectPosition.style.left in % > 50 then moves infoDiv to the left, otherwise to the right  
 	function set_info_inputs_values(){
+		var inputs_v = rectPosition.getPositionSize(2); 
 		for(var i in inputs_relation){
-			inputs[i].value = Math.floor(parsePercentage(rectPosition.style[inputs_relation[i]])*1000)/1000;
+			inputs[i].value = inputs_v[inputs_relation[i]];
 		}
 		
 		// Change the position of infoDiv to not block the view of rectPosition
-		if(parsePercentage(rectPosition.style.left) + parsePercentage(rectPosition.style.width)/2 > 50){
+		if(rectPosition.getPosition.left() + (rectPosition.getSize.width()/2) > 50){
 			if(infoDiv.style.left === ''){
 				infoDiv.style.right = '';
 				infoDiv.style.left  = '2%';
@@ -319,14 +315,14 @@ function generate_position_rect(parameters, callback){
 	*/
 	
 	function change_rectPosition_value(value, name){
-		if(p_fixed && parameters["fixed"].indexOf(name) !== -1){
+		if(p_fixed && params["fixed"].indexOf(name) !== -1){
 			return;
 		}
-		if(p_minimum && typeof parameters["minimum"][name] === "number" && parameters["minimum"][name] > value){
-			rectPosition.style[name] = parameters["minimum"][name] + "%";
+		if(p_minimum && typeof params["minimum"][name] === "number" && params["minimum"][name] > value){
+			rectPosition.style[name] = params["minimum"][name] + "%";
 		}
-		else if(p_maximum && typeof parameters["maximum"][name] === "number" && parameters["maximum"][name] < value){
-			rectPosition.style[name] = parameters["maximum"][name] + "%";
+		else if(p_maximum && typeof params["maximum"][name] === "number" && params["maximum"][name] < value){
+			rectPosition.style[name] = params["maximum"][name] + "%";
 		}
 		else{
 			rectPosition.style[name] = value + "%";
@@ -336,7 +332,7 @@ function generate_position_rect(parameters, callback){
 	
 	function send_realtime_calback(){
 		if(p_realtime){
-			parameters["realtime"]({
+			params["realtime"]({
 				"width"  : inputs[0].value, // %
 				"height" : inputs[1].value, // %
 				"left"   : inputs[2].value, // %
@@ -352,7 +348,7 @@ function generate_position_rect(parameters, callback){
 
 gearDiv.onclick = function(){
 	contentDiv.addClass('visible');
-	contentwidgetsDiv.style.display = '';
+	contentwidgetsDiv.unHide();
 	
 	// Fill the config window
 	
@@ -365,8 +361,8 @@ gearDiv.onclick = function(){
 		// set the onclick for the button. executes the widget function and appends the result to the 
 		buttonWidget.onclick = (function(widget){
 			return function(){
-				contentwidgetsDiv.style.display = 'none';
-				configwidgetDiv.style.display = 'inherit';
+				contentwidgetsDiv.hide();
+				configwidgetDiv.unHide();
 				configwidgetDiv.innerHTML = '<div class="widgetnamebig">' + CONFIG[widget]['name'].toUpperCase() + ' WIDGET</div>'
 				// Execute the function and append the result to the corresponding div container
 				var divContainerConfigWidget = document.createElement('div');
@@ -383,8 +379,8 @@ gearDiv.onclick = function(){
 				backbutton.onclick = function(){
 					// Reset content
 					configwidgetDiv.innerHTML = '';
-					contentwidgetsDiv.style.display = '';
-					configwidgetDiv.style.display = 'none';
+					contentwidgetsDiv.unHide();
+					configwidgetDiv.hide();
 					backbutton.remove();
 				};
 			};
