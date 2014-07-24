@@ -3,19 +3,19 @@ Consult pattern:
 
 var consult = {
 	'action'    : 'get',
-	'widget'    : widgetID | 'global',
+	'widget'    : widgetID | -1,
 	'variables' : 'variable1'
 }
 
 var consult = {
 	'action'    : 'get',
-	'widget'    : widgetID | 'global',
+	'widget'    : widgetID | -1,
 	'variables' : ['variable1', ...]
 }
 
 var consult = {
 	'action'    : 'set',
-	'widget'    : widgetID | 'global',
+	'widget'    : widgetID | -1,
 	'variables' : {'variable1':'value1', ...}
 }
 */
@@ -248,11 +248,11 @@ var API_F = (function(){
 			},
 			"sharedStorage": {
 				"set":function(key, value, callback){
-					API_F.call(1, 'global', null, key, value, callback);
+					API_F.call(1, -1, null, key, value, callback);
 					return this; //API.Storage.sharedStorage;
 				},
 				"get":function(key, callback){
-					API_F.call(0, 'global', null, key, null, callback);
+					API_F.call(0, -1, null, key, null, callback);
 					return this; //API.Storage.sharedStorage;
 				}
 				/*

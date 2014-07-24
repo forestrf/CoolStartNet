@@ -131,7 +131,7 @@ $hashes = array();
 function widget_variables_valid(&$widgets){
 	global $db, $hashes;
 	foreach($widgets as $widgetID => &$variables){
-		if($widgetID !== 'global'){
+		if($widgetID != -1){
 			widget_remove_secret($widgetID, $widgetID_real, $secret);
 			if(!validateWidget($widgetID_real, $secret, $hash)){
 				unset($widgets[$widgetID]);
@@ -161,8 +161,8 @@ function getHandler(&$widgets){
 	$array_response = array();
 	$response = $db->get_variable($widgets);
 	foreach($response as &$result){
-		$widgetID = $result['IDwidget'] === '-1' ? 'global' : $hashes[$result['IDwidget']]; //global is a invisible widget with id -1
-		$array_response[$widgetID][$result['variable']] = $result['value'];
+		//global is a invisible widget with id -1
+		$array_response[$result['IDwidget'] === '-1' ? '-1' : $hashes[$result['IDwidget']]][$result['variable']] = $result['value'];
 	}
 	return $array_response;
 }
