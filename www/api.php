@@ -87,13 +87,20 @@ widget_variables_valid($data_json);
 
 switch(isset($action)?$action:null){
 	case 'get':
-		// Simple
 		$response = getHandler($data_json);
 		perfect(json_encode($response));
 	break;
 	case 'set':
-		// Check blocks
 		$response = setHandler($data_json);
+		if(is_array($response) && count($response) > 0){
+			perfect(json_encode($response));
+		}
+		else{
+			fail(json_encode($response));
+		}
+	break;
+	case 'del':
+		$response = delHandler($data_json);
 		if(is_array($response) && count($response) > 0){
 			perfect(json_encode($response));
 		}
@@ -117,14 +124,23 @@ switch(isset($action)?$action:null){
 #
 # --------------------------------------------------------------------------------------------------------------
 
+$hashes = array();
+
 // Validate a widget list
 // returns true or false
 function widget_variables_valid(&$widgets){
-	global $db;
+	global $db, $hashes;
 	foreach($widgets as $widgetID => &$variables){
 		if($widgetID !== 'global'){
-			if(!$db->get_widget_by_ID($widgetID)){
+			widget_remove_secret($widgetID, $widgetID_real, $secret);
+			if(!validateWidget($widgetID_real, $secret, $hash)){
 				unset($widgets[$widgetID]);
+			}
+			else{
+				if(!$db->get_widget_by_ID($widgetID_real)){
+					unset($widgets[$widgetID]);
+				}
+				$hashes[$widgetID_real] = $widgetID;
 			}
 		}
 	}
@@ -140,22 +156,9 @@ function widget_remove_secret(&$widgetSecret, &$widgetID, &$secret){
 }
 
 // Call before the function widget_variables_valid()
-// returns an array with the content or false -> read failure
 function getHandler(&$widgets){
-	global $db;
-	$hashes = array();
+	global $db, $hashes;
 	$array_response = array();
-	foreach($widgets as $widgetID => &$content){
-		if($widgetID !== 'global'){
-			widget_remove_secret($widgetID, $widgetID, $secret);
-			if(!validateWidget($widgetID, $secret, $hash)){
-				unset($widgets[$widgetID]);
-			}
-			else{
-				$hashes[$widgetID] = widget_add_secret($widgetID, $hash);
-			}
-		}
-	}
 	$response = $db->get_variable($widgets);
 	foreach($response as &$result){
 		$widgetID = $result['IDwidget'] === '-1' ? 'global' : $hashes[$result['IDwidget']]; //global is a invisible widget with id -1
@@ -165,11 +168,25 @@ function getHandler(&$widgets){
 }
 
 // Call before the function widget_variables_valid()
-// returns true or false -> write failure
 function setHandler(&$widgets){
 	global $db;
 	$array_response = array();
 	$response = $db->set_variable($widgets);
+	foreach($widgets as $widgetID => &$variables_widget){
+		foreach($variables_widget as $variable => &$value){
+			$array_response[$widgetID][$variable] = $response;
+		}
+	}
+	return $array_response;
+}
+
+
+// PENDENT
+// Call before the function widget_variables_valid()
+function delHandler(&$widgets){
+	/*global $db;
+	$array_response = array();
+	$response = $db->del_variable($widgets);
 	foreach($widgets as $widgetID => &$variables_widget){
 		if($widgetID !== 'global'){
 			$secret = substr($widgetID, strpos($widgetID, '-')+1);
@@ -186,7 +203,7 @@ function setHandler(&$widgets){
 			}
 		}
 	}
-	return $array_response;
+	return $array_response;*/
 }
 
 function validateWidget($widgetID, $secret, &$hash){

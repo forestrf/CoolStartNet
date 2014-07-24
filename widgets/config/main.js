@@ -94,7 +94,6 @@ console.log receives:
 }
 
 */
-a = generate_position_rect;
 function generate_position_rect(params, callback){
 	// Preconfigured parameters
 	var default_position_size = 20; // %
