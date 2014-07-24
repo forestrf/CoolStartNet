@@ -94,9 +94,11 @@ console.log receives:
 }
 
 */
+window.generate_position_rect = generate_position_rect;
 function generate_position_rect(params, callback){
 	// Preconfigured parameters
 	var default_position_size = 20; // %
+	var i = 0;
 
 	// Parse params
 	var p_fixed = typeof params["fixed"] === "object";
@@ -162,28 +164,30 @@ function generate_position_rect(params, callback){
 	
 	// Generate the interior of the Info div
 	var inputs = []; // W, H, L ,R
-	var inputs_relation = {0:"width",1:"height",2:"left",3:"top"};
-	for(var i = 0; i < 4; ++i){
+	var inputs_relation = ["width", "height", "left", "top"];
+	i = 0;
+	while(i < inputs_relation.length){
 		inputs[i] = document.createElement("input");
 		// Allows to write to the inputs
 		if(p_fixed && params["fixed"].indexOf(inputs_relation[i]) !== -1){
-			inputs[i].setAttribute("disabled", "disabled");
+			inputs[i++].setAttribute("disabled", "disabled");
 		}
 		else{
 			inputs[i].onkeyup = inputs[i].onblur = (function(i){
 				return function(){
 					change_rectPosition_value(inputs[i].value, inputs_relation[i]);
 				}
-			})(i);
+			})(i++);
 		}
 	}
 	
 	var appends = ["Width ","Height ","Left ","Top "];
-	for(var i in appends){
+	i = 0;
+	while(i < appends.length){
 		inputsDiv.appendChild(document.createTextNode(appends[i]));
 		inputsDiv.appendChild(inputs[i]);
 		inputsDiv.appendChild(document.createTextNode(" %"));
-		if(i !== 3){
+		if(i++ !== 3){
 			inputsDiv.appendChild(document.createElement("br"));
 		}
 	}
@@ -197,15 +201,18 @@ function generate_position_rect(params, callback){
 	// Make the resizers divs
 	var resizers = ["center_top", "center_bottom", "left_center", "right_center"];
 	var resizers_divs = {};
-	for(var i in resizers){
+	i = 0;
+	while(i < resizers.length){
 		resizers_divs[resizers[i]] = document.createElement('div');
 		resizers_divs[resizers[i]].className = resizers[i];
-		rectPosition.appendChild(resizers_divs[resizers[i]]);
+		rectPosition.appendChild(resizers_divs[resizers[i++]]);
 	}
 	
 	// Asign the initial sizes and position
-	for(var i in inputs_relation){
+	i = 0;
+	while(i < inputs_relation.length){
 		rectPosition.style[inputs_relation[i]] = (params[inputs_relation[i]] ? params[inputs_relation[i]] : default_position_size) + "%";
+		i++;
 	}
 	
 	// Setting the values to the inputs
@@ -275,12 +282,14 @@ function generate_position_rect(params, callback){
 	// If rectPosition.style.left in % > 50 then moves infoDiv to the left, otherwise to the right  
 	function set_info_inputs_values(){
 		var inputs_v = rectPosition.getPositionSize(); 
-		for(var i in inputs_relation){
+		var i = 0;
+		while(i < inputs_relation.length){
 			inputs[i].value = inputs_v[inputs_relation[i]];
+			i++;
 		}
 		
 		// Change the position of infoDiv to not block the view of rectPosition
-		if(rectPosition.getPosition.left() + (rectPosition.getSize.width()/2) > 50){
+		if(inputs_v.left - - inputs_v.width/2 > 50){
 			if(infoDiv.style.left === ''){
 				infoDiv.style.right = '';
 				infoDiv.style.left  = '2%';

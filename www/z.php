@@ -81,8 +81,9 @@ El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo
 		// Create the html that will call the script
 		//echo "<script src=\"widgetfile.php?widgetID={$widget['ID']}&widgetVersion={$version}&name=main.js\"></script>";
 		$data = $db->get_widget_version_file($widget['ID'], $version, 'main.js');
-		$data = &$data[0];
-		$data = &$data['data'];
+		if(!$data){
+			continue;
+		}
 		?>
 		
 		(function(API_F){
@@ -98,7 +99,7 @@ El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo
 			})(API_F, "<?php echo $widget['ID'];?>", "<?php echo hash_api($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_API);?>");
 			API_F = null;
 			
-			<?php echo $data;?>
+			<?php echo $data[0]['data'];?>
 			
 			if(typeof CONFIG_function !== 'undefined'){
 				CONFIG.push({

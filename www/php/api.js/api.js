@@ -72,26 +72,26 @@ var API_F = (function(){
 					
 					// Go over the cb and generate a response
 					if(response['response']==='OK'){
-						for(var i in cb){
+						var i = 0;
+						while (i < cb.length) {
 							
 							var widgetID = cb[i]['widgetID'];
 							var key      = cb[i]['key'];
 							
-							// If received
-							if(typeof response['content'][widgetID] !== 'undefined'){
-								// If key requested
-								if(typeof response['content'][widgetID][key] !== 'undefined'){
-									cb[i]['callback'](JSON.parse(response['content'][widgetID][key]));
-									continue;
-								}
+							// If received and key requested
+							if(typeof response['content'][widgetID] !== 'undefined' &&
+							typeof response['content'][widgetID][key] !== 'undefined'){
+								cb[i++]['callback'](JSON.parse(response['content'][widgetID][key]));
+								continue;
 							}
-							cb[i]['callback'](null);
+							cb[i++]['callback'](null);
 						}
 						return;
 					}
 				}
-				for(var i in cb){
-					cb[i]['callback'](null);
+				var i = 0;
+				while (i < cb.length) {
+					cb[i++]['callback'](null);
 				}
 			}
 		};

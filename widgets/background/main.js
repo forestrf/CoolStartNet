@@ -134,6 +134,7 @@ function setBackground(div, background){
 
 // Function for the config widgetID. It returns the html object to append on the config window
 var CONFIG_function = function(){
+	var i = 0;
 	// Make a copy of the backgrounds and use it to change configurations without touch the current background setup
 	var backgrounds_copy = backgrounds.slice(0);
 	
@@ -184,8 +185,9 @@ var CONFIG_function = function(){
 	var tableBackgrounds = document.createElement('table');
 	
 	// Background list
-	for(var i in backgrounds_copy){
-		tableBackgrounds.appendChild(createBGTableElement(backgrounds_copy[i]));
+	i = 0;
+	while(i < backgrounds_copy.length){
+		tableBackgrounds.appendChild(createBGTableElement(backgrounds_copy[i++]));
 	}
 	
 	div.appendChild(tableBackgrounds);
