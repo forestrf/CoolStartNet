@@ -22,11 +22,13 @@ var consult = {
 
 // 0 = get
 // 1 = set
+// 2 = delete
 var API_F = (function(){
-	var max_wait_GET_SET_request = [100, 100]; //ms
-	var timeout_GET_SET = [0, 0];
-	var callbacks_GET_SET_request = [[],[]];
-	var next_GET_SET_request = [{}, {}];
+	var max_wait = 100; //ms
+	var timeouts = [];
+	var callbacks = [];
+	var execute_modes = [];
+	var requests = [];
 	
 	function widget_add_secret(widgetID, secret){
 		return widgetID + '-' + secret;
@@ -40,30 +42,25 @@ var API_F = (function(){
 			widgetID = widget_add_secret(widgetID, secret);
 		}
 		
-		if(mode === 0 || mode === 1){
-			
-			if(next_GET_SET_request[mode][widgetID] === undefined){
-				next_GET_SET_request[mode][widgetID] = {};
-			}
-			
-			next_GET_SET_request[mode][widgetID][key] = value;
-			
-			
-			callbacks_GET_SET_request[mode].push({"callback":callback,"widgetID":widgetID,"key":key});
-			clearTimeout(timeout_GET_SET[mode]);
-			if(mode === 0){
-				timeout_GET_SET[mode] = setTimeout(execute_GET, max_wait_GET_SET_request[mode]);
-			}
-			else if(mode === 1){
-				timeout_GET_SET[mode] = setTimeout(execute_SET, max_wait_GET_SET_request[mode]);
-			}
+		if(requests[mode] === undefined){
+			requests[mode] = {};
+			execute_modes[mode] = function(){execute(mode, callbacks[mode]);}
+			callbacks[mode] = [];
 		}
-		else{
-			callback(null);
+		
+		if(requests[mode][widgetID] === undefined){
+			requests[mode][widgetID] = {};
 		}
+		
+		requests[mode][widgetID][key] = value;
+		
+		callbacks[mode].push({"callback":callback,"widgetID":widgetID,"key":key});
+		clearTimeout(timeouts[mode]);
+		timeouts[mode] = setTimeout(execute_modes[mode], max_wait);
 	}
 	
-	var execute = function(action, next_request, callbacksConsulta){
+	// Execute and clean cache
+	var execute = function(mode, cb){
 		var req = new XMLHttpRequest();
 		req.open('POST', 'api.php', true);
 		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -73,48 +70,38 @@ var API_F = (function(){
 					//console.log(req.responseText);
 					var response = JSON.parse(req.responseText);
 					
-					// Go over the callbacks and generate a response
+					// Go over the cb and generate a response
 					if(response['response']==='OK'){
-						for(var i in callbacksConsulta){
+						for(var i in cb){
 							
-							var widgetID = callbacksConsulta[i]['widgetID'];
-							var key    = callbacksConsulta[i]['key'];
+							var widgetID = cb[i]['widgetID'];
+							var key      = cb[i]['key'];
 							
 							// If received
 							if(typeof response['content'][widgetID] !== 'undefined'){
 								// If key requested
 								if(typeof response['content'][widgetID][key] !== 'undefined'){
-									callbacksConsulta[i]['callback'](JSON.parse(response['content'][widgetID][key]));
+									cb[i]['callback'](JSON.parse(response['content'][widgetID][key]));
+									continue;
 								}
 							}
+							cb[i]['callback'](null);
 						}
-					}
-					else{
-						for(var i in callbacksConsulta){
-							callbacksConsulta[i]['callback'](null);
-						}
+						return;
 					}
 				}
-				else{
-					for(var i in callbacksConsulta){
-						callbacksConsulta[i]['callback'](null);
-					}
+				for(var i in cb){
+					cb[i]['callback'](null);
 				}
 			}
 		};
-		var data = 'action='+['get', 'set'][action]+'&data='+encodeURIComponent(JSON.stringify(next_request));
+		var data = 'action='+['get', 'set', 'del'][mode]+'&data='+encodeURIComponent(JSON.stringify(requests[mode]));
 		req.send(data);
+	
+		requests[mode] = {};
+		callbacks[mode] = [];
 	}
 	
-	
-	// Execute and clean cache
-	var execute_GET_SET = function(mode){
-		execute(mode, next_GET_SET_request[mode], callbacks_GET_SET_request[mode]);
-		next_GET_SET_request[mode] = {};
-		callbacks_GET_SET_request[mode] = [];
-	};
-	var execute_GET = function(){execute_GET_SET(0);};
-	var execute_SET = function(){execute_GET_SET(1);};
 	
 	
 	
