@@ -1,5 +1,5 @@
 // CREATE AND APPEND GEAR TO THE BODY
-
+var C = crel2;
 
 // Import css (css of the widget)
 // Import css (Github icons pack)
@@ -9,7 +9,7 @@ API.Widget.linkMyCSS('css.css').linkExternalCSS("//maxcdn.bootstrapcdn.com/font-
 // Make the gear button
 var gearDiv = API.Widget.create();
 gearDiv.addClass('config_buttongear');
-gearDiv.innerHTML = '<i class="fa fa-cog"></i>';
+C(gearDiv, C('i', ['class', 'fa fa-cog']));
 
 
 
@@ -101,11 +101,11 @@ function generate_position_rect(params, callback){
 	var i = 0;
 
 	// Parse params
-	var p_fixed = typeof params["fixed"] === "object";
-	var p_minimum = typeof params["minimum"] === "object";
-	var p_maximum = typeof params["maximum"] === "object";
-	var p_show_bg = typeof params["show_bg"] === "boolean";
-	var p_realtime = typeof params["realtime"] === "function";
+	var p_fixed = typeof params["fixed"] === "object",
+		p_minimum = typeof params["minimum"] === "object",
+		p_maximum = typeof params["maximum"] === "object",
+		p_show_bg = typeof params["show_bg"] === "boolean",
+		p_realtime = typeof params["realtime"] === "function";
 	
 	
 	// CREATE AND APPEND CONTENT CONFIGURATION DIV
@@ -157,11 +157,6 @@ function generate_position_rect(params, callback){
 		}
 	}
 	
-	// Make the div container for the inputs
-	var inputsDiv = document.createElement('div');
-	inputsDiv.className = 'config_rectInfo_inputs';
-	infoDiv.appendChild(inputsDiv);
-	
 	// Generate the interior of the Info div
 	var inputs = []; // W, H, L ,R
 	var inputs_relation = ["width", "height", "left", "top"];
@@ -180,33 +175,30 @@ function generate_position_rect(params, callback){
 			})(i++);
 		}
 	}
+
+	// Make the div container for the inputs
+	var inputsDiv = C('div', ['class', 'config_rectInfo_inputs'],
+		"Width ",  inputs[0], " %", C('br'),
+		"Height ", inputs[1], " %", C('br'),
+		"Left ",   inputs[2], " %", C('br'),
+		"Top ",    inputs[3], " %");
 	
-	var appends = ["Width ","Height ","Left ","Top "];
-	i = 0;
-	while(i < appends.length){
-		inputsDiv.appendChild(document.createTextNode(appends[i]));
-		inputsDiv.appendChild(inputs[i]);
-		inputsDiv.appendChild(document.createTextNode(" %"));
-		if(i++ !== 3){
-			inputsDiv.appendChild(document.createElement("br"));
-		}
-	}
+	infoDiv.appendChild(inputsDiv);
 	
 	
 	// Make the movible rect
-	var rectPosition = API.document.createElement('div');
-	rectPosition.addClass('config_rectPosition');
-	contentDivRect.appendChild(rectPosition);
-	
-	// Make the resizers divs
-	var resizers = ["center_top", "center_bottom", "left_center", "right_center"];
 	var resizers_divs = {};
-	i = 0;
-	while(i < resizers.length){
-		resizers_divs[resizers[i]] = document.createElement('div');
-		resizers_divs[resizers[i]].className = resizers[i];
-		rectPosition.appendChild(resizers_divs[resizers[i++]]);
-	}
+	var rectPosition = API.document.createElement('div');
+	contentDivRect.appendChild(
+		
+		// Make the resizers divs
+		C(rectPosition, ['class', 'config_rectPosition'],
+			resizers_divs["center_top"]    = C('div', ['class', 'center_top']),
+			resizers_divs["center_bottom"] = C('div', ['class', 'center_bottom']),
+			resizers_divs["left_center"]   = C('div', ['class', 'left_center']),
+			resizers_divs["right_center"]  = C('div', ['class', 'right_center'])
+		)
+	);
 	
 	// Asign the initial sizes and position
 	i = 0;
@@ -352,8 +344,7 @@ gearDiv.onclick = function(){
 	
 	// Go over the array CONFIG
 	for(widget in CONFIG){
-		var buttonWidget = document.createElement('div');
-		buttonWidget.innerHTML += CONFIG[widget]['name'].toUpperCase();
+		var buttonWidget = C('div', CONFIG[widget]['name'].toUpperCase());
 		contentwidgetsDiv.appendChild(buttonWidget);
 		
 		// set the onclick for the button. executes the widget function and appends the result to the 
@@ -361,19 +352,18 @@ gearDiv.onclick = function(){
 			return function(){
 				contentwidgetsDiv.hide();
 				configwidgetDiv.unHide();
-				configwidgetDiv.innerHTML = '<div class="widgetnamebig">' + CONFIG[widget]['name'].toUpperCase() + ' WIDGET</div>'
-				// Execute the function and append the result to the corresponding div container
-				var divContainerConfigWidget = document.createElement('div');
-				divContainerConfigWidget.className = 'widgetcontentconfig';
-				divContainerConfigWidget.appendChild(CONFIG[widget]['function']({
-					'positioning':generate_position_rect
-				}));
-				configwidgetDiv.appendChild(divContainerConfigWidget);
+				C(configwidgetDiv,
+					C('div', ['class', 'widgetnamebig'], CONFIG[widget]['name'].toUpperCase() + ' WIDGET'),
+					// Execute the function and append the result to the corresponding div container
+					C('div', ['class', 'widgetcontentconfig'], CONFIG[widget]['function']({
+						'positioning':generate_position_rect
+					}))
+				);
 				
 				// Create the back button for the widget config window
-				backbutton = document.createElement('i');
-				backbutton.className = 'fa fa-reply backbutton';
-				contentDiv.appendChild(backbutton);
+				contentDiv.appendChild(
+					backbutton = C('i', ['class', 'fa fa-reply backbutton'])
+				);
 				backbutton.onclick = function(){
 					// Reset content
 					configwidgetDiv.innerHTML = '';

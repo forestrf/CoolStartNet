@@ -15,3 +15,10 @@
 	z-index: -99998;
 	transition: opacity 3s ease;
 }
+
+.background_widget_preview_pic {
+	float: right;
+	height: 10em;
+	max-width: 25em;
+	box-shadow: 0 0 0.5em #151515;
+}

@@ -38,6 +38,7 @@ $db = new DB();
 <head>
 	<title>Homepage</title>
 	<link rel="stylesheet" href="css/reset.min.css"/>
+	<script src="js/crel2.js"></script>
 </head>
 <body>
 
