@@ -234,30 +234,36 @@ var API_F = (function(){
 				"exists"(key, callback) -> bool*/
 			},
 			"remoteStorage": {
+				"get":function(key, callback){
+					API_F.call(0, widgetID, secret, key, null, callback);
+					return this; //API.Storage.remoteStorage;
+				},
 				"set":function(key, value, callback){
 					API_F.call(1, widgetID, secret, key, value, callback);
 					return this; //API.Storage.remoteStorage;
 				},
-				"get":function(key, callback){
-					API_F.call(0, widgetID, secret, key, null, callback);
+				"delete":function(key, callback){
+					API_F.call(2, widgetID, secret, key, null, callback);
 					return this; //API.Storage.remoteStorage;
-				}/*,
-				"delete"(key, callback) -> Storage.remoteStorage
+				}
+				/*
 				"deleteAll"(callback) -> Storage.remoteStorage
 				"exists"(key, callback) -> bool*/
 			},
 			"sharedStorage": {
+				"get":function(key, callback){
+					API_F.call(0, -1, null, key, null, callback);
+					return this; //API.Storage.sharedStorage;
+				},
 				"set":function(key, value, callback){
 					API_F.call(1, -1, null, key, value, callback);
 					return this; //API.Storage.sharedStorage;
 				},
-				"get":function(key, callback){
-					API_F.call(0, -1, null, key, null, callback);
-					return this; //API.Storage.sharedStorage;
+				"delete":function(key, callback){
+					API_F.call(2, -1, secret, key, null, callback);
+					return this; //API.Storage.remoteStorage;
 				}
-				/*
-				"delete"(key, callback) -> Storage.sharedStorage
-				"exists"(key, callback) -> bool*/
+				/*"exists"(key, callback) -> bool*/
 			}
 		}
 	}

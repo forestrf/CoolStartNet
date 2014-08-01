@@ -61,7 +61,7 @@ if(!isset($_POST['data']) || !isset($_POST['action'])){
 $data = &$_POST['data'];
 $action = &$_POST['action'];
 
-if($action !== 'set' && $action !== 'get'){
+if($action !== 'set' && $action !== 'get' && $action !== 'del'){
 	fail(5);
 }
 
@@ -184,26 +184,15 @@ function setHandler(&$widgets){
 // PENDENT
 // Call before the function widget_variables_valid()
 function delHandler(&$widgets){
-	/*global $db;
+	global $db, $hashes;
 	$array_response = array();
 	$response = $db->del_variable($widgets);
 	foreach($widgets as $widgetID => &$variables_widget){
-		if($widgetID !== 'global'){
-			$secret = substr($widgetID, strpos($widgetID, '-')+1);
-			$widgetID = substr($widgetID, 0, strpos($widgetID, '-'));
-			if(validateWidget($widgetID, $secret, $hash)){
-				foreach($variables_widget as $variable => &$value){
-					$array_response[widget_add_secret($widgetID, $hash)][$variable] = $response;
-				}
-			}
-		}
-		else{
-			foreach($variables_widget as $variable => &$value){
-				$array_response[$widgetID][$variable] = $response;
-			}
+		foreach($variables_widget as $variable => &$value){
+			$array_response[$widgetID][$variable] = $response;
 		}
 	}
-	return $array_response;*/
+	return $array_response;
 }
 
 function validateWidget($widgetID, $secret, &$hash){

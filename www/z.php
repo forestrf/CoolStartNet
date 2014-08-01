@@ -42,21 +42,6 @@ $db = new DB();
 </head>
 <body>
 
-<!--
-Mirar qué widgets tiene el usuario
-
-Recorrerlos todos e incluir el js que les corresponde.
-
-Un widget debe de contener lo siguiente: 
-- Javascript que lo compone
-- Posición y tamaño donde está situado
-
-El javascript dibujará todo el widget, incluido el div que lo contendrá en el body
-El javascript debe de estar contenido en su totalidad en una función anónima
-El javascript tendrá acceso a la API para leer y escribir variables de cualquier widget. Además la api le suministrará la url a los archivos que le pida.
-El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo ya que serán variables accesibles desde la API
--->
-
 <script id = "delete_me">
 	
 (function(){
