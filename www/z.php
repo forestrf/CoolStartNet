@@ -73,16 +73,7 @@ $db = new DB();
 		?>
 		
 		(function(API_F){
-			var API = (function(API_F, widgetID, secret){
-				return {
-					"Storage": API_F.Storage(widgetID, secret),
-					"Widget": API_F.Widget(widgetID, secret),
-					"document": API_F.document(),
-					
-					
-					"url": function(name){return API_F.url(widgetID, name);}
-				}
-			})(API_F, "<?php echo $widget['ID'];?>", "<?php echo hash_api($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_API);?>");
+			var API = API_F.init("<?php echo $widget['ID'];?>", "<?php echo hash_api($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_API);?>");
 			API_F = null;
 			
 			<?php echo $data[0]['data'];?>

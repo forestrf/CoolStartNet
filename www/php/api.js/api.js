@@ -126,7 +126,6 @@ var API_F = (function(){
 	}
 	
 	function div_base(div){
-	
 		function cRound(number, roundedTo){
 			return roundedTo === undefined ? number : (- -number).toFixed(roundedTo);
 		}
@@ -222,58 +221,6 @@ var API_F = (function(){
 	
 	
 	
-	
-	
-	function Storage(widgetID, secret){
-		return {
-			"localStorage": {
-				/*"set"(key, value, callback) -> Storage.localStorage
-				"get"(key, callback) -> value
-				"delete"(key, callback) -> Storage.localStorage
-				"deleteAll"(callback) -> Storage.localStorage
-				"exists"(key, callback) -> bool*/
-			},
-			"remoteStorage": {
-				"get":function(key, callback){
-					API_F.call(0, widgetID, secret, key, null, callback);
-					return this; //API.Storage.remoteStorage;
-				},
-				"set":function(key, value, callback){
-					API_F.call(1, widgetID, secret, key, value, callback);
-					return this; //API.Storage.remoteStorage;
-				},
-				"delete":function(key, callback){
-					API_F.call(2, widgetID, secret, key, null, callback);
-					return this; //API.Storage.remoteStorage;
-				}
-				/*
-				"deleteAll"(callback) -> Storage.remoteStorage
-				"exists"(key, callback) -> bool*/
-			},
-			"sharedStorage": {
-				"get":function(key, callback){
-					API_F.call(0, -1, null, key, null, callback);
-					return this; //API.Storage.sharedStorage;
-				},
-				"set":function(key, value, callback){
-					API_F.call(1, -1, null, key, value, callback);
-					return this; //API.Storage.sharedStorage;
-				},
-				"delete":function(key, callback){
-					API_F.call(2, -1, secret, key, null, callback);
-					return this; //API.Storage.remoteStorage;
-				}
-				/*"exists"(key, callback) -> bool*/
-			}
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
 	function create_link_css(href){
 		var link = document.createElement("link");
 		link.setAttribute("rel", "stylesheet");
@@ -282,43 +229,85 @@ var API_F = (function(){
 		document.getElementsByTagName("head")[0].appendChild(link);
 	}
 	
-	function Widget(widgetID, secret){
-		return {
-			"create": function(){
-				var div = document.createElement("div");
-				div.style.display = "block";
-				div.style.position = "fixed";
-				document.body.appendChild(div);
-				API_F.div_base(div);
-				return div;
-			},
-			"linkMyCSS": function(name){
-				create_link_css(API_F.url(widgetID, name));
-				return this; //API.Widget
-			},
-			"linkExternalCSS": function(href){
-				create_link_css(href);
-				return this; //API.Widget
+	
+	
+	
+	
+	
+	
+	return{
+		"init":function(widgetID, secret){
+			return {
+				"Storage": {
+					"localStorage": {
+						/*"set"(key, value, callback) -> Storage.localStorage
+						"get"(key, callback) -> value
+						"delete"(key, callback) -> Storage.localStorage
+						"deleteAll"(callback) -> Storage.localStorage
+						"exists"(key, callback) -> bool*/
+					},
+					"remoteStorage": {
+						"get":function(key, callback){
+							precall(0, widgetID, secret, key, null, callback);
+							return this; //API.Storage.remoteStorage;
+						},
+						"set":function(key, value, callback){
+							precall(1, widgetID, secret, key, value, callback);
+							return this; //API.Storage.remoteStorage;
+						},
+						"delete":function(key, callback){
+							precall(2, widgetID, secret, key, null, callback);
+							return this; //API.Storage.remoteStorage;
+						}
+						/*
+						"deleteAll"(callback) -> Storage.remoteStorage
+						"exists"(key, callback) -> bool*/
+					},
+					"sharedStorage": {
+						"get":function(key, callback){
+							precall(0, -1, null, key, null, callback);
+							return this; //API.Storage.sharedStorage;
+						},
+						"set":function(key, value, callback){
+							precall(1, -1, null, key, value, callback);
+							return this; //API.Storage.sharedStorage;
+						},
+						"delete":function(key, callback){
+							precall(2, -1, secret, key, null, callback);
+							return this; //API.Storage.remoteStorage;
+						}
+						/*"exists"(key, callback) -> bool*/
+					}
+				},
+				"Widget": {
+					"create": function(){
+						var div = document.createElement("div");
+						div.style.display = "block";
+						div.style.position = "fixed";
+						document.body.appendChild(div);
+						div_base(div);
+						return div;
+					},
+					"linkMyCSS": function(name){
+						create_link_css(getUrl(widgetID, name));
+						return this; //API.Widget
+					},
+					"linkExternalCSS": function(href){
+						create_link_css(href);
+						return this; //API.Widget
+					}
+				},
+				"document": {
+					"createElement": function(tagName){
+						var elem = document.createElement(tagName);
+						div_base(elem);
+						return elem;
+					}
+				},
+				"url": function(name){return getUrl(widgetID, name);}
 			}
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	return {
-		"call": precall,
-		"url": getUrl,
-		"div_base": div_base,
-		"Storage": Storage,
-		"Widget": Widget,
-		"document": Document
-	};
 })();
 
 
