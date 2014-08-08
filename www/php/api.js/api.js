@@ -24,11 +24,11 @@ var consult = {
 // 1 = set
 // 2 = delete
 var API_F = (function(){
-	var max_wait = 100; //ms
-	var timeouts = [];
-	var callbacks = [];
-	var execute_modes = [];
-	var requests = [];
+	var max_wait = 100, //ms
+		timeouts = [],
+		callbacks = [],
+		execute_modes = [],
+		requests = [];
 	
 	function widget_add_secret(widgetID, secret){
 		return widgetID + '-' + secret;
@@ -43,9 +43,9 @@ var API_F = (function(){
 		}
 		
 		if(requests[mode] === undefined){
-			requests[mode] = {};
-			execute_modes[mode] = function(){execute(mode, callbacks[mode]);}
+			requests[mode]  = {};
 			callbacks[mode] = [];
+			execute_modes[mode] = function(){execute(mode, callbacks[mode]);}
 		}
 		
 		if(requests[mode][widgetID] === undefined){
@@ -95,10 +95,10 @@ var API_F = (function(){
 				}
 			}
 		};
-		var data = 'action='+['get', 'set', 'del'][mode]+'&data='+encodeURIComponent(JSON.stringify(requests[mode]));
+		var data = 'action=' + ['get', 'set', 'del'][mode] + '&data=' + encodeURIComponent(JSON.stringify(requests[mode]));
 		req.send(data);
 	
-		requests[mode] = {};
+		requests[mode]  = {};
 		callbacks[mode] = [];
 	}
 	
@@ -107,7 +107,7 @@ var API_F = (function(){
 	
 	// Return an url to get a file of the widget
 	var getUrl = function(widgetID, filename){
-		return 'widgetfile.php?widgetID='+widgetID+'&api=1&name='+escape(filename);
+		return 'widgetfile.php?widgetID=' + widgetID + '&api=1&name=' + escape(filename);
 	}
 	
 	
@@ -127,10 +127,10 @@ var API_F = (function(){
 	
 	function div_base(div){
 		function cRound(number, roundedTo){
-			return roundedTo === undefined ? number : (- -number).toFixed(roundedTo);
+			return roundedTo === undefined ? number : (+number).toFixed(roundedTo);
 		}
 	
-		div["div"] = div;
+		div["div"]  = div;
 		div["hide"] = function(){
 			div.style.display = 'none';
 			return div;
@@ -142,36 +142,36 @@ var API_F = (function(){
 			
 		div["setPosition"] = function(left, top){
 			div.style.left = left + "%";
-			div.style.top = top + "%";
+			div.style.top  = top + "%";
 			return div;
 		};
 		div.setPosition["left"] = function(left){div.style.left = left + "%"; return div;};
-		div.setPosition["top"] = function(top){div.style.top = top + "%"; return div;};
+		div.setPosition["top"]  = function(top){ div.style.top  = top + "%";  return div;};
 		
 		div["getPosition"] = function(roundedTo){
 			return {
 				"left": cRound(div.style.left.split("%")[0], roundedTo),
-				"top":  cRound(div.style.top.split("%")[0], roundedTo)
+				"top":  cRound(div.style.top.split("%")[0],  roundedTo)
 			};
 		};
 		div.getPosition["left"] = function(roundedTo){return cRound(div.style.left.split("%")[0], roundedTo)};
-		div.getPosition["top"] = function(roundedTo){return cRound(div.style.top.split("%")[0], roundedTo)};
+		div.getPosition["top"]  = function(roundedTo){return cRound(div.style.top.split("%")[0],  roundedTo)};
 		
 		div["setSize"] = function(width, height){
-			div.style.width = width + "%";
+			div.style.width  = width  + "%";
 			div.style.height = height + "%";
 			return div;
 		};
-		div.setSize["width"] = function(width){div.style.width = width + "%"; return div;};
+		div.setSize["width"]  = function(width){ div.style.width  = width  + "%"; return div;};
 		div.setSize["height"] = function(height){div.style.height = height + "%"; return div;};
 		
 		div["getSize"] = function(roundedTo){
 			return {
-				"width":  cRound(div.style.width.split("%")[0], roundedTo),
+				"width":  cRound(div.style.width.split("%")[0],  roundedTo),
 				"height": cRound(div.style.height.split("%")[0], roundedTo)
 			};
 		};
-		div.getSize["width"] = function(roundedTo){return cRound(div.style.width.split("%")[0], roundedTo)};
+		div.getSize["width"]  = function(roundedTo){return cRound(div.style.width.split("%")[0],  roundedTo)};
 		div.getSize["height"] = function(roundedTo){return cRound(div.style.height.split("%")[0], roundedTo)};
 		
 		div["setPositionSize"] = function(left, top, width, height){
@@ -223,7 +223,7 @@ var API_F = (function(){
 	
 	function create_link_css(href){
 		var link = document.createElement("link");
-		link.setAttribute("rel", "stylesheet");
+		link.setAttribute("rel",  "stylesheet");
 		link.setAttribute("type", "text/css");
 		link.setAttribute("href", href);
 		document.getElementsByTagName("head")[0].appendChild(link);
@@ -282,7 +282,7 @@ var API_F = (function(){
 				"Widget": {
 					"create": function(){
 						var div = document.createElement("div");
-						div.style.display = "block";
+						div.style.display  = "block";
 						div.style.position = "fixed";
 						document.body.appendChild(div);
 						div_base(div);
@@ -309,33 +309,3 @@ var API_F = (function(){
 		}
 	}
 })();
-
-
-
-
-
-
-
-
-/*
-Net;
-
-Widget = (function(){
-	function create(){
-		
-	}
-	
-	function includeCssFile(filename){
-		var link = document.createElement("link");
-		link.setAttribute("rel", "stylesheet");
-		link.setAttribute("type", "text/css");
-		link.setAttribute("href", API.url(widgetID, filename));
-		document.getElementsByTagName("head")[0].appendChild(link);
-	}
-	
-	return {
-		"create":create,
-		"includeCssFile":null
-	}
-})();
-*/
