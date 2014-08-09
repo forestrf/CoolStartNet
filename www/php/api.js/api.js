@@ -278,12 +278,12 @@ var API_F = (function(){
 		"bookmarks":
 		[
 			{
-				"type":"bookmark",
-				"uri":"http://1"
-			},
-			{
 				"type":"folder",
 				"name":"third folder"
+			},
+			{
+				"type":"bookmark",
+				"uri":"http://1"
 			},
 			{
 				"type":"folder",
@@ -304,28 +304,15 @@ var API_F = (function(){
 	.addFolder("/second folder/", "third folder")
 	.addBookmark("/second folder/third folder/", "http://6")
 	.moveBookmark("/first folder",2,"/second folder/third folder",0)
-	.moveFolder("/","second folder","/third folder",0)
+	.moveFolder("/second folder","third folder","/",0)
 	.moveFolder("/",3,"/third folder",0);
 	
 	*/
 	function bookmarks_base(bookmarks){
-		var folders_name   = "folders";
-		var bookmarks_name = "bookmarks";
-		
-		var bookmark_uri_name     = "uri";
-		var bookmark_title_name   = "title";
-		var bookmark_iconuri_name = "iconuri";
-		
-		var folder_name_name = "name";
-		
-		var type_name     = "type";
-		var type_folder   = "folder";
-		var type_bookmark = "bookmark";
-		
 		if(bookmarks === undefined){
 			bookmarks = {};
-			bookmarks[folders_name] = {};
-			bookmarks[bookmarks_name] = [];
+			bookmarks["folders"] = {};
+			bookmarks["bookmarks"] = [];
 		}
 		
 		//Given a path with the pattern a/b/c returns the object from the folder c inside of the b inside of the a inside of the root
@@ -335,95 +322,146 @@ var API_F = (function(){
 			while(path.length > 0){
 				var path_fragment = path.pop();
 				if(path_fragment !== ""){
-					bookmark_path = bookmark_path[folders_name][path_fragment];
+					bookmark_path = bookmark_path["folders"][path_fragment];
 				}
 			}
 			return bookmark_path;
 		}
 		
 		return {
-			"object":bookmarks,
-			"addBookmark":function(path, uri, title, icon_uri){
-				var bookmark_path = path_resolver(path);
-				var bookmark_obj = {};
-				bookmark_obj[type_name]             = type_bookmark;
-				bookmark_obj[bookmark_uri_name]     = uri;
-				bookmark_obj[bookmark_title_name]   = title;
-				bookmark_obj[bookmark_iconuri_name] = icon_uri;
-				bookmark_path[bookmarks_name].push(bookmark_obj);
-				return this;
-			},
-			"addFolder":function(path, name){
-				var bookmark_path = path_resolver(path);
-				bookmark_path[folders_name][name] = {};
-				bookmark_path[folders_name][name][folders_name]   = {};
-				bookmark_path[folders_name][name][bookmarks_name] = [];
+			"object": bookmarks,
+			"addBookmark": function(path, uri, title, icon_uri){
+				var real_path = path_resolver(path);
+				if(!real_path){return this;}
 				
 				var bookmark_obj = {};
-				bookmark_obj[type_name]        = type_folder;
-				bookmark_obj[folder_name_name] = name;
-				bookmark_path[bookmarks_name].push(bookmark_obj);
+				bookmark_obj["type"]    = "bookmark";
+				bookmark_obj["uri"]     = uri;
+				bookmark_obj["title"]   = title;
+				bookmark_obj["iconuri"] = icon_uri;
+				real_path["bookmarks"].push(bookmark_obj);
 				return this;
 			},
-			"removeBookmark":function(path, index, custom){
+			"addFolder": function(path, name){
+				var real_path = path_resolver(path);
+				if(!real_path){return this;}
+				
+				real_path["folders"][name] = {};
+				real_path["folders"][name]["folders"]   = {};
+				real_path["folders"][name]["bookmarks"] = [];
+				
+				var bookmark_obj = {};
+				bookmark_obj["type"]        = "folder";
+				bookmark_obj["name"] = name;
+				real_path["bookmarks"].push(bookmark_obj);
+				return this;
+			},
+			"getBookmark": function(path, index){
+				var real_path = path_resolver(path);
+				if(!real_path){return false;}
+				
+				if(real_path["bookmarks"][index] && real_path["bookmarks"][index]["type"] !== "folder"){
+					return real_path["bookmarks"][index];
+				}
+				return false;
+			},
+			"getBookmarks": function(path){
+				var real_path = path_resolver(path);
+				if(!real_path){return false;}
+				
+				var result = [];
+				var i = 0;
+				while(i < real_path["bookmarks"].length){
+					if(real_path["bookmarks"][i]["type"] !== "folder"){
+						result.push(real_path["bookmarks"][i]);
+					}
+					i++;
+				}
+				return result;
+			},
+			"getFolders": function(path){
+				var real_path = path_resolver(path);
+				if(!real_path){return false;}
+				
+				var result = [];
+				var i = 0;
+				while(i < real_path["bookmarks"].length){
+					if(real_path["bookmarks"][i]["type"] === "folder"){
+						result.push(real_path["bookmarks"][i]["name"]);
+					}
+					i++;
+				}
+				return result;
+			},
+			"removeBookmark": function(path, index, custom){
 				if(custom === undefined){custom = false}
-				var bookmark_path = path_resolver(path);
-				if(custom || bookmark_path[bookmarks_name][index][type_name] === type_bookmark){
-					bookmark_path[bookmarks_name].splice(index, 1);
+				var real_path = path_resolver(path);
+				if(!real_path){return this;}
+				
+				if(custom || real_path["bookmarks"][index]["type"] === "bookmark"){
+					real_path["bookmarks"].splice(index, 1);
 				}
 				return this;
 			},
-			"removeFolder":function(path, name_index){
-				var bookmark_path = path_resolver(path);
+			"removeFolder": function(path, name_index){
+				var real_path = path_resolver(path);
+				if(!real_path){return this;}
+				
 				var name;
 				
 				if(typeof name_index === "number"){
-					if(bookmark_path[bookmarks_name][name_index][type_name] === type_bookmark){
+					if(real_path["bookmarks"][name_index]["type"] === "bookmark"){
 						return this;
 					}
-					name = bookmark_path[bookmarks_name].splice(name_index, 1)[0][folder_name_name];
+					name = real_path["bookmarks"].splice(name_index, 1)[0]["name"];
 				}
 				else{
 					name = name_index
 				}
-				delete bookmark_path[folders_name][name];
+				delete real_path["folders"][name];
 				return this;
 			},
 			// Moves a bookmark from one place to another. index starts from 0
 			"moveBookmark": function(path_from, index_from, path_to, index_to, custom){
 				if(custom === undefined){custom = false}
-				var bookmark_path_from = path_resolver(path_from);
-				var bookmark_path_to   = path_resolver(path_to);
-				if(custom || bookmark_path_from[bookmarks_name][index_from][type_name] === type_bookmark){
-					var bookmark = bookmark_path_from[bookmarks_name].splice(index_from ,1)[0];
-					var temp = bookmark_path_to[bookmarks_name].splice(index_to);
-					bookmark_path_to[bookmarks_name] = bookmark_path_to[bookmarks_name].concat(bookmark).concat(temp);
+				var real_path_from = path_resolver(path_from);
+				var real_path_to   = path_resolver(path_to);
+				if(!real_path_from){return this;}
+				if(!real_path_to){return this;}
+				
+				if(custom || real_path_from["bookmarks"][index_from]["type"] === "bookmark"){
+					var bookmark = real_path_from["bookmarks"].splice(index_from ,1)[0];
+					var temp = real_path_to["bookmarks"].splice(index_to);
+					real_path_to["bookmarks"] = real_path_to["bookmarks"].concat(bookmark).concat(temp);
 				}
 				return this;
 			},
 			// Moves a bookmark from one place to another. index starts from 0
 			"moveFolder": function(path_from, name_index_from, path_to, index_to){
-				var bookmark_path_from = path_resolver(path_from);
-				var bookmark_path_to   = path_resolver(path_to);
+				var real_path_from = path_resolver(path_from);
+				var real_path_to   = path_resolver(path_to);
+				if(!real_path_from){return this;}
+				if(!real_path_to){return this;}
+				
 				var name;
 				var folder_bookmarks;
 				
 				if(typeof name_index_from === "number"){
-					if(bookmark_path_from[bookmarks_name][name_index_from][type_name] === type_bookmark){
+					if(real_path_from["bookmarks"][name_index_from]["type"] === "bookmark"){
 						return this;
 					}
-					folder_bookmarks = bookmark_path_from[bookmarks_name].splice(name_index_from, 1)[0];
-					name = folder_bookmarks[folder_name_name];
+					folder_bookmarks = real_path_from["bookmarks"].splice(name_index_from, 1)[0];
+					name = folder_bookmarks["name"];
 				}
 				else{
 					name = name_index_from;
 					var i = 0;
-					while(i < bookmark_path_from[bookmarks_name].length){
-						if(bookmark_path_from[bookmarks_name][i][folder_name_name] === name){
-							if(bookmark_path_from[bookmarks_name][i][type_name] === type_bookmark){
+					while(i < real_path_from["bookmarks"].length){
+						if(real_path_from["bookmarks"][i]["name"] === name){
+							if(real_path_from["bookmarks"][i]["type"] === "bookmark"){
 								return this;
 							}
-							folder_bookmarks = bookmark_path_from[bookmarks_name].splice(i, 1)[0];
+							folder_bookmarks = real_path_from["bookmarks"].splice(i, 1)[0];
 							break;
 						}
 						i++;
@@ -431,14 +469,14 @@ var API_F = (function(){
 				}
 				// name and folder_bookmarks setted at this point
 				
-				// Readd to bookmarks list
-				var temp = bookmark_path_to[bookmarks_name].splice(index_to);
-				bookmark_path_to[bookmarks_name] = bookmark_path_to[bookmarks_name].concat(folder_bookmarks).concat(temp);
+				// move folder from bookmarks list
+				var temp = real_path_to["bookmarks"].splice(index_to);
+				real_path_to["bookmarks"] = real_path_to["bookmarks"].concat(folder_bookmarks).concat(temp);
 				
 				//move folder from folders list
-				var folder = bookmark_path_from[folders_name][name];
-				delete bookmark_path_from[folders_name][name];
-				bookmark_path_to[folders_name][name] = folder;
+				var folder = real_path_from["folders"][name];
+				delete real_path_from["folders"][name];
+				real_path_to["folders"][name] = folder;
 				return this;
 			}
 		}
