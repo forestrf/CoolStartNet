@@ -215,14 +215,112 @@ var API_F = (function(){
 	}
 	
 	
+	// There are 2 types of elements, bookmarks and folders.
+	// Bookmarks contain the info of a individual bookmark.
+	// folders make groups of bookmarks and folders.
+	// folders have a placeholder in the bookmarks to allow order between bookmarks and folders.
+	// custom placeholders in bookmarks can be placed simply using an invented type, like separators.
+	// To allow custom placeholders, bookmarks type is checked by if it is or not a bookmark. If it is not, it is as a folder.
+	// To work with placeholders you must use the moveBookmark and removeBookmark methods passing bool "true" to the "custom" parameter
+	// everything can be amplified with more options, but no less (this is the minimum).
+	// Widgets will read the options they can handle. This api doesn't delete unknown options.
+	// Object structure example and code to generate it:
+	/*
+	{
+		"folders":
+		{
+			"first folder":
+			{
+				"folders":{},
+				"bookmarks":
+				[
+					{
+						"type":"bookmark",
+						"uri":"http://2"
+					},
+					{
+						"type":"bookmark",
+						"uri":"http://3"
+					},
+					{
+						"type":"bookmark",
+						"uri":"http://5"
+					}
+				]
+			},
+			"third folder":
+			{
+				"folders":
+				{
+					"second folder":
+					{
+						"folders":{},
+						"bookmarks":[]
+					}
+				},
+				"bookmarks":
+				[
+					{
+						"type":"folder",
+						"name":"second folder"
+					},
+					{
+						"type":"bookmark",
+						"uri":"http://4"
+					},
+					{
+						"type":"bookmark",
+						"uri":"http://6"
+					}
+				]
+			}
+		},
+		"bookmarks":
+		[
+			{
+				"type":"bookmark",
+				"uri":"http://1"
+			},
+			{
+				"type":"folder",
+				"name":"third folder"
+			},
+			{
+				"type":"folder",
+				"name":"first folder"
+			}
+		]
+	}
 	
+	// Generated using:
+	API.Bookmarks.createObject()
+	.addBookmark("/", "http://1")
+	.addFolder("/", "first folder")
+	.addBookmark("/first folder", "http://2")
+	.addBookmark("/first folder", "http://3")
+	.addBookmark("/first folder", "http://4")
+	.addBookmark("/first folder", "http://5")
+	.addFolder("/", "second folder")
+	.addFolder("/second folder/", "third folder")
+	.addBookmark("/second folder/third folder/", "http://6")
+	.moveBookmark("/first folder",2,"/second folder/third folder",0)
+	.moveFolder("/","second folder","/third folder",0)
+	.moveFolder("/",3,"/third folder",0);
+	
+	*/
 	function bookmarks_base(bookmarks){
 		var folders_name   = "folders";
 		var bookmarks_name = "bookmarks";
 		
-		var bookmark_uri_name = "uri";
-		var bookmark_title_name = "title";
+		var bookmark_uri_name     = "uri";
+		var bookmark_title_name   = "title";
 		var bookmark_iconuri_name = "iconuri";
+		
+		var folder_name_name = "name";
+		
+		var type_name     = "type";
+		var type_folder   = "folder";
+		var type_bookmark = "bookmark";
 		
 		if(bookmarks === undefined){
 			bookmarks = {};
@@ -236,16 +334,11 @@ var API_F = (function(){
 			var bookmark_path = bookmarks;
 			while(path.length > 0){
 				var path_fragment = path.pop();
-				bookmark_path = path_fragment === "" ? bookmark_path: bookmark_path[folders_name][path_fragment];
+				if(path_fragment !== ""){
+					bookmark_path = bookmark_path[folders_name][path_fragment];
+				}
 			}
 			return bookmark_path;
-		}
-		
-		function bookmark_swap(bookmarksFragment, index1, index2){
-			/*var temp = bookmarksFragment[index1];
-			bookmarksFragment[index1] = bookmarksFragment[index2];
-			bookmarksFragment[index2] = temp;
-			return this;*/
 		}
 		
 		return {
@@ -253,8 +346,9 @@ var API_F = (function(){
 			"addBookmark":function(path, uri, title, icon_uri){
 				var bookmark_path = path_resolver(path);
 				var bookmark_obj = {};
-				bookmark_obj[bookmark_uri_name] = uri;
-				bookmark_obj[bookmark_title_name] = title;
+				bookmark_obj[type_name]             = type_bookmark;
+				bookmark_obj[bookmark_uri_name]     = uri;
+				bookmark_obj[bookmark_title_name]   = title;
 				bookmark_obj[bookmark_iconuri_name] = icon_uri;
 				bookmark_path[bookmarks_name].push(bookmark_obj);
 				return this;
@@ -262,36 +356,91 @@ var API_F = (function(){
 			"addFolder":function(path, name){
 				var bookmark_path = path_resolver(path);
 				bookmark_path[folders_name][name] = {};
-				bookmark_path[folders_name][name][folders_name] = {};
+				bookmark_path[folders_name][name][folders_name]   = {};
 				bookmark_path[folders_name][name][bookmarks_name] = [];
+				
+				var bookmark_obj = {};
+				bookmark_obj[type_name]        = type_folder;
+				bookmark_obj[folder_name_name] = name;
+				bookmark_path[bookmarks_name].push(bookmark_obj);
 				return this;
 			},
-			"removeBookmark":function(path, uri){
+			"removeBookmark":function(path, index, custom){
+				if(custom === undefined){custom = false}
 				var bookmark_path = path_resolver(path);
-				delete bookmark_path[bookmarks_name][uri];
+				if(custom || bookmark_path[bookmarks_name][index][type_name] === type_bookmark){
+					bookmark_path[bookmarks_name].splice(index, 1);
+				}
 				return this;
 			},
-			"removeFolder":function(path, name){
+			"removeFolder":function(path, name_index){
 				var bookmark_path = path_resolver(path);
+				var name;
+				
+				if(typeof name_index === "number"){
+					if(bookmark_path[bookmarks_name][name_index][type_name] === type_bookmark){
+						return this;
+					}
+					name = bookmark_path[bookmarks_name].splice(name_index, 1)[0][folder_name_name];
+				}
+				else{
+					name = name_index
+				}
 				delete bookmark_path[folders_name][name];
 				return this;
-			}
-			"swap": bookmark_swap,
-			"move": function(path_from, index_from, path_to, index_to){
-				/*var i = from;
-				if(from < to){
-					while(i < to){
-						bookmark_swap(bookmarks, i, i+1); i++;
+			},
+			// Moves a bookmark from one place to another. index starts from 0
+			"moveBookmark": function(path_from, index_from, path_to, index_to, custom){
+				if(custom === undefined){custom = false}
+				var bookmark_path_from = path_resolver(path_from);
+				var bookmark_path_to   = path_resolver(path_to);
+				if(custom || bookmark_path_from[bookmarks_name][index_from][type_name] === type_bookmark){
+					var bookmark = bookmark_path_from[bookmarks_name].splice(index_from ,1)[0];
+					var temp = bookmark_path_to[bookmarks_name].splice(index_to);
+					bookmark_path_to[bookmarks_name] = bookmark_path_to[bookmarks_name].concat(bookmark).concat(temp);
+				}
+				return this;
+			},
+			// Moves a bookmark from one place to another. index starts from 0
+			"moveFolder": function(path_from, name_index_from, path_to, index_to){
+				var bookmark_path_from = path_resolver(path_from);
+				var bookmark_path_to   = path_resolver(path_to);
+				var name;
+				var folder_bookmarks;
+				
+				if(typeof name_index_from === "number"){
+					if(bookmark_path_from[bookmarks_name][name_index_from][type_name] === type_bookmark){
+						return this;
+					}
+					folder_bookmarks = bookmark_path_from[bookmarks_name].splice(name_index_from, 1)[0];
+					name = folder_bookmarks[folder_name_name];
+				}
+				else{
+					name = name_index_from;
+					var i = 0;
+					while(i < bookmark_path_from[bookmarks_name].length){
+						if(bookmark_path_from[bookmarks_name][i][folder_name_name] === name){
+							if(bookmark_path_from[bookmarks_name][i][type_name] === type_bookmark){
+								return this;
+							}
+							folder_bookmarks = bookmark_path_from[bookmarks_name].splice(i, 1)[0];
+							break;
+						}
+						i++;
 					}
 				}
-				else if(from > to){
-					while(i > to){
-						bookmark_swap(bookmarks, i, i-1); i--;
-					}
-				}
-				return to;*/
+				// name and folder_bookmarks setted at this point
+				
+				// Readd to bookmarks list
+				var temp = bookmark_path_to[bookmarks_name].splice(index_to);
+				bookmark_path_to[bookmarks_name] = bookmark_path_to[bookmarks_name].concat(folder_bookmarks).concat(temp);
+				
+				//move folder from folders list
+				var folder = bookmark_path_from[folders_name][name];
+				delete bookmark_path_from[folders_name][name];
+				bookmark_path_to[folders_name][name] = folder;
+				return this;
 			}
-		
 		}
 	}
 	
@@ -320,7 +469,8 @@ var API_F = (function(){
 						"get"(key, callback) -> value
 						"delete"(key, callback) -> Storage.localStorage
 						"deleteAll"(callback) -> Storage.localStorage
-						"exists"(key, callback) -> bool*/
+						"exists"(key, callback) -> bool
+						"lastModified"(key, callback) -> //API.Storage.localStorage*/
 					},
 					"remoteStorage": {
 						"get":function(key, callback){
@@ -336,8 +486,9 @@ var API_F = (function(){
 							return this; //API.Storage.remoteStorage;
 						}
 						/*
-						"deleteAll"(callback) -> Storage.remoteStorage
-						"exists"(key, callback) -> bool*/
+						"deleteAll"(callback) -> //API.Storage.remoteStorage
+						"exists"(key, callback) -> bool
+						"lastModified"(key, callback) -> //API.Storage.remoteStorage*/
 					},
 					"sharedStorage": {
 						"get":function(key, callback){
@@ -352,7 +503,8 @@ var API_F = (function(){
 							precall(2, -1, secret, key, null, callback);
 							return this; //API.Storage.remoteStorage;
 						}
-						/*"exists"(key, callback) -> bool*/
+						/*"exists"(key, callback) -> bool
+						"lastModified"(key, callback) -> //API.Storage.sharedStorage*/
 					}
 				},
 				"Widget": {
