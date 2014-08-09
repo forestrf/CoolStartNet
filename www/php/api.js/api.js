@@ -231,7 +231,23 @@ var API_F = (function(){
 	
 	
 	
+	function bookmark_swap(bookmarksFragment, index1, index2){
+		var temp = bookmarksFragment[index1];
+		bookmarksFragment[index1] = bookmarksFragment[index2];
+		bookmarksFragment[index2] = temp;
+		return this;
+	}
 	
+	function object_push(obj, elem){
+		var i = 0;
+		while(obj[i++] !== undefined){}
+		obj[--i] = elem;
+		return i;
+	}
+	
+	function remove_elem_obj(bookmarksFragment, index){
+		delete bookmarksFragment[index];
+	}
 	
 	
 	
@@ -304,7 +320,46 @@ var API_F = (function(){
 						return elem;
 					}
 				},
-				"url": function(name){return getUrl(widgetID, name);}
+				"url": function(name){return getUrl(widgetID, name);},
+				"Bookmarks": {
+					"new": function(){
+						return {};
+					},
+					"addFolder": function(bookmarksFragment, folderName, childs){
+						if(childs === undefined){childs = [];}
+						return object_push(bookmarksFragment, {
+							"title":folderName,
+							"childs":childs
+						});
+					},
+					"removeFolder": remove_elem_obj,
+					"removeBookmark": remove_elem_obj,
+					"addBookmark": function(bookmarksFragment, index){
+						if(tags === undefined){tags = [];}
+						if(iconuri === undefined){iconuri = "";}
+						return object_push(bookmarksFragment, {
+							"title":title,
+							"uri":uri,
+							"iconuri":iconuri,
+							"tags":tags
+						});
+					},
+					"swap": bookmark_swap,
+					"move": function(bookmarksFragment, from, to){
+						var i = from;
+						if(from < to){
+							while(i < to){
+								bookmark_swap(bookmarksFragment, i, i+1); i++;
+							}
+						}
+						else if(from > to){
+							while(i > to){
+								bookmark_swap(bookmarksFragment, i, i-1); i--;
+							}
+						}
+						return to;
+					}
+				}
 			}
 		}
 	}
