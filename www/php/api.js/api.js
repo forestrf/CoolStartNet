@@ -447,7 +447,7 @@ var API_F = (function(){
 				var folder_bookmarks;
 				
 				if(typeof name_index_from === "number"){
-					if(real_path_from["bookmarks"][name_index_from]["type"] === "bookmark"){
+					if(real_path_from["bookmarks"][name_index_from]["type"] !== "folder"){
 						return this;
 					}
 					folder_bookmarks = real_path_from["bookmarks"].splice(name_index_from, 1)[0];
@@ -458,7 +458,7 @@ var API_F = (function(){
 					var i = 0;
 					while(i < real_path_from["bookmarks"].length){
 						if(real_path_from["bookmarks"][i]["name"] === name){
-							if(real_path_from["bookmarks"][i]["type"] === "bookmark"){
+							if(real_path_from["bookmarks"][i]["type"] !== "folder"){
 								return this;
 							}
 							folder_bookmarks = real_path_from["bookmarks"].splice(i, 1)[0];
