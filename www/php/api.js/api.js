@@ -311,7 +311,7 @@ var API_F = (function(){
 	function bookmarks_base(bookmarks){
 		if(bookmarks === undefined){
 			bookmarks = {};
-			bookmarks["folders"] = {};
+			bookmarks["folders"]   = {};
 			bookmarks["bookmarks"] = [];
 		}
 		
@@ -334,26 +334,27 @@ var API_F = (function(){
 				var real_path = path_resolver(path);
 				if(!real_path){return this;}
 				
-				var bookmark_obj = {};
-				bookmark_obj["type"]    = "bookmark";
-				bookmark_obj["uri"]     = uri;
-				bookmark_obj["title"]   = title;
-				bookmark_obj["iconuri"] = icon_uri;
-				real_path["bookmarks"].push(bookmark_obj);
+				real_path["bookmarks"].push({
+					type: "bookmark",
+					uri: uri,
+					title: title,
+					iconuri: icon_uri
+				});
 				return this;
 			},
 			"addFolder": function(path, name){
 				var real_path = path_resolver(path);
 				if(!real_path){return this;}
 				
-				real_path["folders"][name] = {};
-				real_path["folders"][name]["folders"]   = {};
-				real_path["folders"][name]["bookmarks"] = [];
+				real_path["folders"][name] = {
+					folders: {},
+					bookmarks: []
+				};
 				
-				var bookmark_obj = {};
-				bookmark_obj["type"]        = "folder";
-				bookmark_obj["name"] = name;
-				real_path["bookmarks"].push(bookmark_obj);
+				real_path["bookmarks"].push({
+					type: "folder",
+					name: name
+				});
 				return this;
 			},
 			"getBookmark": function(path, index){
