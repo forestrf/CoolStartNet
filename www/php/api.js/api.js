@@ -216,6 +216,84 @@ var API_F = (function(){
 	
 	
 	
+	function bookmarks_base(bookmarks){
+		var folders_name   = "folders";
+		var bookmarks_name = "bookmarks";
+		
+		var bookmark_uri_name = "uri";
+		var bookmark_title_name = "title";
+		var bookmark_iconuri_name = "iconuri";
+		
+		if(bookmarks === undefined){
+			bookmarks = {};
+			bookmarks[folders_name] = {};
+			bookmarks[bookmarks_name] = [];
+		}
+		
+		//Given a path with the pattern a/b/c returns the object from the folder c inside of the b inside of the a inside of the root
+		function path_resolver(path){
+			path = path.split("/").reverse();
+			var bookmark_path = bookmarks;
+			while(path.length > 0){
+				var path_fragment = path.pop();
+				bookmark_path = path_fragment === "" ? bookmark_path: bookmark_path[folders_name][path_fragment];
+			}
+			return bookmark_path;
+		}
+		
+		function bookmark_swap(bookmarksFragment, index1, index2){
+			/*var temp = bookmarksFragment[index1];
+			bookmarksFragment[index1] = bookmarksFragment[index2];
+			bookmarksFragment[index2] = temp;
+			return this;*/
+		}
+		
+		return {
+			"object":bookmarks,
+			"addBookmark":function(path, uri, title, icon_uri){
+				var bookmark_path = path_resolver(path);
+				var bookmark_obj = {};
+				bookmark_obj[bookmark_uri_name] = uri;
+				bookmark_obj[bookmark_title_name] = title;
+				bookmark_obj[bookmark_iconuri_name] = icon_uri;
+				bookmark_path[bookmarks_name].push(bookmark_obj);
+				return this;
+			},
+			"addFolder":function(path, name){
+				var bookmark_path = path_resolver(path);
+				bookmark_path[folders_name][name] = {};
+				bookmark_path[folders_name][name][folders_name] = {};
+				bookmark_path[folders_name][name][bookmarks_name] = [];
+				return this;
+			},
+			"removeBookmark":function(path, uri){
+				var bookmark_path = path_resolver(path);
+				delete bookmark_path[bookmarks_name][uri];
+				return this;
+			},
+			"removeFolder":function(path, name){
+				var bookmark_path = path_resolver(path);
+				delete bookmark_path[folders_name][name];
+				return this;
+			}
+			"swap": bookmark_swap,
+			"move": function(path_from, index_from, path_to, index_to){
+				/*var i = from;
+				if(from < to){
+					while(i < to){
+						bookmark_swap(bookmarks, i, i+1); i++;
+					}
+				}
+				else if(from > to){
+					while(i > to){
+						bookmark_swap(bookmarks, i, i-1); i--;
+					}
+				}
+				return to;*/
+			}
+		
+		}
+	}
 	
 	
 	
@@ -230,24 +308,6 @@ var API_F = (function(){
 	}
 	
 	
-	
-	function bookmark_swap(bookmarksFragment, index1, index2){
-		var temp = bookmarksFragment[index1];
-		bookmarksFragment[index1] = bookmarksFragment[index2];
-		bookmarksFragment[index2] = temp;
-		return this;
-	}
-	
-	function object_push(obj, elem){
-		var i = 0;
-		while(obj[i++] !== undefined){}
-		obj[--i] = elem;
-		return i;
-	}
-	
-	function remove_elem_obj(bookmarksFragment, index){
-		delete bookmarksFragment[index];
-	}
 	
 	
 	
@@ -322,43 +382,7 @@ var API_F = (function(){
 				},
 				"url": function(name){return getUrl(widgetID, name);},
 				"Bookmarks": {
-					"new": function(){
-						return {};
-					},
-					"addFolder": function(bookmarksFragment, folderName, childs){
-						if(childs === undefined){childs = [];}
-						return object_push(bookmarksFragment, {
-							"title":folderName,
-							"childs":childs
-						});
-					},
-					"removeFolder": remove_elem_obj,
-					"removeBookmark": remove_elem_obj,
-					"addBookmark": function(bookmarksFragment, index){
-						if(tags === undefined){tags = [];}
-						if(iconuri === undefined){iconuri = "";}
-						return object_push(bookmarksFragment, {
-							"title":title,
-							"uri":uri,
-							"iconuri":iconuri,
-							"tags":tags
-						});
-					},
-					"swap": bookmark_swap,
-					"move": function(bookmarksFragment, from, to){
-						var i = from;
-						if(from < to){
-							while(i < to){
-								bookmark_swap(bookmarksFragment, i, i+1); i++;
-							}
-						}
-						else if(from > to){
-							while(i > to){
-								bookmark_swap(bookmarksFragment, i, i-1); i--;
-							}
-						}
-						return to;
-					}
+					"createObject": bookmarks_base
 				}
 			}
 		}
