@@ -408,18 +408,14 @@ var API_F = (function(){
 				var real_path = path_resolver(path);
 				if(!real_path){return this;}
 				
-				var name;
-				
 				if(typeof name_index === "number"){
 					if(real_path["bookmarks"][name_index]["type"] === "bookmark"){
 						return this;
 					}
-					name = real_path["bookmarks"].splice(name_index, 1)[0]["name"];
+					name_index = real_path["bookmarks"].splice(name_index, 1)[0]["name"];
 				}
-				else{
-					name = name_index
-				}
-				delete real_path["folders"][name];
+				
+				delete real_path["folders"][name_index];
 				return this;
 			},
 			// Moves a bookmark from one place to another. index starts from 0
@@ -444,7 +440,6 @@ var API_F = (function(){
 				if(!real_path_from){return this;}
 				if(!real_path_to){return this;}
 				
-				var name;
 				var folder_bookmarks;
 				
 				if(typeof name_index_from === "number"){
@@ -452,13 +447,12 @@ var API_F = (function(){
 						return this;
 					}
 					folder_bookmarks = real_path_from["bookmarks"].splice(name_index_from, 1)[0];
-					name = folder_bookmarks["name"];
+					name_index_from = folder_bookmarks["name"];
 				}
 				else{
-					name = name_index_from;
 					var i = 0;
 					while(i < real_path_from["bookmarks"].length){
-						if(real_path_from["bookmarks"][i]["name"] === name){
+						if(real_path_from["bookmarks"][i]["name"] === name_index_from){
 							if(real_path_from["bookmarks"][i]["type"] !== "folder"){
 								return this;
 							}
@@ -468,16 +462,16 @@ var API_F = (function(){
 						i++;
 					}
 				}
-				// name and folder_bookmarks setted at this point
+				// name_index_from and folder_bookmarks setted at this point
 				
 				// move folder from bookmarks list
 				var temp = real_path_to["bookmarks"].splice(index_to);
 				real_path_to["bookmarks"] = real_path_to["bookmarks"].concat(folder_bookmarks).concat(temp);
 				
 				//move folder from folders list
-				var folder = real_path_from["folders"][name];
-				delete real_path_from["folders"][name];
-				real_path_to["folders"][name] = folder;
+				var folder = real_path_from["folders"][name_index_from];
+				delete real_path_from["folders"][name_index_from];
+				real_path_to["folders"][name_index_from] = folder;
 				return this;
 			}
 		}
