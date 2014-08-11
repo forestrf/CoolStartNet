@@ -29,7 +29,7 @@
 	}
 }(this, function (){
 	var appendChild = function(element, child){
-		if(typeof child === 'string'){
+		if(typeof child !== 'object'){
 			child = document.createTextNode(child);
 		}
 		element.appendChild(child);

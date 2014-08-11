@@ -357,6 +357,7 @@ var API_F = (function(){
 				});
 				return this;
 			},
+			// Returns references that, if modified, the original object breaks?
 			"getBookmark": function(path, index){
 				var real_path = path_resolver(path);
 				if(!real_path){return false;}
@@ -366,6 +367,7 @@ var API_F = (function(){
 				}
 				return false;
 			},
+			// Returns references that, if modified, the original object breaks?
 			"getBookmarks": function(path){
 				var real_path = path_resolver(path);
 				if(!real_path){return false;}
@@ -380,6 +382,7 @@ var API_F = (function(){
 				}
 				return result;
 			},
+			// Returns references that, if modified, the original object breaks?
 			"getFolders": function(path){
 				var real_path = path_resolver(path);
 				if(!real_path){return false;}
@@ -389,6 +392,24 @@ var API_F = (function(){
 				while(i < real_path["bookmarks"].length){
 					if(real_path["bookmarks"][i]["type"] === "folder"){
 						result.push(real_path["bookmarks"][i]["name"]);
+					}
+					i++;
+				}
+				return result;
+			},
+			// Returns references that, if modified, the original object breaks?
+			"getElements": function(path){
+				var real_path = path_resolver(path);
+				if(!real_path){return false;}
+				
+				var result = [];
+				var i = 0;
+				while(i < real_path["bookmarks"].length){
+					if(real_path["bookmarks"][i]["type"] === "folder"){
+						result.push(real_path["bookmarks"][i]["name"]);
+					}
+					else if(real_path["bookmarks"][i]["type"] !== "folder"){
+						result.push(real_path["bookmarks"][i]);
 					}
 					i++;
 				}
