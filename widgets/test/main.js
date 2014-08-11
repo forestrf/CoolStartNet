@@ -1,151 +1,152 @@
-//console.log(API.url(widgetID,'main.js'));
+var C = crel2;
+
+var ventana = API.Widget.create();
+
+var textarea;
+
+C(ventana, 
+	C('button', ['onclick', set_test], 'SET test'),
+	C('button', ['onclick', get_test], 'GET test'),
+	C('button', ['onclick', delete_test], 'DELETE test'),
+	C('button', ['onclick', global_set_test], 'GLOBAL SET test'),
+	C('button', ['onclick', global_get_test], 'GLOBAL GET test'),
+	C('button', ['onclick', global_delete_test], 'GLOBAL DELETE test'),
+	C('br'),
+	textarea = C('textarea')
+);
+
+function log(what){
+	textarea.value += what+"\n";
+}
+
+
+
+//log(API.url(widgetID,'main.js'));
 // Variables are saved as text
 
-console.log('Test 1');
 
 /////////////////////////////
 // SET test
 /////////////////////////////
+function set_test(){
+	var text_rnd = Math.random();
+	log('SET Test Saving the text: '+text_rnd);
 
-var text_rnd = Math.random();
-console.log('Test 1 Saving the text: '+text_rnd);
-
-var command = {
-	'action':'set',
-	'widget':widgetID,
-	'variables':{'test':text_rnd}
-};
-
-API.call(command, function(entrada){
-	if(entrada['test']){
-		console.log('Test 1 Text Saved.');
-	}
-	else{
-		console.log('Test 1 Text NOT saved.');
-	}
-});
+	API.Storage.remoteStorage.set('test', text_rnd, function(entrada){
+		if(entrada){
+			log('SET Test Text Saved.');
+		}
+		else{
+			log('SET Test Text NOT saved.');
+		}
+	});
+}
 
 
 
 /////////////////////////////
 // GET test
 /////////////////////////////
-
-var command = {
-	'action':'get',
-	'widget':widgetID,
-	'variables':'test'
-};
-
-API.call(command, function(entrada){
-	if(entrada['test']){
-		console.log('Test 1 Got the text: '+entrada['test']);
-	}
-	else{
-		console.log('Test 1 There is not a saved variable with that name.');
-	}
-});
-
-// ----------------------------------------------------------------------------------------------------------------
-
-
-
-console.log('Test 2');
-
-/////////////////////////////
-// Multiple SET test
-/////////////////////////////
-
-var text_rnd1 = Math.random();
-var text_rnd2 = Math.random();
-var text_rnd3 = Math.random();
-console.log('Test 2 Saving the texts:\n'+text_rnd1+'\n'+text_rnd2+'\n'+text_rnd3);
-
-var command = {
-	'action':'set',
-	'widget':widgetID,
-	'variables':{'test1':text_rnd1,'test2':text_rnd2,'test3':text_rnd3}
-};
-
-API.call(command, function(entrada){
-	for(var i in entrada){
-		if(entrada[i]){
-			console.log('Test 2 Text Saved ('+i+').');
+function get_test(){
+	log('GET Test');
+	
+	API.Storage.remoteStorage.get('test', function(entrada){
+		if(entrada){
+			log('GET Test Got the text: '+entrada);
 		}
 		else{
-			console.log('Test 2 Text NOT saved ('+i+').');
+			log('GET Test There is not a saved variable with that name.');
 		}
-	}
-});
+	});
+}
 
 
 
 /////////////////////////////
-// Multiple GET test
+// GLOBAL SET test
 /////////////////////////////
+function global_set_test(){
+	var text_rnd = Math.random();
+	log('GLOBAL SET Test Saving the text: '+text_rnd);
 
-var command = {
-	'action':'get',
-	'widget':widgetID,
-	'variables':['test1','test2','test3']
-};
-
-API.call(command, function(entrada){
-	for(var i in entrada){
-		if(entrada[i]){
-			console.log('Test 2 Got the text ('+i+'): '+entrada[i]);
+	API.Storage.sharedStorage.set('test', text_rnd, function(entrada){
+		if(entrada){
+			log('GLOBAL SET Test Text Saved.');
 		}
 		else{
-			console.log('Test 2 There is not a saved variable with that name ('+i+').');
+			log('GLOBAL SET Test Text NOT saved.');
 		}
-	}
-});
-
-// ----------------------------------------------------------------------------------------------------------------
-
-
-
-console.log('Test 3');
-
-/////////////////////////////
-// Global variable SET test
-/////////////////////////////
-
-var text_rnd = Math.random();
-console.log('Test 3 Saving the text: '+text_rnd);
-
-var command = {
-	'action':'set',
-	'widget':'global',
-	'variables':{'test':text_rnd}
-};
-
-API.call(command, function(entrada){
-	if(entrada['test']){
-		console.log('Test 3 Text Saved.');
-	}
-	else{
-		console.log('Test 3 Text NOT saved.');
-	}
-});
+	});
+}
 
 
 
 /////////////////////////////
-// Global variable GET test
+// GLOBAL GET test
 /////////////////////////////
+function global_get_test(){
+	log('GLOBAL GET Test');
+	
+	API.Storage.sharedStorage.get('test', function(entrada){
+		if(entrada){
+			log('GLOBAL GET Test Got the text: '+entrada);
+		}
+		else{
+			log('GLOBAL GET Test There is not a saved variable with that name.');
+		}
+	});
+}
 
-var command = {
-	'action':'get',
-	'widget':'global',
-	'variables':'test'
-};
 
-API.call(command, function(entrada){
-	if(entrada['test']){
-		console.log('Test 3 Got the text: '+entrada['test']);
-	}
-	else{
-		console.log('Test 3 There is not a saved variable with that name.');
-	}
-});
+
+/////////////////////////////
+// DELETE test
+/////////////////////////////
+function delete_test(){
+	log('DELETE Test');
+
+	API.Storage.remoteStorage.delete('test', function(entrada){
+		if(entrada){
+			log('DELETE Test deleted OK.');
+		}
+		else{
+			log('DELETE Test deleted FAIL.');
+		}
+	});
+
+	API.Storage.remoteStorage.get('test', function(entrada){
+		if(entrada){
+			log('DELETE Test confirmed FAIL.');
+		}
+		else{
+			log('DELETE Test confirmed OK.');
+		}
+	});
+}
+
+
+
+/////////////////////////////
+// GLOBAL DELETE test
+/////////////////////////////
+function global_delete_test(){
+	log('GLOBAL DELETE Test');
+
+	API.Storage.sharedStorage.delete('test', function(entrada){
+		if(entrada){
+			log('GLOBAL DELETE Test deleted OK.');
+		}
+		else{
+			log('GLOBAL DELETE Test deleted FAIL.');
+		}
+	});
+
+	API.Storage.remoteStorage.get('test', function(entrada){
+		if(entrada){
+			log('GLOBAL DELETE Test confirmed FAIL.');
+		}
+		else{
+			log('GLOBAL DELETE Test confirmed OK.');
+		}
+	});
+}

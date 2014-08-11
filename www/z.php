@@ -37,57 +37,58 @@ $db = new DB();
 <html>
 <head>
 	<title>Homepage</title>
-	<script src="js/api.js"></script>
 	<link rel="stylesheet" href="css/reset.min.css"/>
+	<script src="js/crel2.js"></script>
 </head>
 <body>
 
-<!--
-Mirar qué widgets tiene el usuario
+<script id = "delete_me">
+	
+(function(){
+	// prevent innerHTML from reading the widgetID + secret to prevent widgets manipulate other widgets without consent
+	document.getElementById("delete_me").remove();
+	// Prevent eval
+	eval = function(){};
 
-Recorrerlos todos e incluir el js que les corresponde.
-
-Un widget debe de contener lo siguiente: 
-- Javascript que lo compone
-- Posición y tamaño donde está situado
-
-El javascript dibujará todo el widget, incluido el div que lo contendrá en el body
-El javascript debe de estar contenido en su totalidad en una función anónima
-El javascript tendrá acceso a la API para leer y escribir variables de cualquier widget. Además la api le suministrará la url a los archivos que le pida.
-El javascript tendrá acceso a la posición y tamaño indicado y podrá editarlo ya que serán variables accesibles desde la API
--->
-
-<script>
 	// Variables for the config widget
 	var CONFIG = [];
-</script>
-
-<?php
-
-// Widgets del usuario
-$widgets_usuario = $db->get_widgets_user();
-foreach($widgets_usuario as &$widget){
-	// Pick the correct widget version
-	$version = $db->get_using_widget_version_user($widget);
 	
-	// Create the html that will call the script
-	//echo "<script src=\"widgetfile.php?widgetID={$widget['ID']}&widgetVersion={$version}&name=main.js\"></script>";
-	$data = $db->get_widget_version_file($widget['ID'], $version, 'main.js');
-	$data = &$data[0];
-	$data = &$data['data'];
-	echo "<script>
-		(function(widgetID){
-			{$data}
+	<?php echo file_get_contents('php/api.js/api.js');?>
+
+
+	<?php
+
+	// Widgets del usuario
+	$widgets_usuario = $db->get_widgets_user();
+	foreach($widgets_usuario as &$widget){
+		// Pick the correct widget version
+		$version = $db->get_using_widget_version_user($widget);
+		
+		// Create the html that will call the script
+		//echo "<script src=\"widgetfile.php?widgetID={$widget['ID']}&widgetVersion={$version}&name=main.js\"></script>";
+		$data = $db->get_widget_version_file($widget['ID'], $version, 'main.js');
+		if(!$data){
+			continue;
+		}
+		?>
+		
+		(function(API_F){
+			var API = API_F.init("<?php echo $widget['ID'];?>", "<?php echo hash_api($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_API);?>");
+			API_F = null;
+			
+			<?php echo $data[0]['data'];?>
+			
 			if(typeof CONFIG_function !== 'undefined'){
 				CONFIG.push({
-					'name':'".strtr($widget['name'], array("'","\\'"))."',
+					'name':'<?php echo strtr($widget['name'], array("'","\\'"));?>',
 					'function':CONFIG_function
 				});
 			}
-		})('{$widget['ID']}');
-		</script>";
-}
-?>
+		})(API_F);
+		
+	<?php }	?>
+})();
+</script>
 
 </body>
 </html>

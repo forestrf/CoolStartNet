@@ -12,12 +12,17 @@ require_once 'php/config.php';
 require_once 'php/class/DB.php';
 require_once 'php/functions/generic.php';
 
+insert_nocache_headers();
+
 if(!isset($_GET['widgetID']) || !isInteger($_GET['widgetID']) || $_GET['widgetID'] < 0){
 	exit;
 }
 $widgetID = &$_GET['widgetID'];
 
 $db = new DB();
+
+$widget = $db->get_widget_by_ID($widgetID);
+$versiones = $db->get_all_widget_versions($widgetID);
 
 ?>
 <!doctype html>
@@ -33,7 +38,7 @@ $db = new DB();
 </head>
 <body>
 
-Edit a widget managing its versiones<br/>
+Edit the widget <b><?php echo $widget['name'];?></b> managing its versiones<br/>
 You can't delete or modify public versions but it can be hidden. Anyone with the widget will continue having it but it will no be disponible for new users.<br/>
 
 ¿Posibilidad de renombrar?<br/><br/>
@@ -48,8 +53,7 @@ You can't delete or modify public versions but it can be hidden. Anyone with the
 	<input type="submit" value="Create new version">
 </form><br/>
 <?php
-$widget = $db->get_widget_by_ID($widgetID);
-$versiones = $db->get_all_widget_versions($widgetID);
+
 if(count($versiones) > 0){
 	foreach($versiones as $version){
 		echo '['.$version['version'].']',$version['public']?($version['visible']?'+ ':'- '):' ';

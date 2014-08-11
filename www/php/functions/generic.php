@@ -32,6 +32,10 @@ function hash_ipa($userRND, $widgetID, $password){
 	return md5($userRND.'-'.$widgetID.'-'.$password);
 }
 
+function hash_api($userRND, $widgetID, $password){
+	return hash_ipa($userRND, $widgetID, $password);
+}
+
 function file_hash(&$content){
 	return md5($content);
 }
@@ -57,6 +61,12 @@ function truncate_filename($name, $max){
 		}
 	}
 	return $name;
+}
+
+function insert_nocache_headers(){
+	header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+	header("Cache-Control: post-check=0, pre-check=0", false);
+	header("Pragma: no-cache");
 }
 
 

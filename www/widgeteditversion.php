@@ -12,6 +12,8 @@ require_once 'php/config.php';
 require_once 'php/class/DB.php';
 require_once 'php/functions/generic.php';
 
+insert_nocache_headers();
+
 if(!isset($_GET['widgetID']) || !isInteger($_GET['widgetID']) || $_GET['widgetID'] < 0){
 	exit;
 }

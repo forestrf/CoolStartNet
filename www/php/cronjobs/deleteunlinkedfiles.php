@@ -1,8 +1,8 @@
 <?php
 
-require_once 'php/config.php';
-require_once 'php/class/DB.php';
-require_once 'php/functions/generic.php';
+require_once __DIR__.'/../config.php';
+require_once __DIR__.'/../class/DB.php';
+require_once __DIR__.'/../functions/generic.php';
 
 $db = new DB();
 
