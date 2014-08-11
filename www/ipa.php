@@ -3,7 +3,7 @@
 header('Content-Type: text/html; charset=UTF-8');
 
 require_once 'php/functions/generic.php';
-inser_nocache_headers();
+insert_nocache_headers();
 
 if(!isset($_POST['switch'])){
 	exit;

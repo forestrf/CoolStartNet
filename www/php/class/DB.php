@@ -297,7 +297,8 @@ class DB {
 		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
 		}
-		$new_version = $this->get_widget_last_version($widgetID, false)['version'];
+		$new_version = $this->get_widget_last_version($widgetID, false);
+		$new_version = $new_version['version'];
 		if(!$new_version){
 			$new_version = 0;
 		}
@@ -385,7 +386,7 @@ class DB {
 	
 	// Get a file of a widget version given its name. The user needs to be the owner or be using the widget.
 	function get_widget_version_file($widgetID, $version, $name){
-		if(can_be_widget_version($version) && ($this->CanIModifyWidget($widgetID) || $this->check_using_widget_user($widgetID))){
+		if(can_be_widget_version($version) && ($this->check_using_widget_user($widgetID) || $this->CanIModifyWidget($widgetID))){
 			$name = mysql_escape_mimic($name);
 			return $this->query("SELECT * FROM `files` WHERE `hash` = (SELECT `hash` FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}' AND `name` = '{$name}');");
 		}
