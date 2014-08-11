@@ -36,7 +36,7 @@ var height = 30;
 ventana.setPositionSize(left, top, width, height);
 
 // Setting background color
-ventana.style.backgroundColor = "rgba(0, 0, 0, 0.7);";
+ventana.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
 
 
 
@@ -56,28 +56,42 @@ var bookmarks = API.Bookmarks.createObject()
 
 console.log(bookmarks);
 
+// px sizes for the constructor
+var folderSize = 30;
+var bookmarSize = 30;
 
 // do not show the parent folder (first child) brcause it is a inexistent folder created by recursive_bookmark_parser.
-var hierarchi = recursive_bookmark_parser("", bookmarks.getElements(""));
-while(hierarchi.childNodes.length){
-	ventana.appendChild(hierarchi.childNodes[0]);
-}
+recursive_bookmark_parser(ventana, "", bookmarks.getElements(""));
 
-
-
-function recursive_bookmark_parser(path, elements, folderName){
-	var folder_obj = C('div', ['class', 'folder']);
-	if(folderName !== undefined){
-		folder_obj.appendChild(C('span', ['class','foldername'], folderName));
-	}
-	
+function recursive_bookmark_parser(element, path, elements){
+	var height = 0;
 	var i = 0;
+	
 	while(i < elements.length){
 		if(typeof elements[i] === "string"){
 			// Folder
-			folder_obj.appendChild(
-				recursive_bookmark_parser(path+"/"+elements[i], bookmarks.getElements(path+"/"+elements[i]), elements[i])
+			var folder_obj = C('div', ['class', 'folder', 'style', 'height: 0px;']);
+			var folderTitle;
+			element.appendChild(
+				folderTitle = C('span', ['class','foldername'], elements[i])
 			);
+			
+			var resp = recursive_bookmark_parser(folder_obj, path+"/"+elements[i], bookmarks.getElements(path+"/"+elements[i]));
+			element.appendChild(folder_obj);
+			height += resp;
+			height += folderSize;
+			
+			
+			folderTitle.onclick = (function(height, folder){
+				return function(){
+					if(folder.style.height === "0px"){
+						folder.style.height = height+"px";
+					}
+					else{
+						folder.style.height = "0px";
+					}
+				}
+			})(resp, folder_obj);
 		}
 		else if(elements[i].type === "bookmark"){
 			// Bookmark
@@ -85,9 +99,11 @@ function recursive_bookmark_parser(path, elements, folderName){
 			if(elements[i].iconuri){
 				a.style.backgroundImage = "url('"+elements[i].iconuri+"')";
 			}
-			folder_obj.appendChild(a);
+			element.appendChild(a);
+			height += bookmarSize;
 		}
 		i++;
 	}
-	return folder_obj;
+	
+	return height;
 }
