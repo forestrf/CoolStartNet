@@ -61,14 +61,15 @@ var API_F = (function(){
 	
 	// Execute and clean cache
 	var execute = function(mode, cb){
-		var req = new XMLHttpRequest();
-		req.open('POST', 'api.php', true);
-		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-		req.onreadystatechange = function(aEvt){
-			if(req.readyState == 4){
-				if(req.status == 200){
-					//console.log(req.responseText);
-					var response = JSON.parse(req.responseText);
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', 'api.php', true);
+		xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		xhr.timeout = 5000;
+		xhr.onreadystatechange = ontimeout = function(aEvt){
+			if(xhr.readyState == 4){
+				if(xhr.status == 200){
+					//console.log(xhr.responseText);
+					var response = JSON.parse(xhr.responseText);
 					
 					// Go over the cb and generate a response
 					if(response['response']==='OK'){
@@ -96,7 +97,7 @@ var API_F = (function(){
 			}
 		};
 		var data = 'action=' + ['get', 'set', 'del'][mode] + '&data=' + encodeURIComponent(JSON.stringify(requests[mode]));
-		req.send(data);
+		xhr.send(data);
 	
 		requests[mode]  = {};
 		callbacks[mode] = [];

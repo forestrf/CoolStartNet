@@ -18,6 +18,9 @@ API.Storage.sharedStorage.get('bookmarks', function(entrada){
 		.moveFolder("/second folder","third folder","/",0)
 		.moveFolder("/",3,"/third folder",0);
 	}
+	
+	// do not show the parent folder (first child) brcause it is a inexistent folder created by recursive_bookmark_parser.
+	recursive_bookmark_parser(ventana, "", bookmarks.getElements(""));
 });
 
 var configs = {
@@ -52,9 +55,6 @@ ventana.setPositionSize(configs.left, configs.top, configs.width, configs.height
 
 // Setting background color
 ventana.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
-
-// do not show the parent folder (first child) brcause it is a inexistent folder created by recursive_bookmark_parser.
-recursive_bookmark_parser(ventana, "", bookmarks.getElements(""));
 
 function recursive_bookmark_parser(element, path, elements){
 	var height = 0;
