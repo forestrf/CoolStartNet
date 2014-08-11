@@ -18,10 +18,25 @@ API.Storage.sharedStorage.set('bookmarks', ["a","b",{"c":"d"}], function(entrada
 });
 */
 
+// Import css
+API.Widget.linkMyCSS('css.css');
+
+//crel2 shortcut
 var C = crel2;
 
+// Creating the widget
 var ventana = API.Widget.create();
 ventana.addClass("bookmarks");
+
+// Setting size and position
+var left = 5;
+var top = 65;
+var width = 20;
+var height = 30;
+ventana.setPositionSize(left, top, width, height);
+
+// Setting background color
+ventana.style.backgroundColor = "rgba(0, 0, 0, 0.7);";
 
 
 
@@ -42,30 +57,37 @@ var bookmarks = API.Bookmarks.createObject()
 console.log(bookmarks);
 
 
-ventana.appendChild(recursive_bookmark_parser("", bookmarks.getElements("")));
+// do not show the parent folder (first child) brcause it is a inexistent folder created by recursive_bookmark_parser.
+var hierarchi = recursive_bookmark_parser("", bookmarks.getElements(""));
+while(hierarchi.childNodes.length){
+	ventana.appendChild(hierarchi.childNodes[0]);
+}
 
 
 
-function recursive_bookmark_parser(path, elements){
-	var folder_obj = C('div');
-	for(var i = 0; i < elements.length; i++){
+function recursive_bookmark_parser(path, elements, folderName){
+	var folder_obj = C('div', ['class', 'folder']);
+	if(folderName !== undefined){
+		folder_obj.appendChild(C('span', ['class','foldername'], folderName));
+	}
+	
+	var i = 0;
+	while(i < elements.length){
 		if(typeof elements[i] === "string"){
+			// Folder
 			folder_obj.appendChild(
-				recursive_bookmark_parser(path+"/"+elements[i], bookmarks.getElements(path+"/"+elements[i]))
+				recursive_bookmark_parser(path+"/"+elements[i], bookmarks.getElements(path+"/"+elements[i]), elements[i])
 			);
 		}
 		else if(elements[i].type === "bookmark"){
-			var a = C("a", ["href", elements[i].uri], elements[i].title ? elements[i].title : elements[i].uri);
+			// Bookmark
+			var a = C("a", ["href", elements[i].uri, "style", "background-color: rgba(255, 255, 255, 0.14);"], elements[i].title ? elements[i].title : elements[i].uri);
 			if(elements[i].iconuri){
-				a.setAttribute("style", "background-image: url('"+elements[i].iconuri+"');");
+				a.style.backgroundImage = "url('"+elements[i].iconuri+"')";
 			}
 			folder_obj.appendChild(a);
-			/*<div class="tags_display">
-				{LINK_TAGS}
-					<div class="tag_nombre_{elem}"></div>
-				{/LINK_TAGS}
-			</div>*/
 		}
+		i++;
 	}
 	return folder_obj;
 }
