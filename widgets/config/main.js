@@ -71,7 +71,7 @@ params:
 }
 
 Example:
-generate_position_rect({
+positioning({
 	"width"   : 50,
 	"height"  : 20,
 	"left"    : 0,
@@ -94,8 +94,8 @@ console.log receives:
 }
 
 */
-window.generate_position_rect = generate_position_rect;
-function generate_position_rect(params, callback){
+window.positioning = positioning;
+function positioning(params, callback){
 	// Preconfigured parameters
 	var default_position_size = 20; // %
 	var i = 0;
@@ -356,7 +356,7 @@ gearDiv.onclick = function(){
 					C('div', ['class', 'widgetnamebig'], CONFIG[widget]['name'].toUpperCase() + ' WIDGET'),
 					// Execute the function and append the result to the corresponding div container
 					C('div', ['class', 'widgetcontentconfig'], CONFIG[widget]['function']({
-						'positioning':generate_position_rect
+						'positioning':positioning
 					}))
 				);
 				
