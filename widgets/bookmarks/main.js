@@ -34,6 +34,9 @@ API.Storage.remoteStorage.get('configs', function(entrada){
 	if(entrada){
 		configs = entrada;
 	}
+	
+	// Setting size and position
+	ventana.setPositionSize(configs.left, configs.top, configs.width, configs.height);
 });
 
 // Import css
@@ -49,9 +52,6 @@ var bookmarSize = 30;
 // Creating the widget
 var ventana = API.Widget.create();
 ventana.addClass("bookmarks");
-
-// Setting size and position
-ventana.setPositionSize(configs.left, configs.top, configs.width, configs.height);
 
 // Setting background color
 ventana.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
@@ -107,7 +107,15 @@ var CONFIG_function = function(functions){
 			"show_bg" : false,
 			"realtime": realTimeMove
 		},
-		console.log
+		function(data){
+			configs = {
+				left: data.left,
+				top: data.top,
+				width: data.width,
+				height: data.height
+			};
+			API.Storage.remoteStorage.set('configs', configs);
+		}
 	);
 	
 	

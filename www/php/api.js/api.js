@@ -85,14 +85,14 @@ var API_F = (function(){
 								cb[i++]['callback'](JSON.parse(response['content'][widgetID][key]));
 								continue;
 							}
-							cb[i++]['callback'](null);
+							cb[i++]['callback']();
 						}
 						return;
 					}
 				}
 				var i = 0;
 				while (i < cb.length) {
-					cb[i++]['callback'](null);
+					cb[i++]['callback']();
 				}
 			}
 		};
