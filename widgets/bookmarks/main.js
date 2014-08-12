@@ -108,13 +108,18 @@ var CONFIG_function = function(functions){
 			"realtime": realTimeMove
 		},
 		function(data){
-			configs = {
-				left: data.left,
-				top: data.top,
-				width: data.width,
-				height: data.height
-			};
-			API.Storage.remoteStorage.set('configs', configs);
+			if(data){
+				configs = {
+					left: data.left,
+					top: data.top,
+					width: data.width,
+					height: data.height
+				};
+				API.Storage.remoteStorage.set('configs', configs);
+			}
+			else{
+				ventana.setPositionSize(configs.left, configs.top, configs.width, configs.height);
+			}
 		}
 	);
 	

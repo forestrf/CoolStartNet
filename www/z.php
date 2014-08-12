@@ -39,6 +39,7 @@ $db = new DB();
 	<title>Homepage</title>
 	<link rel="stylesheet" href="css/reset.min.css"/>
 	<script src="js/crel2.js"></script>
+	<script src="js/api.js"></script>
 </head>
 <body>
 
@@ -52,9 +53,6 @@ $db = new DB();
 
 	// Variables for the config widget
 	var CONFIG = [];
-	
-	<?php echo file_get_contents('php/api.js/api.js');?>
-
 
 	<?php
 
@@ -72,9 +70,8 @@ $db = new DB();
 		}
 		?>
 		
-		(function(API_F){
-			var API = API_F.init("<?php echo $widget['ID'];?>", "<?php echo hash_api($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_API);?>");
-			API_F = null;
+		(function(API){
+			API = API.init("<?php echo $widget['ID'];?>", "<?php echo hash_api($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_API);?>");
 			
 			<?php echo $data[0]['data'];?>
 			
@@ -84,7 +81,7 @@ $db = new DB();
 					'function':CONFIG_function
 				});
 			}
-		})(API_F);
+		})(API);
 		
 	<?php }	?>
 })();

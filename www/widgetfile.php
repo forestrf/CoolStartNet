@@ -48,8 +48,7 @@ else{
 $file = $db->get_widget_version_file($widgetID, $widgetVersion, $name);
 
 if($file){
-	$file = &$file[0];
-	// var_dump($file);
-	header('Content-type: '.$file['mimetype']);
-	echo $file['data'];
+	// var_dump($file[0]);
+	header('Content-type: '.$file[0]['mimetype']);
+	echo $file[0]['data'];
 }

@@ -1,29 +1,4 @@
-/*
-Consult pattern:
-
-var consult = {
-	'action'    : 'get',
-	'widget'    : widgetID | -1,
-	'variables' : 'variable1'
-}
-
-var consult = {
-	'action'    : 'get',
-	'widget'    : widgetID | -1,
-	'variables' : ['variable1', ...]
-}
-
-var consult = {
-	'action'    : 'set',
-	'widget'    : widgetID | -1,
-	'variables' : {'variable1':'value1', ...}
-}
-*/
-
-// 0 = get
-// 1 = set
-// 2 = delete
-var API_F = (function(){
+var API = (function(){
 	var max_wait = 100, //ms
 		timeouts = [],
 		callbacks = [],
@@ -34,6 +9,9 @@ var API_F = (function(){
 		return widgetID + '-' + secret;
 	}
 	
+	// 0 = get
+	// 1 = set
+	// 2 = delete
 	var precall = function(mode, widgetID, secret, key, value, callback){
 		if(callback === undefined){
 			callback = function(){};
@@ -69,10 +47,16 @@ var API_F = (function(){
 			if(xhr.readyState == 4){
 				if(xhr.status == 200){
 					//console.log(xhr.responseText);
-					var response = JSON.parse(xhr.responseText);
+					try {
+						var response = JSON.parse(xhr.responseText);
+					} catch (e) {
+						while (i < cb.length) {
+							cb[i++]['callback']();
+						}
+					}
 					
 					// Go over the cb and generate a response
-					if(response['response']==='OK'){
+					if(response && response['response'] && response['response']==='OK'){
 						var i = 0;
 						while (i < cb.length) {
 							
