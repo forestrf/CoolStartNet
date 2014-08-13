@@ -212,6 +212,24 @@ class DB {
 		return $this->query("DELETE FROM `variables` WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND (".implode(' OR ', $SQL_statement).");");
 	}
 	
+	function delall_variable($widgetID_variable_value, $private_only = true){
+		// Make all the operations in one sql call.
+		$SQL_statement = array();
+		foreach($widgetID_variable_value as $widgetID => &$variable_value){
+			$widgetID = mysql_escape_mimic($widgetID);
+			
+			// Global widget handler here
+			if($private_only && $widgetID === 'global'){
+				continue;
+			}
+			$widgetID_calc = $widgetID === 'global' ? '-1' : $widgetID; //global is a invisible widget with id -1
+			
+			$SQL_statement[] = "`IDwidget` = '{$widgetID_calc}'";
+		}
+		
+		return $this->query("DELETE FROM `variables` WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND (".implode(' OR ', $SQL_statement).");");
+	}
+	
 	// Create a widget.
 	function create_widget($name){
 		$name = mysql_escape_mimic($name);

@@ -61,7 +61,14 @@ if(!isset($_POST['data']) || !isset($_POST['action'])){
 $data = &$_POST['data'];
 $action = &$_POST['action'];
 
-if($action !== 'set' && $action !== 'get' && $action !== 'del'){
+if(
+	$action !== 'set' &&
+	$action !== 'get' &&
+	$action !== 'del' &&
+	$action !== 'delall' &&
+	$action !== 'check' &&
+	$action !== 'time'
+){
 	fail(5);
 }
 
@@ -101,6 +108,15 @@ switch(isset($action)?$action:null){
 	break;
 	case 'del':
 		$response = delHandler($data_json);
+		if(is_array($response) && count($response) > 0){
+			perfect(json_encode($response));
+		}
+		else{
+			fail(json_encode($response));
+		}
+	break;
+	case 'delall':
+		$response = delallHandler($data_json);
 		if(is_array($response) && count($response) > 0){
 			perfect(json_encode($response));
 		}
@@ -180,8 +196,6 @@ function setHandler(&$widgets){
 	return $array_response;
 }
 
-
-// PENDENT
 // Call before the function widget_variables_valid()
 function delHandler(&$widgets){
 	global $db, $hashes;
@@ -194,6 +208,21 @@ function delHandler(&$widgets){
 	}
 	return $array_response;
 }
+
+// Call before the function widget_variables_valid()
+function delallHandler(&$widgets){
+	global $db, $hashes;
+	$array_response = array();
+	$response = $db->delall_variable($widgets, true);
+	foreach($widgets as $widgetID => &$variables_widget){
+		foreach($variables_widget as $variable => &$value){
+			$array_response[$widgetID][$variable] = $response;
+		}
+	}
+	return $array_response;
+}
+
+
 
 function validateWidget($widgetID, $secret, &$hash){
 	$hash = hash_api($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_API);

@@ -80,7 +80,7 @@ var API = (function(){
 				}
 			}
 		};
-		var data = 'action=' + ['get', 'set', 'del'][mode] + '&data=' + encodeURIComponent(JSON.stringify(requests[mode]));
+		var data = 'action=' + ['get', 'set', 'del', 'delall'][mode] + '&data=' + encodeURIComponent(JSON.stringify(requests[mode]));
 		xhr.send(data);
 	
 		requests[mode]  = {};
@@ -512,33 +512,35 @@ var API = (function(){
 						"lastModified"(key, callback) -> //API.Storage.localStorage*/
 					},
 					"remoteStorage": {
-						"get":function(key, callback){
+						"get": function(key, callback){
 							precall(0, widgetID, secret, key, null, callback);
 							return this; //API.Storage.remoteStorage;
 						},
-						"set":function(key, value, callback){
+						"set": function(key, value, callback){
 							precall(1, widgetID, secret, key, value, callback);
 							return this; //API.Storage.remoteStorage;
 						},
-						"delete":function(key, callback){
+						"delete": function(key, callback){
 							precall(2, widgetID, secret, key, null, callback);
 							return this; //API.Storage.remoteStorage;
-						}
-						/*
-						"deleteAll"(callback) -> //API.Storage.remoteStorage
-						"exists"(key, callback) -> bool
+						},
+						"deleteAll": function(callback){
+							precall(3, widgetID, secret, null, null, callback);
+							return this; //API.Storage.remoteStorage;
+						} //API.Storage.remoteStorage
+						/*"exists"(key, callback) -> bool
 						"lastModified"(key, callback) -> //API.Storage.remoteStorage*/
 					},
 					"sharedStorage": {
-						"get":function(key, callback){
+						"get": function(key, callback){
 							precall(0, -1, null, key, null, callback);
 							return this; //API.Storage.sharedStorage;
 						},
-						"set":function(key, value, callback){
+						"set": function(key, value, callback){
 							precall(1, -1, null, key, value, callback);
 							return this; //API.Storage.sharedStorage;
 						},
-						"delete":function(key, callback){
+						"delete": function(key, callback){
 							precall(2, -1, secret, key, null, callback);
 							return this; //API.Storage.remoteStorage;
 						}
