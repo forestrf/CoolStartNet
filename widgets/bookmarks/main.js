@@ -1,57 +1,46 @@
-var bookmarks = API.Bookmarks.createObject();
+// Import css
+API.widget.linkMyCSS('css.css').linkExternalCSS("//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css");
 
-API.Storage.sharedStorage.get('bookmarks', function(entrada){
+//crel2 shortcut
+var C = crel2;
+
+// Creating the widget
+var ventana = API.widget.create();
+ventana.addClass("bookmarks");
+
+// Bookmarks object and more variables
+var bookmarks = API.bookmarks.createObject();
+var buttonAdd;
+
+API.storage.sharedStorage.get('bookmarks', function(entrada){
 	if(entrada){
 		bookmarks.object = entrada;
-	}
-	else{
-		bookmarks.addBookmark("/", "http://1")
-		.addFolder("/", "first folder")
-		.addBookmark("/first folder", "http://2")
-		.addBookmark("/first folder", "http://3")
-		.addBookmark("/first folder", "http://4")
-		.addBookmark("/first folder", "http://5")
-		.addFolder("/", "second folder")
-		.addFolder("/second folder/", "third folder")
-		.addBookmark("/second folder/third folder/", "http://6")
-		.moveBookmark("/first folder",2,"/second folder/third folder",0)
-		.moveFolder("/second folder","third folder","/",0)
-		.moveFolder("/",3,"/third folder",0);
 	}
 	
 	// do not show the parent folder (first child) brcause it is a inexistent folder created by recursive_bookmark_parser.
 	recursive_bookmark_parser(ventana, "", bookmarks.getElements(""));
 });
 
-var configs = {
+var pos = {
 	left: 5,
 	top: 55,
 	width: 20,
 	height: 40
 };
 
-API.Storage.remoteStorage.get('configs', function(entrada){
+API.storage.remoteStorage.get('pos', function(entrada){
 	if(entrada){
-		configs = entrada;
+		pos = entrada;
 	}
 	
 	// Setting size and position
-	ventana.setPositionSize(configs.left, configs.top, configs.width, configs.height);
+	ventana.setPositionSize(pos.left, pos.top, pos.width, pos.height);
 });
-
-// Import css
-API.Widget.linkMyCSS('css.css');
-
-//crel2 shortcut
-var C = crel2;
 
 // px sizes for the expandable folder functions
 var folderSize = 30;
 var bookmarSize = 30;
 
-// Creating the widget
-var ventana = API.Widget.create();
-ventana.addClass("bookmarks");
 
 // Setting background color
 ventana.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
@@ -100,25 +89,29 @@ var CONFIG_function = function(functions){
 	
 	functions.positioning(
 		{
-			"width"   : configs.width,
-			"height"  : configs.height,
-			"left"    : configs.left,
-			"top"     : configs.top,
+			"width"   : pos.width,
+			"height"  : pos.height,
+			"left"    : pos.left,
+			"top"     : pos.top,
 			"show_bg" : false,
 			"realtime": realTimeMove
 		},
 		function(data){
 			if(data){
-				configs = {
+				pos = {
 					left: data.left,
 					top: data.top,
 					width: data.width,
 					height: data.height
 				};
-				API.Storage.remoteStorage.set('configs', configs);
+				API.storage.remoteStorage.set('pos', pos, function(entrada){
+					if(!entrada){
+						alert("data not saved");
+					}
+				});
 			}
 			else{
-				ventana.setPositionSize(configs.left, configs.top, configs.width, configs.height);
+				ventana.setPositionSize(pos.left, pos.top, pos.width, pos.height);
 			}
 		}
 	);
