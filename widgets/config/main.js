@@ -3,11 +3,11 @@ var C = crel2;
 
 // Import css (css of the widget)
 // Import css (Github icons pack)
-API.Widget.linkMyCSS('css.css').linkExternalCSS("//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css");
+API.widget.linkMyCSS('css.css').linkExternalCSS("//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css");
 
 
 // Make the gear button
-var gearDiv = API.Widget.create();
+var gearDiv = API.widget.create();
 gearDiv.addClass('config_buttongear');
 C(gearDiv, C('i', ['class', 'fa fa-cog']));
 
@@ -18,7 +18,7 @@ C(gearDiv, C('i', ['class', 'fa fa-cog']));
 // CREATE AND APPEND CONTENT CONFIGURATION DIV
 
 // Make the div container for the config window
-var contentDiv = API.Widget.create();
+var contentDiv = API.widget.create();
 contentDiv.addClass('config_contentdiv');
 
 // Make the div container for the widgets in the config window and append the container for the widgets in the config window
@@ -111,7 +111,7 @@ function positioning(params, callback){
 	// CREATE AND APPEND CONTENT CONFIGURATION DIV
 
 	// Make the div container for the rect
-	var contentDivRect = API.Widget.create();
+	var contentDivRect = API.widget.create();
 	contentDivRect.addClass('config_contentDivRect');
 	if(p_show_bg && params["show_bg"] === false){
 		contentDivRect.style.backgroundColor = 'transparent';

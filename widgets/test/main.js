@@ -1,6 +1,6 @@
 var C = crel2;
 
-var ventana = API.Widget.create();
+var ventana = API.widget.create();
 
 var textarea;
 
@@ -32,7 +32,7 @@ function set_test(){
 	var text_rnd = Math.random();
 	log('SET Test Saving the text: '+text_rnd);
 
-	API.Storage.remoteStorage.set('test', text_rnd, function(entrada){
+	API.storage.remoteStorage.set('test', text_rnd, function(entrada){
 		if(entrada){
 			log('SET Test Text Saved.');
 		}
@@ -50,7 +50,7 @@ function set_test(){
 function get_test(){
 	log('GET Test');
 	
-	API.Storage.remoteStorage.get('test', function(entrada){
+	API.storage.remoteStorage.get('test', function(entrada){
 		if(entrada){
 			log('GET Test Got the text: '+entrada);
 		}
@@ -69,7 +69,7 @@ function global_set_test(){
 	var text_rnd = Math.random();
 	log('GLOBAL SET Test Saving the text: '+text_rnd);
 
-	API.Storage.sharedStorage.set('test', text_rnd, function(entrada){
+	API.storage.sharedStorage.set('test', text_rnd, function(entrada){
 		if(entrada){
 			log('GLOBAL SET Test Text Saved.');
 		}
@@ -87,7 +87,7 @@ function global_set_test(){
 function global_get_test(){
 	log('GLOBAL GET Test');
 	
-	API.Storage.sharedStorage.get('test', function(entrada){
+	API.storage.sharedStorage.get('test', function(entrada){
 		if(entrada){
 			log('GLOBAL GET Test Got the text: '+entrada);
 		}
@@ -105,7 +105,7 @@ function global_get_test(){
 function delete_test(){
 	log('DELETE Test');
 
-	API.Storage.remoteStorage.delete('test', function(entrada){
+	API.storage.remoteStorage.delete('test', function(entrada){
 		if(entrada){
 			log('DELETE Test deleted OK.');
 		}
@@ -114,7 +114,7 @@ function delete_test(){
 		}
 	});
 
-	API.Storage.remoteStorage.get('test', function(entrada){
+	API.storage.remoteStorage.get('test', function(entrada){
 		if(entrada){
 			log('DELETE Test confirmed FAIL.');
 		}
@@ -132,7 +132,7 @@ function delete_test(){
 function global_delete_test(){
 	log('GLOBAL DELETE Test');
 
-	API.Storage.sharedStorage.delete('test', function(entrada){
+	API.storage.sharedStorage.delete('test', function(entrada){
 		if(entrada){
 			log('GLOBAL DELETE Test deleted OK.');
 		}
@@ -141,7 +141,7 @@ function global_delete_test(){
 		}
 	});
 
-	API.Storage.remoteStorage.get('test', function(entrada){
+	API.storage.remoteStorage.get('test', function(entrada){
 		if(entrada){
 			log('GLOBAL DELETE Test confirmed FAIL.');
 		}

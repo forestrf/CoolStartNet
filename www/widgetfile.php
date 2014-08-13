@@ -2,6 +2,11 @@
 // A file can only be downloaded if the user is using the widget or is the owner of the widget.
 // If the name of the file exists for the version asked or exists for the current version the php echoes the file and sends the mimetype header of the file.
 
+// While using windows as server, pipelined connections of multiple php files crashes the server
+// http://stackoverflow.com/questions/25255415/apache-php-crashes-when-calling-2-or-more-php-files-at-the-same-time
+if(strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'){
+	header('Connection: Close');
+}
 
 session_start();
 if(!isset($_SESSION['user'])){

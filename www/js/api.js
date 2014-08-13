@@ -278,7 +278,7 @@ var API = (function(){
 	}
 	
 	// Generated using:
-	API.Bookmarks.createObject()
+	API.bookmarks.createObject()
 	.addBookmark("/", "http://1")
 	.addFolder("/", "first folder")
 	.addBookmark("/first folder", "http://2")
@@ -502,7 +502,7 @@ var API = (function(){
 	return{
 		"init":function(widgetID, secret){
 			return {
-				"Storage": {
+				"storage": {
 					"localStorage": {
 						/*"set"(key, value, callback) -> Storage.localStorage
 						"get"(key, callback) -> value
@@ -546,7 +546,7 @@ var API = (function(){
 						"lastModified"(key, callback) -> //API.Storage.sharedStorage*/
 					}
 				},
-				"Widget": {
+				"widget": {
 					"create": function(){
 						var div = document.createElement("div");
 						div.style.display  = "block";
@@ -572,7 +572,7 @@ var API = (function(){
 					}
 				},
 				"url": function(name){return getUrl(widgetID, name);},
-				"Bookmarks": {
+				"bookmarks": {
 					"createObject": bookmarks_base
 				}
 			}

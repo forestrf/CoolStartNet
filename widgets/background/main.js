@@ -1,9 +1,9 @@
 // Import css
-API.Widget.linkMyCSS('bgcss.css');
+API.widget.linkMyCSS('bgcss.css');
 
 // Make the div container for the background and style it.
-var fondoDiv = API.Widget.create();
-var fondoDiv2 = API.Widget.create();
+var fondoDiv = API.widget.create();
+var fondoDiv2 = API.widget.create();
 
 // Style the background div
 fondoDiv.addClass('background_widget_bg1');
@@ -46,7 +46,7 @@ var delayBackground = 60000; //ms
 
 
 
-API.Storage.sharedStorage.get('background_delay', function(entrada){
+API.storage.sharedStorage.get('background_delay', function(entrada){
 	if(entrada){
 		delayBackground = entrada;
 	}
@@ -206,7 +206,7 @@ var CONFIG_function = function(){
 		transitionTime = inputTransitionTime.value *1000; // s to ms
 		
 		// Save the variables using the API
-		API.Storage.sharedStorage.set('background_images', backgrounds).
+		API.storage.sharedStorage.set('background_images', backgrounds).
 		set('background_delay', delayBackground).
 		set('background_transition_time', transitionTime);
 
