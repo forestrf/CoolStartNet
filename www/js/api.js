@@ -9,9 +9,47 @@ var API = (function(){
 		return widgetID + '-' + secret;
 	}
 	
-	// 0 = get
-	// 1 = set
-	// 2 = delete
+	var local_precall = function(mode, widgetID, key, value, callback){
+		if(callback === undefined){
+			callback = function(){};
+		}
+		
+		var fullkey = widgetID + '-' + key;
+		
+		// ['get', 'set', 'del', 'delall', 'check']
+		switch(mode){
+			case 0:
+				callback(JSON.parse(localStorage.getItem(fullkey)));
+			break;
+			case 1:
+				callback(localStorage.setItem(fullkey, JSON.stringify(value)) || true);
+			break;
+			case 2:
+				callback(localStorage.removeItem(fullkey));
+			break;
+			case 3:
+				var length = localStorage.length;
+				for (var i = 0; i < length; i++) {
+					var tkey = localStorage.key(i);
+					if(tkey && tkey.indexOf(widgetID + '-') === 0){
+						localStorage.removeItem(tkey);
+					}
+				}
+				callback(1);
+			break;
+			case 4:
+				callback(localStorage.getItem(fullkey)?true:false);
+			break;
+		}
+	}
+	
+	/*
+	0 = get
+	1 = set
+	2 = delete
+	3 = delete all
+	4 = exists
+	*/
 	var precall = function(mode, widgetID, secret, key, value, callback){
 		if(callback === undefined){
 			callback = function(){};
@@ -96,19 +134,6 @@ var API = (function(){
 	}
 	
 	
-	
-	
-	
-	
-	function Document(){
-		return {
-			"createElement": function(tagName){
-				var elem = document.createElement(tagName);
-				div_base(elem);
-				return elem;
-			}
-		};
-	}
 	
 	function div_base(div){
 		function cRound(number, roundedTo){
@@ -504,12 +529,26 @@ var API = (function(){
 			return {
 				"storage": {
 					"localStorage": {
-						/*"set"(key, value, callback) -> Storage.localStorage
-						"get"(key, callback) -> value
-						"delete"(key, callback) -> Storage.localStorage
-						"deleteAll"(callback) -> Storage.localStorage
-						"exists"(key, callback) -> bool
-						"lastModified"(key, callback) -> //API.Storage.localStorage*/
+						"get": function(key, callback){
+							local_precall(0, widgetID, key, null, callback);
+							return this; //API.Storage.localStorage;
+						},
+						"set": function(key, value, callback){
+							local_precall(1, widgetID, key, value, callback);
+							return this; //API.Storage.localStorage;
+						},
+						"delete": function(key, callback){
+							local_precall(2, widgetID, key, null, callback);
+							return this; //API.Storage.localStorage;
+						},
+						"deleteAll": function(callback){
+							local_precall(3, widgetID, null, null, callback);
+							return this; //API.Storage.remoteStorage;
+						},
+						"exists": function(key, callback){
+							local_precall(4, widgetID, key, null, callback);
+							return this; //API.Storage.localStorage;
+						}
 					},
 					"remoteStorage": {
 						"get": function(key, callback){
@@ -532,7 +571,6 @@ var API = (function(){
 							precall(4, widgetID, secret, key, null, callback);
 							return this; //API.Storage.remoteStorage;
 						}
-						/*"lastModified"(key, callback) -> //API.Storage.remoteStorage*/
 					},
 					"sharedStorage": {
 						"get": function(key, callback){
@@ -551,7 +589,6 @@ var API = (function(){
 							precall(4, -1, null, key, null, callback);
 							return this; //API.Storage.remoteStorage;
 						}
-						/*"lastModified"(key, callback) -> //API.Storage.sharedStorage*/
 					}
 				},
 				"widget": {
