@@ -165,6 +165,26 @@ class DB {
 		return $this->query("SELECT `IDwidget`, `variable`, `value` FROM `variables` WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND (".implode('OR', $SQL_statement).");");
 	}
 	
+	
+	function check_variable($widgetID_variable){
+		// Make all the operations in one sql call.
+		$SQL_statement = array();
+		foreach($widgetID_variable as $widgetID => &$variables){
+			$widgetID = mysql_escape_mimic($widgetID);
+			
+			// Global widget handler here
+			$widgetID_calc = $widgetID === 'global' ? '-1' : $widgetID; //global is a invisible widget with id -1
+			
+			// Ignore value
+			foreach($variables as $variable => &$value){
+				$variable = mysql_escape_mimic($variable);
+				$SQL_statement[] = "(`IDwidget` = '{$widgetID_calc}' AND `variable` = '{$variable}')";
+			}
+		}
+		
+		return $this->query("SELECT `IDwidget`, `variable` FROM `variables` WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND (".implode('OR', $SQL_statement).");");
+	}
+	
 	// Doesn't check if the widget exists. This check is done in api.php
 	// POR HACER: Limitar tamaño de lo que se puede guardar.
 	// $widgetID_variable_value must be an array that follows the next pattern:

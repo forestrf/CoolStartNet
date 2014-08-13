@@ -80,7 +80,7 @@ var API = (function(){
 				}
 			}
 		};
-		var data = 'action=' + ['get', 'set', 'del', 'delall'][mode] + '&data=' + encodeURIComponent(JSON.stringify(requests[mode]));
+		var data = 'action=' + ['get', 'set', 'del', 'delall', 'check'][mode] + '&data=' + encodeURIComponent(JSON.stringify(requests[mode]));
 		xhr.send(data);
 	
 		requests[mode]  = {};
@@ -527,9 +527,12 @@ var API = (function(){
 						"deleteAll": function(callback){
 							precall(3, widgetID, secret, null, null, callback);
 							return this; //API.Storage.remoteStorage;
-						} //API.Storage.remoteStorage
-						/*"exists"(key, callback) -> bool
-						"lastModified"(key, callback) -> //API.Storage.remoteStorage*/
+						},
+						"exists": function(key, callback){
+							precall(4, widgetID, secret, key, null, callback);
+							return this; //API.Storage.remoteStorage;
+						}
+						/*"lastModified"(key, callback) -> //API.Storage.remoteStorage*/
 					},
 					"sharedStorage": {
 						"get": function(key, callback){
@@ -541,11 +544,14 @@ var API = (function(){
 							return this; //API.Storage.sharedStorage;
 						},
 						"delete": function(key, callback){
-							precall(2, -1, secret, key, null, callback);
+							precall(2, -1, null, key, null, callback);
+							return this; //API.Storage.remoteStorage;
+						},
+						"exists": function(key, callback){
+							precall(4, -1, null, key, null, callback);
 							return this; //API.Storage.remoteStorage;
 						}
-						/*"exists"(key, callback) -> bool
-						"lastModified"(key, callback) -> //API.Storage.sharedStorage*/
+						/*"lastModified"(key, callback) -> //API.Storage.sharedStorage*/
 					}
 				},
 				"widget": {

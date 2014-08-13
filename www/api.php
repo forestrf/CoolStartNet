@@ -124,6 +124,10 @@ switch(isset($action)?$action:null){
 			fail(json_encode($response));
 		}
 	break;
+	case 'check':
+		$response = checkHandler($data_json);
+		perfect(json_encode($response));
+	break;
 	default:
 		// Never should occur
 		fail(5);
@@ -179,6 +183,18 @@ function getHandler(&$widgets){
 	foreach($response as &$result){
 		//global is a invisible widget with id -1
 		$array_response[$result['IDwidget'] === '-1' ? '-1' : $hashes[$result['IDwidget']]][$result['variable']] = $result['value'];
+	}
+	return $array_response;
+}
+
+// Call before the function widget_variables_valid()
+function checkHandler(&$widgets){
+	global $db, $hashes;
+	$array_response = array();
+	$response = $db->check_variable($widgets);
+	foreach($response as &$result){
+		//global is a invisible widget with id -1
+		$array_response[$result['IDwidget'] === '-1' ? '-1' : $hashes[$result['IDwidget']]][$result['variable']] = 1;
 	}
 	return $array_response;
 }

@@ -9,9 +9,11 @@ C(ventana,
 	C('button', ['onclick', get_test], 'GET test'),
 	C('button', ['onclick', delete_test], 'DELETE test'),
 	C('button', ['onclick', delete_all_test], 'DELETE ALL test'),
+	C('button', ['onclick', exists], 'EXISTS test'),
 	C('button', ['onclick', global_set_test], 'GLOBAL SET test'),
 	C('button', ['onclick', global_get_test], 'GLOBAL GET test'),
 	C('button', ['onclick', global_delete_test], 'GLOBAL DELETE test'),
+	C('button', ['onclick', global_exists], 'GLOBAL EXISTS test'),
 	C('br'),
 	textarea = C('textarea')
 );
@@ -118,6 +120,24 @@ function delete_all_test(){
 
 
 /////////////////////////////
+// EXISTS test
+/////////////////////////////
+function exists(){
+	log('EXISTS Test');
+
+	API.storage.remoteStorage.exists('test', function(entrada){
+		if(entrada){
+			log('EXISTS Test variable exists = YES.');
+		}
+		else{
+			log('EXISTS Test variable exists = NO.');
+		}
+	});
+}
+
+
+
+/////////////////////////////
 // GLOBAL SET test
 /////////////////////////////
 function global_set_test(){
@@ -175,6 +195,24 @@ function global_delete_test(){
 		}
 		else{
 			log('GLOBAL DELETE Test confirmed OK.');
+		}
+	});
+}
+
+
+
+/////////////////////////////
+// GLOBAL EXISTS test
+/////////////////////////////
+function global_exists(){
+	log('GLOBAL EXISTS Test');
+
+	API.storage.sharedStorage.exists('test', function(entrada){
+		if(entrada){
+			log('GLOBAL EXISTS Test variable exists = YES.');
+		}
+		else{
+			log('GLOBAL EXISTS Test variable exists = NO.');
 		}
 	});
 }
