@@ -72,3 +72,45 @@
 .bookmarks .foldername:hover {
 	background-color: #AB9718;
 }
+
+
+
+/*ADD/MANAGE BOOKMARKS*/
+.bookmarks .button_add {
+	right: 10px;
+	width: 30px;
+	color: rgba(255, 255, 255, 0.7);
+	bottom: 10px;
+	height: 30px;
+	cursor: pointer;
+	z-index: 1;
+	position: absolute;
+	font-size: 30px;
+	font-style: normal;
+	line-height: 30px;
+}
+
+.bookmarks .button_add:hover {
+	color: #fff;
+}
+
+.bookmarks .manager {
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 99999;
+	position: fixed;
+	background-color: rgba(255, 255, 255, 0.4);
+}
+
+.bookmarks .manager .container {
+	top: 35%;
+	left: 30%;
+	width: 40%;
+	height: 30%;
+	position: absolute;
+	box-shadow: 0 0 20px #000;
+	border-radius: 15px;
+	background-color: rgba(0, 0, 0, 0.75);
+}

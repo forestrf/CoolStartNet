@@ -19,6 +19,18 @@ API.storage.sharedStorage.get('bookmarks', function(entrada){
 	
 	// do not show the parent folder (first child) brcause it is a inexistent folder created by recursive_bookmark_parser.
 	recursive_bookmark_parser(ventana, "", bookmarks.getElements(""));
+	
+	// Complete de widget.
+	ventana.appendChild(
+		buttonAdd = C('div', ['class', 'fa fa-plus-square button_add'])
+	);
+	
+	buttonAdd.onclick = function(){
+		var bookmark_manager_div = API.document.createElement("div").addClass("manager");
+		var div_container = C('div', ['class', 'container']);
+		ventana.appendChild(bookmark_manager_div);
+		bookmark_manager_div.appendChild(div_container);
+	}
 });
 
 var pos = {
