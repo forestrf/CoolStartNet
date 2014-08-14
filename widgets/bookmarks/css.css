@@ -118,7 +118,7 @@
 
 .bookmarks .manager .container > .txt {
 	display: block;
-	margin: 10px 0;
+	margin-top: 10px;
 	text-align: center;
 	width: 100%;
 }
@@ -129,6 +129,7 @@
 	border: 1px outset #F00;
 	padding: 2px;
 	position: relative;
+	margin-top: 20px;
 	box-shadow: 0 0 5px #000 inset;
 	font-family: Helvetica;
 	border-radius: 10px;
@@ -155,4 +156,62 @@
 	background: -ms-linear-gradient(top,  #f00 0%,#4e0000 100%);
 	background: linear-gradient(to bottom,  #f00 0%,#4e0000 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f00', endColorstr='#4e0000',GradientType=0 );
+}
+
+.form {
+	margin-top: 20px;
+}
+
+.bookmarks .manager .form input {
+	width: 80%;
+	color: #FFF;
+	border: 1px outset #F00;
+	padding: 5px;
+	margin-left: 10%;
+	margin-bottom: 2%;
+	border-radius: 5px;
+	background-color: #1C1C1C;
+}
+.bookmarks .manager .form input:focus {
+	box-shadow: 0 0 11px #1C0000;
+	background-color: #1C0000;
+}
+
+.bookmarks .manager .buttons {
+	margin-top: 5%;
+    text-align: center;
+}
+
+.bookmarks .manager .buttons > input {
+    border: 1px solid #FFF;
+    border-radius: 5px;
+    color: #FFF;
+    cursor: pointer;
+    height: 2em;
+    margin: 0 5%;
+    width: 25%;
+	
+	background: #f00;
+	background: -moz-linear-gradient(top,  #f00 0%, #621D00 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f00), color-stop(100%,#621D00));
+	background: -webkit-linear-gradient(top,  #f00 0%,#621D00 100%);
+	background: -o-linear-gradient(top,  #f00 0%,#621D00 100%);
+	background: -ms-linear-gradient(top,  #f00 0%,#621D00 100%);
+	background: linear-gradient(to bottom,  #f00 0%,#621D00 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f00', endColorstr='#621D00',GradientType=0 );
+}
+
+.bookmarks .manager .buttons > input:hover {
+	background: #D91A1A;
+}
+
+.bookmarks .manager .buttons > input:active {C13B02 C13B02
+	background: #7B0909;
+	background: -moz-linear-gradient(top,  #621D00 0%, #C13B02 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#621D00), color-stop(100%,#C13B02));
+	background: -webkit-linear-gradient(top,  #621D00 0%,#C13B02 100%);
+	background: -o-linear-gradient(top,  #621D00 0%,#C13B02 100%);
+	background: -ms-linear-gradient(top,  #621D00 0%,#C13B02 100%);
+	background: linear-gradient(to bottom,  #621D00 0%,#C13B02 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#621D00', endColorstr='#C13B02',GradientType=0 );
 }

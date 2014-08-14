@@ -110,11 +110,21 @@ function create_element(path){
 			button_target_bookmark = C("div", ["onclick", set_target_bookmark, "class", "selected"], "Bookmark"),
 			button_target_folder   = C("div", ["onclick", set_target_folder], "Folder")
 		),
-		form_target = C("div", ["class", "form"]);
+		form_target = C("div", ["class", "form"]),
+		C("div", ["class", "buttons"],
+			C("input", ["type", "button", "onclick", ok, "value", "OK"]),
+			C("input", ["type", "button", "onclick", cancel, "value", "Cancel"])
+		)
 	);
+	set_target_bookmark();
 	ventana.appendChild(bookmark_manager_div);
 	bookmark_manager_div.appendChild(div_container);
 }
+
+var form_folder_name;
+var form_irl;
+var form_title;
+var currentTarget;
 
 function set_target_bookmark(){
 	change_target_create_element("bookmark");
@@ -123,16 +133,33 @@ function set_target_folder(){
 	change_target_create_element("folder");
 }
 function change_target_create_element(target){
+	currentTarget = target;
 	switch(target){
 		case "bookmark":
 			button_target_bookmark.className = "selected";
 			button_target_folder.className   = "";
+			form_target.innerHTML = "";
+			C(form_target,
+				form_irl   = C("input", ["type", "text", "placeholder", "Bookmark URL: http://www..."]),
+				form_title = C("input", ["type", "text", "placeholder", "Bookmark Title..."])
+			);
 		break;
 		case "folder":
 			button_target_bookmark.className = "";
 			button_target_folder.className   = "selected";
+			form_target.innerHTML = "";
+			C(form_target,
+				form_folder_name = C("input", ["type", "text", "placeholder", "Folder Name..."])
+			);
 		break;
 	}
+}
+
+function ok(){
+	
+}
+function cancel(){
+	
 }
 
 // Function for the config widgetID. It returns the html object to append on the config window
