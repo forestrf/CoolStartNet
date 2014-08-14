@@ -10,7 +10,7 @@ ventana.addClass("bookmarks");
 
 // Bookmarks object and more variables
 var bookmarks = API.bookmarks.createObject();
-var buttonAdd;
+var buttonEdit = C('div', ['class', 'fa fa-pencil-square button_add']);
 
 API.storage.sharedStorage.get('bookmarks', function(entrada){
 	if(entrada){
@@ -21,16 +21,9 @@ API.storage.sharedStorage.get('bookmarks', function(entrada){
 	recursive_bookmark_parser(ventana, "", bookmarks.getElements(""));
 	
 	// Complete de widget.
-	ventana.appendChild(
-		buttonAdd = C('div', ['class', 'fa fa-plus-square button_add'])
-	);
+	ventana.appendChild(buttonEdit);
 	
-	buttonAdd.onclick = function(){
-		var bookmark_manager_div = API.document.createElement("div").addClass("manager");
-		var div_container = C('div', ['class', 'container']);
-		ventana.appendChild(bookmark_manager_div);
-		bookmark_manager_div.appendChild(div_container);
-	}
+	buttonEdit.onclick = function(){}
 });
 
 var pos = {
@@ -58,39 +51,88 @@ var bookmarSize = 30;
 ventana.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
 
 function recursive_bookmark_parser(element, path, elements){
-	var height = 0;
-	var i = 0;
+	var height = 0, i = 0, length = elements.length;
 	
-	while(i < elements.length){
-		if(typeof elements[i] === "string"){
-			// Folder
-			var folder_obj = C('div', ['class', 'folder', 'style', 'height: 0px;']);
-			var folderTitle = C('div', ['class','foldername'], elements[i])
-			element.appendChild(folderTitle);
-			
-			var folder_height = recursive_bookmark_parser(folder_obj, path+"/"+elements[i], bookmarks.getElements(path+"/"+elements[i]));
-			element.appendChild(folder_obj);
-			height += folderSize + folder_height;
-			
-			folderTitle.onclick = (function(height, folder){
-				return function(){
-					folder.style.height = folder.style.height === "0px" ? height+"px" : "0px";
+	while(i < length){
+		switch(typeof elements[i]){
+			case "string":
+				// Folder
+				var folder_obj = C('div', ['class', 'folder', 'style', 'height: 0px;']);
+				var folderTitle = C('div', ['class','foldername'], elements[i])
+				element.appendChild(folderTitle);
+				
+				var folder_height = recursive_bookmark_parser(folder_obj, path+"/"+elements[i], bookmarks.getElements(path+"/"+elements[i]));
+				element.appendChild(folder_obj);
+				height += folderSize + folder_height;
+				
+				folderTitle.onclick = (function(height, folder){
+					return function(){
+						folder.style.height = folder.style.height === "0px" ? height+"px" : "0px";
+					}
+				})(folder_height, folder_obj);			
+			break;
+			default:
+				// Bookmark
+				var a = C("a", ["href", elements[i].uri, "style", "background-color: rgba(255, 255, 255, 0.14);"], elements[i].title ? elements[i].title : elements[i].uri);
+				if(elements[i].iconuri){
+					a.style.backgroundImage = "url('"+elements[i].iconuri+"')";
 				}
-			})(folder_height, folder_obj);
-		}
-		else if(elements[i].type === "bookmark"){
-			// Bookmark
-			var a = C("a", ["href", elements[i].uri, "style", "background-color: rgba(255, 255, 255, 0.14);"], elements[i].title ? elements[i].title : elements[i].uri);
-			if(elements[i].iconuri){
-				a.style.backgroundImage = "url('"+elements[i].iconuri+"')";
-			}
-			element.appendChild(a);
-			height += bookmarSize;
+				element.appendChild(a);
+				height += bookmarSize;			
+			break;
 		}
 		i++;
 	}
 	
+	// Add false bookmark button (button to add folders or bookmarks)
+	var a = C("a", ["style", "background-color: rgba(255, 255, 255, 0.14);", "onclick", (function(){
+		return function(){
+			create_element(path);
+		};
+	})(path)], "Add Bookmark/Folder");
+	element.appendChild(a);
+	height += bookmarSize;	
+	
 	return height;
+}
+
+var button_target_bookmark;
+var button_target_folder;
+var form_target;
+
+// Create a box where you can choose to create a bookmark or a folder in the path "path"
+function create_element(path){
+	var bookmark_manager_div = API.document.createElement("div").addClass("manager");
+	var folder_gui = path === "" ? "the root folder" : "the folder " + path;
+	var div_container = C('div', ['class', 'container'],
+		C("div", ["class", "txt"], "Creating an element inside "+folder_gui),
+		C("div", ["class", "type_selector"],
+			button_target_bookmark = C("div", ["onclick", set_target_bookmark, "class", "selected"], "Bookmark"),
+			button_target_folder   = C("div", ["onclick", set_target_folder], "Folder")
+		),
+		form_target = C("div", ["class", "form"]);
+	);
+	ventana.appendChild(bookmark_manager_div);
+	bookmark_manager_div.appendChild(div_container);
+}
+
+function set_target_bookmark(){
+	change_target_create_element("bookmark");
+}
+function set_target_folder(){
+	change_target_create_element("folder");
+}
+function change_target_create_element(target){
+	switch(target){
+		case "bookmark":
+			button_target_bookmark.className = "selected";
+			button_target_folder.className   = "";
+		break;
+		case "folder":
+			button_target_bookmark.className = "";
+			button_target_folder.className   = "selected";
+		break;
+	}
 }
 
 // Function for the config widgetID. It returns the html object to append on the config window
