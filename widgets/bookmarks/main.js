@@ -105,7 +105,10 @@ function recursive_bookmark_parser(element, path, elements){
 				
 				editButton.onclick = (function(path, name){
 					return function(event){
-						create_element(path, 'folder', false, 'editing a folder inside ');
+						create_element(path, 'folder', false, 'editing a folder inside ', function(){
+							bookmarks.editFolder(path, name, form_folder_name.value);
+							draw_bookmarks();
+						});
 						form_folder_name.value = name;
 					}
 				})(path, elements[i]);
@@ -127,7 +130,10 @@ function recursive_bookmark_parser(element, path, elements){
 				
 				editButton.onclick = (function(path, i){
 					return function(event){
-						create_element(path, 'bookmark', false, 'editing a bookmark inside ');
+						create_element(path, 'bookmark', false, 'editing a bookmark inside ', function(){
+							bookmarks.editBookmark(path, i, form_uri.value, form_title.value);
+							draw_bookmarks();
+						});
 						form_uri.value   = elements[i].uri;
 						form_title.value = elements[i].title;
 					}
@@ -147,16 +153,22 @@ function recursive_bookmark_parser(element, path, elements){
 }
 
 var bookmark_manager_div;
-var button_target_bookmark;
-var button_target_folder;
+var button_target_bookmark, button_target_folder;
 var form_target;
+
 var currentPath;
+var currentTarget;
+
+var form_folder_name;
+var form_uri;
+var form_title;
 
 // Create a box where you can choose to create a bookmark or a folder in the path "path"
-function create_element(path, selected, show_selector, message){
+function create_element(path, selected, show_selector, message, ok_callback){
 	if(selected      === undefined) selected = "bookmark";
 	if(show_selector === undefined) show_selector = true;
 	if(message       === undefined) message = "Creating an element inside ";
+	if(ok_callback   === undefined) ok_callback = ok;
 	
 	currentPath = path;
 	var folder_gui = path === "" ? "the root folder" : "the folder " + path;
@@ -166,12 +178,12 @@ function create_element(path, selected, show_selector, message){
 			C('div', ['class', 'container'],
 				C("div", ["class", "txt"], message + folder_gui),
 				C("div", ["class", "type_selector", "style", show_selector ? "" : "display:none;"],
-					button_target_bookmark = C("div", ["onclick", set_target_bookmark, "class", selected === 'bookmark' ? "selected" : ''], "Bookmark"),
-					button_target_folder   = C("div", ["onclick", set_target_folder,   "class", selected === 'folder'   ? "selected" : ''], "Folder")
+					button_target_bookmark = C("div", ["onclick", function(){change_target_create_element("bookmark")}, "class", selected === 'bookmark' ? "selected" : ''], "Bookmark"),
+					button_target_folder   = C("div", ["onclick", function(){change_target_create_element("folder");},  "class", selected === 'folder'   ? "selected" : ''], "Folder")
 				),
 				form_target = C("div", ["class", "form"]),
 				C("div", ["class", "buttons"],
-					C("input", ["type", "button", "onclick", ok, "value", "OK"]),
+					C("input", ["type", "button", "onclick", ok_callback, "value", "OK"]),
 					C("input", ["type", "button", "onclick", cancel, "value", "Cancel"])
 				)
 			)
@@ -181,17 +193,6 @@ function create_element(path, selected, show_selector, message){
 	change_target_create_element(selected);
 }
 
-var form_folder_name;
-var form_uri;
-var form_title;
-var currentTarget;
-
-function set_target_bookmark(){
-	change_target_create_element("bookmark");
-}
-function set_target_folder(){
-	change_target_create_element("folder");
-}
 function change_target_create_element(target){
 	currentTarget = target;
 	switch(target){
