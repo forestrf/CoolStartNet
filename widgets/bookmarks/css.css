@@ -2,8 +2,9 @@
 	color: #EEE;
 	margin: -10px 0 0 -20px;
 	padding: 10px 20px;
-	overflow: auto;
 	font-size: 0.8em;
+	overflow-y: auto;
+	overflow-x: hidden;
 	box-shadow: 0 0 10px 0px #000;
 	font-family: Tahoma, Verdana;
 	border-radius: 5px;
@@ -24,7 +25,7 @@
 	display: block;
 	padding: 5px 0 5px 30px;
 	word-break: break-all;
-	transition: all 0.5s ease 0s;
+	transition: background-color 0.5s ease 0s;
 	line-height: 1.2em;
 	margin-bottom: 5px;
 	border-radius: 15px;
@@ -49,7 +50,7 @@
 /*FOLDERS*/
 .bookmarks .folder {
 	overflow: hidden;
-	transition: all .5s ease 0s;
+	transition: background-color .5s ease 0s;
 	padding-left: 15px;
 }
 
@@ -201,18 +202,18 @@
 
 .bookmarks .manager .buttons {
 	margin-top: 5%;
-    text-align: center;
+	text-align: center;
 }
 
 .bookmarks .manager .buttons > input {
-    width: 25%;
-    color: #FFF;
-    height: 2em;
-    margin: 0 5%;
-    cursor: pointer;
-    border: 1px outset #F00;
+	width: 25%;
+	color: #FFF;
+	height: 2em;
+	margin: 0 5%;
+	cursor: pointer;
+	border: 1px outset #F00;
 	background: #1C1C1C;
-    border-radius: 5px;
+	border-radius: 5px;
 }
 
 .bookmarks .manager .buttons > input:hover {
