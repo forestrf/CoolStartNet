@@ -237,38 +237,47 @@ function cancel(){
 
 // Function for the config widgetID. It returns the html object to append on the config window
 var CONFIG_function = function(functions){
+	
+	return C('div',
+		C('button', ['onclick', setPosition], 'Set position')
+	);
+	
+	
+	
 	function realTimeMove(data){
 		ventana.setPositionSize(data.left, data.top, data.width, data.height);
 	}
 	
-	functions.positioning(
-		{
-			"width"   : pos.width,
-			"height"  : pos.height,
-			"left"    : pos.left,
-			"top"     : pos.top,
-			"show_bg" : false,
-			"realtime": realTimeMove
-		},
-		function(data){
-			if(data){
-				pos = {
-					left: data.left,
-					top: data.top,
-					width: data.width,
-					height: data.height
-				};
-				API.storage.remoteStorage.set('pos', pos, function(entrada){
-					if(!entrada){
-						alert("data not saved");
-					}
-				});
+	function setPosition(){
+		functions.positioning(
+			{
+				"width"   : pos.width,
+				"height"  : pos.height,
+				"left"    : pos.left,
+				"top"     : pos.top,
+				"show_bg" : false,
+				"realtime": realTimeMove
+			},
+			function(data){
+				if(data){
+					pos = {
+						left: data.left,
+						top: data.top,
+						width: data.width,
+						height: data.height
+					};
+					API.storage.remoteStorage.set('pos', pos, function(entrada){
+						if(!entrada){
+							alert("data not saved");
+						}
+					});
+				}
+				else{
+					ventana.setPositionSize(pos.left, pos.top, pos.width, pos.height);
+				}
 			}
-			else{
-				ventana.setPositionSize(pos.left, pos.top, pos.width, pos.height);
-			}
-		}
-	);
+		);
+	}
 	
 	
 }
