@@ -73,10 +73,11 @@ function recursive_bookmark_parser(element, path, elements){
 		switch(typeof elements[i]){
 			case "string":
 				// Folder
-				var deleteButton;
-				var folderTitle = C('div', ['class','foldername'], elements[i], deleteButton = C('div', ['class', "delete fa fa-trash-o"]));
-				var folder_obj = C('div', ['class', 'folder', 'style', 'height: '+(folders_opened[path] ? 'auto' : '0px')+';']);
+				var deleteButton = C('div', ['class', "delete fa fa-trash-o"]);
+				var folderTitle = C('div', ['class','foldername'], elements[i]);
+				var folder_obj = C('div', ['class', 'folder', 'style', 'height: '+(folders_opened[path+"/"+elements[i]] ? 'auto' : '0px')+';']);
 				element.appendChild(folderTitle);
+				element.appendChild(deleteButton);
 				
 				recursive_bookmark_parser(folder_obj, path+"/"+elements[i], bookmarks.getElements(path+"/"+elements[i]));
 				element.appendChild(folder_obj);
@@ -88,37 +89,35 @@ function recursive_bookmark_parser(element, path, elements){
 							folders_opened[path] = true;
 						}else{
 							folder.style.height = "0px";
-							delete folders_opened[path];
+							folders_opened[path] = false;
 						}
 					}
-				})(folder_obj, path);
+				})(folder_obj, path+"/"+elements[i]);
 				
-				deleteButton.onclick = (function(folderTitle, folder_obj, path, name){
+				deleteButton.onclick = (function(path, name){
 					return function(){
 						bookmarks.removeFolder(path, name);
-						//draw_bookmarks();
-						folderTitle.remove();
-						folder_obj.remove();
+						draw_bookmarks();
 					}
-				})(folderTitle, folder_obj, path, elements[i]);
+				})(path, elements[i]);
 				
 			break;
 			default:
 				// Bookmark
-				var deleteButton;
-				var a = C("a", ["href", elements[i].uri], elements[i].title ? elements[i].title : elements[i].uri,  deleteButton = C('div', ['class', "delete fa fa-trash-o"]));
+				var deleteButton = C('div', ['class', "delete fa fa-trash-o"]);
+				var a = C("a", ["href", elements[i].uri], elements[i].title ? elements[i].title : elements[i].uri);
 				if(elements[i].iconuri){
 					a.style.backgroundImage = "url('"+elements[i].iconuri+"')";
 				}
 				element.appendChild(a);
+				element.appendChild(deleteButton);
 				
-				deleteButton.onclick = (function(a, path, i){
-					return function(){
+				deleteButton.onclick = (function(path, i){
+					return function(event){
 						bookmarks.removeBookmark(path, i);
-						//draw_bookmarks();
-						a.remove();
+						draw_bookmarks();
 					}
-				})(a, path, elements[i].i);
+				})(path, i);
 			break;
 		}
 		i++;
