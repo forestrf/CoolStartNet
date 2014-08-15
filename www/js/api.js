@@ -51,7 +51,7 @@ var API = (function(){
 	4 = exists
 	*/
 	var precall = function(mode, widgetID, secret, key, value, callback){
-		if(callback === undefined){
+		if(typeof callback !== "function"){
 			callback = function(){};
 		}
 		if(secret){
@@ -339,7 +339,8 @@ var API = (function(){
 		}
 		
 		return {
-			"object": bookmarks,
+			"getObject": function(){return bookmarks},
+			"setObject": function(obj){bookmarks = obj},
 			"addBookmark": function(path, uri, title, icon_uri){
 				var real_path = path_resolver(path);
 				if(!real_path){return this;}

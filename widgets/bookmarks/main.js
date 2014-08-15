@@ -8,13 +8,29 @@ var C = crel2;
 var ventana = API.widget.create();
 ventana.addClass("bookmarks");
 
-// Bookmarks object and more variables
+var bookmarks_backup;
+
+// Edit bookmarks
 var bookmarks = API.bookmarks.createObject();
-var buttonEdit = C('div', ['class', 'fa fa-pencil-square button_add']);
+var buttonEdit = C('div', ['class', 'fa fa-pencil-square button button_add', "onclick", function(){
+	ventana.addClass("editing");
+	bookmarks_backup = JSON.stringify(bookmarks.getObject());
+}]);
+// Save bookmarks
+var buttonConfirm = C('div', ['class', 'fa fa-check-square button button_confirm', "onclick", function(){
+	API.storage.sharedStorage.set('bookmarks', bookmarks.getObject());
+	ventana.removeClass("editing");
+}]);
+// Restore bookmarks
+var buttonCancel = C('div', ['class', 'fa fa-ban button button_cancel', "onclick", function(){
+	bookmarks.setObject(JSON.parse(bookmarks_backup));
+	ventana.removeClass("editing");
+	draw_bookmarks();
+}]);
 
 API.storage.sharedStorage.get('bookmarks', function(entrada){
 	if(entrada){
-		bookmarks.object = entrada;
+		bookmarks.setObject(entrada);
 	}
 	
 	draw_bookmarks();
@@ -42,7 +58,8 @@ function draw_bookmarks(){
 	ventana.innerHTML = "";
 	recursive_bookmark_parser(ventana, "", bookmarks.getElements(""));
 	ventana.appendChild(buttonEdit);
-	buttonEdit.onclick = function(){}
+	ventana.appendChild(buttonConfirm);
+	ventana.appendChild(buttonCancel);
 }
 
 
@@ -77,7 +94,7 @@ function recursive_bookmark_parser(element, path, elements){
 			break;
 			default:
 				// Bookmark
-				var a = C("a", ["href", elements[i].uri, "style", "background-color: rgba(255, 255, 255, 0.14);"], elements[i].title ? elements[i].title : elements[i].uri);
+				var a = C("a", ["href", elements[i].uri], elements[i].title ? elements[i].title : elements[i].uri);
 				if(elements[i].iconuri){
 					a.style.backgroundImage = "url('"+elements[i].iconuri+"')";
 				}
@@ -88,7 +105,7 @@ function recursive_bookmark_parser(element, path, elements){
 	}
 	
 	// Add false bookmark button (button to add folders or bookmarks)
-	var a = C("a", ["style", "background-color: rgba(255, 255, 255, 0.14);", "onclick", (function(){
+	var a = C("a", ["class", "addItem", "onclick", (function(){
 		return function(){
 			create_element(path);
 		};

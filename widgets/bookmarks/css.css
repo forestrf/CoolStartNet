@@ -1,23 +1,16 @@
 .bookmarks {
 	color: #EEE;
-	width: calc(100% - 40px);
-	height: calc(100% - 20px);
-	padding: 10px 20px;
-	overflow: auto;
-	overflow: overlay;
-	box-shadow: 0 0 10px 0px #000;
-	border-radius: 5px;
-}
-
-.bookmarks {
-	color: #EEE;
-	width: calc(100% - 40px);
 	margin: -10px 0 0 -20px;
-	height: calc(100% - 20px);
 	padding: 10px 20px;
 	overflow: auto;
-	box-shadow: 0 0 10px 0 #000;
+	box-shadow: 0 0 10px 0px #000;
+	font-family: Tahoma, Verdana;
 	border-radius: 5px;
+	
+	-webkit-user-select: none;
+	-moz-user-select: -moz-none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .bookmarks:hover {
@@ -41,8 +34,13 @@
 	border-radius: 15px;
 	text-decoration: none;
 	background-size: 19px 19px;
+	background-color: rgba(255, 255, 255, 0.15);
 	background-repeat: no-repeat;
 	background-position: 6px 3px;
+}
+
+.bookmarks a.addItem {
+	display: none;
 }
 
 .bookmarks a:hover {
@@ -77,11 +75,9 @@
 
 
 /*ADD/MANAGE BOOKMARKS*/
-.bookmarks .button_add {
-	right: 10px;
+
+.bookmarks .button {
 	width: 30px;
-	color: rgba(255, 255, 255, 0.7);
-	bottom: 10px;
 	height: 30px;
 	cursor: pointer;
 	z-index: 1;
@@ -91,9 +87,35 @@
 	line-height: 30px;
 }
 
+.bookmarks .button_add {
+	color: rgba(255, 255, 255, 0.7);
+	right: 10px;
+	bottom: 10px;
+}
 .bookmarks .button_add:hover {
 	color: #fff;
 }
+
+.bookmarks .button_confirm {
+	right: 40px;
+	color: rgba(27, 255, 77, 0.7);
+	bottom: 10px;
+	display: none;
+}
+.bookmarks .button_confirm:hover {
+	color: #1BFF4D;
+}
+
+.bookmarks .button_cancel {
+	right: 10px;
+	color: rgba(255, 0, 0, 0.7);
+	bottom: 10px;
+	display: none;
+}
+.bookmarks .button_cancel:hover {
+	color: #f00;
+}
+
 
 .bookmarks .manager {
 	top: 0;
@@ -183,15 +205,14 @@
 }
 
 .bookmarks .manager .buttons > input {
-    border: 1px outset #F00;
-    border-radius: 5px;
+    width: 25%;
     color: #FFF;
-    cursor: pointer;
     height: 2em;
     margin: 0 5%;
-    width: 25%;
-	
+    cursor: pointer;
+    border: 1px outset #F00;
 	background: #1C1C1C;
+    border-radius: 5px;
 }
 
 .bookmarks .manager .buttons > input:hover {
@@ -214,4 +235,38 @@
 	background: -ms-linear-gradient(top,  #621D00 0%,#C13B02 100%);
 	background: linear-gradient(to bottom,  #621D00 0%,#C13B02 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#621D00', endColorstr='#C13B02',GradientType=0 );
+}
+
+
+
+/* MOVE ITEMS */
+
+.bookmarks.editing .button_add {
+	display: none;
+}
+
+.bookmarks.editing .button_confirm {
+	display: block;
+}
+
+.bookmarks.editing .button_cancel {
+	display: block;
+}
+
+.bookmarks.editing .foldername {
+	border: 1px dashed #FFF;
+	cursor: move;
+}
+
+.bookmarks.editing a {
+	border: 1px dashed #FFF;
+	cursor: move;
+}
+
+.bookmarks.editing a.addItem {
+	border: 0 none;
+	cursor: pointer;
+	display: block;
+	border-radius: 7px;
+	background-color: #979940;
 }
