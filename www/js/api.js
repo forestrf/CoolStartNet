@@ -357,6 +357,10 @@ var API = (function(){
 				var real_path = path_resolver(path);
 				if(!real_path){return this;}
 				
+				// Prevent possible bugs
+				if(real_path["folders"] instanceof Array){
+					real_path["folders"] = {};
+				}
 				real_path["folders"][name] = {
 					folders: {},
 					bookmarks: []
@@ -384,12 +388,10 @@ var API = (function(){
 				if(!real_path){return false;}
 				
 				var result = [];
-				var i = 0;
-				while(i < real_path["bookmarks"].length){
+				for(var i = 0; i < real_path["bookmarks"].length; i++){
 					if(real_path["bookmarks"][i]["type"] !== "folder"){
 						result.push(real_path["bookmarks"][i]);
 					}
-					i++;
 				}
 				return result;
 			},
@@ -399,12 +401,10 @@ var API = (function(){
 				if(!real_path){return false;}
 				
 				var result = [];
-				var i = 0;
-				while(i < real_path["bookmarks"].length){
+				for(var i = 0; i < real_path["bookmarks"].length; i++){
 					if(real_path["bookmarks"][i]["type"] === "folder"){
 						result.push(real_path["bookmarks"][i]["name"]);
 					}
-					i++;
 				}
 				return result;
 			},
@@ -414,15 +414,13 @@ var API = (function(){
 				if(!real_path){return false;}
 				
 				var result = [];
-				var i = 0;
-				while(i < real_path["bookmarks"].length){
+				for(var i = 0; i < real_path["bookmarks"].length; i++){
 					if(real_path["bookmarks"][i]["type"] === "folder"){
 						result.push(real_path["bookmarks"][i]["name"]);
 					}
 					else if(real_path["bookmarks"][i]["type"] !== "folder"){
 						result.push(real_path["bookmarks"][i]);
 					}
-					i++;
 				}
 				return result;
 			},
@@ -445,6 +443,16 @@ var API = (function(){
 						return this;
 					}
 					name_index = real_path["bookmarks"].splice(name_index, 1)[0]["name"];
+				}
+				else{
+					for(var i = 0; i < real_path["bookmarks"].length; i++){
+						if(real_path["bookmarks"][i]["name"] === name_index){
+							if(real_path["bookmarks"][i]["type"] === "folder"){
+								folder_bookmarks = real_path["bookmarks"].splice(i, 1)[0];
+							}
+							break;
+						}
+					}
 				}
 				
 				delete real_path["folders"][name_index];
@@ -482,8 +490,7 @@ var API = (function(){
 					name_index_from = folder_bookmarks["name"];
 				}
 				else{
-					var i = 0;
-					while(i < real_path_from["bookmarks"].length){
+					for(var i = 0; i < real_path_from["bookmarks"].length; i++){
 						if(real_path_from["bookmarks"][i]["name"] === name_index_from){
 							if(real_path_from["bookmarks"][i]["type"] !== "folder"){
 								return this;
@@ -491,7 +498,6 @@ var API = (function(){
 							folder_bookmarks = real_path_from["bookmarks"].splice(i, 1)[0];
 							break;
 						}
-						i++;
 					}
 				}
 				// name_index_from and folder_bookmarks setted at this point

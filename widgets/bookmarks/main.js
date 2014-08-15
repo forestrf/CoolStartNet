@@ -73,8 +73,9 @@ function recursive_bookmark_parser(element, path, elements){
 		switch(typeof elements[i]){
 			case "string":
 				// Folder
+				var deleteButton;
+				var folderTitle = C('div', ['class','foldername'], elements[i], deleteButton = C('div', ['class', "delete fa fa-trash-o"]));
 				var folder_obj = C('div', ['class', 'folder', 'style', 'height: '+(folders_opened[path] ? 'auto' : '0px')+';']);
-				var folderTitle = C('div', ['class','foldername'], elements[i])
 				element.appendChild(folderTitle);
 				
 				recursive_bookmark_parser(folder_obj, path+"/"+elements[i], bookmarks.getElements(path+"/"+elements[i]));
@@ -90,15 +91,34 @@ function recursive_bookmark_parser(element, path, elements){
 							delete folders_opened[path];
 						}
 					}
-				})(folder_obj, path);			
+				})(folder_obj, path);
+				
+				deleteButton.onclick = (function(folderTitle, folder_obj, path, name){
+					return function(){
+						bookmarks.removeFolder(path, name);
+						//draw_bookmarks();
+						folderTitle.remove();
+						folder_obj.remove();
+					}
+				})(folderTitle, folder_obj, path, elements[i]);
+				
 			break;
 			default:
 				// Bookmark
-				var a = C("a", ["href", elements[i].uri], elements[i].title ? elements[i].title : elements[i].uri);
+				var deleteButton;
+				var a = C("a", ["href", elements[i].uri], elements[i].title ? elements[i].title : elements[i].uri,  deleteButton = C('div', ['class', "delete fa fa-trash-o"]));
 				if(elements[i].iconuri){
 					a.style.backgroundImage = "url('"+elements[i].iconuri+"')";
 				}
-				element.appendChild(a);	
+				element.appendChild(a);
+				
+				deleteButton.onclick = (function(a, path, i){
+					return function(){
+						bookmarks.removeBookmark(path, i);
+						//draw_bookmarks();
+						a.remove();
+					}
+				})(a, path, elements[i].i);
 			break;
 		}
 		i++;

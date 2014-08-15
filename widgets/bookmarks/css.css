@@ -3,6 +3,7 @@
 	margin: -10px 0 0 -20px;
 	padding: 10px 20px;
 	overflow: auto;
+	font-size: 0.8em;
 	box-shadow: 0 0 10px 0px #000;
 	font-family: Tahoma, Verdana;
 	border-radius: 5px;
@@ -19,17 +20,13 @@
 
 .bookmarks a {
 	color: #EEE;
-	height: 25px;
 	cursor: pointer;
-	z-index: 1;
 	display: block;
-	padding: 0 5px 0 30px;
+	padding: 5px 0 5px 30px;
 	overflow: hidden;
-	position: relative;
-	font-size: 12px;
 	word-break: break-all;
 	transition: all 0.5s ease 0s;
-	line-height: 25px;
+	line-height: 1.2em;
 	margin-bottom: 5px;
 	border-radius: 15px;
 	text-decoration: none;
@@ -58,11 +55,9 @@
 }
 
 .bookmarks .foldername {
-	height: 15px;
 	cursor: pointer;
 	padding: 5px 0 5px 20px;
-	font-size: 15px;
-	line-height: 15px;
+	line-height: 1.2em;
 	margin-bottom: 5px;
 	border-radius: 5px;
 	background-color: #776705;
@@ -116,6 +111,9 @@
 	color: #f00;
 }
 
+.bookmarks .delete {
+	display: none;
+}
 
 .bookmarks .manager {
 	top: 0;
@@ -269,4 +267,18 @@
 	display: block;
 	border-radius: 7px;
 	background-color: #979940;
+}
+
+.bookmarks.editing .delete {
+	color: #FF0;
+	right: 28px;
+	cursor: pointer;
+	display: block;
+	position: absolute;
+	font-size: 1.5em;
+	margin-top: -0.9em;
+	text-shadow: 0 0 2px #000;
+}
+.bookmarks.editing .delete:hover {
+	color: #F00;
 }
