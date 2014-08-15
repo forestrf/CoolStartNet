@@ -70,14 +70,16 @@ function recursive_bookmark_parser(element, path, elements){
 	var i = 0, length = elements.length;
 	
 	while(i < length){
+		var deleteButton = C('div', ['class', "delete fa fa-trash-o"]);
+		var editButton = C('div', ['class', "edit fa fa-pencil"]);
 		switch(typeof elements[i]){
 			case "string":
 				// Folder
-				var deleteButton = C('div', ['class', "delete fa fa-trash-o"]);
 				var folderTitle = C('div', ['class','foldername'], elements[i]);
 				var folder_obj = C('div', ['class', 'folder', 'style', 'height: '+(folders_opened[path+"/"+elements[i]] ? 'auto' : '0px')+';']);
 				element.appendChild(folderTitle);
 				element.appendChild(deleteButton);
+				element.appendChild(editButton);
 				
 				recursive_bookmark_parser(folder_obj, path+"/"+elements[i], bookmarks.getElements(path+"/"+elements[i]));
 				element.appendChild(folder_obj);
@@ -101,21 +103,33 @@ function recursive_bookmark_parser(element, path, elements){
 					}
 				})(path, elements[i]);
 				
+				editButton.onclick = (function(path, name){
+					return function(event){
+						create_element(path, 'folder', false, 'editing a folder inside ');
+						form_folder_name.value = name;
+					}
+				})(path, elements[i]);
 			break;
 			default:
 				// Bookmark
-				var deleteButton = C('div', ['class', "delete fa fa-trash-o"]);
-				var a = C("a", ["href", elements[i].uri], elements[i].title ? elements[i].title : elements[i].uri);
-				if(elements[i].iconuri){
-					a.style.backgroundImage = "url('"+elements[i].iconuri+"')";
-				}
+				var a = C("a", ["href", elements[i].uri, "style", "background-image: url(http://g.etfv.co/"+encodeURI(elements[i].uri)+")"], elements[i].title ? elements[i].title : elements[i].uri);
+				
 				element.appendChild(a);
 				element.appendChild(deleteButton);
+				element.appendChild(editButton);
 				
 				deleteButton.onclick = (function(path, i){
 					return function(event){
 						bookmarks.removeBookmark(path, i);
 						draw_bookmarks();
+					}
+				})(path, i);
+				
+				editButton.onclick = (function(path, i){
+					return function(event){
+						create_element(path, 'bookmark', false, 'editing a bookmark inside ');
+						form_uri.value   = elements[i].uri;
+						form_title.value = elements[i].title;
 					}
 				})(path, i);
 			break;
@@ -139,25 +153,32 @@ var form_target;
 var currentPath;
 
 // Create a box where you can choose to create a bookmark or a folder in the path "path"
-function create_element(path){
+function create_element(path, selected, show_selector, message){
+	if(selected      === undefined) selected = "bookmark";
+	if(show_selector === undefined) show_selector = true;
+	if(message       === undefined) message = "Creating an element inside ";
+	
 	currentPath = path;
-	bookmark_manager_div = API.document.createElement("div").addClass("manager");
 	var folder_gui = path === "" ? "the root folder" : "the folder " + path;
-	var div_container = C('div', ['class', 'container'],
-		C("div", ["class", "txt"], "Creating an element inside "+folder_gui),
-		C("div", ["class", "type_selector"],
-			button_target_bookmark = C("div", ["onclick", set_target_bookmark, "class", "selected"], "Bookmark"),
-			button_target_folder   = C("div", ["onclick", set_target_folder], "Folder")
-		),
-		form_target = C("div", ["class", "form"]),
-		C("div", ["class", "buttons"],
-			C("input", ["type", "button", "onclick", ok, "value", "OK"]),
-			C("input", ["type", "button", "onclick", cancel, "value", "Cancel"])
+	
+	C(ventana, 
+		C(bookmark_manager_div = API.document.createElement("div").addClass("manager"),
+			C('div', ['class', 'container'],
+				C("div", ["class", "txt"], message + folder_gui),
+				C("div", ["class", "type_selector", "style", show_selector ? "" : "display:none;"],
+					button_target_bookmark = C("div", ["onclick", set_target_bookmark, "class", selected === 'bookmark' ? "selected" : ''], "Bookmark"),
+					button_target_folder   = C("div", ["onclick", set_target_folder,   "class", selected === 'folder'   ? "selected" : ''], "Folder")
+				),
+				form_target = C("div", ["class", "form"]),
+				C("div", ["class", "buttons"],
+					C("input", ["type", "button", "onclick", ok, "value", "OK"]),
+					C("input", ["type", "button", "onclick", cancel, "value", "Cancel"])
+				)
+			)
 		)
 	);
-	set_target_bookmark();
-	ventana.appendChild(bookmark_manager_div);
-	bookmark_manager_div.appendChild(div_container);
+	
+	change_target_create_element(selected);
 }
 
 var form_folder_name;
@@ -197,7 +218,10 @@ function change_target_create_element(target){
 function ok(){
 	switch(currentTarget){
 		case "bookmark":
-			bookmarks.addBookmark(currentPath, form_uri.value, form_title.value/*, icon_uri*/);
+			if(form_uri.value.indexOf("http") !== 0){
+				form_uri.value = "http://"+form_uri.value;
+			}
+			bookmarks.addBookmark(currentPath, form_uri.value, form_title.value);
 		break;
 		case "folder":
 			bookmarks.addFolder(currentPath, form_folder_name.value);

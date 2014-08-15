@@ -114,6 +114,9 @@
 .bookmarks .delete {
 	display: none;
 }
+.bookmarks .edit {
+	display: none;
+}
 
 .bookmarks .manager {
 	top: 0;
@@ -269,6 +272,16 @@
 	background-color: #979940;
 }
 
+.bookmarks.editing .edit {
+	color: #FF0;
+	float: right;
+	cursor: pointer;
+	display: block;
+	font-size: 1.5em;
+	margin-top: -1.5em;
+	text-shadow: 0 0 2px #000;
+	margin-right: 25px;
+}
 .bookmarks.editing .delete {
 	color: #FF0;
 	float: right;
@@ -279,6 +292,6 @@
 	text-shadow: 0 0 2px #000;
 	margin-right: 6px;
 }
-.bookmarks.editing .delete:hover {
+.bookmarks.editing .delete:hover, .bookmarks.editing .edit:hover {
 	color: #F00;
 }
