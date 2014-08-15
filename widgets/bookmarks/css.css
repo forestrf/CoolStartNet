@@ -23,7 +23,6 @@
 	cursor: pointer;
 	display: block;
 	padding: 5px 0 5px 30px;
-	overflow: hidden;
 	word-break: break-all;
 	transition: all 0.5s ease 0s;
 	line-height: 1.2em;
@@ -262,6 +261,7 @@
 .bookmarks.editing a {
 	border: 1px dashed #FFF;
 	cursor: move;
+	padding-right: 40px;
 }
 
 .bookmarks.editing a.addItem {
