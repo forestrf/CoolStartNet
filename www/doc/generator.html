@@ -19,7 +19,8 @@
 					"type": "bool",
 					"description": "jorl"
 				}
-			]
+			],
+			"inherited members": []
 		}
 	];
 	
@@ -34,13 +35,20 @@
 		path = "API/variables var1";
 		*/
 		var json_tmp = path_resolver(path);
+		
+		
+		
 		console.log(json_tmp);
 		
 		function draw_variable(){}
 		function draw_function(){}
 		function draw_object(){}
 		
+		// types: variable(s), function(s), object(s)
 		function path_resolver(path){
+			if(path === ""){
+				return {"json": json, "type": "objects"};
+			}
 			path = path.split("/").reverse();
 			var json_path = json;
 			while(path.length > 0){
@@ -60,7 +68,15 @@
 					}
 				}
 			}
-			return json_path;
+			if(sub_path){
+				if(json_path instanceof Array){
+					return {"json": json_path, "type": ({"v":"variables","f":"functions","s":"functions","i":"objects"})[sub_path[0]]};
+				} else {
+					return {"json": json_path, "type": ({"v":"variable","f":"function","s":"function","i":"object"})[sub_path[0]]};
+				}
+			} else {
+				return {"json": json_path, "type": "object"};
+			}
 		}
 		/*
 		variable = {
