@@ -2,8 +2,7 @@
 <html>
 <head>
 	<!--<script src="../js/epiceditor/js/epiceditor.min.js"></script>-->
-	<script src="../js/pagedown-extra/pagedown/Markdown.Converter.js"></script>
-	<script src="../js/pagedown-extra/Markdown.Extra.js"></script>
+	<script src="../js/epiceditor/js/epiceditor.min.js"></script>
 	<script src="../js/prettify/prettify.js"></script>
 	<script src="functions.js"></script>
 	<script src="doc.js"></script>
@@ -14,14 +13,21 @@
 	<div id="epiceditor-preview"></div>
 
 <script>
-	var converter = new Markdown.Converter();
-	Markdown.Extra.init(converter, {
-		extensions: "all",
-		highlighter: "prettify"
-	});
+	
+	marked.defaults = {
+		gfm: true,
+		tables: true,
+		breaks: false,
+		pedantic: false,
+		sanitize: false,
+		silent: false,
+		highlight: function(code, lang) {
+			return prettyPrintOne(code, lang, false);
+		}
+	};
 	
 	function draw_doc(path){
-		document.getElementById("epiceditor-preview").innerHTML = converter.makeHtml(parse_doc(DOC, path));
+		document.getElementById("epiceditor-preview").innerHTML = marked.parse(parse_doc(DOC, path).replace(/\t/g,'    '));
 		prettyPrint();
 	}
 	
@@ -78,7 +84,7 @@
 				if(oldpath.gui){
 					to_return += "######Inherits from: [" + oldpath.gui + "](#"+oldpath.uri+")\n";
 				} else {
-					to_return += "######[See all the objects](#)\n";
+					to_return += ">[See all the objects](#)\n\n";
 				}
 
 				to_return += "##Description\n" +
@@ -125,7 +131,7 @@
 					}
 				}
 				
-				to_return += ">function " + json.name + "(" + gui_parameters.join(", ") + "): " + json.return + ";\n"+
+				to_return += ">function " + json.name + "(" + gui_parameters.join(", ") + "): " + json.return + ";\n\n"+
 				
 				"|variable|type|default|explanation|\n"+
 				"|---|---|---|---|\n"+

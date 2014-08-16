@@ -3,12 +3,15 @@
 <head>
 	<script src="../js/epiceditor/js/epiceditor.min.js"></script>
 	<script src="../js/crel2.js"></script>
+	<link rel="stylesheet" type="text/css" href="../css/reset.css"/>
 	<script src="functions.js"></script>
 	<script src="doc.js"></script>
 	<style>
 		#list {
-			float: left;
 			width: 20%;
+			height: 100%;
+			overflow: auto;
+			position: absolute;
 		}
 		#list input {
 			display: block;
@@ -42,8 +45,11 @@
 		}
 		
 		#content {
-			float: right;
+			right: 0;
 			width: 80%;
+			height: 100%;
+			overflow: auto;
+			position: absolute;
 		}
 	</style>
 </head>
@@ -69,7 +75,6 @@
 		container: 'Z',
 		textarea: null,
 		basePath: '../js/epiceditor',
-		clientSideStorage: true,
 		localStorageName: 'epiceditor',
 		useNativeFullscreen: true,
 		parser: marked,
@@ -105,10 +110,17 @@
 		var types = info[type];
 		
 		for(var i in types){
-			C(obj, C("div", ["class", "attribute"], i));
+			var buttonEdit = C('span', i);
+			C(obj, C("div", ["class", "attribute"], buttonEdit));
 			if(types[i] instanceof Array){
 				var button = C("input", ["type", "button", "value", "Add to "+i]);
 				obj.appendChild(button);
+			} else {
+				buttonEdit.onclick = (function(doc, i){
+					return function(){
+						editor.importFile("",doc[i]);
+					}
+				})(doc, i);
 			}
 			
 			var d = doc[i];
