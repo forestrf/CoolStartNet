@@ -2,8 +2,8 @@ var DOC = {"objects":
 	[
 		{
 			"name": "API",
-			"description": "Set of functions that allows the use of the web database, widget control on the screen and other things",
-			"fast_description": "Set of functions that allows the use of the web database, widget control on the screen and other things",
+			"description": "Set of functions that allows the use of the web database, widget control on the screen and more",
+			"fast_description": "Set of functions that allows the use of the web database, widget control on the screen and more",
 			"objects": [
 				{
 					"name": "storage",

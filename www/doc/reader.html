@@ -52,7 +52,24 @@
 		
 		var f = {
 			"objects": function(json){
-			
+				var oldpath = old_path_calc(path);
+				
+				var to_return = "#Objects\n";
+				
+				for(var i = 0; i < types.length; i++){
+					if(json[types[i]]){
+						to_return += 
+						"##" + types[i][0].toUpperCase() + types[i].substr(1) + "\n" +
+						"Name|Description\n" +
+						"---|---\n";
+						for(var j = 0; j < json[types[i]].length; j++){
+							var c = json[types[i]][j];
+							to_return += "[" + c.name + "](#" + encodeURI((path ? path+"/" : "")+types[i]+"-"+c.name) + ")|" + c.fast_description + "\n";
+						}
+					}
+				}
+				
+				return to_return;
 			},
 			"object": function(json){
 				var oldpath = old_path_calc(path);
@@ -60,6 +77,8 @@
 				var to_return = "#" + json.name + "\n";
 				if(oldpath.gui){
 					to_return += "######Inherits from: [" + oldpath.gui + "](#"+oldpath.uri+")\n";
+				} else {
+					to_return += "######[See all the objects](#)\n";
 				}
 
 				to_return += "##Description\n" +

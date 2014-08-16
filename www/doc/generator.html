@@ -18,11 +18,27 @@
 			margin-left: 10px;
 		}
 		#list .elem {
-			color: #f00;
-			cursor: pointer;
+			color: #000;
 		}
-		#list .titulo {
+		#list .elem span {
+			cursor: pointer;
+			float: right;
+		}
+		#list .elem .up {
+			background-color: #000;
+			color: #00FF00;
+		}
+		#list .elem .down {
+			background-color: #000;
+			color: #FFFF00;
+		}
+		#list .elem .delete {
+			background-color: #000;
+			color: #FF0000;
+		}
+		#list .attribute {
 			color: #00f;
+			cursor: pointer;
 		}
 		
 		#content {
@@ -89,7 +105,7 @@
 		var types = info[type];
 		
 		for(var i in types){
-			C(obj, C("div", ["class", "titulo"], i));
+			C(obj, C("div", ["class", "attribute"], i));
 			if(types[i] instanceof Array){
 				var button = C("input", ["type", "button", "value", "Add to "+i]);
 				obj.appendChild(button);
@@ -97,9 +113,11 @@
 			
 			var d = doc[i];
 			if(d && d instanceof Array){
-				console.log(d);
 				for(var j = 0; j < d.length; j++){
-					var elem = C("div", ["class", "elem"], d[j].name);
+					var buttonUp = C('span', ["class", "up"], "up");
+					var buttonDown = C('span', ["class", "down"], "down");
+					var buttonDelete = C('span', ["class", "delete"], "delete");
+					var elem = C("div", ["class", "elem"], d[j].name, buttonUp, buttonDown, buttonDelete);
 					obj.appendChild(
 						C("div", ["class", "container"], elem, recursive_list_fill(d[j], types[i][0]))
 					);
