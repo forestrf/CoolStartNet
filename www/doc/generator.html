@@ -60,6 +60,7 @@
 	<div id="content">
 		<div id="previewer"></div>
 		
+		<input type="button" value="Write data to JSON" id="button_save"></input>
 		<input type="button" value="Generate JSON" onclick="recalc_DOC()"></input>
 		<br/>
 		<textarea id="txt" style="width:100%;height:20em;"></textarea>
@@ -70,7 +71,6 @@
 	function recalc_DOC(){
 		document.getElementById("txt").value = JSON.stringify(DOC);
 	}
-	
 	
 	var previewer;
 
@@ -134,7 +134,13 @@
 			} else {
 				buttonEdit.onclick = (function(doc, i){
 					return function(){
-						editor.importFile("",doc[i]);
+						editor.importFile("", doc[i].replace(/\t/g, "    "));
+						document.getElementById("button_save").onclick = function(){
+							doc[i] = editor.exportFile().replace(/    /g, "\t");
+							if(doc[i].lastIndexOf("\n") === doc[i].length -1){
+								doc[i] = doc[i].substr(0, doc[i].length -1);
+							}
+						}
 					}
 				})(doc, i);
 			}
