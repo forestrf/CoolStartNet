@@ -70,7 +70,7 @@
 		}
 		
 		// shortcut if there is only one child that is a string
-		if(typeof settings === 'string' && element.textContent !== undefined){
+		if(argumentsLength - childIndex === 1 && typeof settings === 'string' && element.textContent !== undefined){
 			element.textContent = settings;
 		}
 		else{
