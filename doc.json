@@ -1,0 +1,34 @@
+// Use markdown to make it easy, or something like stackoverflow
+
+string = ""
+
+type = "int"|"bool"|"string"|"object"|"function"|etc...
+
+variable = {
+	"name": string,
+	"type": type,
+	"description": string
+}
+
+parameter = {
+	"name": string,
+	"type": type,
+	"explanation": string
+}
+
+function = {
+	"name": string,
+	"type": type,
+	"return": type,
+	"parameters": [parameter...],
+	"description": string
+}
+
+object = {
+	"name": string, // API, storage, crel2...
+	"description": string, // blah
+	"variables": [variable...],
+	"functions": [function...],
+	"static functions": [function...],
+	"inherited members": [object...]
+}
