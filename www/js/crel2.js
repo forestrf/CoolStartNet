@@ -69,14 +69,9 @@
 			--childIndex;
 		}
 		
-		// shortcut if there is only one child that is a string
-		if(argumentsLength - childIndex === 1 && typeof settings === 'string' && element.textContent !== undefined){
-			element.textContent = settings;
-		}
-		else{
-			while(childIndex < argumentsLength){
-				appendChild(element, args[childIndex++]);
-			}
+		
+		while(childIndex < argumentsLength){
+			appendChild(element, args[childIndex++]);
 		}
 
 
