@@ -37,7 +37,7 @@
 			var oldpath = path.substr(0, path.lastIndexOf("/")), oldpath_gui = oldpath.replace(/\//g,".");
 
 			for(var i = 0; i < types.length; i++){
-				oldpath_gui = oldpath_gui.replace(new RegExp(types[i]+" ", "g"), "");
+				oldpath_gui = oldpath_gui.replace(new RegExp(types[i]+"-", "g"), "");
 			}
 			
 			return {
@@ -70,7 +70,7 @@
 						"---|---\n";
 						for(var j = 0; j < json[types[i]].length; j++){
 							var c = json[types[i]][j];
-							to_return += "[" + c.name + "](#" + encodeURI(path+"/"+types[i]+" "+c.name) + ")|" + c.fast_description + "\n";
+							to_return += "[" + c.name + "](#" + encodeURI(path+"/"+types[i]+"-"+c.name) + ")|" + c.fast_description + "\n";
 						}
 					}
 				}
@@ -83,10 +83,30 @@
 			"function": function(json){
 				var oldpath = old_path_calc(path);
 				
-				var to_return = "#" + json.name + "\n";
+				var to_return = "#" + json.name + "()\n";
 				if(oldpath.gui){
-					to_return += "######Inherits from: [" + oldpath.gui + "](#"+oldpath.uri+")\n";
+					to_return += "######Inherits from: [" + oldpath.gui + "](#" + oldpath.uri + ")\n";
 				}
+				
+				var gui_parameters = [];
+				var explained_parameters = "";
+				for(var i = 0; i < json.parameters.length; i++){
+					explained_parameters += "|" + json.parameters[i].name + "|" + json.parameters[i].type + "|";
+				
+					gui_parameters.push("**" + json.parameters[i].name + "**: " + json.parameters[i].type);
+					if(json.parameters[i].default){
+						gui_parameters[i] += " = " + json.parameters[i].default;
+						explained_parameters += json.parameters[i].default + "|" + json.parameters[i].explanation + "|\n";
+					} else {
+						explained_parameters += "|" + json.parameters[i].explanation + "|\n";
+					}
+				}
+				
+				to_return += ">function " + json.name + "(" + gui_parameters.join(", ") + "): " + json.return + ";\n"+
+				
+				"|variable|type|default|explanation|\n"+
+				"|---|---|---|---|\n"+
+				explained_parameters+"\n";
 
 				to_return += "##Description\n" +
 				
@@ -100,7 +120,7 @@
 						"---|---\n";
 						for(var j = 0; j < json[types[i]].length; j++){
 							var c = json[types[i]][j];
-							to_return += "[" + c.name + "](#" + encodeURI(path+"/"+types[i]+" "+c.name) + ")|" + c.fast_description + "\n";
+							to_return += "[" + c.name + "](#" + encodeURI(path+"/"+types[i]+"-"+c.name) + ")|" + c.fast_description + "\n";
 						}
 					}
 				}
@@ -124,7 +144,7 @@
 					var name_path = path_fragment;
 					if(sub_path){
 						json_path = json_path[sub_path];
-						name_path = path_fragment.substr(sub_path.length).trim();
+						name_path = path_fragment.substr(sub_path.length).replace("-","");
 					}
 					for(var i = 0; i < json_path.length; i++){
 						if(json_path[i].name === name_path){

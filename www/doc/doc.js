@@ -17,19 +17,25 @@ var DOC =
 						"functions": [
 							{
 								"name": "get",
-								"return": "object this", // this = API.storage.localStorage
+								"return": "object", // this = API.storage.localStorage
 								"parameters": [
 									{
 										"name": "key",
-										"type": "string"
+										"type": "string",
+										"explanation": "String key to search on the database"
 									},
 									{
 										"name": "callback",
-										"type": "function(object data)"
+										"type": "function",
+										"default": "function(data){}",
+										"explanation": "The function takes the getted object as a parameter"
 									}
 								],
 								"fast_description": "Get the value corresponding to `key` stored in the browser localStorage",
-								"description": "Get the value corresponding to `key` stored in the browser localStorage. `callback` is called with the parameter `data` when there is data stored for the key and is called with zero parameters when there is no data stored for the key. The object `data` is the same object saved by the [set](API.storage.localStorage.set) function. The key is saved in the localStorage as `widgetID-key` to allow two or more widgets to have the same key name" +
+								"description": "Get the value corresponding to `key` stored in the browser localStorage.\n" +
+								"`callback` takes as parameter a variable when there is data stored for the key and takes zero parameters when there is no data stored for the key.\n"+
+								"The object `data` is the same object saved by the [set function](#API/objects-storage/objects-localStorage/functions-set).\n"+
+								"The key is saved in the browser localStorage as `widgetID-key` to allow two or more widgets to have the same key name" +
 								"\n\n" +
 								"    hola"
 							}

@@ -13,7 +13,9 @@ variable = {
 
 parameter = {
 	"name": string,
-	"type": type
+	"type": type,
+	?"default": string,
+	"explanation": string
 }
 
 function = {
