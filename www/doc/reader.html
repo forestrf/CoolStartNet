@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!--<script src="../js/epiceditor/js/epiceditor.min.js"></script>-->
+	<script src="../js/pagedown-extra/pagedown/Markdown.Converter.js"></script>
+	<script src="../js/pagedown-extra/Markdown.Extra.js"></script>
+	<script src="../js/prettify/prettify.js"></script>
+	<script src="doc.js"></script>
+	<link rel="stylesheet" type="text/css" href="../js/epiceditor/themes/preview/github.css"/>
+	<link rel="stylesheet" type="text/css" href="../js/prettify/prettify.css"/>
+</head>
+<body>
+	<div id="epiceditor-preview"></div>
+
+<script>
+	var converter = new Markdown.Converter();
+	Markdown.Extra.init(converter, {
+		extensions: "all",
+		highlighter: "prettify"
+	});
+	
+	function draw_doc(path){
+		document.getElementById("epiceditor-preview").innerHTML = converter.makeHtml(parse_doc(DOC, path));
+		prettyPrint();
+	}
+	
+	
+	// Returns MarkDown
+	function parse_doc(json, path){
+		if(path === undefined) path = "";
+		
+		var types = ["variables","functions","static functions","objects"];
+		
+		/*
+		path = "";
+		path = "API";
+		path = "API/variables";
+		path = "API/variables var1";
+		*/
+		
+		function old_path_calc(path){
+			var oldpath = path.substr(0, path.lastIndexOf("/")), oldpath_gui = oldpath.replace(/\//g,".");
+
+			for(var i = 0; i < types.length; i++){
+				oldpath_gui = oldpath_gui.replace(new RegExp(types[i]+"-", "g"), "");
+			}
+			
+			return {
+				"uri": encodeURI(oldpath),
+				"gui": oldpath_gui
+			}
+		}
+		
+		var f = {
+			"objects": function(json){
+			
+			},
+			"object": function(json){
+				var oldpath = old_path_calc(path);
+				
+				var to_return = "#" + json.name + "\n";
+				if(oldpath.gui){
+					to_return += "######Inherits from: [" + oldpath.gui + "](#"+oldpath.uri+")\n";
+				}
+
+				to_return += "##Description\n" +
+				
+				json.description + "\n";
+				
+				for(var i = 0; i < types.length; i++){
+					if(json[types[i]]){
+						to_return += 
+						"##" + types[i][0].toUpperCase() + types[i].substr(1) + "\n" +
+						"Name|Description\n" +
+						"---|---\n";
+						for(var j = 0; j < json[types[i]].length; j++){
+							var c = json[types[i]][j];
+							to_return += "[" + c.name + "](#" + encodeURI(path+"/"+types[i]+"-"+c.name) + ")|" + c.fast_description + "\n";
+						}
+					}
+				}
+				
+				return to_return;
+			},
+			"variable": function(json){
+			
+			},
+			"function": function(json){
+				var oldpath = old_path_calc(path);
+				
+				var to_return = "#" + json.name + "()\n";
+				if(oldpath.gui){
+					to_return += "######Inherits from: [" + oldpath.gui + "](#" + oldpath.uri + ")\n";
+				}
+				
+				var gui_parameters = [];
+				var explained_parameters = "";
+				for(var i = 0; i < json.parameters.length; i++){
+					explained_parameters += "|" + json.parameters[i].name + "|" + json.parameters[i].type + "|";
+				
+					gui_parameters.push("**" + json.parameters[i].name + "**: " + json.parameters[i].type);
+					if(json.parameters[i].default){
+						gui_parameters[i] += " = " + json.parameters[i].default;
+						explained_parameters += json.parameters[i].default + "|" + json.parameters[i].explanation + "|\n";
+					} else {
+						explained_parameters += "|" + json.parameters[i].explanation + "|\n";
+					}
+				}
+				
+				to_return += ">function " + json.name + "(" + gui_parameters.join(", ") + "): " + json.return + ";\n"+
+				
+				"|variable|type|default|explanation|\n"+
+				"|---|---|---|---|\n"+
+				explained_parameters+"\n";
+
+				to_return += "##Description\n" +
+				
+				json.description + "\n";
+				
+				for(var i = 0; i < types.length; i++){
+					if(json[types[i]]){
+						to_return += 
+						"##" + types[i][0].toUpperCase() + types[i].substr(1) + "\n" +
+						"Name|Description\n" +
+						"---|---\n";
+						for(var j = 0; j < json[types[i]].length; j++){
+							var c = json[types[i]][j];
+							to_return += "[" + c.name + "](#" + encodeURI(path+"/"+types[i]+"-"+c.name) + ")|" + c.fast_description + "\n";
+						}
+					}
+				}
+				
+				return to_return;
+			}
+		}
+		
+		
+		// types: variable(s), function(s), object(s)
+		function path_resolver(path){
+			if(path === ""){
+				return {"json": json, "type": "objects"};
+			}
+			path = path.split("/").reverse();
+			var json_path = json;
+			while(path.length > 0){
+				var path_fragment = path.pop();
+				if(path_fragment !== ""){
+					var sub_path = ({"v":"variables","f":"functions","s":"static functions","o":"objects"})[path_fragment[0]];
+					var name_path = path_fragment;
+					if(sub_path){
+						json_path = json_path[sub_path];
+						name_path = path_fragment.substr(sub_path.length).replace("-","");
+					}
+					for(var i = 0; i < json_path.length; i++){
+						if(json_path[i].name === name_path){
+							json_path = json_path[i];
+							break;
+						}
+					}
+				}
+			}
+			if(sub_path){
+				if(json_path instanceof Array){
+					return {"json": json_path, "type": ({"v":"variables","f":"functions","s":"functions","o":"objects"})[sub_path[0]]};
+				} else {
+					return {"json": json_path, "type": ({"v":"variable","f":"function","s":"function","o":"object"})[sub_path[0]]};
+				}
+			} else {
+				return {"json": json_path, "type": "object"};
+			}
+		}
+		
+		
+		var resp = path_resolver(path);
+		
+		return f[resp.type](resp.json);
+	}
+	
+	// Detect url changes to navigate through the doc
+	function hashHandler(){
+		this.oldHash = window.location.hash;
+		this.Check;
+
+		var that = this;
+		var detect = function(){
+			if(that.oldHash!=window.location.hash){
+				//alert("HASH CHANGED - new hash: " + window.location.hash);
+				that.oldHash = window.location.hash;
+				draw_doc(that.oldHash.substr(1));
+			}
+		};
+		this.Check = setInterval(function(){ detect() }, 100);
+	}
+	var hashDetection = new hashHandler();
+	
+	
+	// Draw all (first call)
+	draw_doc(window.location.hash.substr(1));
+	
+</script>
+</body>
+</html>

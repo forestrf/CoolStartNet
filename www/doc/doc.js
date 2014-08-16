@@ -33,11 +33,18 @@ var DOC =
 								],
 								"fast_description": "Get the value corresponding to `key` stored in the browser localStorage",
 								"description": "Get the value corresponding to `key` stored in the browser localStorage.\n" +
-								"`callback` takes as parameter a variable when there is data stored for the key and takes zero parameters when there is no data stored for the key.\n"+
+								"`callback` takes as parameter a variable when there is data stored for the key or undefined when there is no data stored for the key.\n"+
 								"The object `data` is the same object saved by the [set function](#API/objects-storage/objects-localStorage/functions-set).\n"+
-								"The key is saved in the browser localStorage as `widgetID-key` to allow two or more widgets to have the same key name" +
+								"The key is saved in the browser localStorage as `widgetID-key` to allow two or more widgets to have the same key name." +
 								"\n\n" +
-								"    hola"
+								"```javascript\n"+
+								"API.storage.localStorage.get('some key', function(data){\n"+
+								"	if(data !== undefined){\n"+
+								"		console.log(data);\n"+
+								"	} else {\n"+
+								"		console.log('No data stored under this key');\n"+
+								"	}\n"+
+								"}\n```"
 							}
 						]
 					}
