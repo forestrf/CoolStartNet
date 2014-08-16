@@ -2,10 +2,12 @@
 <html>
 <head>
 	<script src="../js/epiceditor/js/epiceditor.min.js"></script>
+	<script src="../js/prettify/prettify.js"></script>
 	<script src="../js/crel2.js"></script>
-	<link rel="stylesheet" type="text/css" href="../css/reset.css"/>
 	<script src="functions.js"></script>
 	<script src="doc.js"></script>
+	<link rel="stylesheet" type="text/css" href="../css/reset.css"/>
+	<link rel="stylesheet" type="text/css" href="../js/prettify/prettify.css"/>
 	<style>
 		#list {
 			width: 20%;
@@ -54,10 +56,9 @@
 	</style>
 </head>
 <body>
-	
 	<div id="list"></div>
 	<div id="content">
-		<div id="Z"></div>
+		<div id="previewer"></div>
 		
 		<input type="button" value="Generate JSON" onclick="recalc_DOC()"></input>
 		<br/>
@@ -71,33 +72,48 @@
 	}
 	
 	
-	var opts = {
-		container: 'Z',
-		textarea: null,
+	var previewer;
+
+	// https://github.com/OscarGodson/EpicEditor/issues/147#issuecomment-19862743
+	var editor = new EpicEditor({
+		container: 'previewer',
 		basePath: '../js/epiceditor',
 		localStorageName: 'epiceditor',
 		useNativeFullscreen: true,
-		parser: marked,
 		theme: {
 			base: '/themes/base/epiceditor.css',
 			preview: '/themes/preview/github.css',
 			editor: '/themes/editor/epic-dark.css'
 		},
-		button: {
-			preview: true,
-			fullscreen: true,
-			bar: "auto"
-		},
-		focusOnLoad: false,
-		shortcut: {
-			modifier: 18,
-			fullscreen: 70,
-			preview: 80
-		},
 		autogrow: true
-	}
-	var editor = new EpicEditor(opts);
-	editor.load();
+	}).load(function() {
+		previewer = this.getElement('previewer');
+
+		// Prettify JS
+		var scriptTag = previewer.createElement('script');
+		scriptTag.src = '../js/prettify/prettify.js';
+
+		// Prettify CSS
+		var cssTag = previewer.createElement('link');
+		cssTag.rel = 'stylesheet';
+		cssTag.type = 'text/css';
+		cssTag.href = '../js/prettify/prettify.css';
+
+		// Add JS / CSS
+		previewer.body.appendChild(scriptTag);
+		previewer.head.appendChild(cssTag);
+	});
+
+	editor.on('preview', function() {
+		// Add necessary classes to <code> elements
+		var previewerBody = previewer.body;
+		var codeBlocks = previewerBody.getElementsByTagName('code');
+
+		for (var i = 0; i < codeBlocks.length; i++)
+			codeBlocks[i].className += ' prettyprint';
+
+		prettyPrint(null, previewerBody);
+	});
 	
 	
 	
