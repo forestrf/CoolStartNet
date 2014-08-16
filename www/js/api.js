@@ -83,6 +83,7 @@ var API = (function(){
 		xhr.timeout = 5000;
 		xhr.onreadystatechange = ontimeout = function(aEvt){
 			if(xhr.readyState == 4){
+				var i = 0;
 				if(xhr.status == 200){
 					//console.log(xhr.responseText);
 					try {
@@ -95,7 +96,7 @@ var API = (function(){
 					
 					// Go over the cb and generate a response
 					if(response && response['response'] && response['response']==='OK'){
-						var i = 0;
+						i = 0;
 						while (i < cb.length) {
 							
 							var widgetID = cb[i]['widgetID'];
@@ -112,7 +113,6 @@ var API = (function(){
 						return;
 					}
 				}
-				var i = 0;
 				while (i < cb.length) {
 					cb[i++]['callback']();
 				}
