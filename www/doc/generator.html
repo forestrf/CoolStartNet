@@ -5,17 +5,42 @@
 	<script src="../js/crel2.js"></script>
 	<script src="functions.js"></script>
 	<script src="doc.js"></script>
+	<style>
+		#list {
+			float: left;
+			width: 20%;
+		}
+		#list input {
+			display: block;
+		}
+		#list .container {
+			background-color: rgba(0, 0, 0, 0.1);
+			margin-left: 10px;
+		}
+		#list .elem {
+			color: #f00;
+			cursor: pointer;
+		}
+		#list .titulo {
+			color: #00f;
+		}
+		
+		#content {
+			float: right;
+			width: 80%;
+		}
+	</style>
 </head>
 <body>
 	
 	<div id="list"></div>
-	
-	<div id="Z"></div>
-	
-	<input type="button" value="Generate JSON" onclick="recalc_DOC()"></input>
-	<br/>
-	<textarea id="txt" style="width:100%;height:20em;"></textarea>
-	
+	<div id="content">
+		<div id="Z"></div>
+		
+		<input type="button" value="Generate JSON" onclick="recalc_DOC()"></input>
+		<br/>
+		<textarea id="txt" style="width:100%;height:20em;"></textarea>
+	</div>
 <script>
 	var C = crel2;
 	
@@ -56,19 +81,28 @@
 	
 	
 	
-	document.getElementById("list").appendChild(recursive_list_fill(DOC));
+	document.getElementById("list").appendChild(recursive_list_fill(DOC, "object"));
 	
-	function recursive_list_fill(doc){
+	function recursive_list_fill(doc, type){
 		var obj = C("div");
 		
-		for(var i = 0; i < types.length; i++){
-			var d = doc[types[i]];
-			if(d){
+		var types = info[type];
+		
+		for(var i in types){
+			C(obj, C("div", ["class", "titulo"], i));
+			if(types[i] instanceof Array){
+				var button = C("input", ["type", "button", "value", "Add to "+i]);
+				obj.appendChild(button);
+			}
+			
+			var d = doc[i];
+			if(d && d instanceof Array){
+				console.log(d);
 				for(var j = 0; j < d.length; j++){
+					var elem = C("div", ["class", "elem"], d[j].name);
 					obj.appendChild(
-						C("div", d[j].name, recursive_list_fill(d[j]))
+						C("div", ["class", "container"], elem, recursive_list_fill(d[j], types[i][0]))
 					);
-					console.log(obj.childNodes.length);
 				}
 			}
 		}

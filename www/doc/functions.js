@@ -34,3 +34,34 @@ function path_resolver(path, json){
 		return {"json": json_path, "type": "object"};
 	}
 }
+
+var info = {
+	variable: {
+		"name": "string",
+		"type": "string",
+		"description": "string",
+		"fast_description": "string"
+	},
+	parameter: {
+		"name": "string",
+		"type": "string",
+		"default": "string",
+		"explanation": "string"
+	},
+	function: {
+		"name": "string",
+		"return": "string",
+		"parameters": ["parameter"],
+		"description": "string",
+		"fast_description": "string"
+	},
+	object: {
+		"name": "string", // API, storage, crel2...
+		"description": "string", // blah
+		"fast_description": "string",
+		"variables": ["variable"],
+		"functions": ["function"],
+		"static functions": ["function"],
+		"objects": ["object"]
+	}
+}
