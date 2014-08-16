@@ -1,48 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<!--<script src="../js/epiceditor/js/epiceditor.min.js"></script>-->
+	<script type="text/javascript" src="../js/pagedown-extra/pagedown/Markdown.Converter.js"></script>
+	<script type="text/javascript" src="../js/pagedown-extra/Markdown.Extra.js"></script>
 	<script src="../js/crel2.js"></script>
+	<script src="doc.js"></script>
+	<link rel="stylesheet" href="../js/epiceditor/themes/preview/github.css" type="text/css" />
 </head>
 <body>
-	<div id="Z"></div>
+	<div id="epiceditor-preview"></div>
 
 <script>
-	var Z = document.getElementById("Z");
+	var converter = new Markdown.Converter();
+	Markdown.Extra.init(converter);
 	
-	var json = [
-		{
-			"name": "API",
-			"description": "blabla",
-			"variables": [
-				{
-					"name": "var1",
-					"type": "bool",
-					"description": "jorl"
-				}
-			],
-			"inherited members": []
-		}
-	];
+	function draw_doc(path){
+		document.getElementById("epiceditor-preview").innerHTML = converter.makeHtml(parse_doc(DOC, path));
+	}
 	
-	parse_doc(json);
 	
+	// Returns MarkDown
 	function parse_doc(json, path){
 		if(path === undefined) path = "";
+		
+		var types = ["variables","functions","static functions","objects"];
+		
 		/*
 		path = "";
 		path = "API";
 		path = "API/variables";
 		path = "API/variables var1";
 		*/
-		var json_tmp = path_resolver(path);
 		
+		function old_path_calc(path){
+			var oldpath = path.substr(0, path.lastIndexOf("/")), oldpath_gui = oldpath.replace(/\//g,".");
+
+			for(var i = 0; i < types.length; i++){
+				oldpath_gui = oldpath_gui.replace(new RegExp(types[i]+" ", "g"), "");
+			}
+			
+			return {
+				"uri": encodeURI(oldpath),
+				"gui": oldpath_gui
+			}
+		}
 		
+		var f = {
+			"objects": function(json){
+			
+			},
+			"object": function(json){
+				var oldpath = old_path_calc(path);
+				
+				var to_return = "#" + json.name + "\n";
+				if(oldpath.gui){
+					to_return += "######Inherits from: [" + oldpath.gui + "](#"+oldpath.uri+")\n";
+				}
+
+				to_return += "##Description\n" +
+				
+				json.description + "\n";
+				
+				for(var i = 0; i < types.length; i++){
+					if(json[types[i]]){
+						to_return += 
+						"##" + types[i][0].toUpperCase() + types[i].substr(1) + "\n" +
+						"Name|Description\n" +
+						"---|---\n";
+						for(var j = 0; j < json[types[i]].length; j++){
+							var c = json[types[i]][j];
+							to_return += "[" + c.name + "](#" + encodeURI(path+"/"+types[i]+" "+c.name) + ")|" + c.fast_description + "\n";
+						}
+					}
+				}
+				
+				return to_return;
+			},
+			"variable": function(json){
+			
+			},
+			"function": function(json){
+				var oldpath = old_path_calc(path);
+				
+				var to_return = "#" + json.name + "\n";
+				if(oldpath.gui){
+					to_return += "######Inherits from: [" + oldpath.gui + "](#"+oldpath.uri+")\n";
+				}
+
+				to_return += "##Description\n" +
+				
+				json.description + "\n";
+				
+				for(var i = 0; i < types.length; i++){
+					if(json[types[i]]){
+						to_return += 
+						"##" + types[i][0].toUpperCase() + types[i].substr(1) + "\n" +
+						"Name|Description\n" +
+						"---|---\n";
+						for(var j = 0; j < json[types[i]].length; j++){
+							var c = json[types[i]][j];
+							to_return += "[" + c.name + "](#" + encodeURI(path+"/"+types[i]+" "+c.name) + ")|" + c.fast_description + "\n";
+						}
+					}
+				}
+				
+				return to_return;
+			}
+		}
 		
-		console.log(json_tmp);
-		
-		function draw_variable(){}
-		function draw_function(){}
-		function draw_object(){}
 		
 		// types: variable(s), function(s), object(s)
 		function path_resolver(path){
@@ -54,7 +120,7 @@
 			while(path.length > 0){
 				var path_fragment = path.pop();
 				if(path_fragment !== ""){
-					var sub_path = ({"v":"variables","f":"functions","s":"static functions","i":"inherited members"})[path_fragment[0]];
+					var sub_path = ({"v":"variables","f":"functions","s":"static functions","o":"objects"})[path_fragment[0]];
 					var name_path = path_fragment;
 					if(sub_path){
 						json_path = json_path[sub_path];
@@ -70,14 +136,15 @@
 			}
 			if(sub_path){
 				if(json_path instanceof Array){
-					return {"json": json_path, "type": ({"v":"variables","f":"functions","s":"functions","i":"objects"})[sub_path[0]]};
+					return {"json": json_path, "type": ({"v":"variables","f":"functions","s":"functions","o":"objects"})[sub_path[0]]};
 				} else {
-					return {"json": json_path, "type": ({"v":"variable","f":"function","s":"function","i":"object"})[sub_path[0]]};
+					return {"json": json_path, "type": ({"v":"variable","f":"function","s":"function","o":"object"})[sub_path[0]]};
 				}
 			} else {
 				return {"json": json_path, "type": "object"};
 			}
 		}
+		
 		/*
 		variable = {
 			"name": string,
@@ -102,7 +169,38 @@
 			"inherited members": [object...]
 		}
 		*/
+		
+		
+		
+		
+		
+		
+		
+		
+		var resp = path_resolver(path);
+		
+		return f[resp.type](resp.json);
 	}
+	
+	function hashHandler(){
+		this.oldHash = window.location.hash;
+		this.Check;
+
+		var that = this;
+		var detect = function(){
+			if(that.oldHash!=window.location.hash){
+				//alert("HASH CHANGED - new hash: " + window.location.hash);
+				that.oldHash = window.location.hash;
+				draw_doc(that.oldHash.substr(1));
+			}
+		};
+		this.Check = setInterval(function(){ detect() }, 100);
+	}
+	var hashDetection = new hashHandler();
+	
+	
+	// Call functions
+	draw_doc(window.location.hash.substr(1));
 	
 </script>
 </body>

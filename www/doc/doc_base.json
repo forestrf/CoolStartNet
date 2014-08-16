@@ -7,28 +7,29 @@ type = "int"|"bool"|"string"|"object"|"function"|etc...
 variable = {
 	"name": string,
 	"type": type,
-	"description": string
+	"description": string,
+	"fast_description": string
 }
 
 parameter = {
 	"name": string,
-	"type": type,
-	"explanation": string
+	"type": type
 }
 
 function = {
 	"name": string,
-	"type": type,
 	"return": type,
 	"parameters": [parameter...],
-	"description": string
+	"description": string,
+	"fast_description": string
 }
 
 object = {
 	"name": string, // API, storage, crel2...
 	"description": string, // blah
+	"fast_description": string,
 	"variables": [variable...],
 	"functions": [function...],
 	"static functions": [function...],
-	"inherited members": [object...]
+	"objects": [object...]
 }
