@@ -16,7 +16,7 @@
 			position: absolute;
 		}
 		#list input {
-			display: block;
+			display: inline;
 		}
 		#list .container {
 			background-color: rgba(0, 0, 0, 0.1);
@@ -44,6 +44,9 @@
 		#list .attribute {
 			color: #00f;
 			cursor: pointer;
+		}
+		.foldable {
+			overflow: hidden;
 		}
 		
 		#content {
@@ -126,27 +129,45 @@
 		
 		var types = info[type];
 		
+		// order parameters
+		var dd = [[],[]];
 		for(var i in types){
+			dd[types[i] instanceof Array ? 1 : 0].push(i);
+		}
+		
+		dd = dd[0].concat(dd[1]);
+		
+		for(var z = 0; z < dd.length; z++){
+			var sub_obj = C("div", ["class", "foldable"]);
+			var i = dd[z];
 			var buttonEdit = C('span', i);
 			C(obj, C("div", buttonEdit));
 			if(types[i] instanceof Array){
-				var button = C("input", ["type", "button", "value", "Add to "+i]);
-				button.onclick = (function(new_type, type, doc){
-					return function(){
-						console.log(types);
-						console.log(type);
-						console.log(doc);
-						if(!doc[type]){
-							doc[type] = [];
+				C(obj,
+					C("input", ["type", "button", "value", "Fold", "onclick", (function(sub_obj){
+						return function(){
+							console.log(sub_obj);
+							if(sub_obj.style.height === "0px"){
+								sub_obj.style.height = "auto";
+								this.value = "Fold";
+							} else {
+								sub_obj.style.height = "0px";
+								this.value = "UnFold";
+							}
 						}
-						doc[type].push(clone(info[new_type]));
-						draw_list();
-					}
-				})(types[i][0], i, doc);
-				obj.appendChild(button);
+					})(sub_obj)]),
+					C("input", ["type", "button", "value", "Add to "+i, "onclick", (function(new_type, type, doc){
+						return function(){
+							if(!doc[type]){
+								doc[type] = [];
+							}
+							doc[type].push(clone(info[new_type]));
+							draw_list();
+						}
+					})(types[i][0], i, doc)])
+				);
 			} else {
-				buttonEdit.className = "attribute";
-				buttonEdit.onclick = (function(doc, i){
+				C(buttonEdit, ["class", "attribute", "onclick", (function(doc, i){
 					return function(){
 						editor.importFile("", doc[i].replace(/\t/g, "    "));
 						document.getElementById("button_save").onclick = function(){
@@ -157,17 +178,20 @@
 							draw_list();
 						}
 					}
-				})(doc, i);
+				})(doc, i)]);
 			}
-			
+
 			var d = doc[i];
 			if(d && d instanceof Array){
+				obj.appendChild(sub_obj);
 				for(var j = 0; j < d.length; j++){
-					var buttonUp = C('span', ["class", "up"], "up");
-					var buttonDown = C('span', ["class", "down"], "down");
-					var buttonDelete = C('span', ["class", "delete"], "delete");
+					var buttonUp = C('span', ["class", "up", "onclick", function(){}], "up");
+					var buttonDown = C('span', ["class", "down", "onclick", function(){}], "down");
+					var buttonDelete = C('span', ["class", "delete", "onclick", function(){
+						
+					}], "delete");
 					var elem = C("div", ["class", "elem"], d[j].name, buttonUp, buttonDown, buttonDelete);
-					obj.appendChild(
+					sub_obj.appendChild(
 						C("div", ["class", "container"], elem, recursive_list_fill(d[j], types[i][0]))
 					);
 				}
