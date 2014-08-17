@@ -58,7 +58,9 @@
 			preview: '/themes/preview/github.css',
 			editor: '/themes/editor/epic-dark.css'
 		},
-		autogrow: true
+		autogrow: {
+			minHeight: 400
+		}
 	}).load(function(){
 		previewer = this.getElement('previewer');
 
@@ -110,11 +112,10 @@
 		for(var z = 0; z < dd.length; z++){
 			(function(i){
 				var sub_obj = C("div", ["class", "foldable"]);
-				var buttonEdit = C('span', i);
-				obj.appendChild(C("div", buttonEdit));
 				if(types[i] instanceof Array){
 					C(obj,
-						C("input", ["type", "button", "value", "Fold", "onclick", function(){
+						C('br'),
+						C("input", ["type", "button", "value", i, "onclick", function(){
 							if(sub_obj.className.indexOf("folded") === -1){
 								sub_obj.className += " folded";
 								folded[doc.name+"-"+i] = true;
@@ -141,16 +142,18 @@
 						sub_obj.className += " folded";
 					}
 				} else {
-					C(buttonEdit, ["class", "attribute", "onclick", function(){
-						editor.importFile("", doc[i] ? doc[i].replace(/\t/g, "    ") : "");
-						document.getElementById("button_save").onclick = function(){
-							doc[i] = editor.exportFile().replace(/    /g, "\t");
-							if(doc[i].lastIndexOf("\n") === doc[i].length -1){
-								doc[i] = doc[i].substr(0, doc[i].length -1);
+					obj.appendChild(
+						C('div', ["class", "attribute", "onclick", function(){
+							editor.importFile("", doc[i] ? doc[i].replace(/\t/g, "    ") : "");
+							document.getElementById("button_save").onclick = function(){
+								doc[i] = editor.exportFile().replace(/    /g, "\t");
+								if(doc[i].lastIndexOf("\n") === doc[i].length -1){
+									doc[i] = doc[i].substr(0, doc[i].length -1);
+								}
+								draw_list();
 							}
-							draw_list();
-						}
-					}]);
+						}], i)
+					);
 				}
 
 				if(doc[i] && doc[i] instanceof Array){
@@ -166,7 +169,7 @@
 									}], "up")
 								);
 							}
-							else if(j < doc[i].length -1){
+							if(j < doc[i].length -1){
 								elem.appendChild(
 									C('span', ["class", "down", "onclick", function(){
 										doc[i] = array_swap(doc[i], j, j +1);
