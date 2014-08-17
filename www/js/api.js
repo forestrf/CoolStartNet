@@ -25,7 +25,8 @@ var API = (function(){
 				callback(localStorage.setItem(fullkey, JSON.stringify(value)) || true);
 			break;
 			case 2:
-				callback(localStorage.removeItem(fullkey));
+				localStorage.removeItem(fullkey);
+				callback(true);
 			break;
 			case 3:
 				var length = localStorage.length;

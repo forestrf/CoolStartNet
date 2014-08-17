@@ -137,7 +137,7 @@
 					);
 				} else {
 					C(buttonEdit, ["class", "attribute", "onclick", function(){
-						editor.importFile("", doc[i] ? doc[i].replace(/\t/g, "    ") : "string");
+						editor.importFile("", doc[i] ? doc[i].replace(/\t/g, "    ") : "");
 						document.getElementById("button_save").onclick = function(){
 							doc[i] = editor.exportFile().replace(/    /g, "\t");
 							if(doc[i].lastIndexOf("\n") === doc[i].length -1){
