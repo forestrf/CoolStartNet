@@ -140,8 +140,7 @@ var API = (function(){
 		function cRound(number, roundedTo){
 			return roundedTo === undefined ? number : (+number).toFixed(roundedTo);
 		}
-	
-		div["div"]  = div;
+
 		div["hide"] = function(){
 			div.style.display = 'none';
 			return div;
@@ -156,8 +155,6 @@ var API = (function(){
 			div.style.top  = top + "%";
 			return div;
 		};
-		div.setPosition["left"] = function(left){div.style.left = left + "%"; return div;};
-		div.setPosition["top"]  = function(top){ div.style.top  = top + "%";  return div;};
 		
 		div["getPosition"] = function(roundedTo){
 			return {
@@ -165,16 +162,12 @@ var API = (function(){
 				"top":  cRound(div.style.top.split("%")[0],  roundedTo)
 			};
 		};
-		div.getPosition["left"] = function(roundedTo){return cRound(div.style.left.split("%")[0], roundedTo)};
-		div.getPosition["top"]  = function(roundedTo){return cRound(div.style.top.split("%")[0],  roundedTo)};
 		
 		div["setSize"] = function(width, height){
 			div.style.width  = width  + "%";
 			div.style.height = height + "%";
 			return div;
 		};
-		div.setSize["width"]  = function(width){ div.style.width  = width  + "%"; return div;};
-		div.setSize["height"] = function(height){div.style.height = height + "%"; return div;};
 		
 		div["getSize"] = function(roundedTo){
 			return {
@@ -182,16 +175,10 @@ var API = (function(){
 				"height": cRound(div.style.height.split("%")[0], roundedTo)
 			};
 		};
-		div.getSize["width"]  = function(roundedTo){return cRound(div.style.width.split("%")[0],  roundedTo)};
-		div.getSize["height"] = function(roundedTo){return cRound(div.style.height.split("%")[0], roundedTo)};
 		
 		div["setPositionSize"] = function(left, top, width, height){
 			return div.setPosition(left, top).setSize(width, height);
 		};
-		div.setPositionSize["left"]   = div.setPosition["left"];
-		div.setPositionSize["top"]    = div.setPosition["top"];
-		div.setPositionSize["width"]  = div.setSize["width"];
-		div.setPositionSize["height"] = div.setSize["height"];
 		
 		div["getPositionSize"] = function(roundedTo){
 			var p = div.getPosition(roundedTo);
@@ -203,10 +190,6 @@ var API = (function(){
 				"height": s.height
 			}
 		};
-		div.setPositionSize["left"]   = div.setPosition["left"];
-		div.setPositionSize["top"]    = div.setPosition["top"];
-		div.setPositionSize["width"]  = div.setSize["width"];
-		div.setPositionSize["height"] = div.setSize["height"];
 		
 		div["addClass"] = function(className){
 			div.className += " "+className;
