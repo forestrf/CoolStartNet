@@ -138,7 +138,7 @@ var API = (function(){
 	
 	function div_base(div){
 		function cRound(number, roundedTo){
-			return roundedTo === undefined ? number : (+number).toFixed(roundedTo);
+			return roundedTo === undefined || roundedTo === -1 ? number : (+number).toFixed(roundedTo);
 		}
 
 		div["hide"] = function(){
@@ -199,13 +199,6 @@ var API = (function(){
 			div.className = div.className.split(className).join("").trim();
 			return div;
 		};
-		div["setPriority"] = function(zIndex){
-			div.style.zIndex = zIndex;
-			return div;
-		};
-		div["getPriority"] = function(zIndex){
-			return div.style.zIndex;
-		}
 	}
 	
 	
@@ -624,11 +617,11 @@ var API = (function(){
 					},
 					"linkMyCSS": function(name){
 						create_link_css(getUrl(widgetID, name));
-						return this; //API.Widget
+						return this; //API.widget
 					},
 					"linkExternalCSS": function(href){
 						create_link_css(href);
-						return this; //API.Widget
+						return this; //API.widget
 					}
 				},
 				"document": {
