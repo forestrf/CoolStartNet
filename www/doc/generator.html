@@ -18,7 +18,7 @@
 		<input type="button" value="Write data to JSON" id="button_save"></input>
 		<input type="button" value="Generate JSON" onclick="recalc_DOC()"></input>
 		<br/>
-		<textarea id="txt" style="width:100%;height:20em;"></textarea>
+		<textarea id="txt"></textarea>
 	</div>
 <script>
 	var C = crel2;
@@ -40,18 +40,19 @@
 					}
 				}
 			}
+			else if(doc[i] === ""){
+				delete doc[i];
+			}
 		}
 		return doc;
 	}
 	
 	
-	var previewer;
-
 	// https://github.com/OscarGodson/EpicEditor/issues/147#issuecomment-19862743
+	var previewer;
 	var editor = new EpicEditor({
 		container: 'previewer',
 		basePath: '../js/epiceditor',
-		useNativeFullscreen: true,
 		theme: {
 			base: '/themes/base/epiceditor.css',
 			preview: '/themes/preview/github.css',
@@ -107,10 +108,10 @@
 		dd = dd[0].concat(dd[1]);
 		
 		for(var z = 0; z < dd.length; z++){
-			var sub_obj = C("div", ["class", "foldable"]);
 			var i = dd[z];
+			var sub_obj = C("div", ["class", "foldable"]);
 			var buttonEdit = C('span', i);
-			C(obj, C("div", buttonEdit));
+			obj.appendChild(C("div", buttonEdit));
 			if(types[i] instanceof Array){
 				C(obj,
 					C("input", ["type", "button", "value", "Fold", "onclick", (function(sub_obj){
@@ -122,12 +123,12 @@
 							}
 						}
 					})(sub_obj)]),
-					C("input", ["type", "button", "value", "Add to "+i, "onclick", (function(new_type, type, doc){
+					C("input", ["type", "button", "value", "Add to "+i, "onclick", (function(type){
 						return function(){
 							if(!doc[type]){
 								doc[type] = [];
 							}
-							var temp_obj = clone(info[new_type]);
+							var temp_obj = clone(info[types[type][0]]);
 							for(var k in temp_obj){
 								if(temp_obj[k] instanceof Array){
 									delete temp_obj[k];
@@ -136,12 +137,12 @@
 							doc[type].push(temp_obj);
 							draw_list();
 						}
-					})(types[i][0], i, doc)])
+					})(i)])
 				);
 			} else {
-				C(buttonEdit, ["class", "attribute", "onclick", (function(doc, i){
+				C(buttonEdit, ["class", "attribute", "onclick", (function(i){
 					return function(){
-						editor.importFile("", doc[i].replace(/\t/g, "    "));
+						editor.importFile("", doc[i] ? doc[i].replace(/\t/g, "    ") : "string");
 						document.getElementById("button_save").onclick = function(){
 							doc[i] = editor.exportFile().replace(/    /g, "\t");
 							if(doc[i].lastIndexOf("\n") === doc[i].length -1){
@@ -150,44 +151,43 @@
 							draw_list();
 						}
 					}
-				})(doc, i)]);
+				})(i)]);
 			}
 
-			var d = doc[i];
-			if(d && d instanceof Array){
+			if(doc[i] && doc[i] instanceof Array){
 				obj.appendChild(sub_obj);
-				for(var j = 0; j < d.length; j++){
-					var elem = C("div", ["class", "elem"], C("b", d[j].name));
+				for(var j = 0; j < doc[i].length; j++){
+					var elem = C("div", ["class", "elem"], C("b", doc[i][j].name));
 					if(j > 0){
 						elem.appendChild(
-							C('span', ["class", "up", "onclick", (function(d, j){
+							C('span', ["class", "up", "onclick", (function(i, j){
 								return function(){
-									
+									doc[i] = array_swap(doc[i], j, j -1);
 									draw_list();
 								}
-							})(d, j)], "up")
+							})(i, j)], "up")
 						);
 					}
-					if(j < d.length -1){
+					if(j < doc[i].length -1){
 						elem.appendChild(
-							C('span', ["class", "down", "onclick", (function(d, j){
+							C('span', ["class", "down", "onclick", (function(i, j){
 								return function(){
-									
+									doc[i] = array_swap(doc[i], j, j +1);
 									draw_list();
 								}
-							})(d, j)], "down")
+							})(i, j)], "down")
 						);
 					}
 					elem.appendChild(
-						C('span', ["class", "delete", "onclick", (function(d, j){
+						C('span', ["class", "delete", "onclick", (function(i, j){
 							return function(){
-								d.splice(j, 1);
+								doc[i].splice(j, 1);
 								draw_list();
 							}
-						})(d, j)], "delete")
+						})(i, j)], "delete")
 					);
 					sub_obj.appendChild(
-						C("div", ["class", "container"], elem, recursive_list_fill(d[j], types[i][0]))
+						C("div", ["class", "container"], elem, recursive_list_fill(doc[i][j], types[i][0]))
 					);
 				}
 			}
@@ -206,6 +206,11 @@
 	}
 	
 	draw_list();
+	
+	function array_swap(array, from, to){
+		var b = array.splice(from,1);
+		return array.splice(0, to).concat(b).concat(array);
+	}
 	
 </script>
 </body>

@@ -51,3 +51,8 @@
 	overflow: auto;
 	position: absolute;
 }
+
+#txt {
+	width: 90%;
+	height: 25%;
+}
