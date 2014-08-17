@@ -36,7 +36,7 @@ var API = (function(){
 						localStorage.removeItem(tkey);
 					}
 				}
-				callback(1);
+				callback(true);
 			break;
 			case 4:
 				callback(localStorage.getItem(fullkey)?true:false);
@@ -91,7 +91,7 @@ var API = (function(){
 						var response = JSON.parse(xhr.responseText);
 					} catch (e) {
 						while (i < cb.length) {
-							cb[i++]['callback']();
+							cb[i++]['callback'](null);
 						}
 					}
 					
@@ -109,13 +109,13 @@ var API = (function(){
 								cb[i++]['callback'](JSON.parse(response['content'][widgetID][key]));
 								continue;
 							}
-							cb[i++]['callback']();
+							cb[i++]['callback'](null);
 						}
 						return;
 					}
 				}
 				while (i < cb.length) {
-					cb[i++]['callback']();
+					cb[i++]['callback'](null);
 				}
 			}
 		};

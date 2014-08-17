@@ -117,24 +117,28 @@
 				}
 				
 				var gui_parameters = [];
-				var explained_parameters = "";
-				for(var i = 0; i < json.parameters.length; i++){
-					explained_parameters += "|" + json.parameters[i].name + "|" + json.parameters[i].type + "|";
-				
-					gui_parameters.push("**" + json.parameters[i].name + "**: " + json.parameters[i].type);
-					if(json.parameters[i].default){
-						gui_parameters[i] += " = " + json.parameters[i].default;
-						explained_parameters += json.parameters[i].default + "|" + json.parameters[i].explanation + "|\n";
-					} else {
-						explained_parameters += "|" + json.parameters[i].explanation + "|\n";
+				if(json.parameters){
+					var explained_parameters = "";
+					for(var i = 0; i < json.parameters.length; i++){
+						explained_parameters += "|" + json.parameters[i].name + "|" + json.parameters[i].type + "|";
+					
+						gui_parameters.push("**" + json.parameters[i].name + "**: " + json.parameters[i].type);
+						if(json.parameters[i].default){
+							gui_parameters[i] += " = " + json.parameters[i].default;
+							explained_parameters += json.parameters[i].default + "|" + json.parameters[i].explanation + "|\n";
+						} else {
+							explained_parameters += "|" + json.parameters[i].explanation + "|\n";
+						}
 					}
 				}
+					
+				to_return += ">function " + json.name + "(" + gui_parameters.join(", ") + ")" + (json.return ? ": " + json.return : "") + ";\n\n";
 				
-				to_return += ">function " + json.name + "(" + gui_parameters.join(", ") + "): " + json.return + ";\n\n"+
-				
-				"|variable|type|default|explanation|\n"+
-				"|---|---|---|---|\n"+
-				explained_parameters+"\n";
+				if(json.parameters){	
+					to_return += "|variable|type|default|explanation|\n"+
+					"|---|---|---|---|\n"+
+					explained_parameters+"\n";
+				}
 
 				to_return += "##Description\n" +
 				
