@@ -93,6 +93,7 @@
 		document.getElementById("list").appendChild(recursive_list_fill(DOC, "object"));
 	}
 	
+	var folded = {};
 	
 	function recursive_list_fill(doc, type){
 		var obj = C("div");
@@ -104,7 +105,6 @@
 		for(var i in types){
 			dd[types[i] instanceof Array ? 1 : 0].push(i);
 		}
-		
 		dd = dd[0].concat(dd[1]);
 		
 		for(var z = 0; z < dd.length; z++){
@@ -117,8 +117,10 @@
 						C("input", ["type", "button", "value", "Fold", "onclick", function(){
 							if(sub_obj.className.indexOf("folded") === -1){
 								sub_obj.className += " folded";
+								folded[doc.name+"-"+i] = true;
 							} else {
 								sub_obj.className = sub_obj.className.replace(" folded", "");
+								delete folded[doc.name+"-"+i];
 							}
 						}]),
 						C("input", ["type", "button", "value", "Add to "+i, "onclick", function(){
@@ -135,6 +137,9 @@
 							draw_list();
 						}])
 					);
+					if(folded[doc.name+"-"+i]){
+						sub_obj.className += " folded";
+					}
 				} else {
 					C(buttonEdit, ["class", "attribute", "onclick", function(){
 						editor.importFile("", doc[i] ? doc[i].replace(/\t/g, "    ") : "");
@@ -199,7 +204,7 @@
 	draw_list();
 	
 	function array_swap(array, from, to){
-		var b = array.splice(from,1);
+		var b = array.splice(from, 1);
 		return array.splice(0, to).concat(b).concat(array);
 	}
 	
