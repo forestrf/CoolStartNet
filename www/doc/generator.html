@@ -108,40 +108,35 @@
 		dd = dd[0].concat(dd[1]);
 		
 		for(var z = 0; z < dd.length; z++){
-			var i = dd[z];
-			var sub_obj = C("div", ["class", "foldable"]);
-			var buttonEdit = C('span', i);
-			obj.appendChild(C("div", buttonEdit));
-			if(types[i] instanceof Array){
-				C(obj,
-					C("input", ["type", "button", "value", "Fold", "onclick", (function(sub_obj){
-						return function(){
+			(function(i){
+				var sub_obj = C("div", ["class", "foldable"]);
+				var buttonEdit = C('span', i);
+				obj.appendChild(C("div", buttonEdit));
+				if(types[i] instanceof Array){
+					C(obj,
+						C("input", ["type", "button", "value", "Fold", "onclick", function(){
 							if(sub_obj.className.indexOf("folded") === -1){
 								sub_obj.className += " folded";
 							} else {
 								sub_obj.className = sub_obj.className.replace(" folded", "");
 							}
-						}
-					})(sub_obj)]),
-					C("input", ["type", "button", "value", "Add to "+i, "onclick", (function(type){
-						return function(){
-							if(!doc[type]){
-								doc[type] = [];
+						}]),
+						C("input", ["type", "button", "value", "Add to "+i, "onclick", function(){
+							if(!doc[i]){
+								doc[i] = [];
 							}
-							var temp_obj = clone(info[types[type][0]]);
+							var temp_obj = clone(info[types[i][0]]);
 							for(var k in temp_obj){
 								if(temp_obj[k] instanceof Array){
 									delete temp_obj[k];
 								}
 							}
-							doc[type].push(temp_obj);
+							doc[i].push(temp_obj);
 							draw_list();
-						}
-					})(i)])
-				);
-			} else {
-				C(buttonEdit, ["class", "attribute", "onclick", (function(i){
-					return function(){
+						}])
+					);
+				} else {
+					C(buttonEdit, ["class", "attribute", "onclick", function(){
 						editor.importFile("", doc[i] ? doc[i].replace(/\t/g, "    ") : "string");
 						document.getElementById("button_save").onclick = function(){
 							doc[i] = editor.exportFile().replace(/    /g, "\t");
@@ -150,47 +145,43 @@
 							}
 							draw_list();
 						}
-					}
-				})(i)]);
-			}
-
-			if(doc[i] && doc[i] instanceof Array){
-				obj.appendChild(sub_obj);
-				for(var j = 0; j < doc[i].length; j++){
-					var elem = C("div", ["class", "elem"], C("b", doc[i][j].name));
-					if(j > 0){
-						elem.appendChild(
-							C('span', ["class", "up", "onclick", (function(i, j){
-								return function(){
-									doc[i] = array_swap(doc[i], j, j -1);
-									draw_list();
-								}
-							})(i, j)], "up")
-						);
-					}
-					if(j < doc[i].length -1){
-						elem.appendChild(
-							C('span', ["class", "down", "onclick", (function(i, j){
-								return function(){
-									doc[i] = array_swap(doc[i], j, j +1);
-									draw_list();
-								}
-							})(i, j)], "down")
-						);
-					}
-					elem.appendChild(
-						C('span', ["class", "delete", "onclick", (function(i, j){
-							return function(){
-								doc[i].splice(j, 1);
-								draw_list();
-							}
-						})(i, j)], "delete")
-					);
-					sub_obj.appendChild(
-						C("div", ["class", "container"], elem, recursive_list_fill(doc[i][j], types[i][0]))
-					);
+					}]);
 				}
-			}
+
+				if(doc[i] && doc[i] instanceof Array){
+					obj.appendChild(sub_obj);
+					for(var j = 0; j < doc[i].length; j++){
+						(function(j){
+							var elem = C("div", ["class", "elem"], C("b", doc[i][j].name));
+							if(j > 0){
+								elem.appendChild(
+									C('span', ["class", "up", "onclick", function(){
+										doc[i] = array_swap(doc[i], j, j -1);
+										draw_list();
+									}], "up")
+								);
+							}
+							else if(j < doc[i].length -1){
+								elem.appendChild(
+									C('span', ["class", "down", "onclick", function(){
+										doc[i] = array_swap(doc[i], j, j +1);
+										draw_list();
+									}], "down")
+								);
+							}
+							elem.appendChild(
+								C('span', ["class", "delete", "onclick", function(){
+									doc[i].splice(j, 1);
+									draw_list();
+								}], "delete")
+							);
+							sub_obj.appendChild(
+								C("div", ["class", "container"], elem, recursive_list_fill(doc[i][j], types[i][0]))
+							);
+						})(j);
+					}
+				}
+			})(dd[z]);
 		}
 		return obj;
 	}
