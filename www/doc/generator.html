@@ -8,55 +8,7 @@
 	<script src="doc.js"></script>
 	<link rel="stylesheet" type="text/css" href="../css/reset.css"/>
 	<link rel="stylesheet" type="text/css" href="../js/prettify/prettify.css"/>
-	<style>
-		#list {
-			width: 20%;
-			height: 100%;
-			overflow: auto;
-			position: absolute;
-		}
-		#list input {
-			display: inline;
-		}
-		#list .container {
-			background-color: rgba(0, 0, 0, 0.1);
-			margin-left: 10px;
-		}
-		#list .elem {
-			color: #000;
-		}
-		#list .elem span {
-			cursor: pointer;
-			float: right;
-		}
-		#list .elem .up {
-			background-color: #000;
-			color: #00FF00;
-		}
-		#list .elem .down {
-			background-color: #000;
-			color: #FFFF00;
-		}
-		#list .elem .delete {
-			background-color: #000;
-			color: #FF0000;
-		}
-		#list .attribute {
-			color: #00f;
-			cursor: pointer;
-		}
-		.foldable {
-			overflow: hidden;
-		}
-		
-		#content {
-			right: 0;
-			width: 80%;
-			height: 100%;
-			overflow: auto;
-			position: absolute;
-		}
-	</style>
+	<link rel="stylesheet" type="text/css" href="generator.css"/>
 </head>
 <body>
 	<div id="list"></div>
@@ -72,8 +24,26 @@
 	var C = crel2;
 	
 	function recalc_DOC(){
+		DOC = clean_doc(DOC);
 		document.getElementById("txt").value = JSON.stringify(DOC);
 	}
+	
+	function clean_doc(doc){
+		for(var i in doc){
+			if(doc[i] instanceof Array){
+				var l = doc[i].length;
+				if(l === 0){
+					delete doc[i];
+				} else {
+					for(var j = 0; j < l; j++){
+						doc[i][j] = clean_doc(doc[i][j]);
+					}
+				}
+			}
+		}
+		return doc;
+	}
+	
 	
 	var previewer;
 
@@ -81,7 +51,6 @@
 	var editor = new EpicEditor({
 		container: 'previewer',
 		basePath: '../js/epiceditor',
-		localStorageName: 'epiceditor',
 		useNativeFullscreen: true,
 		theme: {
 			base: '/themes/base/epiceditor.css',
@@ -89,7 +58,7 @@
 			editor: '/themes/editor/epic-dark.css'
 		},
 		autogrow: true
-	}).load(function() {
+	}).load(function(){
 		previewer = this.getElement('previewer');
 
 		// Prettify JS
@@ -110,7 +79,7 @@
 		var previewerBody = previewer.body;
 		var codeBlocks = previewerBody.getElementsByTagName('code');
 
-		for (var i = 0; i < codeBlocks.length; i++)
+		for(var i = 0; i < codeBlocks.length; i++)
 			codeBlocks[i].className += ' prettyprint';
 
 		prettyPrint(null, previewerBody);
@@ -146,13 +115,10 @@
 				C(obj,
 					C("input", ["type", "button", "value", "Fold", "onclick", (function(sub_obj){
 						return function(){
-							console.log(sub_obj);
-							if(sub_obj.style.height === "0px"){
-								sub_obj.style.height = "auto";
-								this.value = "Fold";
+							if(sub_obj.className.indexOf("folded") === -1){
+								sub_obj.className += " folded";
 							} else {
-								sub_obj.style.height = "0px";
-								this.value = "UnFold";
+								sub_obj.className = sub_obj.className.replace(" folded", "");
 							}
 						}
 					})(sub_obj)]),
@@ -161,7 +127,13 @@
 							if(!doc[type]){
 								doc[type] = [];
 							}
-							doc[type].push(clone(info[new_type]));
+							var temp_obj = clone(info[new_type]);
+							for(var k in temp_obj){
+								if(temp_obj[k] instanceof Array){
+									delete temp_obj[k];
+								}
+							}
+							doc[type].push(temp_obj);
 							draw_list();
 						}
 					})(types[i][0], i, doc)])
@@ -185,12 +157,35 @@
 			if(d && d instanceof Array){
 				obj.appendChild(sub_obj);
 				for(var j = 0; j < d.length; j++){
-					var buttonUp = C('span', ["class", "up", "onclick", function(){}], "up");
-					var buttonDown = C('span', ["class", "down", "onclick", function(){}], "down");
-					var buttonDelete = C('span', ["class", "delete", "onclick", function(){
-						
-					}], "delete");
-					var elem = C("div", ["class", "elem"], d[j].name, buttonUp, buttonDown, buttonDelete);
+					var elem = C("div", ["class", "elem"], C("b", d[j].name));
+					if(j > 0){
+						elem.appendChild(
+							C('span', ["class", "up", "onclick", (function(d, j){
+								return function(){
+									
+									draw_list();
+								}
+							})(d, j)], "up")
+						);
+					}
+					if(j < d.length -1){
+						elem.appendChild(
+							C('span', ["class", "down", "onclick", (function(d, j){
+								return function(){
+									
+									draw_list();
+								}
+							})(d, j)], "down")
+						);
+					}
+					elem.appendChild(
+						C('span', ["class", "delete", "onclick", (function(d, j){
+							return function(){
+								d.splice(j, 1);
+								draw_list();
+							}
+						})(d, j)], "delete")
+					);
 					sub_obj.appendChild(
 						C("div", ["class", "container"], elem, recursive_list_fill(d[j], types[i][0]))
 					);

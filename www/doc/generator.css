@@ -1,0 +1,53 @@
+#list {
+	width: 20%;
+	height: 100%;
+	overflow: auto;
+	position: absolute;
+}
+#list input {
+	display: inline;
+}
+#list .container {
+	margin-left: 10px;
+	background-color: rgba(0, 0, 0, 0.15);
+}
+#list .elem {
+	color: #000;
+}
+#list .elem span {
+	float: right;
+	cursor: pointer;
+	margin: 0 1px;
+	padding: 0 2px;
+}
+#list .elem .up {
+	color: #0F0;
+	background-color: #000;
+}
+#list .elem .down {
+	color: #FF0;
+	background-color: #000;
+}
+#list .elem .delete {
+	color: #F00;
+	background-color: #000;
+}
+#list .attribute {
+	color: #00f;
+	cursor: pointer;
+}
+.foldable {
+	overflow: hidden;
+}
+.foldable.folded {
+	height: 0;
+	border-top: 5px solid #f00;
+}
+
+#content {
+	right: 0;
+	width: 80%;
+	height: 100%;
+	overflow: auto;
+	position: absolute;
+}
