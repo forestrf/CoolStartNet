@@ -102,9 +102,7 @@
 		// Add JS / CSS
 		previewer.body.appendChild(scriptTag);
 		previewer.head.appendChild(cssTag);
-	});
-
-	editor.on('preview', function() {
+	}).on('preview', function() {
 		// Add necessary classes to <code> elements
 		var previewerBody = previewer.body;
 		var codeBlocks = previewerBody.getElementsByTagName('code');
@@ -117,8 +115,11 @@
 	
 	
 	
+	function draw_list(){
+		document.getElementById("list").innerHTML = "";
+		document.getElementById("list").appendChild(recursive_list_fill(DOC, "object"));
+	}
 	
-	document.getElementById("list").appendChild(recursive_list_fill(DOC, "object"));
 	
 	function recursive_list_fill(doc, type){
 		var obj = C("div");
@@ -127,11 +128,24 @@
 		
 		for(var i in types){
 			var buttonEdit = C('span', i);
-			C(obj, C("div", ["class", "attribute"], buttonEdit));
+			C(obj, C("div", buttonEdit));
 			if(types[i] instanceof Array){
 				var button = C("input", ["type", "button", "value", "Add to "+i]);
+				button.onclick = (function(new_type, type, doc){
+					return function(){
+						console.log(types);
+						console.log(type);
+						console.log(doc);
+						if(!doc[type]){
+							doc[type] = [];
+						}
+						doc[type].push(clone(info[new_type]));
+						draw_list();
+					}
+				})(types[i][0], i, doc);
 				obj.appendChild(button);
 			} else {
+				buttonEdit.className = "attribute";
 				buttonEdit.onclick = (function(doc, i){
 					return function(){
 						editor.importFile("", doc[i].replace(/\t/g, "    "));
@@ -140,6 +154,7 @@
 							if(doc[i].lastIndexOf("\n") === doc[i].length -1){
 								doc[i] = doc[i].substr(0, doc[i].length -1);
 							}
+							draw_list();
 						}
 					}
 				})(doc, i);
@@ -161,8 +176,17 @@
 		return obj;
 	}
 	
+	function clone(obj){
+		var target = {};
+		for(var i in obj){
+			if(obj.hasOwnProperty(i)){
+				target[i] = obj[i];
+			}
+		}
+		return target;
+	}
 	
-	
+	draw_list();
 	
 </script>
 </body>
