@@ -34,12 +34,13 @@
 	// Returns MarkDown
 	function parse_doc(json, path){
 		if(path === undefined) path = "";
+		path = decodeURI(path);
 		
 		/*
 		path = "";
-		path = "API";
-		path = "API/variables";
-		path = "API/variables var1";
+		path = "objects-API";
+		path = "objects-API/variables";
+		path = "objects-API/variables-var1";
 		*/
 		
 		function old_path_calc(path){
@@ -105,9 +106,7 @@
 				
 				return to_return;
 			},
-			"variable": function(json){
-			
-			},
+			//"variable": function(json){},
 			"function": function(json){
 				var oldpath = old_path_calc(path);
 				

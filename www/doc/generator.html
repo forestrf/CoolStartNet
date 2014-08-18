@@ -144,9 +144,10 @@
 				} else {
 					obj.appendChild(
 						C('div', ["class", "attribute", "onclick", function(){
+							// tab -> 4 spaces -> tab
 							editor.importFile("", doc[i] ? doc[i].replace(/\t/g, "    ") : "");
 							document.getElementById("button_save").onclick = function(){
-								doc[i] = editor.exportFile().replace(/    /g, "\t");
+								doc[i] = editor.exportFile().replace(/    /g, "	");
 								if(doc[i].lastIndexOf("\n") === doc[i].length -1){
 									doc[i] = doc[i].substr(0, doc[i].length -1);
 								}
