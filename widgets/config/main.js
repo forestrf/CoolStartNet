@@ -45,7 +45,7 @@ closebutton.onclick = function(){
 	configwidgetDiv.innerHTML = '';
 	configwidgetDiv.hide();
 	if(backbutton){
-		backbutton.remove();
+		backbutton.parentNode.removeChild(backbutton);
 	}
 	// Hide window
 	contentDiv.removeClass('visible');
@@ -143,14 +143,14 @@ function positioning(params, callback){
 	
 	// Callbacks
 	buttonOK.onclick = function(){
-		contentDivRect.remove();
+		contentDivRect.parentNode.removeChild(contentDivRect);
 		contentDiv.unHide();
 		if(typeof callback === "function"){
 			callback(rectPosition.getPositionSize());
 		}
 	}
 	buttonCANCEL.onclick = function(){
-		contentDivRect.remove();
+		contentDivRect.parentNode.removeChild(contentDivRect);
 		contentDiv.unHide();
 		if(typeof callback === "function"){
 			callback(false);
@@ -369,7 +369,7 @@ gearDiv.onclick = function(){
 					configwidgetDiv.innerHTML = '';
 					contentwidgetsDiv.unHide();
 					configwidgetDiv.hide();
-					backbutton.remove();
+					backbutton.parentNode.removeChild(backbutton);
 				};
 			};
 		})(widget);

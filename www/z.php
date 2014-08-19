@@ -43,11 +43,13 @@ $db = new DB();
 </head>
 <body>
 
-<script id = "delete_me">
+<script id="delete_me">
 	
 (function(){
 	// prevent innerHTML from reading the widgetID + secret to prevent widgets manipulate other widgets without consent
-	document.getElementById("delete_me").remove();
+	var t = document.getElementById("delete_me");
+	t.parentNode.removeChild(t);
+	delete t;
 	// Prevent eval
 	eval = function(){};
 

@@ -5,7 +5,10 @@
 	cursor: pointer;
 	position: fixed;
 	font-size: 2em;
-	transition: all 0.5s ease 0s;
+	-webkit-transition: color 0.5s ease, text-shadow 0.5s ease;
+	-moz-transition: color 0.5s ease, text-shadow 0.5s ease;
+	-o-transition: color 0.5s ease, text-shadow 0.5s ease;
+	transition: color 0.5s ease, text-shadow 0.5s ease;
 	text-shadow: 3px 3px #000;
 }
 
@@ -23,13 +26,27 @@
 	opacity: 0;
 	z-index: 999999;
 	position: fixed;
-	transition: opacity 0.5s ease 0s, top 0s ease 0.5s;
-	background: linear-gradient(to bottom, #171717 0%, rgba(40, 40, 40, 0.8) 100%) transparent;
+	-webkit-transition: opacity 0.5s ease, top 0s ease 0.5s;
+	-moz-transition: opacity 0.5s ease, top 0s ease 0.5s;
+	-o-transition: opacity 0.5s ease, top 0s ease 0.5s;
+	transition: opacity 0.5s ease, top 0s ease 0.5s;
+	
+	background: #171717;
+	background: -moz-linear-gradient(top,  #171717 0%, rgba(40, 40, 40, 0.8) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#171717), color-stop(100%,rgba(40, 40, 40, 0.8)));
+	background: -webkit-linear-gradient(top,  #171717 0%,rgba(40, 40, 40, 0.8) 100%);
+	background: -o-linear-gradient(top,  #171717 0%,rgba(40, 40, 40, 0.8) 100%);
+	background: -ms-linear-gradient(top,  #171717 0%,rgba(40, 40, 40, 0.8) 100%);
+	background: linear-gradient(to bottom,  #171717 0%,rgba(40, 40, 40, 0.8) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#171717', endColorstr='#000000',GradientType=0 );
 }
 .config_contentdiv.visible {
 	top: 0;
 	opacity: 1;
-	transition: opacity 0.5s ease 0s;
+	-webkit-transition: opacity 0.5s ease;
+	-moz-transition: opacity 0.5s ease;
+	-o-transition: opacity 0.5s ease;
+	transition: opacity 0.5s ease;
 }
 
 .config_contentdiv .closebutton, .config_contentdiv .backbutton {
@@ -63,7 +80,10 @@
 	margin: 0 1em 1em 0;
 	display: inline-block;
 	padding: 1em;
-	transition: all 0.2s ease 0s;
+	-webkit-transition: all 0.2s ease;
+	-moz-transition: all 0.2s ease;
+	-o-transition: all 0.2s ease;
+	transition: all 0.2s ease;
 }
 
 .config_contentdiv .contentwidgets > div:hover {
@@ -212,7 +232,10 @@
 	color: #d0d0d0;
 	border: 1px solid #a0a0a0;
 	padding: 0.3em;
-	transition: all 0.2s ease 0s;
+	-webkit-transition: all 0.2s ease;
+	-moz-transition: all 0.2s ease;
+	-o-transition: all 0.2s ease;
+	transition: all 0.2s ease;
 	background-color: transparent;
 }
 

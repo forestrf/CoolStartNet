@@ -25,7 +25,10 @@
 	display: block;
 	padding: 5px 0 5px 30px;
 	word-break: break-all;
-	transition: background-color 0.5s ease 0s;
+	-webkit-transition: background-color 0.5s ease;
+	-moz-transition: background-color 0.5s ease;
+	-o-transition: background-color 0.5s ease;
+	transition: background-color 0.5s ease;
 	line-height: 1.2em;
 	margin-bottom: 5px;
 	border-radius: 15px;
@@ -42,7 +45,10 @@
 
 .bookmarks a:hover {
 	color: #000;
-	transition: box-shadow 0.2s ease 0s;
+	-webkit-transition: box-shadow 0.2s ease;
+	-moz-transition: box-shadow 0.2s ease;
+	-o-transition: box-shadow 0.2s ease;
+	transition: box-shadow 0.2s ease;
 	background-color: #EEE !important;
 }
 
@@ -50,7 +56,10 @@
 /*FOLDERS*/
 .bookmarks .folder {
 	overflow: hidden;
-	transition: background-color .5s ease 0s;
+	-webkit-transition: background-color 0.5s ease;
+	-moz-transition: background-color 0.5s ease;
+	-o-transition: background-color 0.5s ease;
+	transition: background-color 0.5s ease;
 	padding-left: 15px;
 }
 
