@@ -431,12 +431,12 @@ var API = (function(){
 				}
 				return result;
 			},
-			"removeBookmark": function(path, index, custom){
-				if(custom === undefined){custom = false}
+			"removeBookmark": function(path, index, force){
+				if(force === undefined){force = false}
 				var real_path = path_resolver(path);
 				if(!real_path){return this;}
 				
-				if(custom || real_path["bookmarks"][index].type === "bookmark"){
+				if(force || real_path["bookmarks"][index].type === "bookmark"){
 					real_path["bookmarks"].splice(index, 1);
 				}
 				return this;
@@ -466,14 +466,14 @@ var API = (function(){
 				return this;
 			},
 			// Moves a bookmark from one place to another. index starts from 0
-			"moveBookmark": function(path_from, index_from, path_to, index_to, custom){
-				if(custom === undefined){custom = false}
+			"moveBookmark": function(path_from, index_from, path_to, index_to, force){
+				if(force === undefined){force = false}
 				var real_path_from = path_resolver(path_from);
 				var real_path_to   = path_resolver(path_to);
 				if(!real_path_from){return this;}
 				if(!real_path_to){return this;}
 				
-				if(custom || real_path_from["bookmarks"][index_from].type === "bookmark"){
+				if(force || real_path_from["bookmarks"][index_from].type === "bookmark"){
 					var bookmark = real_path_from["bookmarks"].splice(index_from ,1)[0];
 					var temp = real_path_to["bookmarks"].splice(index_to);
 					real_path_to["bookmarks"] = real_path_to["bookmarks"].concat(bookmark).concat(temp);
@@ -519,7 +519,7 @@ var API = (function(){
 				real_path_to["folders"][name_index_from] = folder;
 				return this;
 			},
-			"editBookmark": function(path, index, uri, title, icon_uri){
+			"editBookmark": function(path, index, uri, title, favicon_uri){
 				var real_path = path_resolver(path);
 				if(!real_path){return this;}
 				
@@ -527,23 +527,34 @@ var API = (function(){
 					type: "bookmark",
 					uri: uri,
 					title: title,
-					iconuri: icon_uri
+					iconuri: favicon_uri
 				};
 				return this;
 			},
-			"editFolder": function(path, old_name, new_name){
+			"editFolder": function(path, old_name_index, new_name){
 				var real_path = path_resolver(path);
+				var old_name = old_name_index;
 				if(!real_path){return this;}
 				
-				for(var i = 0; i < real_path["bookmarks"].length; i++){
-					if(real_path["bookmarks"][i].name === old_name){
-						if(real_path["bookmarks"][i].type !== "folder"){
-							return this;
-						}
-						real_path["bookmarks"][i].name = new_name;
-						break;
+				if(typeof old_name_index === "number"){
+					if(real_path["bookmarks"][old_name_index].type !== "folder"){
+						return this;
 					}
+					old_name = real_path["bookmarks"][old_name_index].name;
+					real_path["bookmarks"][old_name_index].name = new_name;
 				}
+				else{
+					for(var i = 0; i < real_path["bookmarks"].length; i++){
+						if(real_path["bookmarks"][i].name === old_name){
+							if(real_path["bookmarks"][i].type !== "folder"){
+								return this;
+							}
+							real_path["bookmarks"][i].name = new_name;
+							break;
+						}
+					}					
+				}
+				
 				
 				real_path["folders"][new_name] = real_path["folders"][old_name];
 				delete real_path["folders"][old_name];
