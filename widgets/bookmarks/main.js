@@ -56,10 +56,27 @@ var folders_opened = {};
 
 function draw_bookmarks(){
 	ventana.innerHTML = "";
-	recursive_bookmark_parser(ventana, "", bookmarks.getElements(""));
+	recursive_bookmark_parser(ventana, "", getElementFormatted(""));
 	ventana.appendChild(buttonEdit);
 	ventana.appendChild(buttonConfirm);
 	ventana.appendChild(buttonCancel);
+}
+
+function getElementFormatted(path){
+	var temp = bookmarks.getElements(path);
+	for(var i = 0; i < temp.length; i++){
+		if(temp[i].type === "folder"){
+			temp[i] = temp[i].folder;
+		}
+		else if(temp[i].type !== "folder"){
+			temp[i] = {
+				uri: temp[i].uri,
+				title: temp[i].title,
+				iconuri: temp[i].iconuri
+			};
+		}
+	}
+	return temp;
 }
 
 
@@ -81,7 +98,7 @@ function recursive_bookmark_parser(element, path, elements){
 				element.appendChild(deleteButton);
 				element.appendChild(editButton);
 				
-				recursive_bookmark_parser(folder_obj, path+"/"+elements[i], bookmarks.getElements(path+"/"+elements[i]));
+				recursive_bookmark_parser(folder_obj, path+"/"+elements[i], getElementFormatted(path+"/"+elements[i]));
 				element.appendChild(folder_obj);
 				
 				folderTitle.onclick = (function(folder, path){
@@ -229,10 +246,10 @@ function ok(){
 		break;
 	}
 	draw_bookmarks();
-	bookmark_manager_div.remove();
+	bookmark_manager_div.parentNode.removeChild(bookmark_manager_div);
 }
 function cancel(){
-	bookmark_manager_div.remove();
+	bookmark_manager_div.parentNode.removeChild(bookmark_manager_div);
 }
 
 // Function for the config widgetID. It returns the html object to append on the config window

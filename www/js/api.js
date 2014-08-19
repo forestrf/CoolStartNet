@@ -331,7 +331,7 @@ var API = (function(){
 				return this;
 			},
 			"addFolder": function(path, name){
-				if(name.indexOf("/") !== -1){
+				if(name.indexOf("/") !== -1 || name.length === 0){
 					return this;
 				}
 				
@@ -359,7 +359,11 @@ var API = (function(){
 				if(!real_path){return false;}
 				
 				if(real_path["bookmarks"][index] && real_path["bookmarks"][index].type !== "folder"){
-					return real_path["bookmarks"][index];
+					return {
+						uri: real_path["bookmarks"][index].uri,
+						title: real_path["bookmarks"][index].title,
+						iconuri: real_path["bookmarks"][index].iconuri
+					};
 				}
 				return false;
 			},
@@ -371,7 +375,12 @@ var API = (function(){
 				var result = [];
 				for(var i = 0; i < real_path["bookmarks"].length; i++){
 					if(real_path["bookmarks"][i].type !== "folder"){
-						result.push(real_path["bookmarks"][i]);
+						result.push({
+							index: i,
+							uri: real_path["bookmarks"][i].uri,
+							title: real_path["bookmarks"][i].title,
+							iconuri: real_path["bookmarks"][i].iconuri
+						});
 					}
 				}
 				return result;
@@ -384,7 +393,10 @@ var API = (function(){
 				var result = [];
 				for(var i = 0; i < real_path["bookmarks"].length; i++){
 					if(real_path["bookmarks"][i].type === "folder"){
-						result.push(real_path["bookmarks"][i].name);
+						result.push({
+							index: i,
+							folder: real_path["bookmarks"][i].name
+						});
 					}
 				}
 				return result;
@@ -397,10 +409,24 @@ var API = (function(){
 				var result = [];
 				for(var i = 0; i < real_path["bookmarks"].length; i++){
 					if(real_path["bookmarks"][i].type === "folder"){
-						result.push(real_path["bookmarks"][i].name);
+						result.push({
+							type: 'folder',
+							folder: real_path["bookmarks"][i].name
+						});
 					}
-					else if(real_path["bookmarks"][i].type !== "folder"){
-						result.push(real_path["bookmarks"][i]);
+					else if(real_path["bookmarks"][i].type === "bookmark"){
+						result.push({
+							type: 'bookmark',
+							uri: real_path["bookmarks"][i].uri,
+							title: real_path["bookmarks"][i].title,
+							iconuri: real_path["bookmarks"][i].iconuri
+						});
+					}
+					else{
+						result.push({
+							type: 'unknown',
+							element: real_path["bookmarks"][i]
+						});
 					}
 				}
 				return result;
