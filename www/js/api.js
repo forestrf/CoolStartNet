@@ -317,8 +317,8 @@ var API = (function(){
 		
 		return {
 			"getObject": function(){return bookmarks},
-			"setObject": function(obj){bookmarks = obj},
-			"addBookmark": function(path, uri, title, icon_uri){
+			"setObject": function(obj){bookmarks = obj; return this},
+			"addBookmark": function(path, uri, title, favicon_uri){
 				var real_path = path_resolver(path);
 				if(!real_path){return this;}
 				
@@ -326,11 +326,15 @@ var API = (function(){
 					type: "bookmark",
 					uri: uri,
 					title: title,
-					iconuri: icon_uri
+					iconuri: favicon_uri
 				});
 				return this;
 			},
 			"addFolder": function(path, name){
+				if(name.indexOf("/") !== -1){
+					return this;
+				}
+				
 				var real_path = path_resolver(path);
 				if(!real_path){return this;}
 				
