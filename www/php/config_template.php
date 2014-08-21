@@ -38,6 +38,5 @@ define('WIDGET_VERSION_COMMENT_MAX_LENGTH', 250);
 # Max number of files for a widget version
 define('WIDGET_VERSION_MAX_FILES_NUMBER', 50);
 
-// Not in use yet
 # Max user data stored in form of variables. In bytes.
-define('USER_MAX_MB_STORED_DB', 20480000);
+define('USER_MAX_BYTES_STORED_DB', 5242880); // 1MB

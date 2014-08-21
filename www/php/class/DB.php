@@ -146,7 +146,7 @@ class DB {
 			), ...
 		);
 	*/
-	function get_variable($widgetID_variable){
+	function get_variable(&$widgetID_variable){
 		// Make all the operations in one sql call.
 		$SQL_statement = array();
 		foreach($widgetID_variable as $widgetID => &$variables){
@@ -166,7 +166,7 @@ class DB {
 	}
 	
 	
-	function check_variable($widgetID_variable){
+	function check_variable(&$widgetID_variable){
 		// Make all the operations in one sql call.
 		$SQL_statement = array();
 		foreach($widgetID_variable as $widgetID => &$variables){
@@ -186,7 +186,7 @@ class DB {
 	}
 	
 	// Doesn't check if the widget exists. This check is done in api.php
-	// POR HACER: Limitar tamaño de lo que se puede guardar.
+	// Check if the user has space to save the new data
 	// $widgetID_variable_value must be an array that follows the next pattern:
 	/*
 		array(
@@ -195,7 +195,9 @@ class DB {
 			), ...
 		);
 	*/
-	function set_variable($widgetID_variable_value){
+	function set_variable(&$widgetID_variable_value){
+		$occupied = $this->get_user_size_variable();
+		
 		// Make all the operations in one sql call.
 		$SQL_statement = array();
 		foreach($widgetID_variable_value as $widgetID => &$variable_value){
@@ -205,16 +207,51 @@ class DB {
 			$widgetID_calc = $widgetID === 'global' ? '-1' : $widgetID; //global is a invisible widget with id -1
 			
 			foreach($variable_value as $variable => &$value){
-				$variable = mysql_escape_mimic($variable);
+				$value = json_encode($value);
+				$occupied[$widgetID_calc][$variable] = strlen($value);
 				$value = mysql_escape_mimic($value);
-				$SQL_statement[] = "('{$_SESSION['user']['ID']}', '{$widgetID_calc}', '{$variable}', '".json_encode($value)."')";
+				$variable = mysql_escape_mimic($variable);
+				$SQL_statement[] = "('{$_SESSION['user']['ID']}', '{$widgetID_calc}', '{$variable}', '".$value."')";
+			}
+		}
+
+		if($this->calculate_occupied_size_from_object($occupied) < USER_MAX_BYTES_STORED_DB){
+			return $this->query("INSERT INTO `variables` (`IDuser`, `IDwidget`, `variable`, `value`) VALUES ".implode(',', $SQL_statement)." ON DUPLICATE KEY UPDATE `value` = VALUES(`value`);");
+		}
+		return false;
+	}
+	
+	
+	/*
+	array(
+		'IDwidget' => array(
+			'variable' => (int)size, ...
+		), ...
+	)
+	*/
+	// Return an array with all the variables with its sizes from a user
+	function get_user_size_variable(){
+		$pre_occupied = $this->query("SELECT `IDwidget`, `variable`, LENGTH(`value`) AS `total_size` FROM `variables` WHERE `IDuser` = '{$_SESSION['user']['ID']}';");
+		$occupied = array();
+		for($i = 0; $i < count($pre_occupied); $i++){
+			$occupied[$pre_occupied[$i]['IDwidget']][$pre_occupied[$i]['variable']] = intval($pre_occupied[$i]['total_size']);
+		}
+		
+		return $occupied;
+	}
+	
+	function calculate_occupied_size_from_object(&$object){
+		$sum = 0;
+		foreach($object as $IDwidget => &$variable){
+			foreach($variable as &$size){
+				$sum += $size;
 			}
 		}
 		
-		return $this->query("INSERT INTO `variables` (`IDuser`, `IDwidget`, `variable`, `value`) VALUES ".implode(',', $SQL_statement)." ON DUPLICATE KEY UPDATE `value` = VALUES(`value`);");
+		return $sum;
 	}
 	
-	function del_variable($widgetID_variable_value){
+	function del_variable(&$widgetID_variable_value){
 		// Make all the operations in one sql call.
 		$SQL_statement = array();
 		foreach($widgetID_variable_value as $widgetID => &$variable_value){
@@ -232,7 +269,7 @@ class DB {
 		return $this->query("DELETE FROM `variables` WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND (".implode(' OR ', $SQL_statement).");");
 	}
 	
-	function delall_variable($widgetID_variable_value, $private_only = true){
+	function delall_variable(&$widgetID_variable_value, $private_only = true){
 		// Make all the operations in one sql call.
 		$SQL_statement = array();
 		foreach($widgetID_variable_value as $widgetID => &$variable_value){
