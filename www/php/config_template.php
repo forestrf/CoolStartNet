@@ -40,3 +40,9 @@ define('WIDGET_VERSION_MAX_FILES_NUMBER', 50);
 
 # Max user data stored in form of variables. In bytes.
 define('USER_MAX_BYTES_STORED_DB', 5242880); // 1MB
+
+# Windows has a lot of problems. For future conditionals.
+define('MACHINE', strtoupper(substr(PHP_OS, 0, 3)));
+
+# Dropbox app name
+define('DROPBOX_APP_NAME', 'coolstart.net/1.0');
