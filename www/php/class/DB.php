@@ -633,6 +633,29 @@ class DB {
 	
 	
 	
+	# ---------------------------------------------------------------------------
+	#
+	# USERS - DROPBOX
+	#
+	# ---------------------------------------------------------------------------
+	
+	// Returns all the tokens that the current user have
+	function getAllAccessToken(){
+		$resp = $this->query("SELECT `dropbox_accessToken` FROM `access-token` WHERE `IDuser` = '{$_SESSION['user']['ID']}';");
+		return $resp[0] ? $resp[0] : false;
+	}
+	
+	// Set the dropbox token of the current user
+	function setDropboxAccessToken($accessToken){
+		return $this->query("INSERT INTO `access-token` (`IDuser`, `dropbox_accessToken`) VALUES ('{$_SESSION['user']['ID']}', '{$accessToken}') ON DUPLICATE KEY UPDATE `dropbox_accessToken` = '{$accessToken}';");
+	}
+	
+	// Delete the dropbox token of the current user
+	function delDropboxAccessToken($accessToken){
+		return $this->query("UPDATE `access-token` SET `dropbox_accessToken` = '' WHERE `IDuser` = '{$_SESSION['user']['ID']}';");
+	}
+	
+	
 	
 	// --------------------------------------------------------
 	

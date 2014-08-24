@@ -8,6 +8,10 @@ if(isset($_POST['submit'])){
 	
 	if($valid !== false){
 		$_SESSION['user'] = $valid;
+		$accessTokens = $db->getAllAccessToken();
+		foreach($accessTokens as $service => $accessToken){
+			$_SESSION['user'][$service] = $accessToken;
+		}
 	}
 	else{
 		echo 'Invalid login<br>';

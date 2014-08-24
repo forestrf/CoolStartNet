@@ -3,6 +3,9 @@ require_once '../php/config.php';
 require_once 'dropbox-functions.php';
 
 session_start();
+if(!isset($_SESSION['user'])){
+	exit;
+}
 
 try {
    list($accessToken, $userId, $urlState) = getWebAuth()->finish($_GET);
@@ -30,7 +33,13 @@ catch (dbx\Exception $ex) {
    error_log("/dropbox-auth-finish: error communicating with Dropbox API: " . $ex->getMessage());
 }
 
-echo $accessToken;
+// All ok
+// Save the token with the user
+require_once '../php/class/DB.php';
+$db = new DB();
+$db->setDropboxAccessToken($accessToken);
+$_SESSION['user']['dropbox_accessToken'] = $accessToken;
+
 
 // We can now use $accessToken to make API requests.
-$client = dbx\Client($accessToken);
+//$client = dbx\Client($accessToken);
