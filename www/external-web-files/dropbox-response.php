@@ -42,4 +42,4 @@ $_SESSION['user']['dropbox_accessToken'] = $accessToken;
 
 
 // We can now use $accessToken to make API requests.
-//$client = dbx\Client($accessToken);
+//$dbxClient = new dbx\Client($_SESSION['user']['dropbox_accessToken'], DROPBOX_APP_NAME);

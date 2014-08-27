@@ -1,9 +1,9 @@
 <?php
 
-require_once '../php/config.php';
+require_once dirname(__FILE__).'/../php/config.php';
 
 # Include the Dropbox SDK libraries
-require_once '../php/lib/Dropbox/autoload.php';
+require_once dirname(__FILE__).'/../php/lib/Dropbox/autoload.php';
 use \Dropbox as dbx;
 
 function getWebAuth(){
