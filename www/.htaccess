@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>  
+	Options +FollowSymLinks
+	Options -Indexes
+
+	RewriteEngine On
+	
+	RewriteBase /
+	
+	RewriteRule ^externalfile/(.*)$ externalfile.php?file=/$1 [NC,L]
+
+</IfModule>
