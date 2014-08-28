@@ -110,6 +110,7 @@ var API = (function(){
 				return;
 			}
 		}, function(){ //FAIL
+			var i = 0;
 			while (i < cb.length) {
 				cb[i++]['callback'](null);
 			}
