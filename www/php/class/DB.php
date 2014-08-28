@@ -103,7 +103,7 @@ class DB {
 	function create_new_user($nick, $password){
 		$nick = mysql_escape_mimic($nick);
 		$password = hash_password(mysql_escape_mimic($password));
-		$rnd = random_string(32);
+		$rnd = mysql_escape_mimic(random_string(32));
 		return $this->query("INSERT INTO `users` (`nick`, `password`, `RND`) VALUES ('{$nick}', '{$password}', '{$rnd}')") === true;
 	}
 	
