@@ -6,6 +6,22 @@
 	
 	RewriteBase /
 	
+	
+	
+	#####################################
+	# Force without WWW
+	#####################################
+
+	# convertir ***.com en www.***.com
+	RewriteCond %{HTTP_HOST} ^www.coolstart.net [NC]
+	RewriteRule (.*) http://coolstart.net/$1 [R=301,L]
+	
+	
+	
+	#####################################
+	# Dropbox Files shortcut
+	#####################################
+	
 	RewriteRule ^externalfile/(.*)$ externalfile.php?file=/$1 [NC,L]
 
 </IfModule>
