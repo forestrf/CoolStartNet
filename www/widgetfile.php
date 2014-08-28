@@ -4,9 +4,8 @@
 
 // While using windows as server, pipelined connections of multiple php files crashes the server
 // http://stackoverflow.com/questions/25255415/apache-php-crashes-when-calling-2-or-more-php-files-at-the-same-time
-if(strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'){
-	header('Connection: Close');
-}
+
+header('Connection: Close');
 
 session_start();
 if(!isset($_SESSION['user'])){
