@@ -690,7 +690,7 @@ var API = (function(){
 				},
 				"dropbox": {
 					"getPathContents": function(path, callback){
-						xhr('/externalfile.php', 'path='+encodeURIComponent(path), function(response){
+						xhr('/external.php', 'path='+encodeURIComponent(path), function(response){
 							try {
 								response = JSON.parse(response);
 							} catch (e) {
@@ -712,7 +712,7 @@ var API = (function(){
 						return '//' + domain + 'externalfile' + path;
 					},
 					"available": function(callback){
-						xhr('/externalfile.php', '', function(response){
+						xhr('/external.php', '', function(response){
 							try {
 								response = JSON.parse(response);
 							} catch (e) {

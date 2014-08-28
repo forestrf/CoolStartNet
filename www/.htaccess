@@ -22,6 +22,6 @@
 	# Dropbox Files shortcut
 	#####################################
 	
-	RewriteRule ^externalfile/(.*)$ externalfile.php?file=/$1 [NC,L]
+	RewriteRule ^externalfile/(.*)$ external.php?file=/$1 [NC,L]
 
 </IfModule>
