@@ -78,54 +78,65 @@ var API = (function(){
 	
 	// Execute and clean cache
 	var execute = function(mode, cb){
-		var xhr = new XMLHttpRequest();
-		xhr.open('POST', 'api.php', true);
-		xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-		xhr.timeout = 5000;
-		xhr.onreadystatechange = ontimeout = function(aEvt){
-			if(xhr.readyState == 4){
-				var i = 0;
-				if(xhr.status == 200){
-					//console.log(xhr.responseText);
-					try {
-						var response = JSON.parse(xhr.responseText);
-					} catch (e) {
-						while (i < cb.length) {
-							cb[i++]['callback'](null);
-						}
-					}
-					
-					// Go over the cb and generate a response
-					if(response && response['response'] && response['response']==='OK'){
-						i = 0;
-						while (i < cb.length) {
-							
-							var widgetID = cb[i]['widgetID'];
-							var key      = cb[i]['key'];
-							
-							// If received and key requested
-							if(typeof response['content'][widgetID] !== 'undefined' &&
-							typeof response['content'][widgetID][key] !== 'undefined'){
-								cb[i++]['callback'](JSON.parse(response['content'][widgetID][key]));
-								continue;
-							}
-							cb[i++]['callback'](null);
-						}
-						return;
-					}
-				}
+		var data = 'action=' + ['get', 'set', 'del', 'delall', 'check'][mode] + '&data=' + encodeURIComponent(JSON.stringify(requests[mode]));
+		
+		xhr('api.php', data, function(response){ //OK
+			var i = 0;
+			//console.log(xhr.responseText);
+			try {
+				response = JSON.parse(response);
+			} catch (e) {
 				while (i < cb.length) {
 					cb[i++]['callback'](null);
 				}
 			}
-		};
-		var data = 'action=' + ['get', 'set', 'del', 'delall', 'check'][mode] + '&data=' + encodeURIComponent(JSON.stringify(requests[mode]));
-		xhr.send(data);
-	
+			
+			// Go over the cb and generate a response
+			if(response && response['response'] && response['response']==='OK'){
+				i = 0;
+				while (i < cb.length) {
+					
+					var widgetID = cb[i]['widgetID'];
+					var key      = cb[i]['key'];
+					
+					// If received and key requested
+					if(typeof response['content'][widgetID] !== 'undefined' &&
+					typeof response['content'][widgetID][key] !== 'undefined'){
+						cb[i++]['callback'](JSON.parse(response['content'][widgetID][key]));
+						continue;
+					}
+					cb[i++]['callback'](null);
+				}
+				return;
+			}
+		}, function(){ //FAIL
+			while (i < cb.length) {
+				cb[i++]['callback'](null);
+			}
+		});
+		
 		requests[mode]  = {};
 		callbacks[mode] = [];
 	}
 	
+	// callback takes one argument
+	function xhr(url, data, callbackOK, callbackFAIL){
+		var x = new XMLHttpRequest();
+		x.open('POST', url, true);
+		x.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		x.timeout = 5000;
+		x.onreadystatechange = ontimeout = function(aEvt){
+			if(x.readyState == 4){
+				if(x.status == 200){
+					callbackOK(x.responseText);
+				} else {
+					callbackFAIL();
+				}
+			}
+		};
+		
+		x.send(data);
+	}
 	
 	
 	
@@ -675,6 +686,30 @@ var API = (function(){
 				"url": function(name){return getUrl(widgetID, name);},
 				"bookmarks": {
 					"createObject": bookmarks_base
+				},
+				"dropbox": {
+					"getPathContents": function(path, callback){
+						xhr('/externalfile.php', 'path='+encodeURIComponent(path), function(response){
+							try {
+								response = JSON.parse(response);
+							} catch (e) {
+								callback(null);
+							}
+							
+							// Go over the cb and generate a response
+							if(response && response['folders'] && response['files']){
+								callback(response);
+							} else {
+								callback(null);
+							}
+						}, function(){
+							callback(null);
+						});
+						return this; //API.dropbox
+					},
+					"getFileURI": function(path){
+						return '/externalfile'+path;
+					}
 				}
 			}
 		}
