@@ -3,6 +3,7 @@
 // If the name of the file exists for the version asked or exists for the current version the php echoes the file and sends the mimetype header of the file.
 
 // While using windows as server, pipelined connections of multiple php files crashes the server
+// Sessions are fucked up too
 // http://stackoverflow.com/questions/25255415/apache-php-crashes-when-calling-2-or-more-php-files-at-the-same-time
 
 header('Connection: Close');
