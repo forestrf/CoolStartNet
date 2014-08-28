@@ -49,6 +49,5 @@ header('Content-type: '.$fileMetadata['mime_type']);
 header('Pragma: public');
 header('Etag: '.base64_encode($file));
 header('Cache-Control: max-age=2592000, public'); // 30 days
-header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 2592000)); // 30 days
 
 echo $data;
