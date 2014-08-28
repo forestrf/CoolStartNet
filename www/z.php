@@ -79,7 +79,7 @@ $db = new DB();
 		?>
 		
 		(function(API){
-			API = API.init("<?php echo $widget['ID'];?>", "<?php echo hash_api($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_API);?>");
+			API = API.init("<?php echo $widget['ID'];?>", "<?php echo hash_api($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_API);?>", "<?php echo WEB_PATH?>");
 			
 			<?php echo $data[0]['data'];?>
 			

@@ -18,6 +18,15 @@ if(isset($_POST['path']) && strlen($_POST['path']) > 0){
 	}
 	
 	echoFile(start(), $_GET['file']);
+} else {
+	session_start();
+	if(isset($_SESSION['user'])){
+		echo json_encode(
+			array(
+				'available' => isset($_SESSION['user']['dropbox_accessToken'])
+			)
+		);
+	}
 }
 
 

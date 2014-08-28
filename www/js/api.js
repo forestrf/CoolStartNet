@@ -592,7 +592,7 @@ var API = (function(){
 	
 	
 	return{
-		"init":function(widgetID, secret){
+		"init":function(widgetID, secret, domain){
 			return {
 				"storage": {
 					"localStorage": {
@@ -708,7 +708,26 @@ var API = (function(){
 						return this; //API.dropbox
 					},
 					"getFileURI": function(path){
-						return '/externalfile'+path;
+						return '//' + domain + 'externalfile' + path;
+					},
+					"available": function(callback){
+						xhr('/externalfile.php', '', function(response){
+							try {
+								response = JSON.parse(response);
+							} catch (e) {
+								callback(false);
+							}
+							
+							// Go over the cb and generate a response
+							if(response && response['available']){
+								callback(response['available']);
+							} else {
+								callback(false);
+							}
+						}, function(){
+							callback(false);
+						});
+						return this; //API.dropbox
 					}
 				}
 			}
