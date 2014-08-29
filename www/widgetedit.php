@@ -2,15 +2,11 @@
 
 header('Content-Type: text/html; charset=UTF-8');
 
-session_start();
+require_once 'php/functions/generic.php';
+$db = open_db_session();
 if(!isset($_SESSION['user'])){
 	exit;
 }
-
-
-require_once 'php/config.php';
-require_once 'php/class/DB.php';
-require_once 'php/functions/generic.php';
 
 insert_nocache_headers();
 
@@ -19,7 +15,6 @@ if(!isset($_GET['widgetID']) || !isInteger($_GET['widgetID']) || $_GET['widgetID
 }
 $widgetID = &$_GET['widgetID'];
 
-$db = new DB();
 
 $widget = $db->get_widget_by_ID($widgetID);
 $versiones = $db->get_all_widget_versions($widgetID);

@@ -82,3 +82,16 @@ function test($funcion){
 	$funcion();
 	return number_format(microtime(true) - $time_start, 3);
 }
+
+// 'db' | 'session'
+function open_db_session($to_return = 'db'){
+	require_once __DIR__.'/../config.php';
+	require_once __DIR__.'/../lib/DB.php';
+	require_once __DIR__.'/../lib/zebra_session/Zebra_Session.php';
+	
+	$db = new DB();
+	$db->Open();
+
+    $session = new Zebra_Session($db->mysqli, 'PASSWORD_ZEBRA_SESSION', ZEBRA_SESSION_TIME);
+	return $$to_return;
+}

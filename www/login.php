@@ -1,9 +1,7 @@
 <?php
-session_start();
+require_once 'php/functions/generic.php';
+$db = open_db_session();
 if(isset($_POST['submit'])){
-	require_once 'php/class/DB.php';
-	
-	$db = new DB();
 	$valid = $db -> check_nick_password($_POST['nick'], $_POST['password']);
 	
 	if($valid !== false){

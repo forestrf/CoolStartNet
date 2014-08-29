@@ -1,5 +1,6 @@
 <?php
-session_start();
-session_destroy();
+require_once 'php/functions/generic.php';
+$session = open_db_session('session');
+$session->stop();
 ?>
 Logout

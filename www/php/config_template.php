@@ -11,11 +11,17 @@ define('MYSQL_DATABASE', 'database_name');
 # Seed to generate the hash of the user's password. A password reset is necessary to change this variable.
 define('USER_PASSWORD_HMAC_SEED', 'write random characters here');
 
-# Seed to generate the hash of the token.
+# Seed to generate the hash of the ipa token. A cache reset is necessary to change it.
 define('PASSWORD_TOKEN_IPA', 'write random characters here');
 
-# Seed to generate the hash of the api token.
+# Seed to generate the hash of the api token. A cache reset is necessary to change it.
 define('PASSWORD_TOKEN_API', 'write random characters here');
+
+# Password for the zebra_session. A user session reset is necessary to change it.
+define('PASSWORD_ZEBRA_SESSION', 'write random characters here');
+
+# Max time, in seconds, that a session lasts
+define('ZEBRA_SESSION_TIME', 2592000); // 30 Days
 
 # path to the web with / in the end, starting with the subdomain (if there is) and without protocol.
 define('WEB_PATH', 'www.mywebhere.com/folder/to/site/');
@@ -39,7 +45,7 @@ define('WIDGET_VERSION_COMMENT_MAX_LENGTH', 250);
 define('WIDGET_VERSION_MAX_FILES_NUMBER', 50);
 
 # Max user data stored in form of variables. In bytes.
-define('USER_MAX_BYTES_STORED_DB', 5242880); // 1MB
+define('USER_MAX_BYTES_STORED_DB', 5242880); // 5MB
 
 # Windows has a lot of problems. For future conditionals.
 define('MACHINE', strtoupper(substr(PHP_OS, 0, 3)));

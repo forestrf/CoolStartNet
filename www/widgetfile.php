@@ -8,14 +8,11 @@
 
 header('Connection: Close');
 
-session_start();
+require_once 'php/functions/generic.php';
+$db = open_db_session();
 if(!isset($_SESSION['user'])){
 	exit;
 }
-
-
-require_once 'php/config.php';
-require_once 'php/class/DB.php';
 
 
 
@@ -33,8 +30,6 @@ if(!isset($_GET['name']) || strlen($_GET['name']) > FILENAME_MAX_LENGTH || strle
 $name = &$_GET['name'];
 
 
-
-$db = new DB();
 
 // If the call comes from the api the widget version comes from a query to the database.
 if(isset($_GET['api'])){

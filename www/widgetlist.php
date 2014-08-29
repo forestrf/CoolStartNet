@@ -2,19 +2,14 @@
 
 header('Content-Type: text/html; charset=UTF-8');
 
-session_start();
+require_once 'php/functions/generic.php';
+$db = open_db_session();
 if(!isset($_SESSION['user'])){
 	exit;
 }
 
 
-require_once 'php/config.php';
-require_once 'php/class/DB.php';
-require_once 'php/functions/generic.php';
-
 insert_nocache_headers();
-
-$db = new DB();
 
 ?>
 <!doctype html>

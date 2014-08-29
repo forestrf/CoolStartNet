@@ -12,10 +12,11 @@ class DB {
 	private $pass = MYSQL_PASSWORD;
 	private $bd   = MYSQL_DATABASE;
 	
-	private $mysqli;
+	var $mysqli;
 	
 	private $opened_connection = false;
 	
+	// Auto inserted id number
 	var $LAST_MYSQL_ID = '';
 	
 	private $cache = array();
