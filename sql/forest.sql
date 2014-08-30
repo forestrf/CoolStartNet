@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Aug 28, 2014 at 03:31 PM
+-- Generation Time: Aug 30, 2014 at 03:12 PM
 -- Server version: 5.5.39
 -- PHP Version: 5.4.31
 
@@ -46,6 +46,19 @@ CREATE TABLE IF NOT EXISTS `files` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `session_data`
+--
+
+CREATE TABLE IF NOT EXISTS `session_data` (
+  `session_id` varchar(32) NOT NULL DEFAULT '',
+  `hash` varchar(32) NOT NULL DEFAULT '',
+  `session_data` blob NOT NULL,
+  `session_expire` int(11) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -54,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `nick` varchar(15) COLLATE utf8_bin NOT NULL,
   `password` varchar(32) COLLATE utf8_bin NOT NULL,
   `RND` varchar(32) COLLATE utf8_bin NOT NULL
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=8 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=56 ;
 
 -- --------------------------------------------------------
 
@@ -80,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `widgets` (
   `name` varchar(30) COLLATE utf8_bin NOT NULL,
   `ownerID` int(11) NOT NULL,
   `published` int(11) NOT NULL DEFAULT '-1' COMMENT 'Si se publica cambiar a 0 o + desde php. Nunca volver a -1'
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=10 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=11 ;
 
 -- --------------------------------------------------------
 
@@ -140,6 +153,12 @@ ALTER TABLE `files`
  ADD PRIMARY KEY (`hash`);
 
 --
+-- Indexes for table `session_data`
+--
+ALTER TABLE `session_data`
+ ADD PRIMARY KEY (`session_id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -183,12 +202,12 @@ ALTER TABLE `widgets-versions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=56;
 --
 -- AUTO_INCREMENT for table `widgets`
 --
 ALTER TABLE `widgets`
-MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
+MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=11;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
