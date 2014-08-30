@@ -9,7 +9,7 @@ if(!isset($_POST['switch'])){
 	exit;
 }
 
-require_once __DIR__.'/../functions/generic.php';
+require_once __DIR__.'/php/functions/generic.php';
 $db = open_db_session();
 
 user_check_access(DEFAULT_USER_ACCESSIBLE);
