@@ -52,3 +52,10 @@ define('MACHINE', strtoupper(substr(PHP_OS, 0, 3)));
 
 # Dropbox app name
 define('DROPBOX_APP_NAME', 'coolstart.net/1.0');
+
+# Default user (when not logged in)
+define('DEFAULT_USER_NICK', 'ANONYMOUS');
+define('DEFAULT_USER_PASSWORD', 'ANONYMOUS');
+define('DEFAULT_USER_ACCESSIBLE', false);
+
+mb_internal_encoding('utf8');

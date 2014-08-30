@@ -4,17 +4,8 @@ if(!isset($_POST['widgetID']) || !isset($_POST['action']) || !isset($_POST['toke
 	exit;
 }
 
-session_start();
-if(!isset($_SESSION['user'])){
-	exit;
-}
-
-
-require_once __DIR__.'/../config.php';
 require_once __DIR__.'/../functions/generic.php';
-require_once __DIR__.'/../class/DB.php';
-
-$db = new DB();
+$db = open_db_session();
 
 
 /*

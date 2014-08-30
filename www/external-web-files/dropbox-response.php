@@ -1,11 +1,8 @@
 <?php
-require_once '../php/config.php';
-require_once 'dropbox-functions.php';
+require_once '../php/functions/generic.php';
+$db = open_db_session();
 
-session_start();
-if(!isset($_SESSION['user'])){
-	exit;
-}
+require_once 'dropbox-functions.php';
 
 try {
    list($accessToken, $userId, $urlState) = getWebAuth()->finish($_GET);
@@ -35,8 +32,6 @@ catch (dbx\Exception $ex) {
 
 // All ok
 // Save the token with the user
-require_once '../php/class/DB.php';
-$db = new DB();
 $db->setDropboxAccessToken($accessToken);
 $_SESSION['user']['dropbox_accessToken'] = $accessToken;
 

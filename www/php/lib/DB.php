@@ -1,5 +1,20 @@
 <?php
 
+# This file is part of CoolStart.net.
+#
+#	 CoolStart.net is free software: you can redistribute it and/or modify
+#	 it under the terms of the GNU Affero General Public License as published by
+#	 the Free Software Foundation, either version 3 of the License, or
+#	 (at your option) any later version.
+#
+#	 CoolStart.net is distributed in the hope that it will be useful,
+#	 but WITHOUT ANY WARRANTY; without even the implied warranty of
+#	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	 GNU Affero General Public License for more details.
+#
+#	 You should have received a copy of the GNU Affero General Public License
+#	 along with CoolStart.net.  If not, see <http://www.gnu.org/licenses/>.
+
 require_once __DIR__.'/../config.php';
 require_once __DIR__.'/../functions/generic.php';
 
@@ -39,7 +54,8 @@ class DB {
 			// echo "Failed to connect to MySQL: (" . $this->mysqli->connect_errno . ") " . $this->mysqli->connect_error;
 			return false;
 		}
-		$this->mysqli->set_charset("utf8");
+		$this->mysqli->set_charset('utf8');
+
 		return true;
 	}
 	
@@ -61,21 +77,12 @@ class DB {
 			$this->opened_connection = true;
 		}
 		
-		try{
-			$result = $this->mysqli->query($query, MYSQLI_USE_RESULT);
-			if(strpos($query, 'INSERT') !== false){
-				$this->LAST_MYSQL_ID = $this->mysqli->insert_id;
-			}
-			if($result === false){
-				throw new Exception('Error: '.$this->mysqli->error);
-				return false;
-			}
-			elseif($result === true){
-				return true;
-			}
+		$result = $this->mysqli->query($query, MYSQLI_USE_RESULT);
+		if(strpos($query, 'INSERT') !== false){
+			$this->LAST_MYSQL_ID = $this->mysqli->insert_id;
 		}
-		catch(Exception $e){
-			return false;
+		if($result === false || $result === true){
+			return $result;
 		}
 		
 		$resultArray = array();
@@ -102,16 +109,17 @@ class DB {
 	
 	// Insert a new user.
 	function create_new_user($nick, $password){
+		require_once __DIR__.'/../functions/generic.php';
 		$nick = mysql_escape_mimic($nick);
-		$password = hash_password(mysql_escape_mimic($password));
-		$rnd = mysql_escape_mimic(random_string(32));
-		return $this->query("INSERT INTO `users` (`nick`, `password`, `RND`) VALUES ('{$nick}', '{$password}', '{$rnd}')") === true;
+		$password = hash_password($password);
+		$rnd = mysql_escape_mimic(utf8_encode(random_string(32)));
+		return $this->query("INSERT INTO `users` (`nick`, `password`, `RND`) VALUES ('{$nick}', '{$password}', '{$rnd}');") === true;
 	}
 	
 	// Returns the user after validating the nick and the password or returns false if the user doesn't match.
 	function check_nick_password($nick, $password){
 		$nick = mysql_escape_mimic($nick);
-		$password = hash_password(mysql_escape_mimic($password));
+		$password = hash_password($password);
 		$result = $this->query("SELECT * FROM `users` WHERE `nick` = '{$nick}' AND `password` = '{$password}';");
 		return count($result) > 0 ? $result[0] : false;
 	}
@@ -212,7 +220,7 @@ class DB {
 				$occupied[$widgetID_calc][$variable] = strlen($value);
 				$value = mysql_escape_mimic($value);
 				$variable = mysql_escape_mimic($variable);
-				$SQL_statement[] = "('{$_SESSION['user']['ID']}', '{$widgetID_calc}', '{$variable}', '".$value."')";
+				$SQL_statement[] = "('{$_SESSION['user']['ID']}', '{$widgetID_calc}', '{$variable}', '{$value}')";
 			}
 		}
 
