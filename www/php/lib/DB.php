@@ -651,7 +651,7 @@ class DB {
 	// Returns all the tokens that the current user have
 	function getAllAccessToken(){
 		$resp = $this->query("SELECT `dropbox_accessToken` FROM `access-token` WHERE `IDuser` = '{$_SESSION['user']['ID']}';");
-		return $resp[0] ? $resp[0] : false;
+		return isset($resp[0]) ? $resp[0] : false;
 	}
 	
 	// Set the dropbox token of the current user

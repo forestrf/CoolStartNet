@@ -233,16 +233,19 @@ class Zebra_Session
         // continue if there is an active MySQL connection
         if ($this->_mysql_ping()) {
 
-            // make sure session cookies never expire so that session lifetime
-            // will depend only on the value of $session_lifetime
-            ini_set('session.cookie_lifetime', 0);
-
             // if $session_lifetime is specified and is an integer number
-            if ($session_lifetime != '' && is_integer($session_lifetime))
+            if ($session_lifetime != '' && is_integer($session_lifetime)){
 
                 // set the new value
                 ini_set('session.gc_maxlifetime', (int)$session_lifetime);
-
+				
+				ini_set('session.cookie_lifetime', (int)$session_lifetime);
+			} else {
+				// make sure session cookies never expire so that session lifetime
+				// will depend only on the value of $session_lifetime
+				ini_set('session.cookie_lifetime', 0);
+			}
+			
             // if $gc_probability is specified and is an integer number
             if ($gc_probability != '' && is_integer($gc_probability))
 

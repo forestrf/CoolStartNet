@@ -83,15 +83,23 @@ function test($funcion){
 	return number_format(microtime(true) - $time_start, 3);
 }
 
+// Must be called before any echo to be able to output headers
 // 'db' | 'session'
 function open_db_session($to_return = 'db'){
 	require_once __DIR__.'/../config.php';
 	require_once __DIR__.'/../lib/DB.php';
 	require_once __DIR__.'/../lib/zebra_session/Zebra_Session.php';
 	
+	ini_set('session.cookie_domain', substr($_SERVER['SERVER_NAME'], strpos($_SERVER['SERVER_NAME'], '.')));
+	
 	$db = new DB();
 	$db->Open();
 
     $session = new Zebra_Session($db->mysqli, 'PASSWORD_ZEBRA_SESSION', ZEBRA_SESSION_TIME);
+	
+	if(isset($_COOKIE['PHPSESSID'])){
+		setcookie('PHPSESSID', $_COOKIE['PHPSESSID'], time() + ZEBRA_SESSION_TIME);
+	}
+	
 	return $$to_return;
 }
