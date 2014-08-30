@@ -58,4 +58,8 @@ define('DEFAULT_USER_NICK', 'ANONYMOUS');
 define('DEFAULT_USER_PASSWORD', 'ANONYMOUS');
 define('DEFAULT_USER_ACCESSIBLE', false);
 
+#Captcha ReCaptcha
+define('CAPTCHA_PUBLIC_KEY', 'key here');
+define('CAPTCHA_PRIVATE_KEY', 'key here');
+
 mb_internal_encoding('utf8');

@@ -11,7 +11,7 @@
 	transition: margin-top 0.3s ease 0s;
 }
 
-.login input[type="text"], .login input[type="password"] {
+.login input.c[type="text"], .login input.c[type="password"] {
 	background-color: rgba(37, 136, 153, 0.46);
 	border: 1px solid #68B4B8;
 	border-radius: 5px 5px 5px 5px;
@@ -29,13 +29,13 @@
 	transition: all 0.3s ease 0s;
 	width: 86%;
 }
-.login input[type="text"]:focus, .login input[type="password"]:focus {
+.login input.c[type="text"]:focus, .login input.c[type="password"]:focus {
 	background-color: rgba(26, 202, 232, 0.46);
 	border: 1px solid #00FFFF;
 	box-shadow: 0 0 5px #00E1FF;
 }
 
-.login input[type="submit"] {
+.login input.c[type="submit"] {
 	display: inline-block;
 	left: 65%;
 	margin: 5% 0;
@@ -44,15 +44,15 @@
 	width: 30%;
 }
 
-.login input.invisible, .login input.invisible:focus {
-    border-width: 0;
-    height: 0;
-    margin: 0;
-    padding: 0 2%;
+.login input.c.invisible, .login input.c.invisible:focus {
+	border-width: 0;
+	height: 0;
+	margin: 0;
+	padding: 0 2%;
 	box-shadow: none;
 }
 
-.login label {
+.login label.c {
 	color: #FFFFFF;
 	margin-left: 5%;
 	margin-top: 5%;
@@ -60,6 +60,21 @@
 	position: absolute;
 }
 
-.login input[type="checkbox"] {
+.login input.c[type="checkbox"] {
 	margin-right: 10px;
+}
+
+
+.login .captcha_placeholder {
+	display: block;
+	left: 5%;
+	margin-top: 5%;
+	position: relative;
+	text-align: center;
+	width: 90%;
+}
+
+
+#recaptcha_area, #recaptcha_table {
+	display: inline;
 }
