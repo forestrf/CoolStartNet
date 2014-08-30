@@ -1,0 +1,38 @@
+.login {
+	background-color: rgba(0, 0, 0, 0.6);
+	border-radius: 10px 10px 10px 10px;
+	box-shadow: 0 0 5px #333333;
+	left: 35%;
+	top: 35%;
+	width: 30%;
+}
+
+.login input[type="text"], .login input[type="password"] {
+	background-color: rgba(37, 136, 153, 0.46);
+	border: 1px solid #68B4B8;
+	border-radius: 5px 5px 5px 5px;
+	color: #FFFFFF;
+	display: block;
+	font-family: Tahoma;
+	font-size: 1em;
+	left: 5%;
+	margin: 5% 0 0;
+	padding: 2%;
+	position: relative;
+	transition: all 0.3s ease 0s;
+	width: 86%;
+}
+.login input[type="text"]:focus {
+	background-color: rgba(26, 202, 232, 0.46);
+	border: 1px solid #00FFFF;
+	box-shadow: 0 0 5px #00E1FF;
+}
+
+.login input[type="submit"] {
+	display: inline-block;
+	left: 65%;
+	margin: 5% 0;
+	padding: 2%;
+	position: relative;
+	width: 30%;
+}

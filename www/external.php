@@ -34,7 +34,8 @@ if(isset($_POST['path']) && strlen($_POST['path']) > 0){
 function start(){
 	require_once 'php/functions/generic.php';
 	$db = open_db_session();
-	if(!isset($_SESSION['user']) || !isset($_SESSION['user']['dropbox_accessToken'])){
+	user_check_access();
+	if(!isset($_SESSION['user']['dropbox_accessToken'])){
 		exit;
 	}
 

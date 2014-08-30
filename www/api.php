@@ -61,14 +61,15 @@ if(
 	$action !== 'get' &&
 	$action !== 'del' &&
 	$action !== 'delall' &&
-	$action !== 'check' &&
-	$action !== 'time'
+	$action !== 'check'
 ){
 	fail(5);
 }
 
 
-
+if($action !== 'get' && $action !== 'check' && $_SESSION['user']['nick'] === DEFAULT_USER_NICK && !DEFAULT_USER_ACCESSIBLE){
+	exit;
+}
 
 
 

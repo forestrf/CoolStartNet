@@ -17,19 +17,20 @@ if(isset($_POST['submit'])){
 		}
 	}
 	else{
-		echo 'Invalid login<br>';
+		header('Location: //'.WEB_PATH.'?status=incorrect', true, 302);
+		exit;
 	}
 }
 
-var_dump($_SESSION);
+// var_dump($_SESSION);
 
-if(isset($_SESSION['user'])){
-	exit;
-}
-?>
+header('Location: //'.WEB_PATH, true, 302);
 
+/*
 <form method="POST" action="">
 	<input type="text" name="nick" placeholder="nick"><br>
 	<input type="password" name="password" placeholder="password"><br>
 	<input name="submit" type="submit" value="Login">
 </form>
+*/
+?>

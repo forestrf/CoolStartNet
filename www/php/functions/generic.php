@@ -90,7 +90,8 @@ function open_db_session($to_return = 'db'){
 	require_once __DIR__.'/../lib/DB.php';
 	require_once __DIR__.'/../lib/zebra_session/Zebra_Session.php';
 	
-	ini_set('session.cookie_domain', substr($_SERVER['SERVER_NAME'], strpos($_SERVER['SERVER_NAME'], '.')));
+	$domain = substr($_SERVER['SERVER_NAME'], strpos($_SERVER['SERVER_NAME'], '.'));
+	ini_set('session.cookie_domain', $domain);
 	
 	$db = new DB();
 	$db->Open();
@@ -98,8 +99,16 @@ function open_db_session($to_return = 'db'){
     $session = new Zebra_Session($db->mysqli, 'PASSWORD_ZEBRA_SESSION', ZEBRA_SESSION_TIME);
 	
 	if(isset($_COOKIE['PHPSESSID'])){
-		setcookie('PHPSESSID', $_COOKIE['PHPSESSID'], time() + ZEBRA_SESSION_TIME);
+		setcookie('PHPSESSID', $_COOKIE['PHPSESSID'], time() + ZEBRA_SESSION_TIME, '/', $domain);
 	}
 	
 	return $$to_return;
+}
+
+function user_check_access($allow_default_user = false){
+	if(!isset($_SESSION['user']) ||
+	(!$allow_default_user && $_SESSION['user']['nick'] === DEFAULT_USER_NICK)){
+		header('Location: //'.WEB_PATH, true, 302);
+		exit;
+	}
 }
