@@ -5,6 +5,10 @@
 	left: 35%;
 	top: 35%;
 	width: 30%;
+	-webkit-transition: margin-top 0.3s ease 0s;
+	-moz-transition: margin-top 0.3s ease 0s;
+	-o-transition: margin-top 0.3s ease 0s;
+	transition: margin-top 0.3s ease 0s;
 }
 
 .login input[type="text"], .login input[type="password"] {
@@ -19,10 +23,13 @@
 	margin: 5% 0 0;
 	padding: 2%;
 	position: relative;
+	-webkit-transition: all 0.3s ease 0s;
+	-moz-transition: all 0.3s ease 0s;
+	-o-transition: all 0.3s ease 0s;
 	transition: all 0.3s ease 0s;
 	width: 86%;
 }
-.login input[type="text"]:focus {
+.login input[type="text"]:focus, .login input[type="password"]:focus {
 	background-color: rgba(26, 202, 232, 0.46);
 	border: 1px solid #00FFFF;
 	box-shadow: 0 0 5px #00E1FF;
@@ -35,4 +42,24 @@
 	padding: 2%;
 	position: relative;
 	width: 30%;
+}
+
+.login input.invisible, .login input.invisible:focus {
+    border-width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0 2%;
+	box-shadow: none;
+}
+
+.login label {
+	color: #FFFFFF;
+	margin-left: 5%;
+	margin-top: 5%;
+	padding: 2% 0;
+	position: absolute;
+}
+
+.login input[type="checkbox"] {
+	margin-right: 10px;
 }
