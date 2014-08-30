@@ -9,6 +9,11 @@ if(!isset($_POST['switch'])){
 	exit;
 }
 
+require_once __DIR__.'/../functions/generic.php';
+$db = open_db_session();
+
+user_check_access(DEFAULT_USER_ACCESSIBLE);
+
 // This API must be only called by "me" and not from widgets. Only for configurations of the web.
 // To prevent it, must be send a token and must be an expected referer.
 // The referer must be the page(s) that can configure the value.

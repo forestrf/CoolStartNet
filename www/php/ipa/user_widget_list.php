@@ -4,8 +4,6 @@ if(!isset($_POST['widgetID']) || !isset($_POST['action']) || !isset($_POST['toke
 	exit;
 }
 
-require_once __DIR__.'/../functions/generic.php';
-$db = open_db_session();
 
 
 /*

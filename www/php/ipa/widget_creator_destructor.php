@@ -4,8 +4,6 @@ if(!isset($_POST['name']) && !isset($_POST['widgetID'])){
 	exit;
 }
 
-require_once __DIR__.'/../functions/generic.php';
-$db = open_db_session();
 
 
 /*
