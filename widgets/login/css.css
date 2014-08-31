@@ -60,17 +60,20 @@
 	padding: 2% 0;
 	position: absolute;
 }
+.login label.c.forgotten {
+	margin-top: 10%;
+}
 
 .login input.c[type="checkbox"] {
 	margin-right: 10px;
 }
 
 .login .message {
-    background-color: rgba(255, 0, 0, 0.5);
-    border: 1px solid #FF0000;
-    border-radius: 10px 10px 10px 10px;
-    color: #FFFFFF;
-    padding: 2% 5%;
+	background-color: rgba(255, 0, 0, 0.5);
+	border: 1px solid #FF0000;
+	border-radius: 10px 10px 10px 10px;
+	color: #FFFFFF;
+	padding: 2% 5%;
 }
 .login .message:empty {
 	display: none;

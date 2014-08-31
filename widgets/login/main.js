@@ -13,17 +13,21 @@ document.body.appendChild(js);
 var login = API.widget.create();
 login.addClass('login');
 
-var checkbox ,captcha_placeholder, mail, user, pass, button, form, messages;
+var register ,captcha_placeholder, mail, user, pass, button, form, messages, forgot;
 
 C(login,
-	form = C('form', ['method', 'post', 'action', 'https://' + API.domain + 'login.php'],
+	form = C('form',
 		user = C('input', ['type', 'text',     'name', 'nick',      'placeholder', 'User',     'class', 'c', 'tabindex', 1]),
 		pass = C('input', ['type', 'password', 'name', 'password',  'placeholder', 'Password', 'class', 'c', 'tabindex', 2]),
 		mail = C('input', ['type', 'text',     'name', 'email',     'placeholder', 'email',    'class', 'c invisible']),
 		captcha_placeholder = C('div', ['class', 'captcha_placeholder']),
 		C('label', ['class', 'c'],
-			checkbox = C('input', ['type', 'checkbox']),
+			register = C('input', ['type', 'checkbox']),
 			"I don't have an account"
+		),
+		C('label', ['class', 'c forgotten'],
+			forgot = C('input', ['type', 'checkbox']),
+			"I forgot my password"
 		),
 		button = C('input', ['type', 'submit', 'name', 'submit', 'value', 'Login', 'class', 'c', 'tabindex', 3])
 	),
@@ -32,13 +36,18 @@ C(login,
 
 API.document.wrapElement(user).wrapElement(pass).wrapElement(mail);
 
-checkbox.checked = false;
+register.checked = false;
 
-checkbox.onclick = function(){
-	if(checkbox.checked){
+register.onclick = function(){
+	if(register.disabled) return;
+	
+	if(register.checked){
+		forgot.disabled = true;
+		
+		login.style.marginTop = '-10%';
+		
 		button.value = txt_register;
 		mail.removeClass('invisible');
-		login.style.marginTop = '-10%';
 		
 		button.setAttribute('tabindex', 5);
 		mail.setAttribute('tabindex', 3);
@@ -51,15 +60,59 @@ checkbox.onclick = function(){
 		});
 	}
 	else{
-		button.value = txt_login;
-		mail.addClass('invisible');
-		login.style.marginTop = '0px';
-		
-		mail.removeAttribute('tabindex');
-		button.setAttribute('tabindex', 3);
-		
-		captcha_placeholder.innerHTML = '';
+		backToNormal();
 	}
+}
+
+forgot.onclick = function(){
+	if(forgot.disabled) return;
+	
+	if(forgot.checked){
+		register.disabled = true;
+		
+		login.style.marginTop = '-5%';
+		
+		button.value = txt_register;
+		mail.removeClass('invisible');
+		pass.addClass('invisible');
+		user.addClass('invisible');
+		
+		pass.removeAttribute('tabindex');
+		user.removeAttribute('tabindex');
+		button.setAttribute('tabindex', 3);
+		mail.setAttribute('tabindex', 1);
+		
+		Recaptcha.create(SERVER_VARS.CAPTCHA_PUB_KEY, captcha_placeholder, {
+			theme: "red",
+			callback: function(){
+				document.getElementById('recaptcha_response_field').setAttribute('tabindex', 2);
+			}
+		});
+	}
+	else{
+		backToNormal();
+	}
+}
+
+function backToNormal(){
+	register.disabled = false;
+	forgot.disabled = false;
+	
+	login.style.marginTop = '0px';
+	
+	button.value = txt_login;
+	mail.addClass('invisible');
+	pass.removeClass('invisible');
+	user.removeClass('invisible');
+	
+	mail.removeAttribute('tabindex');
+	button.setAttribute('tabindex', 3);
+	pass.setAttribute('tabindex', 2);
+	user.setAttribute('tabindex', 1);
+	
+	captcha_placeholder.innerHTML = '';
+	
+	form.setAttribute
 }
 
 function submit(){
@@ -67,7 +120,7 @@ function submit(){
 	
 	var elems = [button, user, pass];
 	
-	if(checkbox.checked){
+	if(register.checked || forgot.checked){
 		elems.push(document.getElementById('recaptcha_response_field'));
 		elems.push(document.getElementById('recaptcha_challenge_field'));
 		elems.push(mail);
@@ -79,15 +132,22 @@ function submit(){
 	}
 	data = data.substr(0, data.length -1);
 	
-	var url = checkbox.checked ? 'https://'+API.domain+'register_js.php' : 'https://'+API.domain+'login_js.php';
+	if(register.checked){
+		url = 'https://'+API.domain+'register_js.php';
+	} else if(forgot.checked){
+		url = 'https://'+API.domain+'forgot_js.php';
+	} else {
+		url = 'https://'+API.domain+'login_js.php';
+	}
 	
 	API.xhr(url, data, function(data){
 		data = JSON.parse(data);
 		if(data.status === 'OK'){
-			if(checkbox.checked){
-				checkbox.checked = false;
+			if(register.checked){
+				register.checked = false;
 				submit();
-			}
+			} else if(forgot.checked){
+				forgot.checked = false;
 			else{
 				location.href = '//' + API.domain;
 			}
@@ -109,11 +169,11 @@ function fail(txt){
 	
 	messages.innerHTML = txt;
 	
-	if(checkbox.checked){
+	if(register.checked){
 		Recaptcha.reload();
 	}
 	
-	button.value = checkbox.checked ? txt_register : txt_login;
+	button.value = register.checked ? txt_register : txt_login;
 	
 	setTimeout(function(){
 		user.removeClass('fail');
