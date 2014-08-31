@@ -61,4 +61,8 @@ define('DEFAULT_USER_ACCESSIBLE', false);
 define('CAPTCHA_PUBLIC_KEY', 'key here');
 define('CAPTCHA_PRIVATE_KEY', 'key here');
 
+#Login attempts
+define('MAX_LOGIN_FAILS', 10);
+define('LOGIN_FAIL_WAIT', 10); // minutes
+
 mb_internal_encoding('utf8');

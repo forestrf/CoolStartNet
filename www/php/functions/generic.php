@@ -111,4 +111,8 @@ function user_check_access($allow_default_user = false){
 		header('Location: //'.WEB_PATH, true, 302);
 		exit;
 	}
+	// Prevent session cookie access from multiple IPs
+	if($_SESSION['user']['IP'] !== $_SERVER['REMOTE_ADDR']){
+		exit;
+	}
 }

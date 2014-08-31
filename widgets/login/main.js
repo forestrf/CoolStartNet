@@ -119,6 +119,5 @@ function fail(txt){
 		user.removeClass('fail');
 		pass.removeClass('fail');
 		mail.removeClass('fail');
-		messages.innerHTML = '';
 	}, 4000);
 }
