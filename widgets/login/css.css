@@ -12,7 +12,7 @@
 }
 
 .login input.c[type="text"], .login input.c[type="password"] {
-	background-color: rgba(37, 136, 153, 0.46);
+	background-color: rgba(37, 136, 153, 0.5);
 	border: 1px solid #68B4B8;
 	border-radius: 5px 5px 5px 5px;
 	color: #FFFFFF;
@@ -30,9 +30,14 @@
 	width: 86%;
 }
 .login input.c[type="text"]:focus, .login input.c[type="password"]:focus {
-	background-color: rgba(26, 202, 232, 0.46);
+	background-color: rgba(26, 202, 232, 0.5);
 	border: 1px solid #00FFFF;
 	box-shadow: 0 0 5px #00E1FF;
+}
+
+.login input.c.fail[type="text"], .login input.c.fail[type="password"] {
+	background-color: rgba(174, 22, 22, 0.5);
+	border-color: #FF0000;
 }
 
 .login input.c[type="submit"] {

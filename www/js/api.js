@@ -686,6 +686,7 @@ var API = (function(){
 				},
 				"url": function(name){return getUrl(widgetID, name);},
 				"domain": domain_path,
+				"xhr": xhr,
 				"bookmarks": {
 					"createObject": bookmarks_base
 				},
