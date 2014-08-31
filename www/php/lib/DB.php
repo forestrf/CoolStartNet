@@ -107,13 +107,14 @@ class DB {
 		return count($this->query("SELECT * FROM `users` WHERE `nick` = '{$nick}'", true)) > 0;
 	}
 	
-	// Insert a new user.
-	function create_new_user($nick, $password){
+	// Insert a new user. Data previously validated and sanitized
+	function create_new_user($nick, $password, $email){
 		require_once __DIR__.'/../functions/generic.php';
 		$nick = mysql_escape_mimic($nick);
 		$password = hash_password($password);
+		$email = mysql_escape_mimic($email);
 		$rnd = mysql_escape_mimic(utf8_encode(random_string(32)));
-		return $this->query("INSERT INTO `users` (`nick`, `password`, `RND`) VALUES ('{$nick}', '{$password}', '{$rnd}');") === true;
+		return $this->query("INSERT INTO `users` (`nick`, `password`, `email`, `RND`) VALUES ('{$nick}', '{$password}', '{$email}', '{$rnd}');") === true;
 	}
 	
 	// Returns the user after validating the nick and the password or returns false if the user doesn't match.
@@ -651,7 +652,7 @@ class DB {
 	// Returns all the tokens that the current user have
 	function getAllAccessToken(){
 		$resp = $this->query("SELECT `dropbox_accessToken` FROM `access-token` WHERE `IDuser` = '{$_SESSION['user']['ID']}';");
-		return isset($resp[0]) ? $resp[0] : false;
+		return isset($resp[0]) ? $resp[0] : array();
 	}
 	
 	// Set the dropbox token of the current user

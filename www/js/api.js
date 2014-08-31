@@ -682,6 +682,10 @@ var API = (function(){
 						var elem = document.createElement(tagName);
 						div_base(elem);
 						return elem;
+					},
+					"wrapElement": function(element){
+						div_base(element);
+						return this;
 					}
 				},
 				"url": function(name){return getUrl(widgetID, name);},

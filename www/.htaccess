@@ -9,12 +9,21 @@
 	
 	
 	#####################################
-	# Force without WWW
+	# Force without WWW and https
 	#####################################
 
 	# convertir ***.com en www.***.com
-	RewriteCond %{HTTP_HOST} ^www.coolstart.net [NC]
-	RewriteRule (.*) http://coolstart.net/$1 [R=301,L]
+	RewriteCond %{HTTP_HOST} ^www [NC]
+	RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+	
+	
+	
+	#####################################
+	# Force https
+	#####################################
+	
+	RewriteCond %{HTTPS} off
+	RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 	
 	
 	

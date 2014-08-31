@@ -1,9 +1,13 @@
 <?php
-header('Content-Type: text/html; charset=UTF-8');
-
 require_once 'php/functions/generic.php';
 $db = open_db_session();
-if(isset($_POST['submit'])){
+if(
+	isset($_POST['submit']) &&
+	isset($_POST['nick']) &&
+	isset($_POST['password']) &&
+	isset($_POST['nick'][0]) &&
+	isset($_POST['password'][0])
+){
 	if($_POST['nick'] == DEFAULT_USER_NICK && !DEFAULT_USER_ACCESSIBLE){
 		exit;
 	}
@@ -15,12 +19,13 @@ if(isset($_POST['submit'])){
 		foreach($accessTokens as $service => $accessToken){
 			$_SESSION['user'][$service] = $accessToken;
 		}
-		echo '{"status":"OK"}';
-		exit;
+		echo '{"status":"OK"}';exit;
+	}
+	else{
+		echo '{"status":"FAIL","problem":"Invalid login"}';exit;
 	}
 }
 
-echo '{"status":"FAIL"}';
+echo '{"status":"FAIL","problem":"Incomplete login attempt"}';
 
-// var_dump($_SESSION);
 ?>

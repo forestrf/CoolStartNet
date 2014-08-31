@@ -29,11 +29,10 @@ define('WEB_PATH', 'www.mywebhere.com/folder/to/site/');
 # Max file size for the uploaded widget files. In bytes.
 define('MAX_FILE_SIZE_BYTES', 512000);
 
-# Max user nickname length
+# Max user nickname lengths
 define('NICK_MAX_LENGTH', 15);
-
-# Max user password length
 define('PASSWORD_MAX_LENGTH', 30);
+define('EMAIL_MAX_LENGTH', 50);
 
 # Max filename length
 define('FILENAME_MAX_LENGTH', 50);
