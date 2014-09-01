@@ -189,6 +189,12 @@ var API = (function(){
 		};
 		
 		div["setPositionSize"] = function(left, top, width, height){
+			if(typeof left === 'object'){
+				var top = left.top,
+					width = left.width,
+					height = left.height;
+				left = left.left;
+			}
 			return div.setPosition(left, top).setSize(width, height);
 		};
 		

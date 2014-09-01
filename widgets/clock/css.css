@@ -1,25 +1,24 @@
 .clock {
 	color: #FFFFFF;
-	right: 1%;
-	top: 1%;
+	z-index: -1;
 }
 
 .clock .hour {
-	font-size: 6em;
-	margin-right: 0.3em;
+	font-size: 7vw;
+	text-align: center;
 	text-shadow: 4px 4px 5px #000000;
 }
 .clock .hour span {
 	bottom: 0;
 	display: inline-block;
-	font-size: 0.2em;
+	font-size: 1.5vw;
 	position: relative;
 	text-shadow: 2px 2px 2px #000000;
 	width: 0;
 }
 
 .clock .date {
-	font-size: 1.1em;
+	font-size: 1.3vw;
 	text-align: center;
 	text-shadow: 2px 2px 4px #000000;
 }
