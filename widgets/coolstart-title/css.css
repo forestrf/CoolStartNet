@@ -1,0 +1,19 @@
+.coolstart_title {
+	left: 2%;
+	top: 4%;
+}
+
+.coolstart_title h1 {
+	color: #FFFFFF;
+	font-family: Tahoma;
+	font-size: 5vw;
+	text-shadow: 0.2vw 0.2vw 0.2vw rgba(0, 0, 0, 0.56);
+}
+
+.coolstart_title h2 {
+	color: #F0F0F0;
+	font-size: 1.5vw;
+	margin-left: 2vw;
+	margin-top: 1.2vw;
+	text-shadow: 0.2vw 0.2vw 0.2vw rgba(0, 0, 0, 0.56);
+}

@@ -34,3 +34,23 @@
 	RewriteRule ^externalfile/(.*)$ external.php?file=/$1 [NC,L]
 
 </IfModule>
+
+#CACHE
+<ifModule mod_headers.c>
+
+	# 1 YEAR
+	<FilesMatch "\.(ico|pdf|flv|woff|eot|ttf|svg)$">
+		Header set Cache-Control "max-age=29030400, public"
+	</FilesMatch>
+	
+	# 1 MONTH
+	<FilesMatch "\.(jpg|jpeg|png|gif|swf)$">
+		Header set Cache-Control "max-age=2592000, public"
+	</FilesMatch>
+	
+	# 1 MONTH
+	<FilesMatch "\.(xml|txt|css|js)$">
+		Header set Cache-Control "max-age=2592000, proxy-revalidate"
+	</FilesMatch>
+
+</ifModule>
