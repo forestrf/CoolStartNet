@@ -1,0 +1,25 @@
+.clock {
+	color: #FFFFFF;
+	right: 1%;
+	top: 1%;
+}
+
+.clock .hour {
+	font-size: 6em;
+	margin-right: 0.3em;
+	text-shadow: 4px 4px 5px #000000;
+}
+.clock .hour span {
+	bottom: 0;
+	display: inline-block;
+	font-size: 0.2em;
+	position: relative;
+	text-shadow: 2px 2px 2px #000000;
+	width: 0;
+}
+
+.clock .date {
+	font-size: 1.1em;
+	text-align: center;
+	text-shadow: 2px 2px 4px #000000;
+}
