@@ -4,6 +4,7 @@ API.widget.linkMyCSS('css.css');
 
 var txt_register = 'Register';
 var txt_login = 'Login';
+var txt_remember = 'Remember';
 
 var js = document.createElement("script");
 js.type = "text/javascript";
@@ -72,7 +73,7 @@ forgot.onclick = function(){
 		
 		login.style.marginTop = '-5%';
 		
-		button.value = txt_register;
+		button.value = txt_remember;
 		mail.removeClass('invisible');
 		pass.addClass('invisible');
 		user.addClass('invisible');
@@ -111,8 +112,6 @@ function backToNormal(){
 	user.setAttribute('tabindex', 1);
 	
 	captcha_placeholder.innerHTML = '';
-	
-	form.setAttribute
 }
 
 function submit(){
@@ -173,7 +172,13 @@ function fail(txt){
 		Recaptcha.reload();
 	}
 	
-	button.value = register.checked ? txt_register : txt_login;
+	if(register.checked){
+		button.value = txt_register;
+	} else if(forgot.checked){
+		button.value = txt_remember;
+	} else {
+		button.value = txt_login;
+	}
 	
 	setTimeout(function(){
 		user.removeClass('fail');
