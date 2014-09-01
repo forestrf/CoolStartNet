@@ -148,7 +148,7 @@ function submit(){
 				submit();
 			} else if(forgot.checked){
 				forgot.checked = false;
-			else{
+			}else{
 				location.href = '//' + API.domain;
 			}
 		}
