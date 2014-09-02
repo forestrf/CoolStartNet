@@ -599,7 +599,7 @@ var API = (function(){
 	
 	
 	return{
-		"init":function(widgetID, secret, domain_path){
+		"init":function(widgetID, secret){
 			return {
 				"storage": {
 					"localStorage": {
@@ -695,7 +695,6 @@ var API = (function(){
 					}
 				},
 				"url": function(name){return getUrl(widgetID, name);},
-				"domain": domain_path,
 				"xhr": xhr,
 				"bookmarks": {
 					"createObject": bookmarks_base
@@ -721,7 +720,7 @@ var API = (function(){
 						return this; //API.dropbox
 					},
 					"getFileURI": function(path){
-						return '//' + domain_path + 'externalfile' + path;
+						return '//' + SERVER_VARS.DOMAIN_PATH + 'externalfile' + path;
 					},
 					"available": function(callback){
 						xhr('/external.php', '', function(response){

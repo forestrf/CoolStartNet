@@ -5,6 +5,9 @@ API.widget.linkMyCSS('css.css');
 var txt_register = 'Register';
 var txt_login = 'Login';
 var txt_remember = 'Remember';
+var fail_class = 'fail';
+var invisible = 'invisible';
+var tabindex = 'tabindex';
 
 var js = document.createElement("script");
 js.type = "text/javascript";
@@ -18,9 +21,9 @@ var register ,captcha_placeholder, mail, user, pass, button, form, messages, for
 
 C(login,
 	form = C('form', ['onsubmit', 'return false;'],
-		user = C('input', ['type', 'text',     'name', 'nick',      'placeholder', 'User',     'class', 'c', 'tabindex', 1]),
-		pass = C('input', ['type', 'password', 'name', 'password',  'placeholder', 'Password', 'class', 'c', 'tabindex', 2]),
-		mail = C('input', ['type', 'text',     'name', 'email',     'placeholder', 'email',    'class', 'c invisible']),
+		user = C('input', ['type', 'text',     'name', 'nick',      'placeholder', 'User',     'class', 'c', tabindex, 1]),
+		pass = C('input', ['type', 'password', 'name', 'password',  'placeholder', 'Password', 'class', 'c', tabindex, 2]),
+		mail = C('input', ['type', 'text',     'name', 'email',     'placeholder', 'email',    'class', 'c ' + invisible]),
 		captcha_placeholder = C('div', ['class', 'captcha_placeholder']),
 		C('label', ['class', 'c'],
 			register = C('input', ['type', 'checkbox']),
@@ -30,12 +33,12 @@ C(login,
 			forgot = C('input', ['type', 'checkbox']),
 			"I forgot my password"
 		),
-		button = C('input', ['type', 'submit', 'name', 'submit', 'value', 'Login', 'class', 'c', 'tabindex', 3])
+		button = C('input', ['type', 'submit', 'name', 'submit', 'value', 'Login', 'class', 'c', tabindex, 3])
 	),
 	messages = C('div', ['class', 'message'])
 );
 
-API.document.wrapElement(user).wrapElement(pass).wrapElement(mail);
+API.document.wrapElement(user).wrapElement(pass).wrapElement(mail).wrapElement(messages);
 
 register.checked = false;
 
@@ -48,15 +51,15 @@ register.onclick = function(){
 		login.style.marginTop = '-10%';
 		
 		button.value = txt_register;
-		mail.removeClass('invisible');
+		mail.removeClass(invisible);
 		
-		button.setAttribute('tabindex', 5);
-		mail.setAttribute('tabindex', 3);
+		button.setAttribute(tabindex, 5);
+		mail.setAttribute(tabindex, 3);
 		
 		Recaptcha.create(SERVER_VARS.CAPTCHA_PUB_KEY, captcha_placeholder, {
 			theme: "red",
 			callback: function(){
-				document.getElementById('recaptcha_response_field').setAttribute('tabindex', 4);
+				document.getElementById('recaptcha_response_field').setAttribute(tabindex, 4);
 			}
 		});
 	}
@@ -74,19 +77,19 @@ forgot.onclick = function(){
 		login.style.marginTop = '-5%';
 		
 		button.value = txt_remember;
-		mail.removeClass('invisible');
-		pass.addClass('invisible');
-		user.addClass('invisible');
+		mail.removeClass(invisible);
+		pass.addClass(invisible);
+		user.addClass(invisible);
 		
-		pass.removeAttribute('tabindex');
-		user.removeAttribute('tabindex');
-		button.setAttribute('tabindex', 3);
-		mail.setAttribute('tabindex', 1);
+		pass.removeAttribute(tabindex);
+		user.removeAttribute(tabindex);
+		button.setAttribute(tabindex, 3);
+		mail.setAttribute(tabindex, 1);
 		
 		Recaptcha.create(SERVER_VARS.CAPTCHA_PUB_KEY, captcha_placeholder, {
 			theme: "red",
 			callback: function(){
-				document.getElementById('recaptcha_response_field').setAttribute('tabindex', 2);
+				document.getElementById('recaptcha_response_field').setAttribute(tabindex, 2);
 			}
 		});
 	}
@@ -102,14 +105,14 @@ function backToNormal(){
 	login.style.marginTop = '0px';
 	
 	button.value = txt_login;
-	mail.addClass('invisible');
-	pass.removeClass('invisible');
-	user.removeClass('invisible');
+	mail.addClass(invisible);
+	pass.removeClass(invisible);
+	user.removeClass(invisible);
 	
-	mail.removeAttribute('tabindex');
-	button.setAttribute('tabindex', 3);
-	pass.setAttribute('tabindex', 2);
-	user.setAttribute('tabindex', 1);
+	mail.removeAttribute(tabindex);
+	button.setAttribute(tabindex, 3);
+	pass.setAttribute(tabindex, 2);
+	user.setAttribute(tabindex, 1);
 	
 	captcha_placeholder.innerHTML = '';
 }
@@ -131,24 +134,27 @@ function submit(){
 	}
 	data = data.substr(0, data.length -1);
 	
+	url = 'https://' + SERVER_VARS.DOMAIN_PATH;
 	if(register.checked){
-		url = 'https://'+API.domain+'register_js.php';
+		url += 'register_js.php';
 	} else if(forgot.checked){
-		url = 'https://'+API.domain+'forgot_js.php';
+		url += 'forgot_js.php';
 	} else {
-		url = 'https://'+API.domain+'login_js.php';
+		url += 'login_js.php';
 	}
 	
 	API.xhr(url, data, function(data){
 		data = JSON.parse(data);
 		if(data.status === 'OK'){
 			if(register.checked){
+				ok('Please, check you e-mail inbox to validate your account');
 				register.checked = false;
-				submit();
 			} else if(forgot.checked){
+				ok('Please, check you e-mail to restore your account');
 				forgot.checked = false;
 			}else{
-				location.href = '//' + API.domain;
+				ok('Logged in. Refreshing...');
+				location.href = '//' + SERVER_VARS.DOMAIN_PATH;
 			}
 		}
 		else{
@@ -161,11 +167,19 @@ function submit(){
 
 form.onsubmit = submit;
 
+function ok(txt){
+	messages.removeClass('fail');
+	messages.addClass('ok');
+	messages.innerHTML = txt;
+}
+
 function fail(txt){
-	user.addClass('fail');
-	pass.addClass('fail');
-	mail.addClass('fail');
+	user.addClass(fail_class);
+	pass.addClass(fail_class);
+	mail.addClass(fail_class);
 	
+	messages.removeClass('ok');
+	messages.addClass('fail');
 	messages.innerHTML = txt;
 	
 	if(register.checked){
@@ -181,8 +195,8 @@ function fail(txt){
 	}
 	
 	setTimeout(function(){
-		user.removeClass('fail');
-		pass.removeClass('fail');
-		mail.removeClass('fail');
+		user.removeClass(fail_class);
+		pass.removeClass(fail_class);
+		mail.removeClass(fail_class);
 	}, 4000);
 }

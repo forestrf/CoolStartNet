@@ -101,6 +101,13 @@ class DB {
 	#
 	# ---------------------------------------------------------------------------
 	
+	/*
+	levels:
+	0 => account not validated
+	200 => normal user
+	1000 => lol admin
+	*/
+	
 	// Check if exists a nick.
 	function nick_exists($nick){
 		$nick = mysql_escape_mimic($nick);
@@ -108,20 +115,34 @@ class DB {
 	}
 	
 	// Insert a new user. Data previously validated and sanitized
-	function create_new_user($nick, $password, $email){
+	function create_new_user($nick, $password, $email, &$validation){
 		require_once __DIR__.'/../functions/generic.php';
 		$nick = mysql_escape_mimic($nick);
 		$password = hash_password($password);
 		$email = mysql_escape_mimic($email);
 		$rnd = mysql_escape_mimic(utf8_encode(random_string(32)));
-		return $this->query("INSERT INTO `users` (`nick`, `password`, `email`, `RND`) VALUES ('{$nick}', '{$password}', '{$email}', '{$rnd}');") === true;
+		$validation = mysql_escape_mimic(utf8_encode(random_string(5)));
+		return $this->query("INSERT INTO `users` (`nick`, `password`, `email`, `RND`, `validation`) VALUES ('{$nick}', '{$password}', '{$email}', '{$rnd}', '{$validation}');") === true;
+	}
+	
+	// Insert a new user. Data previously validated and sanitized. Returns false or the user email
+	function validate_new_user($nick, $validation){
+		require_once __DIR__.'/../functions/generic.php';
+		$nick = mysql_escape_mimic($nick);
+		$validation = mysql_escape_mimic($validation);
+		if($this->query("UPDATE `users` set `level` = 200 WHERE `level` = 0 AND `nick` = '{$nick}' AND `validation` = '{$validation}';") === true){
+			$email = $this->query("SELECT `email` FROM `users` WHERE `nick` = '{$nick}';");
+			return $email[0]['email'];
+		} else {
+			return false;
+		}
 	}
 	
 	// Returns the user after validating the nick and the password or returns false if the user doesn't match.
 	function check_nick_password($nick, $password){
 		$nick = mysql_escape_mimic($nick);
 		$password = hash_password($password);
-		$result = $this->query("SELECT * FROM `users` WHERE `nick` = '{$nick}' AND `password` = '{$password}';");
+		$result = $this->query("SELECT * FROM `users` WHERE `level` >= 200 && `nick` = '{$nick}' AND `password` = '{$password}';");
 		return count($result) > 0 ? $result[0] : false;
 	}
 	

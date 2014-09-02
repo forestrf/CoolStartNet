@@ -68,11 +68,17 @@
 }
 
 .login .message {
+	border-radius: 10px 10px 10px 10px;
+	padding: 2% 5%;
+	color: #FFFFFF;
+}
+.login .message.ok {
+	background-color: rgba(20, 255, 0, 0.5);
+	border: 1px solid #14FF00
+}
+.login .message.fail {
 	background-color: rgba(255, 0, 0, 0.5);
 	border: 1px solid #FF0000;
-	border-radius: 10px 10px 10px 10px;
-	color: #FFFFFF;
-	padding: 2% 5%;
 }
 .login .message:empty {
 	display: none;

@@ -37,7 +37,7 @@ header('Content-Type: text/html; charset=UTF-8');
 <body>
 
 <script id="delete_me">
-	
+
 (function(){
 	// prevent innerHTML from reading the widgetID + secret to prevent widgets manipulate other widgets without consent
 	var t = document.getElementById("delete_me");
@@ -48,10 +48,6 @@ header('Content-Type: text/html; charset=UTF-8');
 
 	// Variables for the config widget
 	var CONFIG = [];
-
-	var SERVER_VARS = {
-		'CAPTCHA_PUB_KEY': '<?php echo CAPTCHA_PUBLIC_KEY?>'
-	};
 
 	<?php
 
@@ -70,7 +66,13 @@ header('Content-Type: text/html; charset=UTF-8');
 		?>
 
 		(function(API){
-			API = API.init("<?php echo $widget['ID'];?>", "<?php echo hash_api($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_API);?>", "<?php echo WEB_PATH?>");
+			API = API.init("<?php echo $widget['ID'];?>", "<?php echo hash_api($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_API);?>");
+
+			var SERVER_VARS = {
+				'CAPTCHA_PUB_KEY': '<?php echo CAPTCHA_PUBLIC_KEY?>',
+				'DOMAIN_PATH': '<?php echo WEB_PATH?>'
+			};
+
 
 			<?php echo $data[0]['data'];?>
 

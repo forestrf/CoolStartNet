@@ -27,7 +27,16 @@ if(
 			$db = new DB();
 			$db -> Open();
 			
-			if($db -> create_new_user($_POST['nick'], $_POST['password'], $_POST['email'])){
+			if($db -> create_new_user($_POST['nick'], $_POST['password'], $_POST['email'], $validation)){
+				
+				$validation_link = 'https://'.WEB_PATH.'validate.php?nick='.urlencode($_POST['nick']).'&validation='.urlencode(base64_encode($validation));
+				
+				$subject = 'Validate your account';
+				$body = "Validate your account by following the next link\r\n\r\n"
+					. '<a href="'.$validation_link.'">'.$validation_link.'</a>';
+				
+				send_mail($_POST['email'], $subject, $body);
+				
 				echo '{"status":"OK"}';exit;
 			} else {
 				echo '{"status":"FAIL","problem":"The user already exists"}';exit;
