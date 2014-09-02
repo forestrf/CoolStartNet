@@ -16,17 +16,10 @@
 #	 along with CoolStart.net.  If not, see <http://www.gnu.org/licenses/>.
 
 
+header('Content-Type: text/html; charset=UTF-8');
+
 require_once 'php/functions/generic.php';
 $db = open_db_session();
-if(!isset($_SESSION['user'])){
-	// Not logged. Use default user.
-	$_SESSION['user'] = $db -> check_nick_password(DEFAULT_USER_NICK, DEFAULT_USER_PASSWORD);
-	$accessTokens = $db->getAllAccessToken();
-	foreach($accessTokens as $service => $accessToken){
-		$_SESSION['user'][$service] = $accessToken;
-	}
-}
 
 require_once 'php/renderer.php';
-
 ?>

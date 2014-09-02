@@ -17,7 +17,7 @@ login.addClass('login');
 var register ,captcha_placeholder, mail, user, pass, button, form, messages, forgot;
 
 C(login,
-	form = C('form',
+	form = C('form', ['onsubmit', 'return false;'],
 		user = C('input', ['type', 'text',     'name', 'nick',      'placeholder', 'User',     'class', 'c', 'tabindex', 1]),
 		pass = C('input', ['type', 'password', 'name', 'password',  'placeholder', 'Password', 'class', 'c', 'tabindex', 2]),
 		mail = C('input', ['type', 'text',     'name', 'email',     'placeholder', 'email',    'class', 'c invisible']),

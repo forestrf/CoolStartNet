@@ -3,6 +3,10 @@
 // http://stackoverflow.com/questions/25255415/apache-php-crashes-when-calling-2-or-more-php-files-at-the-same-time
 header('Connection: Close');
 
+require_once 'php/functions/generic.php';
+$db = open_db_session();
+user_check_access();
+
 // Ask for the variables to identify the filename + path.
 if(isset($_POST['path']) && strlen($_POST['path']) > 0){
 	// Path or name
@@ -19,7 +23,6 @@ if(isset($_POST['path']) && strlen($_POST['path']) > 0){
 	
 	echoFile(start(), $_GET['file']);
 } else {
-	session_start();
 	if(isset($_SESSION['user'])){
 		echo json_encode(
 			array(
@@ -32,13 +35,6 @@ if(isset($_POST['path']) && strlen($_POST['path']) > 0){
 
 
 function start(){
-	require_once 'php/functions/generic.php';
-	$db = open_db_session();
-	user_check_access();
-	if(!isset($_SESSION['user']['dropbox_accessToken'])){
-		exit;
-	}
-
 	# Include the Dropbox SDK libraries
 	require_once dirname(__FILE__).'/php/lib/Dropbox/autoload.php';
 	

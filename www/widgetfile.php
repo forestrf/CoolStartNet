@@ -10,9 +10,7 @@ header('Connection: Close');
 
 require_once 'php/functions/generic.php';
 $db = open_db_session();
-if(!isset($_SESSION['user'])){
-	exit;
-}
+user_check_access(true);
 
 
 

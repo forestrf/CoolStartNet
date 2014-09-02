@@ -90,7 +90,11 @@ function open_db_session($to_return = 'db'){
 	require_once __DIR__.'/../lib/DB.php';
 	require_once __DIR__.'/../lib/zebra_session/Zebra_Session.php';
 	
-	$domain = substr($_SERVER['SERVER_NAME'], strpos($_SERVER['SERVER_NAME'], '.'));
+	if(substr_count($_SERVER['SERVER_NAME'], '.') > 1){
+		$domain = substr($_SERVER['SERVER_NAME'], strpos($_SERVER['SERVER_NAME'], '.'));
+	} else {
+		$domain = '.' .$_SERVER['SERVER_NAME'];
+	}
 	ini_set('session.cookie_domain', $domain);
 	
 	$db = new DB();
@@ -102,12 +106,20 @@ function open_db_session($to_return = 'db'){
 		setcookie('PHPSESSID', $_COOKIE['PHPSESSID'], time() + ZEBRA_SESSION_TIME, '/', $domain);
 	}
 	
+	if(!isset($_SESSION['user'])){
+		// Anonymous
+		$_SESSION = array();
+		$_SESSION['user'] = $db -> check_nick_password(DEFAULT_USER_NICK, DEFAULT_USER_PASSWORD);
+		$_SESSION['user']['IP'] = $_SERVER['REMOTE_ADDR'];
+	}
+	
 	return $$to_return;
 }
 
 function user_check_access($allow_default_user = false){
-	if(!isset($_SESSION['user']) ||
-	(!$allow_default_user && $_SESSION['user']['nick'] === DEFAULT_USER_NICK)){
+	if(!$allow_default_user &&
+		(!isset($_SESSION['user']) || $_SESSION['user']['nick'] === DEFAULT_USER_NICK)
+	){
 		header('Location: //'.WEB_PATH, true, 302);
 		exit;
 	}
