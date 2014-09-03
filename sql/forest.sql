@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Aug 31, 2014 at 02:26 AM
+-- Generation Time: Sep 03, 2014 at 01:35 AM
 -- Server version: 5.5.39
 -- PHP Version: 5.4.31
 
@@ -67,8 +67,10 @@ CREATE TABLE IF NOT EXISTS `users` (
   `nick` varchar(15) COLLATE utf8_bin NOT NULL,
   `password` varchar(32) COLLATE utf8_bin NOT NULL,
   `email` varchar(50) COLLATE utf8_bin NOT NULL,
-  `RND` varchar(32) COLLATE utf8_bin NOT NULL
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=61 ;
+  `RND` varchar(32) COLLATE utf8_bin NOT NULL,
+  `level` int(11) NOT NULL DEFAULT '0',
+  `validation` varchar(5) COLLATE utf8_bin NOT NULL
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=62 ;
 
 -- --------------------------------------------------------
 
@@ -94,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `widgets` (
   `name` varchar(30) COLLATE utf8_bin NOT NULL,
   `ownerID` int(11) NOT NULL,
   `published` int(11) NOT NULL DEFAULT '-1' COMMENT 'Si se publica cambiar a 0 o + desde php. Nunca volver a -1'
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=12 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=14 ;
 
 -- --------------------------------------------------------
 
@@ -163,7 +165,7 @@ ALTER TABLE `session_data`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
- ADD PRIMARY KEY (`ID`), ADD UNIQUE KEY `nick` (`nick`);
+ ADD PRIMARY KEY (`ID`), ADD UNIQUE KEY `nick` (`nick`), ADD UNIQUE KEY `email` (`email`);
 
 --
 -- Indexes for table `variables`
@@ -203,12 +205,12 @@ ALTER TABLE `widgets-versions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=61;
+MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=62;
 --
 -- AUTO_INCREMENT for table `widgets`
 --
 ALTER TABLE `widgets`
-MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=12;
+MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=14;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
