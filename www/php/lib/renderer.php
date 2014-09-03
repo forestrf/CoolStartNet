@@ -16,8 +16,8 @@
 #	 along with CoolStart.net.  If not, see <http://www.gnu.org/licenses/>.
 
 
-header('Content-Type: text/html; charset=UTF-8');
-
+function render(&$db, $compress = false){
+	ob_start();
 ?>
 
 <!doctype html>
@@ -28,11 +28,14 @@ header('Content-Type: text/html; charset=UTF-8');
 	<script src="js/crel2.js"></script>
 	<script src="js/api.js"></script>
 	<script>
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-		ga('create', 'UA-54264686-1', 'auto');
-		ga('send', 'pageview');
+		<?php echo ANALYTICS_JS;?>
 	</script>
+	<style>
+	html{
+		width: 0px;
+		height: 5px;
+	}
+	</style>
 </head>
 <body>
 
@@ -90,3 +93,25 @@ header('Content-Type: text/html; charset=UTF-8');
 
 </body>
 </html>
+
+<?php
+	$html = ob_get_contents();
+	ob_end_clean();
+
+	if($compress){
+		require_once __DIR__.'/minify/min/lib/Minify/HTML.php';
+		require_once __DIR__.'/minify/min/lib/Minify/CSS.php';
+		require_once __DIR__.'/minify/min/lib/Minify/CSS/Compressor.php';
+		//require_once __DIR__.'/minify/min/lib/JSMin.php';
+		require_once __DIR__.'/minify/JSHrink/src/Minifier.php';
+
+		$html = Minify_HTML::minify($html, array(
+			'cssMinifier' => array('Minify_CSS', 'minify'),
+			//'jsMinifier' => array('JSMin', 'minify')
+			'jsMinifier' => array('JShrink\Minifier', 'minify')
+		));
+	}
+
+	return $html;
+}
+?>

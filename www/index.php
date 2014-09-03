@@ -21,5 +21,7 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once 'php/functions/generic.php';
 $db = open_db_session();
 
-require_once 'php/renderer.php';
+require_once 'php/lib/renderer.php';
+
+echo render($db, false);
 ?>
