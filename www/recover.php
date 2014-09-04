@@ -14,13 +14,13 @@ if(
 		$db = new DB();
 		$db -> Open();
 		
-		$email = $db -> recover_account_validate($nick, base64_decode($validation));
+		$email = $db -> recover_account_validate($_GET['nick'], base64_decode($validation));
 		
 		if($email){
 			
 			$new_password = random_string(10, 48, 57);
 			
-			$db -> modify_password($nick, $new_password);
+			$db -> modify_password($_GET['nick'], $new_password);
 			
 			$subject = 'Here is your new password';
 			
