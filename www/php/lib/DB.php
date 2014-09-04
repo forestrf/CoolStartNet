@@ -152,7 +152,7 @@ class DB {
 	}
 	
 	// pre-change a users password. Data previously validated and sanitized. Returns the email or false
-	function recover_account_validate($nick, $validation, &$email){
+	function recover_account_validate($nick, $validation){
 		require_once __DIR__.'/../functions/generic.php';
 		$nick = mysql_escape_mimic($nick);
 		$validation = mysql_escape_mimic($validation);
