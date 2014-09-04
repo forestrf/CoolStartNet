@@ -27,6 +27,8 @@ if(
 			$body = "Your new password of your account is:<br/><br/>{$new_password}<br/><br/>Change it as soon as possible.";
 			
 			send_mail($email, $subject, $body);
+			
+			header('Location: //'.WEB_PATH, true, 302);
 		}
 	}
 }
