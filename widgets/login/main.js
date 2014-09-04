@@ -148,10 +148,8 @@ function submit(){
 		if(data.status === 'OK'){
 			if(register.checked){
 				ok('Please, check you e-mail inbox to validate your account');
-				register.checked = false;
 			} else if(forgot.checked){
 				ok('Please, check you e-mail to restore your account');
-				forgot.checked = false;
 			}else{
 				ok('Logged in. Refreshing...');
 				location.href = '//' + SERVER_VARS.DOMAIN_PATH;

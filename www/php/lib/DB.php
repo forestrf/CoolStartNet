@@ -122,7 +122,7 @@ class DB {
 		$email = mysql_escape_mimic($email);
 		$rnd = mysql_escape_mimic(utf8_encode(random_string(32)));
 		$validation = mysql_escape_mimic(utf8_encode(random_string(5)));
-		return $this->query("INSERT INTO `users` (`nick`, `password`, `email`, `RND`, `validation`) VALUES ('{$nick}', '{$password}', '{$email}', '{$rnd}', '{$validation}');") === true;
+		return $this->query("INSERT INTO `users` (`nick`, `password`, `email`, `RND`, `validation`, `creation_date`) VALUES ('{$nick}', '{$password}', '{$email}', '{$rnd}', '{$validation}', NOW());") === true;
 	}
 	
 	// Insert a new user. Data previously validated and sanitized. Returns false or the user email

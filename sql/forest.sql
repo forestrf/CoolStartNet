@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Sep 03, 2014 at 01:35 AM
+-- Generation Time: Sep 04, 2014 at 07:00 PM
 -- Server version: 5.5.39
 -- PHP Version: 5.4.31
 
@@ -69,7 +69,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   `email` varchar(50) COLLATE utf8_bin NOT NULL,
   `RND` varchar(32) COLLATE utf8_bin NOT NULL,
   `level` int(11) NOT NULL DEFAULT '0',
-  `validation` varchar(5) COLLATE utf8_bin NOT NULL
+  `validation` varchar(5) COLLATE utf8_bin NOT NULL,
+  `recover_code_due_date` date NOT NULL,
+  `creation_date` date NOT NULL
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=62 ;
 
 -- --------------------------------------------------------
