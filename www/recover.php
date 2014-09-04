@@ -8,13 +8,13 @@ if(
 	
 	if(
 		!isset($_GET['nick'][NICK_MAX_LENGTH+1]) &&
-		isset($_POST['nick'][0]) &&
+		isset($_GET['nick'][0]) &&
 		isset($_GET['validation'][0])
 	){
 		$db = new DB();
 		$db -> Open();
 		
-		$email = $db -> recover_account_validate($nick, $validation);
+		$email = $db -> recover_account_validate($nick, base64_decode($validation));
 		
 		if($email){
 			

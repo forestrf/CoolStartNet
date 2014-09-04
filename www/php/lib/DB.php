@@ -155,7 +155,7 @@ class DB {
 	function recover_account_validate($nick, $validation, &$email){
 		require_once __DIR__.'/../functions/generic.php';
 		$nick = mysql_escape_mimic($nick);
-		$validation = mysql_escape_mimic(base64_decode($validation));
+		$validation = mysql_escape_mimic($validation);
 		$resp = $this->query("SELECT `email` FROM `users` WHERE `nick` = '{$nick}' AND `validation` = '{$validation}' AND `level` >= 200;");
 		return $resp ? $resp[0]['email'] : false;
 	}
