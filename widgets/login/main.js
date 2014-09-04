@@ -171,6 +171,8 @@ function ok(txt){
 	messages.removeClass('fail');
 	messages.addClass('ok');
 	messages.innerHTML = txt;
+
+	of();
 }
 
 function fail(txt){
@@ -182,21 +184,23 @@ function fail(txt){
 	messages.addClass('fail');
 	messages.innerHTML = txt;
 	
-	if(register.checked){
-		Recaptcha.reload();
-	}
-	
-	if(register.checked){
-		button.value = txt_register;
-	} else if(forgot.checked){
-		button.value = txt_remember;
-	} else {
-		button.value = txt_login;
-	}
-	
 	setTimeout(function(){
 		user.removeClass(fail_class);
 		pass.removeClass(fail_class);
 		mail.removeClass(fail_class);
 	}, 4000);
+	
+	of();
+}
+
+function of(){
+	if(register.checked){
+		button.value = txt_register;
+		Recaptcha.reload();
+	} else if(forgot.checked){
+		button.value = txt_remember;
+		Recaptcha.reload();
+	} else {
+		button.value = txt_login;
+	}
 }

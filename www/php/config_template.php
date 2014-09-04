@@ -69,6 +69,7 @@ define('LOGIN_FAIL_WAIT', 10); // minutes
 define('ANALYTICS_JS', "JS Analytics from GA or other service. Without <script></script>");
 
 # E-Mail
+define('USE_INTERNAL_MAIL_FUNCTION', true);
 define('SMTP_HOST', 'smtp.example.com');
 define('SMTP_EMAIL', 'webmaster@example.com');
 define('SMTP_PASSWORD', 'password of your email account');

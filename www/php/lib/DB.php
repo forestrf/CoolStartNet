@@ -126,16 +126,29 @@ class DB {
 	}
 	
 	// Insert a new user. Data previously validated and sanitized. Returns false or the user email
+	// Remove the validation of the new user. Validation will only be used now to set a new password when recovering the account
 	function validate_new_user($nick, $validation){
-		require_once __DIR__.'/../functions/generic.php';
 		$nick = mysql_escape_mimic($nick);
 		$validation = mysql_escape_mimic($validation);
-		if($this->query("UPDATE `users` set `level` = 200 WHERE `level` = 0 AND `nick` = '{$nick}' AND `validation` = '{$validation}';") === true){
+		if($this->query("UPDATE `users` set `level` = 200, `validation` = '' WHERE `level` = 0 AND `nick` = '{$nick}' AND `validation` = '{$validation}';") === true){
 			$email = $this->query("SELECT `email` FROM `users` WHERE `nick` = '{$nick}';");
 			return $email[0]['email'];
 		} else {
 			return false;
 		}
+	}
+	
+	// pre-change a users password. Data previously validated and sanitized. Returns bool
+	function recover_account($email, &$nick, &$validation){
+		require_once __DIR__.'/../functions/generic.php';
+		$email = mysql_escape_mimic($email);
+		$resp = $this->query("SELECT `nick` FROM `users` WHERE `email` = '{$email}' AND `level` >= 200;");
+		if($resp){
+			$nick = $resp[0]['nick'];
+			$validation = mysql_escape_mimic(utf8_encode(random_string(5)));
+			return $this->query("UPDATE `users` set `validation` = '{$validation}', `recover_code_due_date` = NOW() + INTERVAL 1 DAY WHERE `nick` = '{$nick}' AND `email` = '{$email}';") === true;
+		}
+		return false;
 	}
 	
 	// Returns the user after validating the nick and the password or returns false if the user doesn't match.

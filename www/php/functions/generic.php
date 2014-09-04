@@ -130,28 +130,35 @@ function user_check_access($allow_default_user = false){
 }
 
 function send_mail($for, $subject, $body){
-	require_once __DIR__.'/../lib/PHPMailer/PHPMailerAutoload.php';
+	if(USE_INTERNAL_MAIL_FUNCTION){
+		$extra_headers = 'From: ' . SMTP_EMAIL . "\r\n" .
+			'Reply-To: ' . SMTP_EMAIL . "\r\n" .
+			'X-Mailer: PHP/' . phpversion();
+		mail($for, $subject, $body, $extra_headers);
+	} else {
+		require_once __DIR__.'/../lib/PHPMailer/PHPMailerAutoload.php';
 
-	$mail = new PHPMailer();
+		$mail = new PHPMailer();
 
-	$mail->addAddress($for);	
-	$mail->FromName = EMAIL_FROM_NAME;
-	$mail->Subject  = $subject;
-	$mail->Body     = $mail->AltBody = $body;
+		$mail->addAddress($for);	
+		$mail->FromName = EMAIL_FROM_NAME;
+		$mail->Subject  = $subject;
+		$mail->Body     = $mail->AltBody = $body;
 
 
-	$mail->IsSMTP(); // set mailer to use SMTP
-	$mail->Mailer     = 'smtp';
-	$mail->SMTPAuth   = true;
-	$mail->SMTPSecure = "ssl";
-	$mail->Host       = SMTP_HOST;  // specify main and backup server
-	$mail->Port       = SMTP_PORT;
-	$mail->From       = SMTP_EMAIL;
-	$mail->Username   = SMTP_EMAIL; // SMTP username
-	$mail->Password   = SMTP_PASSWORD; // SMTP password
+		$mail->IsSMTP(); // set mailer to use SMTP
+		$mail->Mailer     = 'smtp';
+		$mail->SMTPAuth   = true;
+		$mail->SMTPSecure = "ssl";
+		$mail->Host       = SMTP_HOST;  // specify main and backup server
+		$mail->Port       = SMTP_PORT;
+		$mail->From       = SMTP_EMAIL;
+		$mail->Username   = SMTP_EMAIL; // SMTP username
+		$mail->Password   = SMTP_PASSWORD; // SMTP password
 
-	if(!$mail->send()){
-		/*echo "There has been a mail error sending to forestrf@gmail.com<br>";
-		echo $mail->ErrorInfo;*/
+		if(!$mail->send()){
+			/*echo "There has been a mail error sending to forestrf@gmail.com<br>";
+			echo $mail->ErrorInfo;*/
+		}
 	}
 }
