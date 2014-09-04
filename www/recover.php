@@ -22,7 +22,9 @@ if(
 			
 			$db -> modify_password($nick, $new_password);
 			
-			$subject = "Your password now is:</br></br>{$new_password}";
+			$subject = 'Here is your new password';
+			
+			$body = "Your new password of your account is:<br/><br/>{$new_password}<br/><br/>Change it as soon as possible.";
 			
 			send_mail($email, $subject, $body);
 		}
