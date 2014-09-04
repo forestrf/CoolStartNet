@@ -115,6 +115,9 @@ function backToNormal(){
 	user.setAttribute(tabindex, 1);
 	
 	captcha_placeholder.innerHTML = '';
+	
+	register.checked = false;
+	forgot.checked = false;
 }
 
 function submit(){
@@ -148,8 +151,10 @@ function submit(){
 		if(data.status === 'OK'){
 			if(register.checked){
 				ok('Please, check you e-mail inbox to validate your account');
+				backToNormal();
 			} else if(forgot.checked){
 				ok('Please, check you e-mail to restore your account');
+				backToNormal();
 			}else{
 				ok('Logged in. Refreshing...');
 				location.href = '//' + SERVER_VARS.DOMAIN_PATH;

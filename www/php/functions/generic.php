@@ -131,9 +131,13 @@ function user_check_access($allow_default_user = false){
 
 function send_mail($for, $subject, $body){
 	if(USE_INTERNAL_MAIL_FUNCTION){
-		$extra_headers = 'From: ' . SMTP_EMAIL . "\r\n" .
-			'Reply-To: ' . SMTP_EMAIL . "\r\n" .
-			'X-Mailer: PHP/' . phpversion();
+		$extra_headers = "MIME-Version: 1.0\r\n"
+			."Content-type: text/html; charset=UTF-8\r\n"
+			."To: {$for} <{$for}>\r\n";
+			.'From: ' . SMTP_EMAIL . "\r\n"
+			.'Reply-To: ' . SMTP_EMAIL . "\r\n"
+			.'X-Mailer: PHP/' . phpversion();
+		
 		mail($for, $subject, $body, $extra_headers);
 	} else {
 		require_once __DIR__.'/../lib/PHPMailer/PHPMailerAutoload.php';
