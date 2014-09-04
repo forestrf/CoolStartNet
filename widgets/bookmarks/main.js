@@ -246,10 +246,11 @@ function ok(){
 		break;
 	}
 	draw_bookmarks();
-	bookmark_manager_div.parentNode.removeChild(bookmark_manager_div);
+	cancel();
 }
 function cancel(){
 	bookmark_manager_div.parentNode.removeChild(bookmark_manager_div);
+	bookmark_manager_div = null;
 }
 
 // Function for the config widgetID. It returns the html object to append on the config window

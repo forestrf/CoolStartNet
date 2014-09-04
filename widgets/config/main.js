@@ -46,6 +46,7 @@ closebutton.onclick = function(){
 	configwidgetDiv.hide();
 	if(backbutton){
 		backbutton.parentNode.removeChild(backbutton);
+		backbutton = null;
 	}
 	// Hide window
 	contentDiv.removeClass('visible');
@@ -370,6 +371,7 @@ gearDiv.onclick = function(){
 					contentwidgetsDiv.unHide();
 					configwidgetDiv.hide();
 					backbutton.parentNode.removeChild(backbutton);
+					backbutton = null;
 				};
 			};
 		})(widget);
