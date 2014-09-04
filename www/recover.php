@@ -14,7 +14,7 @@ if(
 		$db = new DB();
 		$db -> Open();
 		
-		$email = $db -> recover_account_validate($_GET['nick'], base64_decode($validation));
+		$email = $db -> recover_account_validate($_GET['nick'], base64_decode($_GET['validation']));
 		
 		if($email){
 			
