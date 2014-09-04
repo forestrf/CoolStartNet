@@ -151,12 +151,35 @@ class DB {
 		return false;
 	}
 	
+	// pre-change a users password. Data previously validated and sanitized. Returns the email or false
+	function recover_account_validate($nick, $validation, &$email){
+		require_once __DIR__.'/../functions/generic.php';
+		$nick = mysql_escape_mimic($nick);
+		$validation = mysql_escape_mimic(base64_decode($validation));
+		$resp = $this->query("SELECT `email` FROM `users` WHERE `nick` = '{$nick}' AND `validation` = '{$validation}' AND `level` >= 200;");
+		return $resp ? $resp[0]['email'] : false;
+	}
+	
 	// Returns the user after validating the nick and the password or returns false if the user doesn't match.
 	function check_nick_password($nick, $password){
 		$nick = mysql_escape_mimic($nick);
 		$password = hash_password($password);
 		$result = $this->query("SELECT * FROM `users` WHERE `level` >= 200 && `nick` = '{$nick}' AND `password` = '{$password}';");
 		return count($result) > 0 ? $result[0] : false;
+	}
+	
+	// Change the password of the user. Returns bool = success
+	function modify_password($nick, $new_password){
+		$nick = mysql_escape_mimic($nick);
+		$new_password = hash_password($new_password);
+		return $this->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `nick` = '{$nick}';");
+	}
+	
+	// Change the password of the user. Returns bool = success
+	function modify_email($nick, $new_email){
+		$nick = mysql_escape_mimic($nick);
+		$new_email = hash_password($new_email);
+		return $this->query("UPDATE `users` SET `email` = '{$new_email}' WHERE `nick` = '{$nick}';");
 	}
 	
 	
