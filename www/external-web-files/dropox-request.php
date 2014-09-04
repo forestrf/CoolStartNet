@@ -2,10 +2,8 @@
 require_once '../php/config.php';
 require_once 'dropbox-functions.php';
 
-session_start();
-if(!isset($_SESSION['user'])){
-	exit;
-}
+$db = open_db_session();
+user_check_access(false);
 
 // Check if the user has a key already
 if(isset($_SESSION['user']['dropbox_accessToken']) && $_SESSION['user']['dropbox_accessToken'][5]){
