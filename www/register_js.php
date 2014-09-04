@@ -32,7 +32,7 @@ if(
 				$validation_link = 'https://'.WEB_PATH.'validate.php?nick='.urlencode($_POST['nick']).'&validation='.urlencode(base64_encode($validation));
 				
 				$subject = 'Validate your account';
-				$body = "Validate your account by following the next link\r\n\r\n"
+				$body = "Validate your account by following the next link:<br/><br/>"
 					. '<a href="'.$validation_link.'">'.$validation_link.'</a>';
 				
 				send_mail($_POST['email'], $subject, $body);

@@ -21,8 +21,8 @@ if(
 			$link = 'https://'.WEB_PATH;
 			
 			$subject = 'Account validated';
-			$body = "Welcome to CoolStart.net!\r\n\r\n"
-				. "Have a good time here!\r\n\r\n"
+			$body = "Welcome to CoolStart.net!<br/><br/>"
+				. "Have a good time here!<br/><br/>"
 				. '<a href="'.$link.'">'.$link.'</a>';
 			
 			send_mail($email, $subject, $body);
