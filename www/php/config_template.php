@@ -76,4 +76,8 @@ define('SMTP_PASSWORD', 'password of your email account');
 define('EMAIL_FROM_NAME', 'Sender name');
 define('SMTP_PORT', 465);
 
+# Dropbox
+define('DROPBOX_KEY', 'app key');
+define('DROPBOX_SECRET', 'app secret');
+
 mb_internal_encoding('utf8');

@@ -1,2 +1,0 @@
-# https://www.dropbox.com/developers/core/start/php
-dropbox_app.json
