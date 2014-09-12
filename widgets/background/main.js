@@ -196,7 +196,7 @@ var CONFIG_function = function(){
 		// Remove the object from the array and delete the tr of the table that corresponds to the background
 		var index = backgrounds_copy.indexOf(background);
 		backgrounds_copy.splice(index, 1);
-		tableBackgrounds.removeChild(childNodes[index]);
+		tableBackgrounds.removeChild(tableBackgrounds.childNodes[index]);
 	}
 	
 	function saveBackgrounds(){
