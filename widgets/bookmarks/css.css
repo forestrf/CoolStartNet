@@ -127,17 +127,18 @@
 	display: none;
 }
 
-.bookmarks .manager {
+.bookmarks_editor .manager {
 	top: 0;
 	left: 0;
 	width: 100%;
+	color: #EEE;
 	height: 100%;
 	z-index: 99999;
-	position: fixed;
+	position: absolute;
 	background-color: rgba(255, 255, 255, 0.4);
 }
 
-.bookmarks .manager .container {
+.bookmarks_editor .manager .container {
 	top: 30%;
 	left: 30%;
 	width: 40%;
@@ -148,14 +149,14 @@
 	background-color: rgba(0, 0, 0, 0.75);
 }
 
-.bookmarks .manager .container > .txt {
+.bookmarks_editor .manager .container > .txt {
 	display: block;
 	margin-top: 10px;
 	text-align: center;
 	width: 100%;
 }
 
-.bookmarks .manager .type_selector {
+.bookmarks_editor .manager .type_selector {
 	left: 25%;
 	width: 50%;
 	border: 1px outset #F00;
@@ -168,7 +169,7 @@
 	background-color: #1C1C1C;
 }
 
-.bookmarks .manager .type_selector > div {
+.bookmarks_editor .manager .type_selector > div {
 	width: 50%;
 	margin: 0;
 	cursor: pointer;
@@ -179,7 +180,7 @@
 	border-radius: 6px;
 }
 
-.bookmarks .manager .type_selector > div.selected {
+.bookmarks_editor .manager .type_selector > div.selected {
 	background: #f00;
 	background: -moz-linear-gradient(top,  #f00 0%, #4e0000 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f00), color-stop(100%,#4e0000));
@@ -190,11 +191,11 @@
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f00', endColorstr='#4e0000',GradientType=0 );
 }
 
-.form {
+.bookmarks_editor .manager .form {
 	margin-top: 20px;
 }
 
-.bookmarks .manager .form input {
+.bookmarks_editor .manager .form input {
 	width: 80%;
 	color: #FFF;
 	border: 1px outset #F00;
@@ -204,17 +205,17 @@
 	border-radius: 5px;
 	background-color: #1C1C1C;
 }
-.bookmarks .manager .form input:focus {
+.bookmarks_editor .manager .form input:focus {
 	box-shadow: 0 0 11px #1C0000;
 	background-color: #1C0000;
 }
 
-.bookmarks .manager .buttons {
+.bookmarks_editor .manager .buttons {
 	margin-top: 5%;
 	text-align: center;
 }
 
-.bookmarks .manager .buttons > input {
+.bookmarks_editor .manager .buttons > input {
 	width: 25%;
 	color: #FFF;
 	height: 2em;
@@ -225,7 +226,7 @@
 	border-radius: 5px;
 }
 
-.bookmarks .manager .buttons > input:hover {
+.bookmarks_editor .manager .buttons > input:hover {
 	background: #7B0909;
 	background: -moz-linear-gradient(top,  #594444 0%, #451111 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#594444), color-stop(100%,#451111));
@@ -236,7 +237,7 @@
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#594444', endColorstr='#451111',GradientType=0 );
 }
 
-.bookmarks .manager .buttons > input:active {C13B02 C13B02
+.bookmarks_editor .manager .buttons > input:active {C13B02 C13B02
 	background: #7B0909;
 	background: -moz-linear-gradient(top,  #621D00 0%, #C13B02 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#621D00), color-stop(100%,#C13B02));

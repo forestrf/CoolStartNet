@@ -217,6 +217,10 @@ var API = (function(){
 			div.className = div.className.split(className).join("").trim();
 			return div;
 		};
+		
+		div["clear"] = function(){
+			div.innerHTML = '';
+		}
 	}
 	
 	
@@ -669,8 +673,9 @@ var API = (function(){
 					"create": function(){
 						var div = document.createElement("div");
 						div.style.display  = "block";
-						div.style.position = "fixed";
-						document.body.appendChild(div);
+						div.style.position = "absolute";
+						//document.body.appendChild(div);
+						document.getElementById('widgets').appendChild(div);
 						div_base(div);
 						return div;
 					},

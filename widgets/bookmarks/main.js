@@ -150,6 +150,7 @@ function recursive_bookmark_parser(element, path, elements){
 						create_element(path, 'bookmark', false, 'editing a bookmark inside ', function(){
 							bookmarks.editBookmark(path, i, form_uri.value, form_title.value);
 							draw_bookmarks();
+							close_manager();
 						});
 						form_uri.value   = elements[i].uri;
 						form_title.value = elements[i].title;
@@ -180,6 +181,11 @@ var form_folder_name;
 var form_uri;
 var form_title;
 
+var create_element_div = API.widget.create();
+create_element_div.addClass("bookmarks_editor")
+	.setPositionSize(0,0,100,100)
+	.style.zIndex = -1;
+
 // Create a box where you can choose to create a bookmark or a folder in the path "path"
 function create_element(path, selected, show_selector, message, ok_callback){
 	if(selected      === undefined) selected = "bookmark";
@@ -190,7 +196,9 @@ function create_element(path, selected, show_selector, message, ok_callback){
 	currentPath = path;
 	var folder_gui = path === "" ? "the root folder" : "the folder " + path;
 	
-	C(ventana, 
+	create_element_div.style.zIndex = 0;
+	
+	C(create_element_div, 
 		C(bookmark_manager_div = API.document.createElement("div").addClass("manager"),
 			C('div', ['class', 'container'],
 				C("div", ["class", "txt"], message + folder_gui),
@@ -201,7 +209,7 @@ function create_element(path, selected, show_selector, message, ok_callback){
 				form_target = C("div", ["class", "form"]),
 				C("div", ["class", "buttons"],
 					C("input", ["type", "button", "onclick", ok_callback, "value", "OK"]),
-					C("input", ["type", "button", "onclick", cancel, "value", "Cancel"])
+					C("input", ["type", "button", "onclick", close_manager, "value", "Cancel"])
 				)
 			)
 		)
@@ -246,11 +254,12 @@ function ok(){
 		break;
 	}
 	draw_bookmarks();
-	cancel();
+	close_manager();
 }
-function cancel(){
-	bookmark_manager_div.parentNode.removeChild(bookmark_manager_div);
+function close_manager(){
 	bookmark_manager_div = null;
+	create_element_div.clear();
+	create_element_div.style.zIndex = -1;
 }
 
 // Function for the config widgetID. It returns the html object to append on the config window

@@ -43,6 +43,8 @@ function render(&$db, $compress = false){
 </head>
 <body>
 
+<div id="widgets"></div>
+
 <script id="delete_me">
 
 (function(){

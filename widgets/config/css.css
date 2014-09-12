@@ -3,7 +3,7 @@
 	right: 8px;
 	color: #dadada;
 	cursor: pointer;
-	position: fixed;
+	position: absolute;
 	font-size: 2em;
 	-webkit-transition: color 0.5s ease, text-shadow 0.5s ease;
 	-moz-transition: color 0.5s ease, text-shadow 0.5s ease;
@@ -25,7 +25,7 @@
 	height: 100%;
 	opacity: 0;
 	z-index: 999999;
-	position: fixed;
+	position: absolute;
 	-webkit-transition: opacity 0.5s ease, top 0s ease 0.5s;
 	-moz-transition: opacity 0.5s ease, top 0s ease 0.5s;
 	-o-transition: opacity 0.5s ease, top 0s ease 0.5s;
@@ -102,14 +102,14 @@
 	width: 100%;
 	height: 100%;
 	z-index: 999999;
-	position: fixed;
+	position: absolute;
 	background-color: rgba(4, 72, 145, 0.9);
 }
 
 .config_contentDivRect .config_rectPosition {
 	cursor: move;
 	border: 1px solid #fff;
-	position: fixed;
+	position: absolute;
 	box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
 	background-color: rgba(255, 255, 255, 0.35);
 }
