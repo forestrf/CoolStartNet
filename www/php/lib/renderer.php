@@ -17,14 +17,18 @@
 
 
 function render(&$db, $compress = false){
+	
+	$nick = &$_SESSION['user']['nick'];
+
 	ob_start();
 ?>
 
 <!doctype html>
 <html>
 <head>
-	<title>Homepage</title>
+	<title>Homepage<?php if($nick !== DEFAULT_USER_NICK) echo ' - '.$nick?></title>
 	<link rel="stylesheet" href="css/reset.min.css"/>
+	<link rel="stylesheet" href="css/renderer.css"/>
 	<script src="js/crel2.js"></script>
 	<script src="js/api.js"></script>
 	<script>
@@ -90,6 +94,10 @@ function render(&$db, $compress = false){
 	<?php }	?>
 })();
 </script>
+
+<div id="bottom_bar" class="bottom_bar">
+	Manage widgets | forum | Developers | help | about | GitHub | Logout
+</div>
 
 </body>
 </html>

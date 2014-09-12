@@ -24,7 +24,7 @@ if(
 			
 			$subject = 'Here is your new password';
 			
-			$body = "Your new password of your account is:<br/><br/>{$new_password}<br/><br/>Change it as soon as possible.";
+			$body = "Your new password of your account \"{$_GET['nick']}\" is:<br/><br/>{$new_password}<br/><br/>Change it as soon as possible.";
 			
 			send_mail($email, $subject, $body);
 			
