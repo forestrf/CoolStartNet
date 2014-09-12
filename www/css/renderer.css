@@ -1,7 +1,8 @@
 #widgets {
-    width: 100%;
-    height: calc(100% - 1.4em);
-    position: absolute;
+	width: 100%;
+	height: calc(100% - 1.4em);
+	overflow: hidden;
+	position: absolute;
 	-webkit-transition: all 1s ease;
 	-moz-transition: all 1s ease;
 	-o-transition: all 1s ease;

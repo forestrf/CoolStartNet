@@ -12,6 +12,7 @@ gearDiv.addClass('config_buttongear');
 C(gearDiv, C('i', ['class', 'fa fa-cog']));
 
 
+var widgets = API.document.widgets;
 
 
 
@@ -300,7 +301,7 @@ function positioning(params, callback){
 	
 	function screen_to_percentaje(px, axis){
 		//(px/window.innerWidth)*100
-		return axis === 'x' ? px/window.innerWidth*100 : px/window.innerHeight*100;
+		return axis === 'x' ? px/widgets.clientWidth*100 : px/widgets.clientHeight*100;
 	}
 	/*
 	// Not in use

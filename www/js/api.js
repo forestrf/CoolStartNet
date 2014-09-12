@@ -604,6 +604,9 @@ var API = (function(){
 	
 	return{
 		"init":function(widgetID, secret, domain_path){
+		
+			var widgets = document.getElementById("widgets");
+		
 			return {
 				"storage": {
 					"localStorage": {
@@ -697,7 +700,8 @@ var API = (function(){
 					"wrapElement": function(element){
 						div_base(element);
 						return this;
-					}
+					},
+					"widgets": widgets
 				},
 				"url": function(name){return getUrl(widgetID, name);},
 				"xhr": xhr,
