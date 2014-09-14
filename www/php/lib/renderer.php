@@ -16,6 +16,8 @@
 #	 along with CoolStart.net.  If not, see <http://www.gnu.org/licenses/>.
 
 
+
+// This function generates the full html page of the user page. It can be cached
 function render(&$db, $compress = false){
 	
 	$nick = &$_SESSION['user']['nick'];
@@ -45,7 +47,35 @@ function render(&$db, $compress = false){
 
 <div id="widgets"></div>
 
+<div id="bottom_bar" class="bottom_bar"></div>
+
 <script id="delete_me">
+
+// generate the links of the bottom menu bar
+(function(){
+	var C = crel2;
+	
+	var menu = document.getElementById("bottom_bar");
+	
+	C(menu
+		,C("span", ["onclick", manage_widgets], "Manage widgets")
+		,C("span", ["onclick", options], "Options")
+		,C("span", ["onclick", forum], "forum")
+		,C("span", ["onclick", help], "help")
+		,C("span", ["onclick", about], "about")
+		,C("span", ["onclick", github], "GitHub")
+		,C("span", ["onclick", logout], "Logout")
+	);
+	
+	function manage_widgets(){}
+	function options(){}
+	function forum(){}
+	function help(){}
+	function about(){}
+	function github(){}
+	function logout(){}
+	
+})();
 
 (function(){
 	// prevent innerHTML from reading the widgetID + secret to prevent widgets manipulate other widgets without consent
@@ -96,10 +126,6 @@ function render(&$db, $compress = false){
 	<?php }	?>
 })();
 </script>
-
-<div id="bottom_bar" class="bottom_bar">
-	Manage widgets | forum | Developers | help | about | GitHub | Logout
-</div>
 
 </body>
 </html>
