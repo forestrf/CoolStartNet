@@ -25,6 +25,7 @@ define('ZEBRA_SESSION_TIME', 2592000); // 30 Days
 
 # path to the web with / in the end, starting with the subdomain (if there is) and without protocol.
 define('WEB_PATH', 'www.mywebhere.com/folder/to/site/');
+define('FORUM_WEB_PATH', 'forum.mywebhere.com/folder/to/site/');
 
 # Max file size for the uploaded widget files. In bytes.
 define('MAX_FILE_SIZE_BYTES', 512000);

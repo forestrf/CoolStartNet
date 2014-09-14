@@ -56,23 +56,29 @@ function render(&$db, $compress = false){
 	var C = crel2;
 	
 	var menu = document.getElementById("bottom_bar");
+	var view = document.getElementById("widgets");
 	
 	C(menu
-		,C("span", ["onclick", manage_widgets], "Manage widgets")
-		,C("span", ["onclick", options], "Options")
-		,C("span", ["onclick", forum], "forum")
-		,C("span", ["onclick", help], "help")
-		,C("span", ["onclick", about], "about")
-		,C("span", ["onclick", github], "GitHub")
-		,C("span", ["onclick", logout], "Logout")
+		,C("span", ["class", "btn", "onclick", home], "Home")
+		,C("span", ["class", "btn", "onclick", manage_widgets], "Manage widgets")
+		,C("span", ["class", "btn", "onclick", options], "Options")
+		,C("a",    ["class", "btn", "target", "_blank", "href", "http://<?php echo FORUM_WEB_PATH?>"], "forum")
+		,C("span", ["class", "btn", "onclick", help], "help")
+		,C("span", ["class", "btn", "onclick", about], "about")
+		,C("a",    ["class", "btn", "target", "_blank", "href", "https://github.com/forestrf/CoolStartNet"], "GitHub")
+		,C("span", ["class", "btn", "href", "/logout.php"], "Logout")
 	);
 	
-	function manage_widgets(){}
+	function home(){
+		view.className = '';
+	}
+	function manage_widgets(){
+		view.className = 'lateral';
+	}
 	function options(){}
 	function forum(){}
 	function help(){}
 	function about(){}
-	function github(){}
 	function logout(){}
 	
 })();

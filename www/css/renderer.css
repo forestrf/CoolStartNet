@@ -1,4 +1,5 @@
 #widgets {
+	left: 0%;
 	width: 100%;
 	height: calc(100% - 1.6em);
 	overflow: hidden;
@@ -7,6 +8,10 @@
 	-moz-transition: all 1s ease;
 	-o-transition: all 1s ease;
 	transition: all 1s ease;
+}
+
+#widgets.lateral {
+	left: -100%;
 }
 
 .bottom_bar {
@@ -21,15 +26,16 @@
 	background-color: #000;
 }
 
-
-.bottom_bar span:hover {
-	color: #000;
-	box-shadow: 0 0 0 10px #ffffff;
-	background-color: #ffffff;
-}
-.bottom_bar span {
+.bottom_bar .btn {
+	color: #fff;
 	cursor: pointer;
 	padding: 0 0.5em;
 	transition: all 0.2s ease 0s;
 	margin-left: 0.5em;
+	text-decoration: none;
+}
+.bottom_bar .btn:hover {
+	color: #000;
+	box-shadow: 0 0 0 10px #ffffff;
+	background-color: #fff;
 }
