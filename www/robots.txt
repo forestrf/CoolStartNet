@@ -1,5 +1,5 @@
 User-agent: *
-Disallow: /css/
-Disallow: /external-web-files/
-Disallow: /img/
-Disallow: /js/
+Disallow: css/
+Disallow: external-web-files/
+Disallow: img/
+Disallow: js/
