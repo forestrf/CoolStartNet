@@ -1,4 +1,4 @@
-MyHomePage
+CoolStart.net
 ======
 
-Página principal customizable multiusuario.
+Customizable multiuser home page.
