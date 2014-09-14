@@ -1,4 +1,10 @@
 <?php
+require_once 'php/config.php';
+
+if(!USERS_CAN_REGISTER){
+	echo '{"status":"FAIL","problem":"Registration is closed"}';
+}
+
 if(
 	isset($_POST['submit']) &&
 	isset($_POST['nick']) &&
@@ -7,7 +13,6 @@ if(
 	isset($_POST['recaptcha_challenge_field']) &&
 	isset($_POST['recaptcha_response_field'])
 ){
-	require_once 'php/config.php';
 	require_once 'php/lib/recaptcha-php/recaptchalib.php';
 	
 	$resp = recaptcha_check_answer(CAPTCHA_PRIVATE_KEY, $_SERVER["REMOTE_ADDR"], $_POST["recaptcha_challenge_field"], $_POST["recaptcha_response_field"]);
