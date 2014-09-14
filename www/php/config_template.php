@@ -72,14 +72,6 @@ define('LOGIN_FAIL_WAIT', 10); // minutes
 # Analytics JS code
 define('ANALYTICS_JS', "JS Analytics from GA or other service. Without <script></script>");
 
-# E-Mail
-define('USE_INTERNAL_MAIL_FUNCTION', true);
-define('SMTP_HOST', 'smtp.example.com');
-define('SMTP_EMAIL', 'webmaster@example.com');
-define('SMTP_PASSWORD', 'password of your email account');
-define('EMAIL_FROM_NAME', 'Sender name');
-define('SMTP_PORT', 465);
-
 # Dropbox
 define('DROPBOX_KEY', 'app key');
 define('DROPBOX_SECRET', 'app secret');
