@@ -26,6 +26,7 @@ if(
 		if($valid !== false){
 			$_SESSION['user'] = &$valid;
 			$_SESSION['user']['IP'] = $_SERVER['REMOTE_ADDR'];
+			$_SESSION['user']['valid'] = true; //Anonymous user has valid = false
 			$accessTokens = $db->getAllAccessToken();
 			foreach($accessTokens as $service => $accessToken){
 				$_SESSION['user'][$service] = $accessToken;

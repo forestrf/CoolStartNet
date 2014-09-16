@@ -111,6 +111,7 @@ function open_db_session($to_return = 'db'){
 		$_SESSION = array();
 		$_SESSION['user'] = $db -> check_nick_password(DEFAULT_USER_NICK, DEFAULT_USER_PASSWORD);
 		$_SESSION['user']['IP'] = $_SERVER['REMOTE_ADDR'];
+		$_SESSION['user']['valid'] = false; //Anonymous user has valid = false
 	}
 	
 	return $$to_return;
@@ -118,8 +119,7 @@ function open_db_session($to_return = 'db'){
 
 function user_check_access($allow_default_user = false){
 	if(!$allow_default_user &&
-		(!isset($_SESSION['user']) || $_SESSION['user']['nick'] === DEFAULT_USER_NICK)
-	){
+			(!isset($_SESSION['user']) || $_SESSION['user']['nick'] === DEFAULT_USER_NICK)){
 		header('Location: //'.WEB_PATH, true, 302);
 		exit;
 	}

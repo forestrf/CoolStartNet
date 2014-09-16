@@ -33,6 +33,15 @@
 	
 	RewriteRule ^externalfile/(.*)$ external.php?file=/$1 [NC,L]
 
+	
+	
+	#####################################
+	# If the file doesn't have a dot, it will be a .php file
+	#####################################
+	
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule ^([^\.]+)$ $1.php [NC,L]
+	
 </IfModule>
 
 #CACHE

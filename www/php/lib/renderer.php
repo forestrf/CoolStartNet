@@ -45,9 +45,11 @@ function render(&$db, $compress = false){
 </head>
 <body>
 
-<div id="widgets"></div>
-
-<div id="bottom_bar" class="bottom_bar"></div>
+<div class="wrapper">
+	<div class="widgets" id="widgets"></div>
+	
+	<div class="bottom_bar" id="bottom_bar"></div>
+</div>
 
 <script id="delete_me">
 
@@ -57,30 +59,19 @@ function render(&$db, $compress = false){
 	
 	var menu = document.getElementById("bottom_bar");
 	var view = document.getElementById("widgets");
+	var iframe_holder = document.getElementById("placeholder");
 	
 	C(menu
-		,C("span", ["class", "btn", "onclick", home], "Home")
-		,C("span", ["class", "btn", "onclick", manage_widgets], "Manage widgets")
-		,C("span", ["class", "btn", "onclick", options], "Options")
-		,C("a",    ["class", "btn", "target", "_blank", "href", "http://<?php echo FORUM_WEB_PATH?>"], "forum")
-		,C("span", ["class", "btn", "onclick", help], "help")
-		,C("span", ["class", "btn", "onclick", about], "about")
-		,C("a",    ["class", "btn", "target", "_blank", "href", "https://github.com/forestrf/CoolStartNet"], "GitHub")
-		,C("span", ["class", "btn", "href", "/logout.php"], "Logout")
+		,C("a", ["class", "btn",                     "href", "http://<?php echo WEB_PATH?>"],             "Home")
+		,C("a", ["class", "btn",                     "href", "http://<?php echo WEB_PATH?>widgets"],      "Manage widgets")
+		,C("a", ["class", "btn",                     "href", "http://<?php echo WEB_PATH?>options"],      "Options")
+		,C("a", ["class", "btn",                     "href", "http://<?php echo WEB_PATH?>developers"],   "Developers")
+		,C("a", ["class", "btn", "target", "_blank", "href", "http://<?php echo FORUM_WEB_PATH?>"],       "forum")
+		,C("a", ["class", "btn",                     "href", "http://<?php echo WEB_PATH?>help"],         "help")
+		,C("a", ["class", "btn",                     "href", "http://<?php echo WEB_PATH?>about"],        "about")
+		,C("a", ["class", "btn", "target", "_blank", "href", "https://github.com/forestrf/CoolStartNet"], "GitHub")
+		,C("a", ["class", "btn",                     "href", "http://<?php echo WEB_PATH?>logout"],       "Logout")
 	);
-	
-	function home(){
-		view.className = '';
-	}
-	function manage_widgets(){
-		view.className = 'lateral';
-	}
-	function options(){}
-	function forum(){}
-	function help(){}
-	function about(){}
-	function logout(){}
-	
 })();
 
 (function(){

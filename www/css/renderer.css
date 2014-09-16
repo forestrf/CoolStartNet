@@ -1,4 +1,12 @@
-#widgets {
+.wrapper {
+	left: 0%;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	position: absolute;
+}
+
+.widgets {
 	left: 0%;
 	width: 100%;
 	height: calc(100% - 1.6em);
@@ -10,8 +18,11 @@
 	transition: all 1s ease;
 }
 
-#widgets.lateral {
+.widgets.left {
 	left: -100%;
+}
+.widgets.right {
+	left: 100%;
 }
 
 .bottom_bar {
