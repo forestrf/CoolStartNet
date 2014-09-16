@@ -600,13 +600,11 @@ var API = (function(){
 	
 	
 	
+	var widgets = document.getElementById("widgets0");
 	
 	
 	return{
 		"init":function(widgetID, secret, domain_path){
-		
-			var widgets = document.getElementById("widgets");
-		
 			return {
 				"storage": {
 					"localStorage": {
@@ -673,12 +671,13 @@ var API = (function(){
 					}
 				},
 				"widget": {
+					//"widgetsContainer": widgets,
 					"create": function(){
 						var div = document.createElement("div");
 						div.style.display  = "block";
 						div.style.position = "absolute";
 						//document.body.appendChild(div);
-						document.getElementById('widgets').appendChild(div);
+						widgets.appendChild(div);
 						div_base(div);
 						return div;
 					},

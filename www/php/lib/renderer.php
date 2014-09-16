@@ -29,27 +29,22 @@ function render(&$db, $compress = false){
 <html>
 <head>
 	<title>Homepage<?php if($nick !== DEFAULT_USER_NICK) echo ' - '.$nick?></title>
-	<link rel="stylesheet" href="css/reset.min.css"/>
-	<link rel="stylesheet" href="css/renderer.css"/>
-	<script src="js/crel2.js"></script>
-	<script src="js/api.js"></script>
+	<link rel="stylesheet" href="//<?php echo WEB_PATH?>css/reset.min.css"/>
+	<link rel="stylesheet" href="//<?php echo WEB_PATH?>css/renderer.css"/>
+	<script src="//<?php echo WEB_PATH?>js/crel2.js"></script>
 	<script>
 		<?php echo ANALYTICS_JS;?>
 	</script>
-	<style>
-	html{
-		width: 0px;
-		height: 5px;
-	}
-	</style>
 </head>
 <body>
 
 <div class="wrapper">
-	<div class="widgets" id="widgets"></div>
+	<div class="widgets" id="widgets0"></div>
 	
 	<div class="bottom_bar" id="bottom_bar"></div>
 </div>
+
+<script src="//<?php echo WEB_PATH?>js/api.js"></script>
 
 <script id="delete_me">
 
@@ -58,19 +53,17 @@ function render(&$db, $compress = false){
 	var C = crel2;
 	
 	var menu = document.getElementById("bottom_bar");
-	var view = document.getElementById("widgets");
-	var iframe_holder = document.getElementById("placeholder");
 	
 	C(menu
-		,C("a", ["class", "btn",                     "href", "http://<?php echo WEB_PATH?>"],             "Home")
-		,C("a", ["class", "btn",                     "href", "http://<?php echo WEB_PATH?>widgets"],      "Manage widgets")
-		,C("a", ["class", "btn",                     "href", "http://<?php echo WEB_PATH?>options"],      "Options")
-		,C("a", ["class", "btn",                     "href", "http://<?php echo WEB_PATH?>developers"],   "Developers")
-		,C("a", ["class", "btn", "target", "_blank", "href", "http://<?php echo FORUM_WEB_PATH?>"],       "forum")
-		,C("a", ["class", "btn",                     "href", "http://<?php echo WEB_PATH?>help"],         "help")
-		,C("a", ["class", "btn",                     "href", "http://<?php echo WEB_PATH?>about"],        "about")
+		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>"],             "Home")
+		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>widgets"],      "Manage widgets")
+		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>options"],      "Options")
+		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>developers"],   "Developers")
+		,C("a", ["class", "btn", "target", "_blank", "href", "//<?php echo FORUM_WEB_PATH?>"],       "forum")
+		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>help"],         "help")
+		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>about"],        "about")
 		,C("a", ["class", "btn", "target", "_blank", "href", "https://github.com/forestrf/CoolStartNet"], "GitHub")
-		,C("a", ["class", "btn",                     "href", "http://<?php echo WEB_PATH?>logout"],       "Logout")
+		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>logout"],       "Logout")
 	);
 })();
 
