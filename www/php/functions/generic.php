@@ -108,7 +108,6 @@ function open_db_session($to_return = 'db'){
 	
 	if(!isset($_SESSION['user'])){
 		// Anonymous
-		$_SESSION = array();
 		$_SESSION['user'] = $db -> check_nick_password(DEFAULT_USER_NICK, DEFAULT_USER_PASSWORD);
 		$_SESSION['user']['IP'] = $_SERVER['REMOTE_ADDR'];
 		$_SESSION['user']['valid'] = false; //Anonymous user has valid = false

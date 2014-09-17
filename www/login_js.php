@@ -32,7 +32,7 @@ if(
 				$_SESSION['user'][$service] = $accessToken;
 			}
 			apc_delete($apc_key);
-			echo '{"status":"OK"}';exit;
+			echo '{"status":"OK"}';
 		}
 		else{
 			// Loggin attempt reduce
@@ -47,8 +47,9 @@ if(
 	} else {
 		end_fail(2);
 	}
+} else {
+	end_fail(3);
 }
-end_fail(3);
 
 function end_fail($n){
 	switch($n){
