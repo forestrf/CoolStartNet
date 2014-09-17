@@ -100,7 +100,7 @@ function open_db_session($to_return = 'db'){
 	$db = new DB();
 	$db->Open();
 
-    $session = new Zebra_Session($db->mysqli, 'PASSWORD_ZEBRA_SESSION', ZEBRA_SESSION_TIME);
+    $session = new Zebra_Session($db->mysqli, PASSWORD_ZEBRA_SESSION, ZEBRA_SESSION_TIME);
 	
 	if(isset($_COOKIE['PHPSESSID'])){
 		setcookie('PHPSESSID', $_COOKIE['PHPSESSID'], time() + ZEBRA_SESSION_TIME, '/', $domain);

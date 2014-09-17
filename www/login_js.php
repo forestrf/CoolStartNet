@@ -24,13 +24,15 @@ if(
 		$valid = $db -> check_nick_password($_POST['nick'], $_POST['password']);
 		
 		if($valid !== false){
-			$_SESSION['user'] = &$valid;
-			$_SESSION['user']['IP'] = $_SERVER['REMOTE_ADDR'];
-			$_SESSION['user']['valid'] = true; //Anonymous user has valid = false
+			$to_session = array();
+			$to_session['user'] = &$valid;
+			$to_session['user']['IP'] = $_SERVER['REMOTE_ADDR'];
+			$to_session['user']['valid'] = true; //Anonymous user has valid = false
 			$accessTokens = $db->getAllAccessToken();
 			foreach($accessTokens as $service => $accessToken){
-				$_SESSION['user'][$service] = $accessToken;
+				$to_session['user'][$service] = $accessToken;
 			}
+			$_SESSION['user'] = $to_session;
 			apc_delete($apc_key);
 			echo '{"status":"OK"}';
 		}
