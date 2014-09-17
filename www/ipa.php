@@ -12,7 +12,7 @@ if(!isset($_POST['switch'])){
 require_once __DIR__.'/php/functions/generic.php';
 $db = open_db_session();
 
-user_check_access(DEFAULT_USER_ACCESSIBLE);
+user_check_access();
 
 // This API must be only called by "me" and not from widgets. Only for configurations of the web.
 // To prevent it, must be send a token and must be an expected referer.

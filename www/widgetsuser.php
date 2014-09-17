@@ -31,7 +31,7 @@ In use:<br/>
 $widgets_usuario = $db->get_widgets_user();
 
 foreach($widgets_usuario as &$widget){
-	echo $widget['name'].' (<form method="POST" action="ipa.php">
+	echo $widget['name'].' (<form method="POST" action="ipa">
 			<input type="hidden" name="switch" value="1">
 			<input type="hidden" name="action" value="1">
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
@@ -39,12 +39,12 @@ foreach($widgets_usuario as &$widget){
 			<input type="hidden" name="goback" value="1">
 			<input type="submit" value="Remove">
 		</form>)
-		<form method="GET" action="widgetsuserversion.php">
+		<form method="GET" action="widgetsuserversion">
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
 			<input type="submit" value="Select a version">
 		</form>';
 	if($widget['autoupdate'] === '0'){
-		echo '<form method="POST" action="ipa.php">
+		echo '<form method="POST" action="ipa">
 			<input type="hidden" name="switch" value="1">
 			<input type="hidden" name="action" value="4">
 			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
@@ -80,7 +80,7 @@ if($widgets_disponibles){
 			echo $widget['name'].' (in use).<br/>';
 		}
 		else{
-			echo $widget['name'].' (<form method="POST" action="ipa.php">
+			echo $widget['name'].' (<form method="POST" action="ipa">
 					<input type="hidden" name="switch" value="1">
 					<input type="hidden" name="action" value="2">
 					<input type="hidden" name="widgetID" value="'.$widget['ID'].'">

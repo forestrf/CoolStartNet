@@ -116,11 +116,19 @@ function open_db_session($to_return = 'db'){
 	return $$to_return;
 }
 
-function user_check_access($allow_default_user = false){
-	if(!$allow_default_user && !$_SESSION['user']['valid']){
-		header('Location: //'.WEB_PATH, true, 302);
-		exit;
+function user_check_access($allow_default = false){
+	if($_SESSION['user']['valid']){
+		if(DEFAULT_USER_ACCESSIBLE){
+			return;
+		} elseif($_SESSION['user']['nick'] !== DEFAULT_USER_NICK){
+			return;
+		}
+	} elseif ($allow_default && $_SESSION['user']['nick'] === DEFAULT_USER_NICK){
+		return;
 	}
+
+	header('Location: //'.WEB_PATH, true, 302);
+	exit;
 }
 
 function send_mail($for, $subject, $body){

@@ -18,8 +18,8 @@ Actions:
 // Check referer
 
 $possibles_referrer = array(
-	'widgetsuser.php',
-	'widgetsuserversion.php'
+	'widgetsuser',
+	'widgetsuserversion'
 );
 
 foreach($possibles_referrer as $referer_temp){

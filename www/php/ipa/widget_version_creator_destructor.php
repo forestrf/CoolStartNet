@@ -16,7 +16,7 @@ Actions:
 // Check referer
 
 $possibles_referrer = array(
-	'widgetedit.php'
+	'widgetedit'
 );
 
 foreach($possibles_referrer as $referer_temp){

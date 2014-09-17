@@ -67,9 +67,8 @@ if(
 }
 
 
-if($action !== 'get' && $action !== 'check' && $_SESSION['user']['nick'] === DEFAULT_USER_NICK && !DEFAULT_USER_ACCESSIBLE){
-	exit;
-}
+// Solo permitir default sin login en caso de get o check
+user_check_access($action === 'get' || $action === 'check');
 
 
 

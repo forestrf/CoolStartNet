@@ -18,7 +18,7 @@ Actions:
 // Check referer
 
 $possibles_referrer = array(
-	'widgeteditversion.php'
+	'widgeteditversion'
 );
 
 foreach($possibles_referrer as $referer_temp){
