@@ -118,8 +118,7 @@ function open_db_session($to_return = 'db'){
 }
 
 function user_check_access($allow_default_user = false){
-	if(!$allow_default_user &&
-			(!isset($_SESSION['user']) || $_SESSION['user']['nick'] === DEFAULT_USER_NICK)){
+	if(!$allow_default_user && !$_SESSION['user']['valid']){
 		header('Location: //'.WEB_PATH, true, 302);
 		exit;
 	}
