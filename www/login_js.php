@@ -24,9 +24,7 @@ if(
 		$valid = $db -> check_nick_password($_POST['nick'], $_POST['password']);
 		
 		if($valid !== false){
-			$user = array();
 			$user = &$valid;
-			$user['IP'] = $_SERVER['REMOTE_ADDR'];
 			$user['valid'] = true; //Anonymous user has valid = false
 			$accessTokens = $db->getAllAccessToken();
 			foreach($accessTokens as $service => $accessToken){

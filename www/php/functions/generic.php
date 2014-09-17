@@ -100,7 +100,7 @@ function open_db_session($to_return = 'db'){
 	$db = new DB();
 	$db->Open();
 
-    $session = new Zebra_Session($db->mysqli, PASSWORD_ZEBRA_SESSION, ZEBRA_SESSION_TIME);
+    $session = new Zebra_Session($db->mysqli, PASSWORD_ZEBRA_SESSION, ZEBRA_SESSION_TIME, true, true);
 	
 	if(isset($_COOKIE['PHPSESSID'])){
 		setcookie('PHPSESSID', $_COOKIE['PHPSESSID'], time() + ZEBRA_SESSION_TIME, '/', $domain);
@@ -108,9 +108,9 @@ function open_db_session($to_return = 'db'){
 	
 	if(!isset($_SESSION['user'])){
 		// Anonymous
-		$_SESSION['user'] = $db -> check_nick_password(DEFAULT_USER_NICK, DEFAULT_USER_PASSWORD);
-		$_SESSION['user']['IP'] = $_SERVER['REMOTE_ADDR'];
-		$_SESSION['user']['valid'] = false; //Anonymous user has valid = false
+		$user = $db -> check_nick_password(DEFAULT_USER_NICK, DEFAULT_USER_PASSWORD);
+		$user['valid'] = false; //Anonymous user has valid = false
+		$_SESSION['user'] = $user;
 	}
 	
 	return $$to_return;
@@ -119,10 +119,6 @@ function open_db_session($to_return = 'db'){
 function user_check_access($allow_default_user = false){
 	if(!$allow_default_user && !$_SESSION['user']['valid']){
 		header('Location: //'.WEB_PATH, true, 302);
-		exit;
-	}
-	// Prevent session cookie access from multiple IPs
-	if($_SESSION['user']['IP'] !== $_SERVER['REMOTE_ADDR']){
 		exit;
 	}
 }
