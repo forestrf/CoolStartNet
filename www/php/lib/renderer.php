@@ -55,15 +55,15 @@ function render(&$db, $compress = false){
 	var menu = document.getElementById("bottom_bar");
 	
 	C(menu
-		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>"],             "Home")
-		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>widgets"],      "Manage widgets")
-		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>options"],      "Options")
-		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>developers"],   "Developers")
-		,C("a", ["class", "btn", "target", "_blank", "href", "//<?php echo FORUM_WEB_PATH?>"],       "forum")
-		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>help"],         "help")
-		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>about"],        "about")
+		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>"],                  "Home")
+		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>widgets"],           "Manage widgets")
+		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>options"],           "Options")
+		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>developers"],        "Developers")
+		,C("a", ["class", "btn", "target", "_blank", "href", "http://<?php echo FORUM_WEB_PATH?>"],       "forum")
+		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>help"],              "help")
+		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>about"],             "about")
 		,C("a", ["class", "btn", "target", "_blank", "href", "https://github.com/forestrf/CoolStartNet"], "GitHub")
-		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>logout"],       "Logout")
+		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>logout"],            "Logout")
 	);
 })();
 
