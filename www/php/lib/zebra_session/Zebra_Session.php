@@ -667,7 +667,8 @@ class Zebra_Session
 
         }
 
-        $this->regenerate_id();
+        // Change the session id if there is no data in the session
+        //$this->regenerate_id();
 
         // on error return an empty string - this HAS to be an empty string
         return '';
