@@ -66,7 +66,9 @@ function render(&$db, $compress = false){
 		,C("a", ["class", "btn",                     "href", "//<?php echo WEB_PATH?>logout"],            "Logout")
 	);
 })();
+</script>
 
+<script id="delete_me">
 (function(){
 	// prevent innerHTML from reading the widgetID + secret to prevent widgets manipulate other widgets without consent
 	var t = document.getElementById("delete_me");
@@ -95,12 +97,13 @@ function render(&$db, $compress = false){
 		?>
 
 		(function(API){
-			API = API.init("<?php echo $widget['ID'];?>", "<?php echo hash_api($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_API);?>", "<?php echo WEB_PATH?>");
+			API = API.init("<?php echo $widget['ID'];?>",
+					"<?php echo hash_api($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_API);?>",
+					{
+						'CAPTCHA_PUB_KEY': '<?php echo CAPTCHA_PUBLIC_KEY?>',
+						'WEB_PATH': '<?php echo WEB_PATH?>'
+					});
 
-			var SERVER_VARS = {
-				'CAPTCHA_PUB_KEY': '<?php echo CAPTCHA_PUBLIC_KEY?>',
-				'DOMAIN_PATH': '<?php echo WEB_PATH?>'
-			};
 
 
 			<?php echo $data[0]['data'];?>

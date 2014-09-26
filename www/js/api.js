@@ -604,7 +604,7 @@ var API = (function(){
 	
 	
 	return{
-		"init":function(widgetID, secret, domain_path){
+		"init":function(widgetID, secret, server_vars){
 			return {
 				"storage": {
 					"localStorage": {
@@ -704,6 +704,16 @@ var API = (function(){
 				},
 				"url": function(name){return getUrl(widgetID, name);},
 				"xhr": xhr,
+				"siteURLs": {
+					'main'      : '//' + server_vars.WEB_PATH
+					,'login'    : '//' + server_vars.WEB_PATH + 'user?action=login'
+					,'register' : '//' + server_vars.WEB_PATH + 'user?action=register'
+					,'forgot'   : '//' + server_vars.WEB_PATH + 'user?action=forgot'
+					,'logout'   : '//' + server_vars.WEB_PATH + 'user?action=logout'
+				},
+				"globals": {
+					"captchaPublicKey": server_vars.CAPTCHA_PUB_KEY
+				},
 				"bookmarks": {
 					"createObject": bookmarks_base
 				},
@@ -728,7 +738,7 @@ var API = (function(){
 						return this; //API.dropbox
 					},
 					"getFileURI": function(path){
-						return '//' + domain_path + 'externalfile' + path;
+						return '//' + server_vars.WEB_PATH + 'externalfile' + path;
 					},
 					"available": function(callback){
 						xhr('/external.php', '', function(response){

@@ -56,7 +56,7 @@ register.onclick = function(){
 		button.setAttribute(tabindex, 5);
 		mail.setAttribute(tabindex, 3);
 		
-		Recaptcha.create(SERVER_VARS.CAPTCHA_PUB_KEY, captcha_placeholder, {
+		Recaptcha.create(API.globals.captchaPublicKey, captcha_placeholder, {
 			theme: "red",
 			callback: function(){
 				document.getElementById('recaptcha_response_field').setAttribute(tabindex, 4);
@@ -86,7 +86,7 @@ forgot.onclick = function(){
 		button.setAttribute(tabindex, 3);
 		mail.setAttribute(tabindex, 1);
 		
-		Recaptcha.create(SERVER_VARS.CAPTCHA_PUB_KEY, captcha_placeholder, {
+		Recaptcha.create(API.globals.captchaPublicKey, captcha_placeholder, {
 			theme: "red",
 			callback: function(){
 				document.getElementById('recaptcha_response_field').setAttribute(tabindex, 2);
@@ -137,13 +137,13 @@ function submit(){
 	}
 	data = data.substr(0, data.length -1);
 	
-	url = 'https://' + SERVER_VARS.DOMAIN_PATH;
+	var url = "";
 	if(register.checked){
-		url += 'register_js.php';
+		url = API.siteURLs.register;
 	} else if(forgot.checked){
-		url += 'forgot_js.php';
+		url = API.siteURLs.forgot;
 	} else {
-		url += 'login_js.php';
+		url = API.siteURLs.login;
 	}
 	
 	API.xhr(url, data, function(data){
@@ -157,7 +157,7 @@ function submit(){
 				backToNormal();
 			}else{
 				ok('Logged in. Refreshing...');
-				location.href = '//' + SERVER_VARS.DOMAIN_PATH;
+				location.href = API.siteURLs.main;
 			}
 		}
 		else{
