@@ -53,7 +53,6 @@
 				'widgets?action=global-list',
 				'last=' + last,
 				function(data){
-					console.log(data);
 					data = JSON.parse(data);
 					if (data.status === 'OK') {
 						list_from_data(list_available, data.response);
@@ -71,23 +70,39 @@
 		function list_from_data(list, data){
 			list.innerHTML = '';
 			
-			console.log(data);
 			for(var i = 0; i < data.length; i++){
-				list.appendChild(generate_widget_element(data[i]));
+				list.appendChild(generate_widget_element(data[i], 'Use widget', use_callback));
 			}
 		}
 		
-		function generate_widget_element(data){
-			return C('div', ['class', 'widget_element'],
+		function use_callback(ID, div){
+			console.log(ID);
+			console.log(div);
+		}
+		
+		// use_callback(widgetID, div);
+		function generate_widget_element(data, use_text, use_callback){
+			var div = C('div', ['class', 'widget_element'],
 				C('div', ['class', 'body'],
-					C('img', ['class', 'image', 'src', IPA.widgetImage(data.ID)]),
-					C('div', ['class', 'name'], data.name),
-					C('div', ['class', 'description'], data.description)
+					C('img', ['class', 'image', 'src', 'http://placehold.it/80x80/'+rnd(3)/*IPA.widgetImage(data.ID)*/]),
+					C('div', ['class', 'txt name'], data.name),
+					C('div', ['class', 'txt description'], data.description),
+					C('div', ['class', 'txt autor'], 'Autor name and link - forum thread'),
+					C('div', ['class', 'use', 'onclick', function(){use_callback(data.ID, div)}],
+						C('span', use_text)
+					)
 				),
 				C('div', ['class', 'valoration'],
 					C('div')
 				)
 			);
+			
+			return div;
+		}
+		
+		// borrar
+		function rnd(loops){
+			return (Math.random()*10).toFixed() + (loops > 1 ? rnd(loops -1) : '');
 		}
 		
 	})(API, IPA);

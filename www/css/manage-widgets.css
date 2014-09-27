@@ -1,18 +1,22 @@
+.widgets {
+	background: url("../img/bg/homepage.jpg") no-repeat scroll center center / cover  rgba(0, 0, 0, 0);
+}
+
 .title {
-	font-size: 2em;
-	font-weight: normal;
 	height: 1.5em;
+	font-size: 2em;
 	text-align: center;
+	font-weight: normal;
 }
 
 .panel {
-	background-color: rgba(0, 0, 0, 0.3);
+	width: 48.5%;
 	bottom: 0;
 	height: 95%;
 	margin: 1%;
 	padding: 0;
 	position: absolute;
-	width: 48.5%;
+	background-color: rgba(255, 255, 255, 0.6);
 }
 .panel.available {
 	left: 0;
@@ -33,6 +37,7 @@
 	height: 100%;
 	border: 0 none;
 	padding: 0;
+	box-shadow: 0 -2px 0 #2fb0ff inset;
 }
 .search_bar_button {
 	width: 10%;
@@ -44,42 +49,76 @@
 
 
 .list {
+	width: 100%;
 	bottom: 0;
 	height: calc(100% - 2em);
-	overflow-y: auto;
 	position: absolute;
-	width: 100%;
+	overflow-y: auto;
 }
 
 
+.widget_element:nth-of-type(2n) {
+	background-color: rgba(255, 255, 255, 0.4);
+}
 .widget_element {
-	height: 5em;
-}
-.body {
-	height: 100%;
-	width: 70%;
+	height: 100px;
 }
 .body:hover {
 	cursor: pointer;
 	background-color: rgba(0, 0, 0, 0.8);
 }
-.image {
-	float: left;
-	height: 4em;
-	padding: 0.5em;
+
+.body {
+	height: 100%;
 	position: relative;
+	width: 70%;
+}
+.image {
+	background-color: rgba(255, 255, 255, 0.4);
+	border: 1px solid #fff;
+	display: inline-block;
+	height: 80px;
+	margin: 5px;
+	padding: 4px;
+	position: relative;
+	width: 80px;
+}
+.txt {
+	left: 100px;
+	position: absolute;
+	top: 0;	
+	font-size: 15px;
+	height: 15px;
 }
 .name {
-	font-size: 1em;
 	font-weight: bold;
-	padding-top: 0.5em;
+	padding-top: 5px;
 }
 .description {
-	float: left;
-	font-size: 0.9em;
-	padding-left: 0.4em;
+	padding-top: 25px;
+	height: 45px;
 }
-
+.autor {
+	padding-top: 80px;
+}
+.body:hover .use {
+	color: #fff;
+	display: table;
+	position: absolute;
+	font-size: 2em;
+	text-align: center;
+}
+.body .use {
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	display: none;
+}
+.use span {
+	display: table-cell;
+	vertical-align: middle;
+}
 
 
 
