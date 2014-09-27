@@ -8,7 +8,7 @@ var IPA = (function(){
 			
 			return {
 				"widgetImage": function(widgetID){
-					return '//' + server_vars.WEB_PATH + 'widgetImagePreview/' + widgetID;
+					return '//' + server_vars.WEB_PATH + 'widgetImagePreview?id=' + widgetID;
 				}
 			}
 		}

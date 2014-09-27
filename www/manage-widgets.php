@@ -23,15 +23,15 @@
 		var search_txt, search_button, list_available, list_in_use;
 		
 		C(div,
-			C('h1', ['class', 'title'], 'Manage widgets in use'),
 			C('div', ['class', 'panel available'],
 				C('div', ['class', 'search_bar'],
 					search_txt = C('input', ['class', 'search_bar_input', 'type', 'text']),
-					search_button = C('input', ['class', 'search_bar_button', 'type', 'button'])
+					search_button = C('input', ['class', 'search_bar_button', 'type', 'button', 'value', 'Search'])
 				),
 				list_available = C('div', ['class', 'list'])
 			),
 			C('div', ['class', 'panel in_use'],
+				C('div', ['class', 'title'], 'Widgets in use'),
 				list_in_use = C('div', ['class', 'list'])
 			)
 		);
