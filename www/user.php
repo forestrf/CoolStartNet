@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=UTF-8');
 
 # option === function name
 
@@ -18,10 +19,10 @@ $options = array(
 if (isset($_GET['action'])) {
 	$action = &$_GET['action'];
 	if (!isset($options[$action])) {
-		exit;
+		end_fail('Invalid action specified');
 	}
 } else {
-	exit;
+	end_fail('Not action specified');
 }
 
 

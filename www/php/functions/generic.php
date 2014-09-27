@@ -141,3 +141,10 @@ function send_mail($for, $subject, $body){
 	
 	mail($for, $subject, $body, $extra_headers);
 }
+
+function server_vars_js(){
+	return '{
+		"CAPTCHA_PUB_KEY": "'.CAPTCHA_PUBLIC_KEY.'",
+		"WEB_PATH": "'.WEB_PATH.'"
+	}';
+}

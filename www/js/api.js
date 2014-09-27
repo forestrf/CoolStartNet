@@ -605,6 +605,10 @@ var API = (function(){
 	
 	return{
 		"init":function(widgetID, secret, server_vars){
+			if (undefined === widgetID) {widgetID = -1;}
+			if (undefined === secret) {secret = '';}
+			if (undefined === server_vars) {server_vars = {};}
+			
 			return {
 				"storage": {
 					"localStorage": {
