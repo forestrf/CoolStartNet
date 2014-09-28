@@ -19,7 +19,9 @@
 // Ignore warnings. They can be harmful for the json response
 error_reporting(E_ALL ^ E_WARNING);
 
-require_once 'php/functions/generic.php';
+require_once __DIR__.'/php/defaults.php';
+require_once __DIR__.'/php/functions/generic.php';
+
 $db = open_db_session();
 if(!isset($_SESSION['user'])){
 	exit;

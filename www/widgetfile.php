@@ -8,7 +8,9 @@
 
 header('Connection: Close');
 
-require_once 'php/functions/generic.php';
+require_once __DIR__.'/php/defaults.php';
+require_once __DIR__.'/php/functions/generic.php';
+
 $db = open_db_session();
 user_check_access(true);
 

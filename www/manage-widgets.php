@@ -1,4 +1,5 @@
 <?php
+	require_once __DIR__.'/php/defaults.php';
 	require_once __DIR__.'/php/config.php';
 	require_once __DIR__.'/php/functions/generic.php';
 	require_once __DIR__.'/php/lib/renderer.php';
@@ -60,7 +61,7 @@
 					if (data.status === 'OK') {
 						array_widgets_fill(widgets_available, data.response);
 						fill_list_with_widgets(list_available, widgets_available);
-					} else {
+					} else if(data.status !== 'FAIL'){
 						setTimeout(fill_list_available, 5000);
 					}
 				},
@@ -81,7 +82,7 @@
 						array_widgets_fill(widgets_in_use, data.response);
 						fill_list_with_widgets(list_in_use, widgets_in_use);
 						fill_list_available();
-					} else {
+					} else if(data.status !== 'FAIL'){
 						setTimeout(fill_list_in_use, 5000);
 					}
 				},

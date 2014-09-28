@@ -75,5 +75,3 @@ define('ANALYTICS_JS', "JS Analytics from GA or other service. Without <script><
 # Dropbox
 define('DROPBOX_KEY', 'app key');
 define('DROPBOX_SECRET', 'app secret');
-
-mb_internal_encoding('utf8');

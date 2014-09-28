@@ -1,5 +1,6 @@
 <?php
-header('Content-Type: text/html; charset=UTF-8');
+
+require_once __DIR__.'/php/defaults.php';
 
 # option === function name
 
@@ -29,7 +30,7 @@ if (isset($_GET['action'])) {
 
 // Launch option function
 
-require_once 'php/functions/generic.php';
+require_once __DIR__.'/php/functions/generic.php';
 
 $action();
 
@@ -91,7 +92,7 @@ function login(){
 }
 
 function register(){
-	require_once 'php/config.php';
+	require_once __DIR__.'/php/config.php';
 	
 	if (!USERS_CAN_REGISTER) {
 		echo '{"status":"FAIL","problem":"Registration is closed"}';
@@ -104,12 +105,12 @@ function register(){
 			&& isset($_POST['recaptcha_challenge_field'])
 			&& isset($_POST['recaptcha_response_field'])) {
 		
-		require_once 'php/lib/recaptcha-php/recaptchalib.php';
+		require_once __DIR__.'/php/lib/recaptcha-php/recaptchalib.php';
 		
 		$resp = recaptcha_check_answer(CAPTCHA_PRIVATE_KEY, $_SERVER["REMOTE_ADDR"], $_POST["recaptcha_challenge_field"], $_POST["recaptcha_response_field"]);
 
 		if ($resp->is_valid) {
-			require_once 'php/lib/DB.php';
+			require_once __DIR__.'/php/lib/DB.php';
 			
 			if (!isset($_POST['nick'][NICK_MAX_LENGTH+1])
 					&& !isset($_POST['password'][PASSWORD_MAX_LENGTH+1])
@@ -148,8 +149,8 @@ function logout(){
 function validate(){
 	// Do not give info about invalid validations.
 	
-	require_once 'php/config.php';
-	require_once 'php/lib/DB.php';
+	require_once __DIR__.'/php/config.php';
+	require_once __DIR__.'/php/lib/DB.php';
 	
 	if (isset($_GET['nick'])
 			&& !isset($_GET['nick'][NICK_MAX_LENGTH+1])
@@ -180,8 +181,8 @@ function validate(){
 function recover(){
 	// Do not give info about invalid recoveries.
 	
-	require_once 'php/config.php';
-	require_once 'php/lib/DB.php';
+	require_once __DIR__.'/php/config.php';
+	require_once __DIR__.'/php/lib/DB.php';
 	
 	if (isset($_GET['nick'])
 			&& !isset($_GET['nick'][NICK_MAX_LENGTH+1])
@@ -218,13 +219,13 @@ function forgot(){
 			&& isset($_POST['recaptcha_challenge_field'])
 			&& isset($_POST['recaptcha_response_field'])) {
 		
-		require_once 'php/config.php';
-		require_once 'php/lib/recaptcha-php/recaptchalib.php';
+		require_once __DIR__.'/php/config.php';
+		require_once __DIR__.'/php/lib/recaptcha-php/recaptchalib.php';
 		
 		$resp = recaptcha_check_answer(CAPTCHA_PRIVATE_KEY, $_SERVER["REMOTE_ADDR"], $_POST["recaptcha_challenge_field"], $_POST["recaptcha_response_field"]);
 
 		if ($resp->is_valid) {
-			require_once 'php/lib/DB.php';
+			require_once __DIR__.'/php/lib/DB.php';
 			
 			if (!isset($_POST['email'][EMAIL_MAX_LENGTH+1])
 					&& isset($_POST['email'][0])

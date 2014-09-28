@@ -1,8 +1,8 @@
 <?php
 
-header('Content-Type: text/html; charset=UTF-8');
+require_once __DIR__.'/php/defaults.php';
 
-require_once 'php/functions/generic.php';
+require_once __DIR__.'/php/functions/generic.php';
 $db = open_db_session();
 if(!isset($_SESSION['user'])){
 	exit;
