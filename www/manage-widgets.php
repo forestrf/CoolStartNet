@@ -40,6 +40,9 @@
 		
 		// FUNCTIONS
 		
+		var widgets_in_use = [];
+		var widgets_available = [];
+		
 		search_button.onclick = function(){search(search_txt.value);};
 		function search(text){
 			console.log(text);
@@ -55,7 +58,8 @@
 				function(data){
 					data = JSON.parse(data);
 					if (data.status === 'OK') {
-						list_from_data(list_available, data.response);
+						array_widgets_fill(widgets_available, data.response);
+						fill_list_with_widgets(list_available, widgets_available);
 					} else {
 						setTimeout(fill_list_available, 5000);
 					}
@@ -65,39 +69,59 @@
 				}
 			);
 		}
-		fill_list_available();
 		
-		function list_from_data(list, data){
+		// Call only one time.
+		function fill_list_in_use(){
+			API.xhr(
+				'widgets?action=user-using-list',
+				'',
+				function(data){
+					data = JSON.parse(data);
+					if (data.status === 'OK') {
+						array_widgets_fill(widgets_in_use, data.response);
+						fill_list_with_widgets(list_in_use, widgets_in_use);
+						fill_list_available();
+					} else {
+						setTimeout(fill_list_in_use, 5000);
+					}
+				},
+				function(){
+					setTimeout(fill_list_in_use, 5000);
+				}
+			);
+		}
+		fill_list_in_use();
+		
+		function fill_list_with_widgets(list, widgets){
 			list.innerHTML = '';
 			
-			for(var i = 0; i < data.length; i++){
-				list.appendChild(generate_widget_element(data[i], 'Use widget', use_callback));
+			for(var i = 0; i < widgets.length; i++){
+				list.appendChild(widgets[i].div);
 			}
 		}
 		
-		function use_callback(ID, div){
+		function detail_widget(ID, div){
 			console.log(ID);
 			console.log(div);
 		}
 		
-		// use_callback(widgetID, div);
-		function generate_widget_element(data, use_text, use_callback){
-			var div = C('div', ['class', 'widget_element'],
-				C('div', ['class', 'body'],
-					C('img', ['class', 'image', 'src', 'http://placehold.it/80x80/'+rnd(3)/*IPA.widgetImage(data.ID)*/]),
-					C('div', ['class', 'txt name'], data.name),
-					C('div', ['class', 'txt description'], data.description),
-					C('div', ['class', 'txt autor'], 'Autor name and link - forum thread'),
-					C('div', ['class', 'use', 'onclick', function(){use_callback(data.ID, div)}],
-						C('span', use_text)
+		function array_widgets_fill(array, data){
+			for(var i = 0; i < data.length; i++){
+				array.push(generate_widget(data[i]));
+			}
+		}
+		
+		function generate_widget(data){
+			return {
+				div: C('div', ['class', 'widget_element'],
+					C('div', ['class', 'name'], data.name),
+					C('img', ['class', 'image', 'src', 'http://placehold.it/120/'+rnd(3)/*IPA.widgetImage(data.ID)*/]),
+					C('div', ['class', 'description'], data.description, 
+						C('div', ['class', 'use'], 'Use widget')
 					)
 				),
-				C('div', ['class', 'valoration'],
-					C('div')
-				)
-			);
-			
-			return div;
+				data: data
+			};
 		}
 		
 		// borrar
@@ -112,5 +136,5 @@
 	$html = ob_get_contents();
 	ob_end_clean();
 	
-	echo render_wrapper('Manage widgets - CoolStart.net', $html, true);
+	echo render_wrapper('Manage widgets - CoolStart.net', $html, false);
 ?>

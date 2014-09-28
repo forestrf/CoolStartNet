@@ -73,10 +73,31 @@ function global_list(&$db){
 	if($widgets){
 		foreach($widgets as &$widget){
 			$result[] = array(
-				'ID' => $widget['ID'],
-				'name' => $widget['name'],
+				'ID'          => $widget['ID'],
+				'name'        => $widget['name'],
 				'description' => 'Example description.',
-				'token' => hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA)
+				'token'       => hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA)
+			);
+		}
+	}
+	
+	end_ok($result);
+}
+
+function user_using_list(&$db){
+	$widgets = $db->get_widgets_user();
+	
+	$result = array();
+
+	if($widgets){
+		foreach($widgets as &$widget){
+			$result[] = array(
+				'ID'          => $widget['ID'],
+				'name'        => $widget['name'],
+				'description' => 'Example description.',
+				'token'       => hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA),
+				'version'     => $widget['version'],
+				'autoupdate'  => $widget['autoupdate']
 			);
 		}
 	}
