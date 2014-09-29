@@ -4,23 +4,24 @@ require_once __DIR__.'/php/defaults.php';
 # option === function name
 
 $options = array(	
-	'user-created-create'                => 0
-	,'user-created-list'                 => 0
-	,'user-created-version-add'          => 0
-	,'user-created-version-list'         => 0
-	,'user-created-version-remove'       => 0
-	,'user-created-version-info'         => 0
-	,'user-created-version-info-edit'    => 0
-	,'user-created-version-files-list'   => 0
-	,'user-created-version-files-add'    => 0
-	,'user-created-version-files-edit'   => 0
-	,'user-created-version-files-remove' => 0
-	,'user-created-remove'               => 0
-	,'user-using-list'                   => 0
-	,'user-using-add'                    => 0
-	,'user-using-remove'                 => 0
-	,'global-list'                       => 0
-	,'global-list-search'                => 0
+	,'global-list'                       => 0 // Get
+	,'global-list-search'                => 0 // Get
+	,'user-created-list'                 => 0 // Get
+	,'user-created-version-list'         => 0 // Get
+	,'user-created-version-info'         => 0 // Get
+	,'user-created-version-files-list'   => 0 // Get
+	,'user-using-list'                   => 0 // Get
+	
+	'user-created-create'                => 1 // Set
+	,'user-created-version-add'          => 1 // Set
+	,'user-created-version-remove'       => 1 // Set
+	,'user-created-version-info-edit'    => 1 // Set
+	,'user-created-version-files-add'    => 1 // Set
+	,'user-created-version-files-edit'   => 1 // Set
+	,'user-created-version-files-remove' => 1 // Set
+	,'user-created-remove'               => 1 // Set
+	,'user-using-add'                    => 1 // Set
+	,'user-using-remove'                 => 1 // Set
 );
 
 
