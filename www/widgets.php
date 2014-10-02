@@ -4,7 +4,7 @@ require_once __DIR__.'/php/defaults.php';
 # option === function name
 
 $options = array(	
-	,'global-list'                       => 0 // Get
+	'global-list'                        => 0 // Get
 	,'global-list-search'                => 0 // Get
 	,'user-created-list'                 => 0 // Get
 	,'user-created-version-list'         => 0 // Get
@@ -12,7 +12,7 @@ $options = array(
 	,'user-created-version-files-list'   => 0 // Get
 	,'user-using-list'                   => 0 // Get
 	
-	'user-created-create'                => 1 // Set
+	,'user-created-create'               => 1 // Set
 	,'user-created-version-add'          => 1 // Set
 	,'user-created-version-remove'       => 1 // Set
 	,'user-created-version-info-edit'    => 1 // Set
