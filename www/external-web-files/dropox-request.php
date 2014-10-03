@@ -1,6 +1,7 @@
 <?php
-require_once '../php/config.php';
-require_once 'dropbox-functions.php';
+require_once __DIR__.'/../php/config.php';
+require_once __DIR__.'/../php/functions/generic.php';
+require_once __DIR__.'/dropbox-functions.php';
 
 $db = open_db_session();
 user_check_access();

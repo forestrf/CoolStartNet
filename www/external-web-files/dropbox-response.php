@@ -1,8 +1,10 @@
 <?php
-require_once '../php/functions/generic.php';
-$db = open_db_session();
+require_once __DIR__.'/../php/config.php';
+require_once __DIR__.'/../php/functions/generic.php';
+require_once __DIR__.'/dropbox-functions.php';
 
-require_once 'dropbox-functions.php';
+$db = open_db_session();
+user_check_access();
 
 try {
    list($accessToken, $userId, $urlState) = getWebAuth()->finish($_GET);
