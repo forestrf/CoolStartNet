@@ -26,7 +26,7 @@
 		C(div,
 			C('div', ['class', 'panel available'],
 				C('div', ['class', 'search_bar'],
-					search_txt = C('input', ['class', 'search_bar_input', 'type', 'text']),
+					search_txt = C('input', ['class', 'search_bar_input', 'type', 'text', 'placeholder', 'Search...']),
 					search_button = C('input', ['class', 'search_bar_button', 'type', 'button', 'value', 'Search'])
 				),
 				list_available = C('div', ['class', 'list'])
@@ -115,8 +115,8 @@
 		function generate_widget(data){
 			return {
 				div: C('div', ['class', 'widget_element'],
-					C('div', ['class', 'name'], data.name),
 					C('img', ['class', 'image', 'src', 'http://placehold.it/120/'+rnd(3)/*IPA.widgetImage(data.ID)*/]),
+					C('div', ['class', 'name'], data.name),
 					C('div', ['class', 'description'], data.description, 
 						C('div', ['class', 'use'], 'Use widget')
 					)
