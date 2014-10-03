@@ -70,11 +70,11 @@ function login(){
 			if ($valid !== false) {
 				$user = &$valid;
 				$user['valid'] = true; //Anonymous user has valid = false
-				$accessTokens = $db->getAllAccessToken();
-				$_SESSION['user'] = &$user;
+				$accessTokens = $db->getAllAccessToken($user['ID']);
 				foreach($accessTokens as $service => $accessToken){
 					$user[$service] = $accessToken;
 				}
+				$_SESSION['user'] = &$user;
 				apc_delete($apc_key);
 				end_ok();
 			} else {

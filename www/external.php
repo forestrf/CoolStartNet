@@ -12,18 +12,22 @@ user_check_access();
 // Ask for the variables to identify the filename + path.
 if(isset($_POST['path']) && strlen($_POST['path']) > 0){
 	// Path or name
-	echoPath(start(), $_POST['path']);
-} elseif(isset($_GET['file']) && strlen($_GET['file']) > 0){
-	// name
-	$if_none_match = isset($_SERVER['HTTP_IF_NONE_MATCH']) ? $_SERVER['HTTP_IF_NONE_MATCH'] : false;
-	$etag = base64_encode($_GET['file']);
-
-	if($if_none_match === $etag){
-		header('HTTP/1.1 304 Not Modified');
-		exit;
+	if(isset($_SESSION['user']['dropbox_accessToken'])){
+		echoPath(start(), $_POST['path']);
 	}
-	
-	echoFile(start(), $_GET['file']);
+} elseif(isset($_GET['file']) && strlen($_GET['file']) > 0){
+	if(isset($_SESSION['user']['dropbox_accessToken'])){
+		// name
+		$if_none_match = isset($_SERVER['HTTP_IF_NONE_MATCH']) ? $_SERVER['HTTP_IF_NONE_MATCH'] : false;
+		$etag = base64_encode($_GET['file']);
+
+		if($if_none_match === $etag){
+			header('HTTP/1.1 304 Not Modified');
+			exit;
+		}
+		
+		echoFile(start(), $_GET['file']);
+	}
 } else {
 	if(isset($_SESSION['user'])){
 		echo json_encode(

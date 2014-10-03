@@ -369,11 +369,18 @@ class DB {
 	// Doesn't delete from the table 'files' because other file can has the same hash. The unlinked content is deleted from other function that is called from a cronjob.
 	function delete_widget($widgetID){
 		if($this->CanIModifyWidget($widgetID) && $this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `published` = '-1';")){
+			/*
 			$this->query("DELETE FROM `widgets` WHERE `ID` = '{$widgetID}';");
 			$this->query("DELETE FROM `variables` WHERE `IDwidget` = '{$widgetID}';");
 			$this->query("DELETE FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}';");
 			$this->query("DELETE FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}';");
 			$this->query("DELETE FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}';");
+			*/
+			$this->query("DELETE FROM `widgets` WHERE `ID` = '{$widgetID}';" .
+					"DELETE FROM `variables` WHERE `IDwidget` = '{$widgetID}';" .
+					"DELETE FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}';" .
+					"DELETE FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}';" .
+					"DELETE FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}';");
 			return true;
 		}
 		return false;
@@ -415,8 +422,12 @@ class DB {
 	// Delete a private widget version.
 	function delete_private_widget_version($widgetID, $version){
 		if(can_be_widget_version($version) && $this->CanIModifyWidget($widgetID) && $this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}' AND `public` = '0';")){
+			/*
 			$this->query("DELETE FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';");
 			$this->query("DELETE FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';");
+			*/
+			$this->query("DELETE FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';" .
+					"DELETE FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';");
 			return true;
 		}
 		return false;
@@ -424,11 +435,10 @@ class DB {
 	
 	// Set a public widget version as the default public widget version.
 	function set_widget_default_version($widgetID, $version){
-		if(
-			$this->CanIModifyWidget($widgetID) && can_be_widget_version($version) &&
-			// Check if the version exists and is public
-			$this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `public` = '1' AND `version` = '{$version}';")
-		){
+		if($this->CanIModifyWidget($widgetID) &&
+				can_be_widget_version($version) &&
+				// Check if the version exists and is public
+				$this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `public` = '1' AND `version` = '{$version}';")){
 			return $this->query("UPDATE `widgets` SET `published` = '{$version}' WHERE `ID` = '{$widgetID}';");
 		}
 		return false;
@@ -707,8 +717,11 @@ class DB {
 	# ---------------------------------------------------------------------------
 	
 	// Returns all the tokens that the current user have
-	function getAllAccessToken(){
-		$resp = $this->query("SELECT `dropbox_accessToken` FROM `access-token` WHERE `IDuser` = '{$_SESSION['user']['ID']}';");
+	function getAllAccessToken($ID){
+		if(!$ID){
+			$ID = $_SESSION['user']['ID'];
+		}
+		$resp = $this->query("SELECT `dropbox_accessToken` FROM `access-token` WHERE `IDuser` = '{$ID}';");
 		return isset($resp[0]) ? $resp[0] : array();
 	}
 	
