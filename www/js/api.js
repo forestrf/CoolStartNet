@@ -1,23 +1,25 @@
-var API = (function(){
+(function (root, factory){
+	root.API_GENERATOR = factory;
+	root.API = factory();
+})(this, (function () {
 	var max_wait = 100, //ms
 		timeouts = [],
 		callbacks = [],
 		execute_modes = [],
 		requests = [];
 	
-	function widget_add_secret(widgetID, secret){
+	function widget_add_secret(widgetID, secret) {
 		return widgetID + '-' + secret;
 	}
 	
-	var local_precall = function(mode, widgetID, key, value, callback){
-		if(callback === undefined){
-			callback = function(){};
-		}
+	var local_precall = function (mode, widgetID, key, value, callback) {
+		if (callback === undefined) callback = function () {};
+		
 		
 		var fullkey = widgetID + '-' + key;
 		
 		// ['get', 'set', 'del', 'delall', 'check']
-		switch(mode){
+		switch(mode) {
 			case 0:
 				callback(JSON.parse(localStorage.getItem(fullkey)));
 			break;
@@ -32,7 +34,7 @@ var API = (function(){
 				var length = localStorage.length;
 				for (var i = 0; i < length; i++) {
 					var tkey = localStorage.key(i);
-					if(tkey && tkey.indexOf(widgetID + '-') === 0){
+					if (tkey && tkey.indexOf(widgetID + '-') === 0) {
 						localStorage.removeItem(tkey);
 					}
 				}
@@ -42,7 +44,7 @@ var API = (function(){
 				callback(localStorage.getItem(fullkey)?true:false);
 			break;
 		}
-	}
+	};
 	
 	/*
 	0 = get
@@ -51,21 +53,19 @@ var API = (function(){
 	3 = delete all
 	4 = exists
 	*/
-	var precall = function(mode, widgetID, secret, key, value, callback){
-		if(typeof callback !== "function"){
-			callback = function(){};
-		}
-		if(secret){
+	var precall = function (mode, widgetID, secret, key, value, callback) {
+		if (callback === undefined) callback = function () {};
+		if (secret) {
 			widgetID = widget_add_secret(widgetID, secret);
 		}
 		
-		if(requests[mode] === undefined){
+		if (requests[mode] === undefined) {
 			requests[mode]  = {};
 			callbacks[mode] = [];
-			execute_modes[mode] = function(){execute(mode, callbacks[mode]);}
+			execute_modes[mode] = function () {execute(mode, callbacks[mode]);};
 		}
 		
-		if(requests[mode][widgetID] === undefined){
+		if (requests[mode][widgetID] === undefined) {
 			requests[mode][widgetID] = {};
 		}
 		
@@ -74,61 +74,61 @@ var API = (function(){
 		callbacks[mode].push({"callback":callback,"widgetID":widgetID,"key":key});
 		clearTimeout(timeouts[mode]);
 		timeouts[mode] = setTimeout(execute_modes[mode], max_wait);
-	}
+	};
 	
 	// Execute and clean cache
-	var execute = function(mode, cb){
+	var execute = function (mode, cb) {
 		var data = 'action=' + ['get', 'set', 'del', 'delall', 'check'][mode] + '&data=' + encodeURIComponent(JSON.stringify(requests[mode]));
 		
-		xhr('api', data, function(response){ //OK
+		xhr('api', data, function (response) { //OK
 			var i = 0;
 			//console.log(xhr.responseText);
 			try {
 				response = JSON.parse(response);
-			} catch (e) {
+			} catch(e) {
 				while (i < cb.length) {
-					cb[i++]['callback'](null);
+					cb[i++].callback(null);
 				}
 			}
 			
 			// Go over the cb and generate a response
-			if(response && response['response'] && response['response']==='OK'){
+			if (response && response.response && response.response === 'OK') {
 				i = 0;
 				while (i < cb.length) {
 					
-					var widgetID = cb[i]['widgetID'];
-					var key      = cb[i]['key'];
+					var widgetID = cb[i].widgetID;
+					var key      = cb[i].key;
 					
 					// If received and key requested
-					if(typeof response['content'][widgetID] !== 'undefined' &&
-					typeof response['content'][widgetID][key] !== 'undefined'){
-						cb[i++]['callback'](JSON.parse(response['content'][widgetID][key]));
+					if (typeof response.content[widgetID] !== 'undefined' &&
+							typeof response.content[widgetID][key] !== 'undefined') {
+						cb[i++].callback(JSON.parse(response.content[widgetID][key]));
 						continue;
 					}
-					cb[i++]['callback'](null);
+					cb[i++].callback(null);
 				}
 				return;
 			}
-		}, function(){ //FAIL
+		}, function () { //FAIL
 			var i = 0;
 			while (i < cb.length) {
-				cb[i++]['callback'](null);
+				cb[i++].callback(null);
 			}
 		});
 		
 		requests[mode]  = {};
 		callbacks[mode] = [];
-	}
+	};
 	
 	// callback takes one argument
-	function xhr(url, data, callbackOK, callbackFAIL){
+	function xhr(url, data, callbackOK, callbackFAIL) {
 		var x = new XMLHttpRequest();
 		x.open('POST', url, true);
 		x.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		x.timeout = 5000;
-		x.onreadystatechange = ontimeout = function(aEvt){
-			if(x.readyState == 4){
-				if(x.status == 200){
+		x.onreadystatechange = x.ontimeout = function () {
+			if (x.readyState == 4) {
+				if (x.status == 200) {
 					callbackOK(x.responseText);
 				} else {
 					callbackFAIL();
@@ -142,63 +142,63 @@ var API = (function(){
 	
 	
 	// Return an url to get a file of the widget
-	var getUrl = function(widgetID, filename){
-		return 'widgetfile?widgetID=' + widgetID + '&api=1&name=' + escape(filename);
-	}
+	var getUrl = function (widgetID, filename) {
+		return 'widgetfile?widgetID=' + widgetID + '&api=1&name=' + encodeURIComponent(filename);
+	};
 	
 	
 	
-	function div_base(div){
-		function cRound(number, roundedTo){
+	function div_base(div) {
+		function cRound(number, roundedTo) {
 			return roundedTo === undefined || roundedTo === -1 ? number : (+number).toFixed(roundedTo);
 		}
 
-		div["hide"] = function(){
+		div.hide = function () {
 			div.style.display = 'none';
 			return div;
 		};
-		div["unHide"] = function(){
+		div.unHide = function () {
 			div.style.display = '';
 			return div;
 		};
 			
-		div["setPosition"] = function(left, top){
+		div.setPosition = function (left, top) {
 			div.style.left = left + "%";
 			div.style.top  = top + "%";
 			return div;
 		};
 		
-		div["getPosition"] = function(roundedTo){
+		div.getPosition = function (roundedTo) {
 			return {
 				"left": cRound(div.style.left.split("%")[0], roundedTo),
 				"top":  cRound(div.style.top.split("%")[0],  roundedTo)
 			};
 		};
 		
-		div["setSize"] = function(width, height){
+		div.setSize = function (width, height) {
 			div.style.width  = width  + "%";
 			div.style.height = height + "%";
 			return div;
 		};
 		
-		div["getSize"] = function(roundedTo){
+		div.getSize = function (roundedTo) {
 			return {
 				"width":  cRound(div.style.width.split("%")[0],  roundedTo),
 				"height": cRound(div.style.height.split("%")[0], roundedTo)
 			};
 		};
 		
-		div["setPositionSize"] = function(left, top, width, height){
-			if(typeof left === 'object'){
-				var top = left.top,
-					width = left.width,
-					height = left.height;
+		div.setPositionSize = function (left, top, width, height) {
+			if (typeof left === 'object') {
+				top = left.top;
+				width = left.width;
+				height = left.height;
 				left = left.left;
 			}
 			return div.setPosition(left, top).setSize(width, height);
 		};
 		
-		div["getPositionSize"] = function(roundedTo){
+		div.getPositionSize = function (roundedTo) {
 			var p = div.getPosition(roundedTo);
 			var s = div.getSize(roundedTo);
 			return {
@@ -206,21 +206,21 @@ var API = (function(){
 				"top":    p.top,
 				"width":  s.width,
 				"height": s.height
-			}
+			};
 		};
 		
-		div["addClass"] = function(className){
+		div.addClass = function (className) {
 			div.className += " "+className;
 			return div;
 		};
-		div["removeClass"] = function(className){
+		div.removeClass = function (className) {
 			div.className = div.className.split(className).join("").trim();
 			return div;
 		};
 		
-		div["clear"] = function(){
+		div.clear = function () {
 			div.innerHTML = '';
-		}
+		};
 	}
 	
 	
@@ -317,34 +317,34 @@ var API = (function(){
 	.moveFolder("/",3,"/third folder",0);
 	
 	*/
-	function bookmarks_base(bookmarks){
-		if(bookmarks === undefined){
+	function bookmarks_base(bookmarks) {
+		if (bookmarks === undefined) {
 			bookmarks = {};
-			bookmarks["folders"]   = {};
-			bookmarks["bookmarks"] = [];
+			bookmarks.folders   = {};
+			bookmarks.bookmarks = [];
 		}
 		
 		//Given a path with the pattern a/b/c returns the object from the folder c inside of the b inside of the a inside of the root
-		function path_resolver(path){
+		function path_resolver(path) {
 			path = path.split("/").reverse();
 			var bookmark_path = bookmarks;
-			while(path.length > 0){
+			while (path.length > 0) {
 				var path_fragment = path.pop();
-				if(path_fragment !== ""){
-					bookmark_path = bookmark_path["folders"][path_fragment];
+				if (path_fragment !== "") {
+					bookmark_path = bookmark_path.folders[path_fragment];
 				}
 			}
 			return bookmark_path;
 		}
 		
 		return {
-			"getObject": function(){return bookmarks},
-			"setObject": function(obj){bookmarks = obj; return this},
-			"addBookmark": function(path, uri, title, favicon_uri){
+			"getObject": function () {return bookmarks;},
+			"setObject": function (obj) {bookmarks = obj; return this;},
+			"addBookmark": function (path, uri, title, favicon_uri) {
 				var real_path = path_resolver(path);
-				if(!real_path){return this;}
+				if (!real_path) {return this;}
 				
-				real_path["bookmarks"].push({
+				real_path.bookmarks.push({
 					type: "bookmark",
 					uri: uri,
 					title: title,
@@ -352,179 +352,177 @@ var API = (function(){
 				});
 				return this;
 			},
-			"addFolder": function(path, name){
-				if(name.indexOf("/") !== -1 || name.length === 0){
+			"addFolder": function (path, name) {
+				if (name.indexOf("/") !== -1 || name.length === 0) {
 					return this;
 				}
 				
 				var real_path = path_resolver(path);
-				if(!real_path){return this;}
+				if (!real_path) {return this;}
 				
 				// Prevent possible bugs
-				if(real_path["folders"] instanceof Array){
-					real_path["folders"] = {};
+				if (real_path.folders instanceof Array) {
+					real_path.folders = {};
 				}
-				real_path["folders"][name] = {
+				real_path.folders[name] = {
 					folders: {},
 					bookmarks: []
 				};
 				
-				real_path["bookmarks"].push({
+				real_path.bookmarks.push({
 					type: "folder",
 					name: name
 				});
 				return this;
 			},
 			// Returns references that, if modified, the original object breaks?
-			"getBookmark": function(path, index){
+			"getBookmark": function (path, index) {
 				var real_path = path_resolver(path);
-				if(!real_path){return false;}
+				if (!real_path) {return false;}
 				
-				if(real_path["bookmarks"][index] && real_path["bookmarks"][index].type !== "folder"){
+				if (real_path.bookmarks[index] && real_path.bookmarks[index].type !== "folder") {
 					return {
-						uri: real_path["bookmarks"][index].uri,
-						title: real_path["bookmarks"][index].title,
-						iconuri: real_path["bookmarks"][index].iconuri
+						uri: real_path.bookmarks[index].uri,
+						title: real_path.bookmarks[index].title,
+						iconuri: real_path.bookmarks[index].iconuri
 					};
 				}
 				return false;
 			},
 			// Returns references that, if modified, the original object breaks?
-			"getBookmarks": function(path){
+			"getBookmarks": function (path) {
 				var real_path = path_resolver(path);
-				if(!real_path){return false;}
+				if (!real_path) {return false;}
 				
 				var result = [];
-				for(var i = 0; i < real_path["bookmarks"].length; i++){
-					if(real_path["bookmarks"][i].type !== "folder"){
+				for (var i = 0; i < real_path.bookmarks.length; i++) {
+					if (real_path.bookmarks[i].type !== "folder") {
 						result.push({
 							index: i,
-							uri: real_path["bookmarks"][i].uri,
-							title: real_path["bookmarks"][i].title,
-							iconuri: real_path["bookmarks"][i].iconuri
+							uri: real_path.bookmarks[i].uri,
+							title: real_path.bookmarks[i].title,
+							iconuri: real_path.bookmarks[i].iconuri
 						});
 					}
 				}
 				return result;
 			},
 			// Returns references that, if modified, the original object breaks?
-			"getFolders": function(path){
+			"getFolders": function (path) {
 				var real_path = path_resolver(path);
-				if(!real_path){return false;}
+				if (!real_path) {return false;}
 				
 				var result = [];
-				for(var i = 0; i < real_path["bookmarks"].length; i++){
-					if(real_path["bookmarks"][i].type === "folder"){
+				for (var i = 0; i < real_path.bookmarks.length; i++) {
+					if (real_path.bookmarks[i].type === "folder") {
 						result.push({
 							index: i,
-							folder: real_path["bookmarks"][i].name
+							folder: real_path.bookmarks[i].name
 						});
 					}
 				}
 				return result;
 			},
 			// Returns references that, if modified, the original object breaks?
-			"getElements": function(path){
+			"getElements": function (path) {
 				var real_path = path_resolver(path);
-				if(!real_path){return false;}
+				if (!real_path) {return false;}
 				
 				var result = [];
-				for(var i = 0; i < real_path["bookmarks"].length; i++){
-					if(real_path["bookmarks"][i].type === "folder"){
+				for (var i = 0; i < real_path.bookmarks.length; i++) {
+					if (real_path.bookmarks[i].type === "folder") {
 						result.push({
 							type: 'folder',
-							folder: real_path["bookmarks"][i].name
+							folder: real_path.bookmarks[i].name
 						});
 					}
-					else if(real_path["bookmarks"][i].type === "bookmark"){
+					else if (real_path.bookmarks[i].type === "bookmark") {
 						result.push({
 							type: 'bookmark',
-							uri: real_path["bookmarks"][i].uri,
-							title: real_path["bookmarks"][i].title,
-							iconuri: real_path["bookmarks"][i].iconuri
+							uri: real_path.bookmarks[i].uri,
+							title: real_path.bookmarks[i].title,
+							iconuri: real_path.bookmarks[i].iconuri
 						});
-					}
-					else{
+					} else {
 						result.push({
 							type: 'unknown',
-							element: real_path["bookmarks"][i]
+							element: real_path.bookmarks[i]
 						});
 					}
 				}
 				return result;
 			},
-			"removeBookmark": function(path, index, force){
-				if(force === undefined){force = false}
+			"removeBookmark": function (path, index, force) {
+				if (force === undefined) {force = false;}
 				var real_path = path_resolver(path);
-				if(!real_path){return this;}
+				if (!real_path) {return this;}
 				
-				if(force || real_path["bookmarks"][index].type === "bookmark"){
-					real_path["bookmarks"].splice(index, 1);
+				if (force || real_path.bookmarks[index].type === "bookmark") {
+					real_path.bookmarks.splice(index, 1);
 				}
 				return this;
 			},
-			"removeFolder": function(path, name_index){
+			"removeFolder": function (path, name_index) {
 				var real_path = path_resolver(path);
-				if(!real_path){return this;}
+				if (!real_path) {return this;}
 				
-				if(typeof name_index === "number"){
-					if(real_path["bookmarks"][name_index].type === "bookmark"){
+				if (typeof name_index === "number") {
+					if (real_path.bookmarks[name_index].type === "bookmark") {
 						return this;
 					}
-					name_index = real_path["bookmarks"].splice(name_index, 1)[0].name;
-				}
-				else{
-					for(var i = 0; i < real_path["bookmarks"].length; i++){
-						if(real_path["bookmarks"][i].name === name_index){
-							if(real_path["bookmarks"][i].type === "folder"){
-								folder_bookmarks = real_path["bookmarks"].splice(i, 1)[0];
+					name_index = real_path.bookmarks.splice(name_index, 1)[0].name;
+				} else {
+					for (var i = 0; i < real_path.bookmarks.length; i++) {
+						if (real_path.bookmarks[i].name === name_index) {
+							if (real_path.bookmarks[i].type === "folder") {
+								/*folder_bookmarks = real_path.bookmarks.splice(i, 1)[0];*/
+								real_path.bookmarks.splice(i, 1);
 							}
 							break;
 						}
 					}
 				}
 				
-				delete real_path["folders"][name_index];
+				delete real_path.folders[name_index];
 				return this;
 			},
 			// Moves a bookmark from one place to another. index starts from 0
-			"moveBookmark": function(path_from, index_from, path_to, index_to, force){
-				if(force === undefined){force = false}
+			"moveBookmark": function (path_from, index_from, path_to, index_to, force) {
+				if (force === undefined) {force = false;}
 				var real_path_from = path_resolver(path_from);
 				var real_path_to   = path_resolver(path_to);
-				if(!real_path_from){return this;}
-				if(!real_path_to){return this;}
+				if (!real_path_from) {return this;}
+				if (!real_path_to) {return this;}
 				
-				if(force || real_path_from["bookmarks"][index_from].type === "bookmark"){
-					var bookmark = real_path_from["bookmarks"].splice(index_from ,1)[0];
-					var temp = real_path_to["bookmarks"].splice(index_to);
-					real_path_to["bookmarks"] = real_path_to["bookmarks"].concat(bookmark).concat(temp);
+				if (force || real_path_from.bookmarks[index_from].type === "bookmark") {
+					var bookmark = real_path_from.bookmarks.splice(index_from ,1)[0];
+					var temp = real_path_to.bookmarks.splice(index_to);
+					real_path_to.bookmarks = real_path_to.bookmarks.concat(bookmark).concat(temp);
 				}
 				return this;
 			},
 			// Moves a bookmark from one place to another. index starts from 0
-			"moveFolder": function(path_from, name_index_from, path_to, index_to){
+			"moveFolder": function (path_from, name_index_from, path_to, index_to) {
 				var real_path_from = path_resolver(path_from);
 				var real_path_to   = path_resolver(path_to);
-				if(!real_path_from){return this;}
-				if(!real_path_to){return this;}
+				if (!real_path_from) {return this;}
+				if (!real_path_to) {return this;}
 				
 				var folder_bookmarks;
 				
-				if(typeof name_index_from === "number"){
-					if(real_path_from["bookmarks"][name_index_from].type !== "folder"){
+				if (typeof name_index_from === "number") {
+					if (real_path_from.bookmarks[name_index_from].type !== "folder") {
 						return this;
 					}
-					folder_bookmarks = real_path_from["bookmarks"].splice(name_index_from, 1)[0];
+					folder_bookmarks = real_path_from.bookmarks.splice(name_index_from, 1)[0];
 					name_index_from = folder_bookmarks.name;
-				}
-				else{
-					for(var i = 0; i < real_path_from["bookmarks"].length; i++){
-						if(real_path_from["bookmarks"][i].name === name_index_from){
-							if(real_path_from["bookmarks"][i].type !== "folder"){
+				} else {
+					for (var i = 0; i < real_path_from.bookmarks.length; i++) {
+						if (real_path_from.bookmarks[i].name === name_index_from) {
+							if (real_path_from.bookmarks[i].type !== "folder") {
 								return this;
 							}
-							folder_bookmarks = real_path_from["bookmarks"].splice(i, 1)[0];
+							folder_bookmarks = real_path_from.bookmarks.splice(i, 1)[0];
 							break;
 						}
 					}
@@ -532,20 +530,20 @@ var API = (function(){
 				// name_index_from and folder_bookmarks setted at this point
 				
 				// move folder from bookmarks list
-				var temp = real_path_to["bookmarks"].splice(index_to);
-				real_path_to["bookmarks"] = real_path_to["bookmarks"].concat(folder_bookmarks).concat(temp);
+				var temp = real_path_to.bookmarks.splice(index_to);
+				real_path_to.bookmarks = real_path_to.bookmarks.concat(folder_bookmarks).concat(temp);
 				
 				//move folder from folders list
-				var folder = real_path_from["folders"][name_index_from];
-				delete real_path_from["folders"][name_index_from];
-				real_path_to["folders"][name_index_from] = folder;
+				var folder = real_path_from.folders[name_index_from];
+				delete real_path_from.folders[name_index_from];
+				real_path_to.folders[name_index_from] = folder;
 				return this;
 			},
-			"editBookmark": function(path, index, uri, title, favicon_uri){
+			"editBookmark": function (path, index, uri, title, favicon_uri) {
 				var real_path = path_resolver(path);
-				if(!real_path){return this;}
+				if (!real_path) {return this;}
 				
-				real_path["bookmarks"][index] = {
+				real_path.bookmarks[index] = {
 					type: "bookmark",
 					uri: uri,
 					title: title,
@@ -553,44 +551,43 @@ var API = (function(){
 				};
 				return this;
 			},
-			"editFolder": function(path, old_name_index, new_name){
+			"editFolder": function (path, old_name_index, new_name) {
 				var real_path = path_resolver(path);
 				var old_name = old_name_index;
-				if(!real_path){return this;}
+				if (!real_path) {return this;}
 				
-				if(typeof old_name_index === "number"){
-					if(real_path["bookmarks"][old_name_index].type !== "folder"){
+				if (typeof old_name_index === "number") {
+					if (real_path.bookmarks[old_name_index].type !== "folder") {
 						return this;
 					}
-					old_name = real_path["bookmarks"][old_name_index].name;
-					real_path["bookmarks"][old_name_index].name = new_name;
-				}
-				else{
-					for(var i = 0; i < real_path["bookmarks"].length; i++){
-						if(real_path["bookmarks"][i].name === old_name){
-							if(real_path["bookmarks"][i].type !== "folder"){
+					old_name = real_path.bookmarks[old_name_index].name;
+					real_path.bookmarks[old_name_index].name = new_name;
+				} else {
+					for (var i = 0; i < real_path.bookmarks.length; i++) {
+						if (real_path.bookmarks[i].name === old_name) {
+							if (real_path.bookmarks[i].type !== "folder") {
 								return this;
 							}
-							real_path["bookmarks"][i].name = new_name;
+							real_path.bookmarks[i].name = new_name;
 							break;
 						}
 					}					
 				}
 				
 				
-				real_path["folders"][new_name] = real_path["folders"][old_name];
-				delete real_path["folders"][old_name];
+				real_path.folders[new_name] = real_path.folders[old_name];
+				delete real_path.folders[old_name];
 				
 				return this;
 			}
-		}
+		};
 	}
 	
 	
 	
 	
 	
-	function create_link_css(href){
+	function create_link_css(href) {
 		var link = document.createElement("link");
 		link.setAttribute("rel",  "stylesheet");
 		link.setAttribute("type", "text/css");
@@ -603,8 +600,8 @@ var API = (function(){
 	var widgets = document.getElementById("widgets0");
 	
 	
-	return{
-		"init":function(widgetID, secret, server_vars){
+	return {
+		"init":function (widgetID, secret, server_vars) {
 			if (undefined === widgetID) {widgetID = -1;}
 			if (undefined === secret) {secret = '';}
 			if (undefined === server_vars) {server_vars = {};}
@@ -612,63 +609,63 @@ var API = (function(){
 			return {
 				"storage": {
 					"localStorage": {
-						"get": function(key, callback){
+						"get": function (key, callback) {
 							local_precall(0, widgetID, key, null, callback);
 							return this; //API.Storage.localStorage;
 						},
-						"set": function(key, value, callback){
+						"set": function (key, value, callback) {
 							local_precall(1, widgetID, key, value, callback);
 							return this; //API.Storage.localStorage;
 						},
-						"delete": function(key, callback){
+						"delete": function (key, callback) {
 							local_precall(2, widgetID, key, null, callback);
 							return this; //API.Storage.localStorage;
 						},
-						"deleteAll": function(callback){
+						"deleteAll": function (callback) {
 							local_precall(3, widgetID, null, null, callback);
 							return this; //API.Storage.remoteStorage;
 						},
-						"exists": function(key, callback){
+						"exists": function (key, callback) {
 							local_precall(4, widgetID, key, null, callback);
 							return this; //API.Storage.localStorage;
 						}
 					},
 					"remoteStorage": {
-						"get": function(key, callback){
+						"get": function (key, callback) {
 							precall(0, widgetID, secret, key, null, callback);
 							return this; //API.Storage.remoteStorage;
 						},
-						"set": function(key, value, callback){
+						"set": function (key, value, callback) {
 							precall(1, widgetID, secret, key, value, callback);
 							return this; //API.Storage.remoteStorage;
 						},
-						"delete": function(key, callback){
+						"delete": function (key, callback) {
 							precall(2, widgetID, secret, key, null, callback);
 							return this; //API.Storage.remoteStorage;
 						},
-						"deleteAll": function(callback){
+						"deleteAll": function (callback) {
 							precall(3, widgetID, secret, null, null, callback);
 							return this; //API.Storage.remoteStorage;
 						},
-						"exists": function(key, callback){
+						"exists": function (key, callback) {
 							precall(4, widgetID, secret, key, null, callback);
 							return this; //API.Storage.remoteStorage;
 						}
 					},
 					"sharedStorage": {
-						"get": function(key, callback){
+						"get": function (key, callback) {
 							precall(0, -1, null, key, null, callback);
 							return this; //API.Storage.sharedStorage;
 						},
-						"set": function(key, value, callback){
+						"set": function (key, value, callback) {
 							precall(1, -1, null, key, value, callback);
 							return this; //API.Storage.sharedStorage;
 						},
-						"delete": function(key, callback){
+						"delete": function (key, callback) {
 							precall(2, -1, null, key, null, callback);
 							return this; //API.Storage.remoteStorage;
 						},
-						"exists": function(key, callback){
+						"exists": function (key, callback) {
 							precall(4, -1, null, key, null, callback);
 							return this; //API.Storage.remoteStorage;
 						}
@@ -676,7 +673,7 @@ var API = (function(){
 				},
 				"widget": {
 					//"widgetsContainer": widgets,
-					"create": function(){
+					"create": function () {
 						var div = document.createElement("div");
 						div.style.display  = "block";
 						div.style.position = "absolute";
@@ -685,35 +682,35 @@ var API = (function(){
 						div_base(div);
 						return div;
 					},
-					"linkMyCSS": function(name){
+					"linkMyCSS": function (name) {
 						create_link_css(getUrl(widgetID, name));
 						return this; //API.widget
 					},
-					"linkExternalCSS": function(href){
+					"linkExternalCSS": function (href) {
 						create_link_css(href);
 						return this; //API.widget
 					}
 				},
 				"document": {
-					"createElement": function(tagName){
+					"createElement": function (tagName) {
 						var elem = document.createElement(tagName);
 						div_base(elem);
 						return elem;
 					},
-					"wrapElement": function(element){
+					"wrapElement": function (element) {
 						div_base(element);
 						return this;
 					},
 					"widgets": widgets
 				},
-				"url": function(name){return getUrl(widgetID, name);},
+				"url": function (name) {return getUrl(widgetID, name);},
 				"xhr": xhr,
 				"siteURLs": {
-					'main'      : '//' + server_vars.WEB_PATH
-					,'login'    : '//' + server_vars.WEB_PATH + 'user?action=login'
-					,'register' : '//' + server_vars.WEB_PATH + 'user?action=register'
-					,'forgot'   : '//' + server_vars.WEB_PATH + 'user?action=forgot'
-					,'logout'   : '//' + server_vars.WEB_PATH + 'user?action=logout'
+					'main'     : '//' + server_vars.WEB_PATH,
+					'login'    : '//' + server_vars.WEB_PATH + 'user?action=login',
+					'register' : '//' + server_vars.WEB_PATH + 'user?action=register',
+					'forgot'   : '//' + server_vars.WEB_PATH + 'user?action=forgot',
+					'logout'   : '//' + server_vars.WEB_PATH + 'user?action=logout'
 				},
 				"globals": {
 					"captchaPublicKey": server_vars.CAPTCHA_PUB_KEY
@@ -722,8 +719,8 @@ var API = (function(){
 					"createObject": bookmarks_base
 				},
 				"dropbox": {
-					"getPathContents": function(path, callback){
-						xhr('/external', 'm=0&path='+encodeURIComponent(path), function(response){
+					"getPathContents": function (path, callback) {
+						xhr('/external', 'm=0&path='+encodeURIComponent(path), function (response) {
 							try {
 								response = JSON.parse(response);
 							} catch (e) {
@@ -731,21 +728,22 @@ var API = (function(){
 							}
 							
 							// Go over the cb and generate a response
-							if(response && response['folders'] && response['files']){
+							if (response && response.folders && response.files) {
 								callback(response);
 							} else {
 								callback(null);
 							}
-						}, function(){
+						}, function () {
 							callback(null);
 						});
 						return this; //API.dropbox
 					},
-					"getFileURI": function(path){
+					"getFileURI": function (path) {
 						return '//' + server_vars.WEB_PATH + 'externalfile' + path;
 					},
-					"available": function(callback){
-						xhr('/external', 'm=1', function(response){
+					"available": function (callback) {
+						if (callback === undefined) callback = function () {};
+						xhr('/external', 'm=1', function (response) {
 							try {
 								response = JSON.parse(response);
 							} catch (e) {
@@ -753,18 +751,18 @@ var API = (function(){
 							}
 							
 							// Go over the cb and generate a response
-							if(response && response['available']){
-								callback(response['available']);
+							if (response && response.available) {
+								callback(response.available);
 							} else {
 								callback(false);
 							}
-						}, function(){
+						}, function () {
 							callback(false);
 						});
 						return this; //API.dropbox
 					}
 				}
-			}
+			};
 		}
-	}
-})();
+	};
+}));

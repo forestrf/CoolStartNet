@@ -16,7 +16,7 @@ if (isset($_REQUEST['m'])) {
 			if (isset($_POST['path']) &&
 					isset($_POST['path'][0]) &&
 					$_POST['path'][0] === '/' &&
-					isset($_SESSION['user']['dropbox_accessToken'])){
+					isset($_SESSION['user']['dropbox_accessToken'])) {
 				echoPath(start(), $_POST['path']);
 			}
 		break;

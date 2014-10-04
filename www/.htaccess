@@ -12,7 +12,7 @@
 	# Force without WWW and https
 	#####################################
 
-	# convertir ***.com en www.***.com
+	# convertir www.***.com en ***.com
 	RewriteCond %{HTTP_HOST} ^www [NC]
 	RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 	

@@ -102,6 +102,9 @@ function render(&$db, $compress = false){
 		var t = document.getElementById("delete_me");
 		t.parentNode.removeChild(t);
 		delete t;
+		
+		// Make a copy of window.API to prevent modifications from widgets to the api used to construct other widgets
+		var API = API_GENERATOR();
 
 		// Variables for the config widget
 		var CONFIG = [];
