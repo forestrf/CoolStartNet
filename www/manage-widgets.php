@@ -115,7 +115,11 @@
 		function generate_widget(data){
 			return {
 				div: C('div', ['class', 'widget_element'],
-					C('img', ['class', 'image', 'src', 'http://placehold.it/120/'+rnd(3)/*IPA.widgetImage(data.ID)*/]),
+					C('div', ['class', 'background']),
+					C('div', ['class', 'image'],
+						C('div', ['class', 'image_bg']),
+						C('img', ['class', 'image_front', 'src', 'http://placehold.it/120/'+rnd(3)/*IPA.widgetImage(data.ID)*/])
+					),
 					C('div', ['class', 'name'], data.name),
 					C('div', ['class', 'description'], data.description, 
 						C('div', ['class', 'use'], 'Use widget')

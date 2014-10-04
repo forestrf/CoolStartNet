@@ -76,12 +76,7 @@
 
 
 
-.widget_element:hover {
-	background-position: 0 0;
-}
 .widget_element {
-	background: url("../img/misc/widget-element-bg.png") repeat-x scroll top left;
-	background-position: 0 -140px;
 	border-bottom: 1px solid #164e6c;
 	border-color: #164e6c;
 	border-left: 1px solid #164e6c;
@@ -90,9 +85,31 @@
 	height: 140px;
 	margin: 0;
 	position: relative;
-	transition: background-position 0.4s ease 0s;
 	cursor: pointer;
 	overflow: hidden;
+}
+.widget_element .background {
+    background: url("../img/misc/widget-element-bg.png") repeat-x scroll left top rgba(0, 0, 0, 0);
+    position: absolute;
+    height: 280px;
+    top: -140px;
+    width: 100%;
+}
+.widget_element:hover .background {
+	top: 0;
+}
+
+.widget_element .background, .image > .image_bg {
+    -webkit-transition: all .4s ease;
+	-moz-transition: all .4s ease;
+	-ms-transition: all .4s ease;
+	-o-transition: all .4s ease;
+	transition: all .4s ease;
+	-webkit-transform: translatez(0);
+	-moz-transform: translatez(0);
+	-ms-transform: translatez(0);
+	-o-transform: translatez(0);
+	transform: translatez(0);
 }
 
 .body {
@@ -102,39 +119,57 @@
 }
 
 
-.widget_element:hover .image {
-	box-shadow: 0 0 35px 0 #7dcbfb, 0 0 0 9px #7dcbfb;
+.image > .image_bg, .image > .image_front {
+	position: absolute;
+	height: 120px;
+	width: 120px;
 }
 .image {
-	box-shadow: 0 0 0 transparent;
-	display: inline-block;
 	height: 120px;
-	margin-left: 9px;
-	margin-top: 9px;
-	position: absolute;
-	transition: box-shadow 0.6s ease 0s;
 	width: 120px;
+	display: inline-block;
+	left: 9px;
+	top: 9px;
+	position: absolute;
+}
+.widget_element:hover .image > .image_bg {
+    /*height: 138px;
+    left: -9px;
+    top: -9px;
+    width: 138px;*/
+	-webkit-transform: scale(1.15);
+    -moz-transform: scale(1.15);
+	-ms-transform: scale(1.15);
+	-o-transform: scale(1.15);
+	transform: scale(1.15);
+	box-shadow: 0 0 30px 0 #7dcbfb;
+}
+.image > .image_bg {
+    background-color: #7dcbfb;
+    left: 0;
+    top: 0;
 }
 
 
 .name {
-	display: block;
-	font-size: 14px;
-	font-weight: bold;
-	height: 25px;
-	line-height: 25px;
-	margin-left: 170px;
-	vertical-align: top;
+    font-size: 14px;
+    font-weight: bold;
+    height: 25px;
+    left: 170px;
+    line-height: 25px;
+    position: absolute;
+    top: 0;
 }
 
 
 .description {
-	clear: both;
-	display: block;
-	left: 156px;
-	margin-left: 170px;
-	vertical-align: top;
+    left: 170px;
+    position: absolute;
+    top: 25px;
 }
+
+
+
 /*
 .use:hover {
 	background-color: #65bdc9;
