@@ -80,7 +80,7 @@ var API = (function(){
 	var execute = function(mode, cb){
 		var data = 'action=' + ['get', 'set', 'del', 'delall', 'check'][mode] + '&data=' + encodeURIComponent(JSON.stringify(requests[mode]));
 		
-		xhr('api.php', data, function(response){ //OK
+		xhr('api', data, function(response){ //OK
 			var i = 0;
 			//console.log(xhr.responseText);
 			try {
@@ -143,7 +143,7 @@ var API = (function(){
 	
 	// Return an url to get a file of the widget
 	var getUrl = function(widgetID, filename){
-		return 'widgetfile.php?widgetID=' + widgetID + '&api=1&name=' + escape(filename);
+		return 'widgetfile?widgetID=' + widgetID + '&api=1&name=' + escape(filename);
 	}
 	
 	
@@ -723,7 +723,7 @@ var API = (function(){
 				},
 				"dropbox": {
 					"getPathContents": function(path, callback){
-						xhr('/external.php', 'path='+encodeURIComponent(path), function(response){
+						xhr('/external', 'm=0&path='+encodeURIComponent(path), function(response){
 							try {
 								response = JSON.parse(response);
 							} catch (e) {
@@ -745,7 +745,7 @@ var API = (function(){
 						return '//' + server_vars.WEB_PATH + 'externalfile' + path;
 					},
 					"available": function(callback){
-						xhr('/external.php', '', function(response){
+						xhr('/external', 'm=1', function(response){
 							try {
 								response = JSON.parse(response);
 							} catch (e) {

@@ -10,31 +10,39 @@ $db = open_db_session();
 user_check_access();
 
 // Ask for the variables to identify the filename + path.
-if(isset($_POST['path']) && strlen($_POST['path']) > 0){
-	// Path or name
-	if(isset($_SESSION['user']['dropbox_accessToken'])){
-		echoPath(start(), $_POST['path']);
-	}
-} elseif(isset($_GET['file']) && strlen($_GET['file']) > 0){
-	if(isset($_SESSION['user']['dropbox_accessToken'])){
-		// name
-		$if_none_match = isset($_SERVER['HTTP_IF_NONE_MATCH']) ? $_SERVER['HTTP_IF_NONE_MATCH'] : false;
-		$etag = base64_encode($_GET['file']);
-
-		if($if_none_match === $etag){
-			header('HTTP/1.1 304 Not Modified');
-			exit;
-		}
-		
-		echoFile(start(), $_GET['file']);
-	}
-} else {
-	if(isset($_SESSION['user'])){
-		echo json_encode(
-			array(
-				'available' => isset($_SESSION['user']['dropbox_accessToken'])
-			)
-		);
+if (isset($_REQUEST['m'])) {
+	switch ($_REQUEST['m']) {
+		case '0':
+			if (isset($_POST['path']) &&
+					isset($_POST['path'][0]) &&
+					$_POST['path'][0] === '/' &&
+					isset($_SESSION['user']['dropbox_accessToken'])){
+				echoPath(start(), $_POST['path']);
+			}
+		break;
+		case '1':
+			if (isset($_SESSION['user'])) {
+				echo json_encode(
+					array(
+						'available' => isset($_SESSION['user']['dropbox_accessToken'])
+					)
+				);
+			}
+		break;
+		case '2':
+			if (isset($_GET['file']) &&
+					isset($_GET['file'][0]) &&
+					$_GET['file'][0] === '/' &&
+					isset($_SESSION['user']['dropbox_accessToken'])) {
+				
+				if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] === base64_encode($_GET['file'])) {
+					header('HTTP/1.1 304 Not Modified');
+					exit;
+				}
+				
+				echoFile(start(), $_GET['file']);
+			}
+		break;
 	}
 }
 
@@ -42,7 +50,7 @@ if(isset($_POST['path']) && strlen($_POST['path']) > 0){
 
 function start(){
 	# Include the Dropbox SDK libraries
-	require_once dirname(__FILE__).'/php/lib/Dropbox/autoload.php';
+	require_once __DIR__.'/php/lib/Dropbox/autoload.php';
 	
 	return new \Dropbox\Client($_SESSION['user']['dropbox_accessToken'], DROPBOX_APP_NAME);
 }
@@ -50,12 +58,12 @@ function start(){
 function echoPath(&$dbxClient, &$path){
 	$folderMetadata = $dbxClient->getMetadataWithChildren($path);
 	$response = array(
-		'folders'=>array(),
-		'files'=>array()
+		'folders' => array(),
+		'files'   => array()
 	);
-	if($folderMetadata and $folderMetadata['is_dir'] === true){
-		foreach($folderMetadata['contents'] as $elem){
-			switch($elem['is_dir']){
+	if ($folderMetadata and $folderMetadata['is_dir'] === true) {
+		foreach ($folderMetadata['contents'] as $elem) {
+			switch ($elem['is_dir']) {
 				case true:
 					$response['folders'][] = $elem['path'];
 				break;
@@ -79,7 +87,6 @@ function echoFile(&$dbxClient, &$file){
 	ob_end_clean();
 
 	// Headers and file in order
-
 	header('Content-type: '.$fileMetadata['mime_type']);
 
 	header('Pragma: public');
