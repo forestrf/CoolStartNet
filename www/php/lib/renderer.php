@@ -30,8 +30,6 @@ function render_wrapper($title = 'Homepage - CoolStart.net', $content, $compress
 	<title><?=$title?></title>
 	<link rel="stylesheet" href="//<?=WEB_PATH?>css/reset.min.css"/>
 	<link rel="stylesheet" href="//<?=WEB_PATH?>css/renderer.css"/>
-	<script src="//<?=WEB_PATH?>js/crel2.js"></script>
-	<script><?=ANALYTICS_JS?></script>
 </head>
 <body>
 	<div class="wrapper">
@@ -40,7 +38,9 @@ function render_wrapper($title = 'Homepage - CoolStart.net', $content, $compress
 		<div class="bottom_bar" id="bottom_bar"></div>
 	</div>
 	
+	<script src="//<?=WEB_PATH?>js/crel2.js"></script>
 	<script src="//<?=WEB_PATH?>js/api.js"></script>
+	<script><?=ANALYTICS_JS?></script>
 
 	<script id="delete_me">
 		// generate the links of the bottom menu bar

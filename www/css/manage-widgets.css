@@ -3,22 +3,24 @@
 }
 
 .title {
-    color: #fefefe;
-    font-size: 20px;
-    font-weight: normal;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
+	color: #fefefe;
+	font-size: 20px;
+	font-weight: normal;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
 }
 
 .panel {
 	background-color: rgba(0, 0, 0, 0.4);
-	width: 48.5%;
+	border-radius: 2px;
 	bottom: 0;
+	box-shadow: 0 0 2px 1px #000000;
 	height: 95%;
 	margin: 1%;
 	padding: 0;
 	position: absolute;
+	width: 48.5%;
 }
 .panel.available {
 	left: 0;
@@ -36,49 +38,50 @@
 }
 
 .search_bar_input {
-    background-color: transparent;
+	background-color: transparent;
 	border: 0 none;
 	border-bottom: 1px solid #2fb0ff;
-    color: #fefefe;
-    height: 29px;
-    margin: 0;
-    padding: 0 10px;
-    width: 90%;
+	color: #fefefe;
+	height: 29px;
+	margin: 0;
+	padding: 0 10px;
+	width: 90%;
 }
 .search_bar_button:hover {
-    background: linear-gradient(to bottom, #2899be, #00414a) repeat scroll 0 0 rgba(0, 0, 0, 0);
+	background: linear-gradient(to bottom, #2899be, #00414a) repeat scroll 0 0 rgba(0, 0, 0, 0);
 }
 .search_bar_button {
-    background: linear-gradient(to bottom, #004962, #002328) repeat scroll 0 0 rgba(0, 0, 0, 0);
-    border: 0 none;
-    color: #fefefe;
-    cursor: pointer;
-    height: 100%;
-    position: absolute;
-    right: 0;
-    text-align: center;
-    width: 10%;
+	background: linear-gradient(to bottom, #004962, #002328) repeat scroll 0 0 rgba(0, 0, 0, 0);
+	border: 0 none;
+	color: #fefefe;
+	cursor: pointer;
+	height: 100%;
+	position: absolute;
+	right: 0;
+	text-align: center;
+	width: 10%;
 }
 
 
 
 .list {
-    border-top: 1px solid #164e6c;
-    bottom: 0;
-    height: calc(100% - 2em);
-    margin: auto;
-    overflow-y: auto;
-    position: relative;
-    width: 100%;
+	border-top: 1px solid #164e6c;
+	bottom: 0;
+	height: calc(100% - 2em);
+	margin: auto;
+	overflow-y: auto;
+	position: relative;
+	width: 100%;
 }
 
 
 
 .widget_element:hover {
-	background-position: 0 center;
+	background-position: 0 0;
 }
 .widget_element {
-	background: linear-gradient(to bottom, #0582AB, #000000) repeat scroll 0 -280px / 1px 420px rgba(0, 0, 0, 0);
+	background: url("../img/misc/widget-element-bg.png") repeat-x scroll top left;
+	background-position: 0 -140px;
 	border-bottom: 1px solid #164e6c;
 	border-color: #164e6c;
 	border-left: 1px solid #164e6c;
@@ -87,7 +90,7 @@
 	height: 140px;
 	margin: 0;
 	position: relative;
-	transition: background 0.4s ease 0s;
+	transition: background-position 0.4s ease 0s;
 	cursor: pointer;
 	overflow: hidden;
 }
@@ -100,22 +103,17 @@
 
 
 .widget_element:hover .image {
-    background-color: #7dcbfb;
-    box-shadow: 0 0 35px 0 #7dcbfb;
-    transition: all 1s ease 0s;
+	box-shadow: 0 0 35px 0 #7dcbfb, 0 0 0 9px #7dcbfb;
 }
 .image {
-    background-color: rgba(0, 0, 0, 0);
-    border-right: 1px solid #44a9f1;
-    box-shadow: 0 0 0 #0fc2bf;
-    display: inline-block;
-    height: 120px;
-    margin-left: 0;
-    margin-top: 0;
-    padding: 9px;
-    position: absolute;
-    transition: all 0.4s ease 0s;
-    width: 120px;
+	box-shadow: 0 0 0 transparent;
+	display: inline-block;
+	height: 120px;
+	margin-left: 9px;
+	margin-top: 9px;
+	position: absolute;
+	transition: box-shadow 0.6s ease 0s;
+	width: 120px;
 }
 
 
