@@ -89,6 +89,7 @@
 	position: relative;
 	transition: background 0.4s ease 0s;
 	cursor: pointer;
+	overflow: hidden;
 }
 
 .body {
@@ -98,14 +99,23 @@
 }
 
 
+.widget_element:hover .image {
+    background-color: #7dcbfb;
+    box-shadow: 0 0 35px 0 #7dcbfb;
+    transition: all 1s ease 0s;
+}
 .image {
-	border: 1px solid #d6d6d6;
-	display: inline-block;
-	height: 120px;
-	margin-left: 10px;
-	margin-top: 10px;
-	position: absolute;
-	width: 120px;
+    background-color: rgba(0, 0, 0, 0);
+    border-right: 1px solid #44a9f1;
+    box-shadow: 0 0 0 #0fc2bf;
+    display: inline-block;
+    height: 120px;
+    margin-left: 0;
+    margin-top: 0;
+    padding: 9px;
+    position: absolute;
+    transition: all 0.4s ease 0s;
+    width: 120px;
 }
 
 
@@ -118,6 +128,7 @@
 	margin-left: 170px;
 	vertical-align: top;
 }
+
 
 .description {
 	clear: both;
