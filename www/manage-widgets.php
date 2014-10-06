@@ -21,19 +21,28 @@
 		
 		// GUI
 		
-		var search_txt, search_button, list_available, list_in_use;
+		var search_txt, search_button, list;
 		
 		C(div,
-			C('div', ['class', 'panel available'],
-				C('div', ['class', 'search_bar'],
-					search_txt = C('input', ['class', 'search_bar_input', 'type', 'text', 'placeholder', 'Search...']),
-					search_button = C('input', ['class', 'search_bar_button', 'type', 'button', 'value', 'Search'])
-				),
-				list_available = C('div', ['class', 'list'])
+			C('div', ['class', 'left'],
+				C('table', ['class', 'panel'],
+					C('tr', ['class', 'search_bar'],
+						C('td', ['class', 'search_bar_cell'],
+							search_txt = C('input', ['class', 'search_bar_input', 'type', 'text', 'placeholder', 'Search...'])
+						),
+						C('td', ['class', 'search_bar_cell cell_button'],
+							search_button = C('input', ['class', 'search_bar_button', 'type', 'button', 'value', 'Search'])
+						)
+					),
+					C('tr',
+						C('td',
+							'filtros, tags, etc'
+						)
+					)
+				)
 			),
-			C('div', ['class', 'panel in_use'],
-				C('div', ['class', 'title'], 'Widgets in use'),
-				list_in_use = C('div', ['class', 'list'])
+			C('div', ['class', 'right'],
+				list = C('div', ['class', 'list'])
 			)
 		);
 		
@@ -50,7 +59,7 @@
 		}
 		
 		// last widget from the list for stacked requests
-		function fill_list_available(last){
+		function fill_list(last){
 			if (undefined === last) {last = 0;}
 		
 			API.xhr(
@@ -60,38 +69,20 @@
 					data = JSON.parse(data);
 					if (data.status === 'OK') {
 						array_widgets_fill(widgets_available, data.response);
-						fill_list_with_widgets(list_available, widgets_available);
+						fill_list_with_widgets(list, widgets_available);
 					} else if(data.status !== 'FAIL'){
-						setTimeout(fill_list_available, 5000);
+						setTimeout(fill_list, 5000);
 					}
 				},
 				function(){
-					setTimeout(fill_list_available, 5000);
+					setTimeout(fill_list, 5000);
 				}
 			);
 		}
+		fill_list();
 		
+		//'widgets?action=user-using-list',
 		// Call only one time.
-		function fill_list_in_use(){
-			API.xhr(
-				'widgets?action=user-using-list',
-				'',
-				function(data){
-					data = JSON.parse(data);
-					if (data.status === 'OK') {
-						array_widgets_fill(widgets_in_use, data.response);
-						fill_list_with_widgets(list_in_use, widgets_in_use);
-						fill_list_available();
-					} else if(data.status !== 'FAIL'){
-						setTimeout(fill_list_in_use, 5000);
-					}
-				},
-				function(){
-					setTimeout(fill_list_in_use, 5000);
-				}
-			);
-		}
-		fill_list_in_use();
 		
 		function fill_list_with_widgets(list, widgets){
 			list.innerHTML = '';

@@ -1,16 +1,22 @@
 .wrapper {
+	top: 0%;
 	left: 0%;
 	width: 100%;
 	height: 100%;
+	display: table;
 	overflow: hidden;
 	position: absolute;
 }
 
-.widgets {
+.wrapper > .row {
+	display: table-row;
+	position: relative;
+}
+
+.wrapper .widgets {
 	left: 0%;
 	width: 100%;
 	height: 100%;
-	height: calc(100% - 1.6em);
 	overflow: hidden;
 	position: absolute;
 	-webkit-transition: all 1s ease;
@@ -19,26 +25,27 @@
 	transition: all 1s ease;
 }
 
-.widgets.left {
+.wrapper .widgets.left {
 	left: -100%;
 }
-.widgets.right {
+.wrapper .widgets.right {
 	left: 100%;
 }
 
-.bottom_bar {
+.wrapper .bottom_bar {
 	width: 100%;
 	color: #eee;
 	height: 1em;
 	bottom: 0;
 	display: block;
 	padding: 0.3em 0;
-	position: absolute;
+	display: table-cell;
+	position: relative;
 	font-size: 1em;
 	background-color: #000;
 }
 
-.bottom_bar .btn {
+.wrapper .bottom_bar .btn {
 	color: #fff;
 	cursor: pointer;
 	padding: 0 0.5em;
@@ -46,7 +53,7 @@
 	margin-left: 0.5em;
 	text-decoration: none;
 }
-.bottom_bar .btn:hover {
+.wrapper .bottom_bar .btn:hover {
 	color: #000;
 	box-shadow: 0 0 0 10px #ffffff;
 	background-color: #fff;

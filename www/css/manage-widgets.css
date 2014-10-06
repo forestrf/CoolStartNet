@@ -2,38 +2,43 @@
 	background: url("../img/bg/homepage-blur.jpg") no-repeat scroll center center / cover rgba(0, 0, 0, 0);
 }
 
-.title {
-	color: #fefefe;
-	font-size: 20px;
-	font-weight: normal;
-	height: 30px;
-	line-height: 30px;
-	text-align: center;
+
+
+.left {
+    height: 98%;
+    left: 1%;
+    position: absolute;
+    top: 2%;
+    width: 20%;
 }
+
+.right {
+    height: 100%;
+    overflow-y: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 78%;
+}
+
+
 
 .panel {
 	background-color: rgba(0, 0, 0, 0.4);
-	border-radius: 2px;
-	bottom: 0;
 	box-shadow: 0 0 2px 1px #000000;
-	height: 95%;
-	margin: 1%;
-	padding: 0;
-	position: absolute;
-	width: 48.5%;
+	height: 100%;
+	width: 100%;
 }
-.panel.available {
-	left: 0;
-}
-.panel.in_use {
-	right: 0;
-}
+
 
 
 
 .search_bar {
+	width: 100%;
+}
+
+.search_bar_cell {
 	height: 30px;
-	position: relative;
 	width: 100%;
 }
 
@@ -42,13 +47,10 @@
 	border: 0 none;
 	border-bottom: 1px solid #2fb0ff;
 	color: #fefefe;
-	height: 29px;
+	height: 28px;
 	margin: 0;
 	padding: 0 10px;
-	width: 90%;
-}
-.search_bar_button:hover {
-	background: linear-gradient(to bottom, #2899be, #00414a) repeat scroll 0 0 rgba(0, 0, 0, 0);
+	width: 100%;
 }
 .search_bar_button {
 	background: linear-gradient(to bottom, #004962, #002328) repeat scroll 0 0 rgba(0, 0, 0, 0);
@@ -56,138 +58,105 @@
 	color: #fefefe;
 	cursor: pointer;
 	height: 100%;
-	position: absolute;
-	right: 0;
 	text-align: center;
-	width: 10%;
+}
+.search_bar_button:hover {
+	background: linear-gradient(to bottom, #2899be, #00414a) repeat scroll 0 0 rgba(0, 0, 0, 0);
+}
+.search_bar_button, .search_bar_cell.cell_button {
+	width: 100px;
 }
 
 
 
+
 .list {
-	border-top: 1px solid #164e6c;
-	bottom: 0;
-	height: calc(100% - 2em);
-	margin: auto;
-	overflow-y: auto;
-	position: relative;
-	width: 100%;
+    position: relative;
+    top: 2%;
+	margin-bottom: 2%;
+    width: 100%;
 }
 
 
 
 .widget_element {
 	border-bottom: 1px solid #164e6c;
-	border-color: #164e6c;
-	border-left: 1px solid #164e6c;
 	color: #fafafa;
-	display: block;
 	height: 140px;
-	margin: 0;
 	position: relative;
 	cursor: pointer;
 	overflow: hidden;
 }
 .widget_element .background {
-    background: url("../img/misc/widget-element-bg.png") repeat-x scroll left top rgba(0, 0, 0, 0);
-    position: absolute;
-    height: 280px;
-    top: -140px;
-    width: 100%;
+	background: url("../img/misc/widget-element-bg.png") repeat-x scroll left top rgba(0, 0, 0, 0);
+	position: absolute;
+	height: 280px;
+	top: -140px;
+	width: 100%;
 }
 .widget_element:hover .background {
 	top: 0;
 }
 
-.widget_element .background, .image > .image_bg {
-    -webkit-transition: all .4s ease;
+.widget_element .background, .widget_element .image > .image_bg {
+	-webkit-transition: all .4s ease;
 	-moz-transition: all .4s ease;
 	-ms-transition: all .4s ease;
 	-o-transition: all .4s ease;
 	transition: all .4s ease;
-	-webkit-transform: translatez(0);
-	-moz-transform: translatez(0);
-	-ms-transform: translatez(0);
-	-o-transform: translatez(0);
-	transform: translatez(0);
-}
-
-.body {
-	height: 100%;
-	position: relative;
-	width: 85%;
 }
 
 
-.image > .image_bg, .image > .image_front {
+
+.widget_element .image > .image_bg, .widget_element .image > .image_front {
 	position: absolute;
 	height: 120px;
 	width: 120px;
 }
-.image {
+.widget_element .image {
 	height: 120px;
 	width: 120px;
 	display: inline-block;
-	left: 9px;
-	top: 9px;
+	left: 10px;
+	top: 10px;
 	position: absolute;
 }
-.widget_element:hover .image > .image_bg {
-    /*height: 138px;
-    left: -9px;
-    top: -9px;
-    width: 138px;*/
-	-webkit-transform: scale(1.15);
-    -moz-transform: scale(1.15);
-	-ms-transform: scale(1.15);
-	-o-transform: scale(1.15);
-	transform: scale(1.15);
-	box-shadow: 0 0 30px 0 #7dcbfb;
+
+.widget_element .image > .image_bg {
+	background-color: #7dcbfb;
+	left: 0;
+	top: 0;
 }
-.image > .image_bg {
-    background-color: #7dcbfb;
-    left: 0;
-    top: 0;
+.widget_element:hover .image > .image_bg {
+    box-shadow: 0 0 30px 0 #7dcbfb;
+}
+.widget_element:hover .image > .image_bg {
+	height: 140px;
+    left: -10px;
+    top: -10px;
+    width: 140px;
+	box-shadow: 0 0 30px 0 #7dcbfb;
 }
 
 
 .name {
-    font-size: 14px;
-    font-weight: bold;
-    height: 25px;
-    left: 170px;
-    line-height: 25px;
-    position: absolute;
-    top: 0;
+	font-size: 14px;
+	font-weight: bold;
+	height: 25px;
+	left: 170px;
+	line-height: 25px;
+	position: absolute;
+	top: 0;
 }
 
 
 .description {
-    left: 170px;
-    position: absolute;
-    top: 25px;
-}
-
-
-
-/*
-.use:hover {
-	background-color: #65bdc9;
-	border-color: #8cfffd;
-	box-shadow: 0 0 5px #77dddb;
-	text-shadow: 0 0 5px #999999;
-}
-.use {
-	background-color: #184351;
-	border: 1px outset #44b7b5;
-	border-radius: 3px;
-	bottom: 5px;
-	height: 20px;
-	line-height: 20px;
+	left: 170px;
 	position: absolute;
-	width: 130px;
+	top: 25px;
 }
-*/
+
+
 
 
 

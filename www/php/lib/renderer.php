@@ -33,16 +33,20 @@ function render_wrapper($title = 'Homepage - CoolStart.net', $content, $compress
 </head>
 <body>
 	<div class="wrapper">
-		<div class="widgets" id="widgets0"></div>
+		<div class="row">
+			<div class="widgets" id="widgets0"></div>
+		</div>
 		
-		<div class="bottom_bar" id="bottom_bar"></div>
+		<div class="row">
+			<div class="bottom_bar" id="bottom_bar"></div>
+		</div>
 	</div>
 	
 	<script src="//<?=WEB_PATH?>js/crel2.js"></script>
 	<script src="//<?=WEB_PATH?>js/api.js"></script>
 	<script><?=ANALYTICS_JS?></script>
 
-	<script id="delete_me">
+	<script>
 		// generate the links of the bottom menu bar
 		(function(){
 			var C = crel2;
@@ -97,12 +101,13 @@ function render(&$db, $compress = false){
 ?>
 
 <script id="delete_me">
+	// remove innerHTML from the script to delete the secrets of each widget to prevent the manipulation of private variables of a widget from other widgets
+	var t = document.getElementById("delete_me");
+	t.innerHTML = '';
+	t.parentNode.removeChild(t);
+	delete t;
+	
 	(function(){
-		// prevent innerHTML from reading the widgetID + secret to prevent widgets manipulate other widgets without consent
-		var t = document.getElementById("delete_me");
-		t.parentNode.removeChild(t);
-		delete t;
-		
 		// Make a copy of window.API to prevent modifications from widgets to the api used to construct other widgets
 		var API = API_GENERATOR();
 
