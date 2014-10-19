@@ -1,0 +1,91 @@
+.widgets {
+	background: url("../img/bg/homepage-blur.jpg") no-repeat scroll center center / cover rgba(0, 0, 0, 0);
+}
+
+
+.left {
+	left: 0;
+	top: 0;
+}
+
+.right {
+    left: 50.5%;
+    overflow: hidden !important;
+    top: 0;
+}
+
+.panel {
+	background-color: rgba(0, 0, 0, 0.4);
+	box-shadow: 0 0 2px 1px #000000;
+	height: 100%;
+	overflow-y: auto;
+	position: absolute;
+	width: 49.5%;
+	color: #fff;
+}
+
+
+a {
+	cursor: pointer;
+}
+
+
+
+.create, .manage {
+	margin: 1% 2%;
+}
+.create {
+	margin-bottom: 20px;
+}
+
+
+.create > .name {
+	border: 0 none;
+	border-bottom: 1px solid #4df0ff;
+	border-top: 1px solid transparent;
+	background: none repeat scroll 0 0 transparent;
+	color: #fff;
+	font-size: 16px;
+	height: 28px;
+	padding: 0 2%;
+	width: 70%;
+}
+
+.create > .button {
+	background-color: #000;
+	border: 1px solid #4df0ff;
+	color: #fff;
+	height: 30px;
+	margin: 0;
+	padding: 0;
+	width: 26%;
+	cursor: pointer;
+	-webkit-transition: all .5s ease;
+	-moz-transition: all .5s ease;
+	-ms-transition: all .5s ease;
+	-o-transition: all .5s ease;
+	transition: all .5s ease;
+}
+.create > .button:hover {
+	background-color: #55c2cc;
+}
+
+.widget_list {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.developers_menu {
+    height: 10%;
+}
+.developers_space {
+    height: 90%;
+    width: 100%;
+}
+.developers_space:empty {
+	height: 0%;
+}
+.doc_iframe {
+	height: 100%;
+	width: 100%;
+}

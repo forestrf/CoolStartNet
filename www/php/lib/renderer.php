@@ -103,7 +103,6 @@ function render(&$db, $compress = false){
 <script id="delete_me">
 	// remove innerHTML from the script to delete the secrets of each widget to prevent the manipulation of private variables of a widget from other widgets
 	var t = document.getElementById("delete_me");
-	t.innerHTML = '';
 	t.parentNode.removeChild(t);
 	delete t;
 	

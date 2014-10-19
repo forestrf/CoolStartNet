@@ -1,0 +1,76 @@
+.widget_element {
+	border-bottom: 1px solid #164e6c;
+	color: #fafafa;
+	height: 140px;
+	position: relative;
+	cursor: pointer;
+	overflow: hidden;
+}
+.widget_element .background {
+	background: url("../img/misc/widget-element-bg.png") repeat-x scroll left top rgba(0, 0, 0, 0);
+	position: absolute;
+	height: 280px;
+	top: -140px;
+	width: 100%;
+}
+.widget_element:hover .background {
+	top: 0;
+}
+
+.widget_element .background, .widget_element .image > .image_bg {
+	-webkit-transition: all .4s ease;
+	-moz-transition: all .4s ease;
+	-ms-transition: all .4s ease;
+	-o-transition: all .4s ease;
+	transition: all .4s ease;
+}
+
+
+
+.widget_element .image > .image_bg, .widget_element .image > .image_front {
+	position: absolute;
+	height: 120px;
+	width: 120px;
+}
+.widget_element .image {
+	height: 120px;
+	width: 120px;
+	display: inline-block;
+	left: 10px;
+	top: 10px;
+	position: absolute;
+}
+
+.widget_element .image > .image_bg {
+	background-color: #7dcbfb;
+	left: 0;
+	top: 0;
+}
+.widget_element:hover .image > .image_bg {
+	box-shadow: 0 0 30px 0 #7dcbfb;
+}
+.widget_element:hover .image > .image_bg {
+	height: 140px;
+	left: -10px;
+	top: -10px;
+	width: 140px;
+	box-shadow: 0 0 30px 0 #7dcbfb;
+}
+
+
+.widget_element .name {
+	font-size: 14px;
+	font-weight: bold;
+	height: 25px;
+	left: 170px;
+	line-height: 25px;
+	position: absolute;
+	top: 0;
+}
+
+
+.widget_element .description {
+	left: 170px;
+	position: absolute;
+	top: 25px;
+}

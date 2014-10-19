@@ -5,20 +5,56 @@
 
 
 .left {
-    height: 98%;
-    left: 1%;
-    position: absolute;
-    top: 2%;
-    width: 20%;
+	height: 98%;
+	left: 1%;
+	position: absolute;
+	top: 2%;
+	width: 20%;
 }
 
+
+.tags {
+	text-align: center;
+}
+
+
+.button:hover {
+	background-color: #2cacf1;
+}
+.button.big {
+	margin: 3px 3%;
+	padding: 7px 10%;
+	width: 74%;
+}
+.button {
+	background-color: #0c5ea0;
+	border-radius: 5px;
+	color: #fff;
+	cursor: pointer;
+	display: inline-block;
+	margin: 3px;
+	padding: 7px 4%;
+	text-align: center;
+	-webkit-transition: all .3s ease;
+	-moz-transition: all .3s ease;
+	-ms-transition: all .3s ease;
+	-o-transition: all .3s ease;
+	transition: all .3s ease;
+}
+
+
+
+
+
+
+
 .right {
-    height: 100%;
-    overflow-y: auto;
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 78%;
+	height: 100%;
+	overflow-y: auto;
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 78%;
 }
 
 
@@ -52,6 +88,9 @@
 	padding: 0 10px;
 	width: 100%;
 }
+.search_bar_input:hover, .search_bar_input:active {
+	border-color: #88d2ff;
+}
 .search_bar_button {
 	background: linear-gradient(to bottom, #004962, #002328) repeat scroll 0 0 rgba(0, 0, 0, 0);
 	border: 0 none;
@@ -71,90 +110,15 @@
 
 
 .list {
-    position: relative;
-    top: 2%;
-	margin-bottom: 2%;
-    width: 100%;
-}
-
-
-
-.widget_element {
-	border-bottom: 1px solid #164e6c;
-	color: #fafafa;
-	height: 140px;
 	position: relative;
-	cursor: pointer;
-	overflow: hidden;
-}
-.widget_element .background {
-	background: url("../img/misc/widget-element-bg.png") repeat-x scroll left top rgba(0, 0, 0, 0);
-	position: absolute;
-	height: 280px;
-	top: -140px;
+	top: 2%;
+	margin-bottom: 2%;
 	width: 100%;
 }
-.widget_element:hover .background {
-	top: 0;
-}
-
-.widget_element .background, .widget_element .image > .image_bg {
-	-webkit-transition: all .4s ease;
-	-moz-transition: all .4s ease;
-	-ms-transition: all .4s ease;
-	-o-transition: all .4s ease;
-	transition: all .4s ease;
-}
 
 
 
-.widget_element .image > .image_bg, .widget_element .image > .image_front {
-	position: absolute;
-	height: 120px;
-	width: 120px;
-}
-.widget_element .image {
-	height: 120px;
-	width: 120px;
-	display: inline-block;
-	left: 10px;
-	top: 10px;
-	position: absolute;
-}
 
-.widget_element .image > .image_bg {
-	background-color: #7dcbfb;
-	left: 0;
-	top: 0;
-}
-.widget_element:hover .image > .image_bg {
-    box-shadow: 0 0 30px 0 #7dcbfb;
-}
-.widget_element:hover .image > .image_bg {
-	height: 140px;
-    left: -10px;
-    top: -10px;
-    width: 140px;
-	box-shadow: 0 0 30px 0 #7dcbfb;
-}
-
-
-.name {
-	font-size: 14px;
-	font-weight: bold;
-	height: 25px;
-	left: 170px;
-	line-height: 25px;
-	position: absolute;
-	top: 0;
-}
-
-
-.description {
-	left: 170px;
-	position: absolute;
-	top: 25px;
-}
 
 
 

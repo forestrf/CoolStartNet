@@ -121,8 +121,16 @@
 	};
 	
 	// callback takes one argument
+	// http://stackoverflow.com/questions/8567114/how-to-make-an-ajax-call-without-jquery
 	function xhr(url, data, callbackOK, callbackFAIL) {
-		var x = new XMLHttpRequest();
+		var x;
+		if (window.XMLHttpRequest) {
+			// code for IE7+, Firefox, Chrome, Opera, Safari
+			x = new XMLHttpRequest();
+		} else {
+			// code for IE6, IE5
+			x = new ActiveXObject("Microsoft.XMLHTTP");
+		}
 		x.open('POST', url, true);
 		x.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		x.timeout = 5000;

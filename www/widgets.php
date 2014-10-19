@@ -66,43 +66,21 @@ $action($db);
 //
 /////////////////////////////////////////////////////////
 
-function global_list(&$db){
+function global_list(&$db) {
 	$widgets = $db->get_availabe_widgets_user();
-	
-	$result = array();
-
-	if($widgets){
-		foreach($widgets as &$widget){
-			$result[] = array(
-				'ID'          => $widget['ID'],
-				'name'        => $widget['name'],
-				'description' => 'Example description.',
-				'token'       => hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA)
-			);
-		}
-	}
-	
+	$result = generate_widget_array($widgets);
 	end_ok($result);
 }
 
-function user_using_list(&$db){
+function user_using_list(&$db) {
 	$widgets = $db->get_widgets_user();
-	
-	$result = array();
+	$result = generate_widget_array($widgets);
+	end_ok($result);
+}
 
-	if($widgets){
-		foreach($widgets as &$widget){
-			$result[] = array(
-				'ID'          => $widget['ID'],
-				'name'        => $widget['name'],
-				'description' => 'Example description.',
-				'token'       => hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA),
-				'version'     => $widget['version'],
-				'autoupdate'  => $widget['autoupdate']
-			);
-		}
-	}
-	
+function user_created_list(&$db) {
+	$widgets = $db->get_widgets_user_owns();
+	$result = generate_widget_array($widgets);
 	end_ok($result);
 }
 
@@ -112,8 +90,40 @@ function user_using_list(&$db){
 
 
 
-function end_ok(&$array_response){
-	$response = array(
+
+function generate_widget_array(&$widgets) {
+	$result = array();
+
+	if ($widgets) {
+		foreach ($widgets as &$widget) {
+			$result[] = return_widget_array_element($widget);
+		}
+	}
+
+	return $result;
+}
+
+function return_widget_array_element(&$widget) {
+	return array(
+		'ID'          => $widget['ID'],
+		'name'        => $widget['name'],
+		'description' => 'Example description.',
+		'image'       => '',
+		'tags'        => $widget['tags'],
+		//'token'       => hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA),
+		'version'     => $widget['version'],
+		'autoupdate'  => $widget['autoupdate']
+	);
+}
+
+
+
+
+
+
+
+function end_ok(&$array_response) {
+	$response = array (
 		'status' => 'OK'
 		,'response' => $array_response
 	);
@@ -121,7 +131,7 @@ function end_ok(&$array_response){
 	exit;
 }
 
-function end_fail($txt){
+function end_fail($txt) {
 	echo '{"status":"FAIL","problem":"'.$txt.'"}';
 	exit;
 }

@@ -8,6 +8,8 @@
 ?>
 
 <script src="//<?=WEB_PATH?>js/ipa.js"></script>
+<script src="//<?=WEB_PATH?>js/generic.js"></script>
+<link href="//<?=WEB_PATH?>css/widget-box.css" rel="stylesheet"/>
 <link href="//<?=WEB_PATH?>css/manage-widgets.css" rel="stylesheet"/>
 
 <script>
@@ -21,7 +23,8 @@
 		
 		// GUI
 		
-		var search_txt, search_button, list;
+		var search_txt, search_button, list,
+		tags;
 		
 		C(div,
 			C('div', ['class', 'left'],
@@ -35,8 +38,9 @@
 						)
 					),
 					C('tr',
-						C('td',
-							'filtros, tags, etc'
+						C('td', ['colspan', 2],
+							C('div', ['class', 'button big', 'onclick', fill_list_mywidgets], 'My widgets'),
+							tags = C('div', ['class', 'tags'])
 						)
 					)
 				)
@@ -46,82 +50,156 @@
 			)
 		);
 		
+		var tags_in_use = [];
+		
+		var tags_arr = {};
+		
+		function draw_tags(){
+			// for each tag, create a div that contains the tag and the
+			for(var i in tags_arr){
+				var t_elem;
+				C(tags,
+					t_elem = C('div', ['class', 'button', 'onclick', add_tag_to_filter_callback(i)], i)
+				);
+				t_elem.keyword = i;
+				tags_arr[i].div_tag = t_elem;
+			}
+		}
+		
+		
+		search_txt.onkeyup = tipying_search_txt;
+		function tipying_search_txt() {
+			filter_results(search_txt.value);
+			filter_tags(search_txt.value);
+		}
+		
+		function filter_results(by) {
+			for (var i = 0; i < widgets.length; i++) {
+				if (widgets[i].txt.toLowerCase().indexOf(by.toLowerCase()) === -1) {
+					widgets[i].div.style.display = 'none';
+				} else {
+					widgets[i].div.style.display = '';
+				}
+			}
+		}
+		
+		// repaint tags (show onlt the tags of the widgets not filtered
+		function filter_tags() {
+			var tags_left = [];
+			for (var i = 0; i < widgets.length; i++) {
+				if (widgets[i].div.style.display !== 'none') {
+					tags_left = tags_left.concat(widgets[i].data.tags);
+				}
+			}
+			var tags_left_length = tags_left.length;
+			//console.log(tags_left);
+			
+			for (var i in tags_arr) {
+				var visible = false;
+				for (var j = 0; j < tags_left_length; j++) {
+					if(tags_left[j] === i){
+						visible = true;
+						break;
+					}
+				}
+				
+				tags_arr[i].div_tag.style.display = visible ? '' : 'none';
+			}
+		}
+		
+		
+		function add_tag_to_filter_callback(elem) {
+			return function() {
+				tags_in_use.push(elem);
+				filter_tags(search_txt.value);
+			}
+		}
 		
 		
 		// FUNCTIONS
 		
-		var widgets_in_use = [];
-		var widgets_available = [];
-		
-		search_button.onclick = function(){search(search_txt.value);};
-		function search(text){
+		search_button.onclick = function(){search(search_txt.value)};
+		function search(text) {
 			console.log(text);
 		}
 		
-		// last widget from the list for stacked requests
-		function fill_list(last){
-			if (undefined === last) {last = 0;}
+		// widgets container
+		var widgets = [];
 		
+		// last widget from the list for stacked requests
+		function fill_list(action, last) {
+			if (undefined === last) {
+				last = 0;
+			}
+			if (last === 0) {
+				// When no last, delete previous list
+				list.innerHTML = '';
+			}
+			
 			API.xhr(
-				'widgets?action=global-list',
+				'widgets?action=' + action,
 				'last=' + last,
-				function(data){
+				function (data) {
 					data = JSON.parse(data);
 					if (data.status === 'OK') {
-						array_widgets_fill(widgets_available, data.response);
-						fill_list_with_widgets(list, widgets_available);
-					} else if(data.status !== 'FAIL'){
-						setTimeout(fill_list, 5000);
+						widgets = [];
+						for (var i = 0; i < data.response.length; i++) {
+							widgets.push(generate_widget(data.response[i]));
+						}
+						
+						draw_tags();
+
+						if (last === 0) {
+							// When no last, delete previous list
+							list.innerHTML = '';
+						}
+						fill_list_with_widgets(list, widgets);
+					} else if(data.status !== 'FAIL') {
+						setTimeout(fill_list_global, 5000);
 					}
 				},
-				function(){
-					setTimeout(fill_list, 5000);
+				function () {
+					setTimeout(fill_list_global, 5000);
 				}
 			);
 		}
-		fill_list();
+		fill_list_global();
 		
-		//'widgets?action=user-using-list',
-		// Call only one time.
+		function fill_list_global() {
+			fill_list('global-list');
+		}
 		
-		function fill_list_with_widgets(list, widgets){
+		function fill_list_mywidgets() {
+			fill_list('user-using-list');
+		}
+		
+		function fill_list_with_widgets(list, widgets) {
 			list.innerHTML = '';
 			
-			for(var i = 0; i < widgets.length; i++){
+			for (var i = 0; i < widgets.length; i++) {
 				list.appendChild(widgets[i].div);
 			}
 		}
 		
-		function detail_widget(ID, div){
+		function detail_widget(ID, div) {
 			console.log(ID);
 			console.log(div);
 		}
 		
-		function array_widgets_fill(array, data){
-			for(var i = 0; i < data.length; i++){
-				array.push(generate_widget(data[i]));
-			}
-		}
 		
-		function generate_widget(data){
-			return {
-				div: C('div', ['class', 'widget_element'],
-					C('div', ['class', 'background']),
-					C('div', ['class', 'image'],
-						C('div', ['class', 'image_bg']),
-						C('img', ['class', 'image_front', 'src', 'http://placehold.it/120/'+rnd(3)/*IPA.widgetImage(data.ID)*/])
-					),
-					C('div', ['class', 'name'], data.name),
-					C('div', ['class', 'description'], data.description, 
-						C('div', ['class', 'use'], 'Use widget')
-					)
-				),
-				data: data
-			};
+		
+		function generate_widget(data) {
+			var obj = generate_widget_element(data);
+		
+			for(var i = 0; i < data.tags.length; i++){
+				tags_arr[data.tags[i]] = obj;
+			}
+			
+			return obj;
 		}
 		
 		// borrar
-		function rnd(loops){
+		function rnd(loops) {
 			return (Math.random()*10).toFixed() + (loops > 1 ? rnd(loops -1) : '');
 		}
 		
