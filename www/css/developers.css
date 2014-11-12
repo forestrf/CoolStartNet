@@ -1,5 +1,7 @@
 .widgets {
 	background: url("../img/bg/homepage-blur.jpg") no-repeat scroll center center / cover rgba(0, 0, 0, 0);
+	font-family: Verdana;
+	font-size: 0.9em;
 }
 
 
@@ -9,9 +11,9 @@
 }
 
 .right {
-    left: 50.5%;
-    overflow: hidden !important;
-    top: 0;
+	left: 50.5%;
+	overflow: hidden !important;
+	top: 0;
 }
 
 .panel {
@@ -25,9 +27,6 @@
 }
 
 
-a {
-	cursor: pointer;
-}
 
 
 
@@ -75,12 +74,26 @@ a {
 	margin-bottom: 10px;
 }
 
+
 .developers_menu {
-    height: 10%;
+	height: 8%;
+	margin: 1% 2%;
+}
+.links {
+	list-style: inside none square;
+	margin: 1% 2%;
+}
+.links a {
+	cursor: pointer;
+	color: #dadada;
+	text-decoration: none;
+}
+.links a:hover {
+	color: #efffff;
 }
 .developers_space {
-    height: 90%;
-    width: 100%;
+	height: 90%;
+	width: 100%;
 }
 .developers_space:empty {
 	height: 0%;
@@ -89,3 +102,52 @@ a {
 	height: 100%;
 	width: 100%;
 }
+
+
+
+
+
+
+.widget_list .widget_element .settings {
+	background-color: rgba(31, 245, 157, 0.6);
+	font-size: 15px;
+	height: 100%;
+	padding: 17px 15px 0;
+	position: absolute;
+	right: 0;
+	text-align: center;
+	transition: all 0.5s ease 0s;
+	width: 15px;
+	line-height: 17px;
+	
+	-webkit-transition: all .5s ease;
+	-moz-transition: all .5s ease;
+	-ms-transition: all .5s ease;
+	-o-transition: all .5s ease;
+	transition: all .5s ease;
+}
+
+.widget_list .widget_element .settings:hover {
+	background-color: #1eea95;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
