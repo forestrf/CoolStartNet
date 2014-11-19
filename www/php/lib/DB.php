@@ -93,6 +93,14 @@ class DB {
 		return $resultArray;
 	}
 	
+	// Variables
+	var $userID;
+	
+	function set_user_id($userID) {
+		$this->$userID = $userID;
+	}
+	
+	
 	
 	
 	# ---------------------------------------------------------------------------
@@ -229,7 +237,7 @@ class DB {
 			}
 		}
 		
-		return $this->query("SELECT `IDwidget`, `variable`, `value` FROM `variables` WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND (".implode('OR', $SQL_statement).");");
+		return $this->query("SELECT `IDwidget`, `variable`, `value` FROM `variables` WHERE `IDuser` = '{$this->userID}' AND (".implode('OR', $SQL_statement).");");
 	}
 	
 	
@@ -249,7 +257,7 @@ class DB {
 			}
 		}
 		
-		return $this->query("SELECT `IDwidget`, `variable` FROM `variables` WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND (".implode('OR', $SQL_statement).");");
+		return $this->query("SELECT `IDwidget`, `variable` FROM `variables` WHERE `IDuser` = '{$this->userID}' AND (".implode('OR', $SQL_statement).");");
 	}
 	
 	// Doesn't check if the widget exists. This check is done in api.php
@@ -278,7 +286,7 @@ class DB {
 				$occupied[$widgetID_calc][$variable] = strlen($value);
 				$value = mysql_escape_mimic($value);
 				$variable = mysql_escape_mimic($variable);
-				$SQL_statement[] = "('{$_SESSION['user']['ID']}', '{$widgetID_calc}', '{$variable}', '{$value}')";
+				$SQL_statement[] = "('{$this->userID}', '{$widgetID_calc}', '{$variable}', '{$value}')";
 			}
 		}
 
@@ -298,7 +306,7 @@ class DB {
 	*/
 	// Return an array with all the variables with its sizes from a user
 	function get_user_size_variable(){
-		$pre_occupied = $this->query("SELECT `IDwidget`, `variable`, LENGTH(`value`) AS `total_size` FROM `variables` WHERE `IDuser` = '{$_SESSION['user']['ID']}';");
+		$pre_occupied = $this->query("SELECT `IDwidget`, `variable`, LENGTH(`value`) AS `total_size` FROM `variables` WHERE `IDuser` = '{$this->userID}';");
 		$occupied = array();
 		for($i = 0; $i < count($pre_occupied); $i++){
 			$occupied[$pre_occupied[$i]['IDwidget']][$pre_occupied[$i]['variable']] = intval($pre_occupied[$i]['total_size']);
@@ -333,7 +341,7 @@ class DB {
 			}
 		}
 		
-		return $this->query("DELETE FROM `variables` WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND (".implode(' OR ', $SQL_statement).");");
+		return $this->query("DELETE FROM `variables` WHERE `IDuser` = '{$this->userID}' AND (".implode(' OR ', $SQL_statement).");");
 	}
 	
 	function delall_variable(&$widgetID_variable_value, $private_only = true){
@@ -351,7 +359,7 @@ class DB {
 			$SQL_statement[] = "`IDwidget` = '{$widgetID_calc}'";
 		}
 		
-		return $this->query("DELETE FROM `variables` WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND (".implode(' OR ', $SQL_statement).");");
+		return $this->query("DELETE FROM `variables` WHERE `IDuser` = '{$this->userID}' AND (".implode(' OR ', $SQL_statement).");");
 	}
 	
 	// Create a widget.
@@ -359,7 +367,7 @@ class DB {
 		$name = mysql_escape_mimic($name);
 		$result = $this->query("SELECT `ID` FROM `widgets` WHERE `name` = '{$name}';");
 		if(!$result){
-			return $this->query("INSERT INTO `widgets` (`name`, `ownerID`) VALUES ('{$name}', '{$_SESSION['user']['ID']}');");
+			return $this->query("INSERT INTO `widgets` (`name`, `ownerID`) VALUES ('{$name}', '{$this->userID}');");
 		}
 		return false;
 	}
@@ -522,7 +530,7 @@ class DB {
 			}
 		}
 		else{
-			if($this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `ownerID` = '{$_SESSION['user']['ID']}';")){
+			if($this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `ownerID` = '{$this->userID}';")){
 				return $this->get_widget_last_version($widgetID, false);
 			}	
 		}
@@ -614,35 +622,35 @@ class DB {
 	
 	// Returns a list with the widgets of the user.
 	function get_widgets_user(){
-		return $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` ON `widgets-user`.`IDwidget` = `widgets`.`ID` WHERE `IDuser` = '{$_SESSION['user']['ID']}';");
+		return $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` ON `widgets-user`.`IDwidget` = `widgets`.`ID` WHERE `IDuser` = '{$this->userID}';");
 	}
 	
 	// Returns a widget of the user.
 	function get_widget_user($widgetID){
-		$result = $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` ON `widgets-user`.`IDwidget` = `widgets`.`ID` WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND `widgets`.`ID` = '{$widgetID}';");
+		$result = $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` ON `widgets-user`.`IDwidget` = `widgets`.`ID` WHERE `IDuser` = '{$this->userID}' AND `widgets`.`ID` = '{$widgetID}';");
 		return $result ? $result[0] : false;
 	}
 	
 	// Returns a list with the widgets available to the user.
 	function get_availabe_widgets_user(){
-		return $this->query("SELECT * FROM `widgets` WHERE `ownerID` = '-1' OR `ownerID` = '{$_SESSION['user']['ID']}' OR `published` > -1;"); // Por poner filtrado de widgets privados
+		return $this->query("SELECT * FROM `widgets` WHERE `ownerID` = '-1' OR `ownerID` = '{$this->userID}' OR `published` > -1;"); // Por poner filtrado de widgets privados
 	}
 	
 	// Returns a list with the widgets owned by the user.
 	function get_widgets_user_owns(){
-		return $this->query("SELECT * FROM `widgets` WHERE `ownerID` = '{$_SESSION['user']['ID']}';");
+		return $this->query("SELECT * FROM `widgets` WHERE `ownerID` = '{$this->userID}';");
 	}
 	
 	// Returns true if the widget can be manipulated by the user (true if user is the owner of te widget). Otherwise returns false.
 	function CanIModifyWidget(&$widgetID){
 		$widgetID = mysql_escape_mimic($widgetID);
-		return $this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `ownerID` = '{$_SESSION['user']['ID']}';") ? true : false;
+		return $this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `ownerID` = '{$this->userID}';") ? true : false;
 	}
 	
 	// Makes the user stop using a widget without deleting the widget configurations.
 	function remove_using_widget_user($widgetID){
 		$widgetID = mysql_escape_mimic($widgetID);
-		$this->query("DELETE FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}' AND `IDuser` = '{$_SESSION['user']['ID']}';");
+		$this->query("DELETE FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}' AND `IDuser` = '{$this->userID}';");
 	}
 	
 	// Makes the user to use a widget.
@@ -650,15 +658,15 @@ class DB {
 		$widgetID = mysql_escape_mimic($widgetID);
 		
 		// Checks if the users already uses the widget.
-		if(count($this->query("SELECT * FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}' AND `IDuser` = '{$_SESSION['user']['ID']}';")) === 0){
-			$this->query("INSERT INTO `widgets-user` (`IDwidget`, `IDuser`) VALUES ('{$widgetID}', '{$_SESSION['user']['ID']}');");
+		if(count($this->query("SELECT * FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}' AND `IDuser` = '{$this->userID}';")) === 0){
+			$this->query("INSERT INTO `widgets-user` (`IDwidget`, `IDuser`) VALUES ('{$widgetID}', '{$this->userID}');");
 		}
 	}
 	
 	// Returns true if the user is using the widget, otherwise returns false.
 	function check_using_widget_user(&$widgetID){
 		$widgetID = mysql_escape_mimic($widgetID);
-		return $this->query("SELECT * FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}' AND `IDuser` = '{$_SESSION['user']['ID']}';") ? true : false;
+		return $this->query("SELECT * FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}' AND `IDuser` = '{$this->userID}';") ? true : false;
 	}
 	
 	// Returns the widget version (number) used given the ID of the widget or the widget object returned by the function get_widgets_user()
@@ -697,7 +705,7 @@ class DB {
 				}
 			}
 			
-			return $this->query("UPDATE `widgets-user` SET `autoupdate` = '0', `version` = '{$version}' WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND `IDwidget` = '{$widgetID}';");
+			return $this->query("UPDATE `widgets-user` SET `autoupdate` = '0', `version` = '{$version}' WHERE `IDuser` = '{$this->userID}' AND `IDwidget` = '{$widgetID}';");
 		}
 		return false;
 	}
@@ -705,7 +713,7 @@ class DB {
 	// Sets the widget version used to autoupdate for the especified widget ID for the user.
 	function set_using_widget_version_autoupdate_user($widgetID){
 		$widgetID = mysql_escape_mimic($widgetID);
-		return $this->query("UPDATE `widgets-user` SET `autoupdate` = '1', `version` = '0' WHERE `IDuser` = '{$_SESSION['user']['ID']}' AND `IDwidget` = '{$widgetID}';");
+		return $this->query("UPDATE `widgets-user` SET `autoupdate` = '1', `version` = '0' WHERE `IDuser` = '{$this->userID}' AND `IDwidget` = '{$widgetID}';");
 	}
 	
 	
@@ -719,7 +727,7 @@ class DB {
 	// Returns all the tokens that the current user have
 	function getAllAccessToken($ID){
 		if(!$ID){
-			$ID = $_SESSION['user']['ID'];
+			$ID = $this->userID;
 		}
 		$resp = $this->query("SELECT `dropbox_accessToken` FROM `access-token` WHERE `IDuser` = '{$ID}';");
 		return isset($resp[0]) ? $resp[0] : array();
@@ -727,12 +735,12 @@ class DB {
 	
 	// Set the dropbox token of the current user
 	function setDropboxAccessToken($accessToken){
-		return $this->query("INSERT INTO `access-token` (`IDuser`, `dropbox_accessToken`) VALUES ('{$_SESSION['user']['ID']}', '{$accessToken}') ON DUPLICATE KEY UPDATE `dropbox_accessToken` = '{$accessToken}';");
+		return $this->query("INSERT INTO `access-token` (`IDuser`, `dropbox_accessToken`) VALUES ('{$this->userID}', '{$accessToken}') ON DUPLICATE KEY UPDATE `dropbox_accessToken` = '{$accessToken}';");
 	}
 	
 	// Delete the dropbox token of the current user
 	function delDropboxAccessToken($accessToken){
-		return $this->query("UPDATE `access-token` SET `dropbox_accessToken` = '' WHERE `IDuser` = '{$_SESSION['user']['ID']}';");
+		return $this->query("UPDATE `access-token` SET `dropbox_accessToken` = '' WHERE `IDuser` = '{$this->userID}';");
 	}
 	
 	

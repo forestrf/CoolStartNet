@@ -100,7 +100,7 @@ function open_db_session($to_return = 'db'){
 	$db = new DB();
 	$db->Open();
 
-    $session = new Zebra_Session($db->mysqli, PASSWORD_ZEBRA_SESSION, ZEBRA_SESSION_TIME, true, true);
+	$session = new Zebra_Session($db->mysqli, PASSWORD_ZEBRA_SESSION, ZEBRA_SESSION_TIME, true, true);
 	
 	if(isset($_COOKIE['PHPSESSID'])){
 		setcookie('PHPSESSID', $_COOKIE['PHPSESSID'], time() + ZEBRA_SESSION_TIME, '/', $domain);
@@ -112,6 +112,8 @@ function open_db_session($to_return = 'db'){
 		$user['valid'] = false; //Anonymous user has valid = false
 		$_SESSION['user'] = $user;
 	}
+	
+	$db->set_user_id($_SESSION['user']['ID']);
 	
 	return $$to_return;
 }
@@ -149,4 +151,85 @@ function server_vars_js(){
 		"CAPTCHA_PUB_KEY": "'.CAPTCHA_PUBLIC_KEY.'",
 		"WEB_PATH": "'.WEB_PATH.'"
 	}';
+}
+
+function file_mimetype($filename) {
+	$pos = strrpos($filename, '.');
+	if ($pos === false) {
+		return 'text/html';
+	}
+	$extension = substr($filename, $pos + 1);
+	
+	switch ($extension) {
+		case 'aif': case 'aifc': case 'aiff':
+			return 'audio/x-aiff';
+		case 'asf': case 'asr': case 'asx':
+			return 'video/x-ms-asf';
+		case 'au':
+			return 'audio/basic';
+		case 'avi':
+			return 'video/x-msvideo';
+		case 'bin':
+			return 'application/octet-stream';
+		case 'bmp':
+			return 'image/bmp';
+		case 'css':
+			return 'text/css';
+		case 'gif':
+			return 'image/gif';
+		case 'gz':
+			return 'application/x-gzip';
+		case 'htm': case 'html':
+			return 'text/html';
+		case 'ico':
+			return 'image/x-icon';
+		case 'jpe': case 'jpeg': case 'jpg':
+			return 'image/jpeg';
+		case 'js':
+			return 'application/x-javascript';
+		case 'm3u':
+			return 'audio/x-mpegurl';
+		case 'mid':
+			return 'audio/mid';
+		case 'mov':
+			return 'video/quicktime';
+		case 'movie':
+			return 'video/x-sgi-movie';
+		case 'mp2': case 'mpa': case 'mpe': case 'mpeg': case 'mpg': case 'mpv2':
+			return 'video/mpeg';
+		case 'mp3':
+			return 'audio/mpeg';
+		case 'pdf':
+			return 'application/pdf';
+		case 'pps': case 'ppt':
+			return 'application/vnd.ms-powerpoint';
+		case 'pub':
+			return 'application/x-mspublisher';
+		case 'rtf':
+			return 'application/rtf';
+		case 'svg':
+			return 'image/svg+xml';
+		case 'swf':
+			return 'application/x-shockwave-flash';
+		case 'tar':
+			return 'application/x-tar';
+		case 'tgz':
+			return 'application/x-compressed';
+		case 'tif': case 'tiff':
+			return 'image/tiff';
+		case 'txt':
+			return 'text/plain';
+		case 'vcf':
+			return 'text/x-vcard';
+		case 'wav':
+			return 'audio/x-wav';
+		case 'xls':
+			return 'application/vnd.ms-excel';
+		case 'z':
+			return 'application/x-compress';
+		case 'zip':
+			return 'application/zip';
+		default:
+			return 'application/octet-stream';
+	}
 }
