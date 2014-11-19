@@ -548,7 +548,7 @@ class DB {
 	function get_widget_version_file($widgetID, $version, $name){
 		if(can_be_widget_version($version) && ($this->check_using_widget_user($widgetID) || $this->CanIModifyWidget($widgetID))){
 			$name = mysql_escape_mimic($name);
-			return $this->query("SELECT * FROM `files` WHERE `hash` = (SELECT `hash` FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}' AND `name` = '{$name}');");
+			return $this->query("SELECT *, `widgets-content`.`mimetype` FROM `files` WHERE `hash` = (SELECT `hash` FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}' AND `name` = '{$name}');");
 		}
 		return false;
 	}
@@ -595,9 +595,9 @@ class DB {
 			$name = mysql_escape_mimic($name);
 			$content = mysql_escape_mimic($content);
 			$hash = file_hash($content);
-			$this->query("INSERT INTO `widgets-content` (`IDwidget`, `version`, `name`, `hash`) VALUES ('{$widgetID}', '{$version}', '{$name}', '{$hash}');");
+			$this->query("INSERT INTO `widgets-content` (`IDwidget`, `version`, `name`, `hash`, `mimetype`) VALUES ('{$widgetID}', '{$version}', '{$name}', '{$hash}', '{$mimetype}');");
 			if(!$this->query("SELECT * FROM `files` WHERE `hash` = '{$hash}';")){
-				return $this->query("INSERT INTO `files` (`hash`, `data`, `mimetype`) VALUES ('{$hash}', '{$content}', '{$mimetype}');");
+				return $this->query("INSERT INTO `files` (`hash`, `data`) VALUES ('{$hash}', '{$content}');");
 			}
 			return true;
 		}

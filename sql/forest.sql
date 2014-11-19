@@ -39,8 +39,7 @@ CREATE TABLE `access-token` (
 
 CREATE TABLE `files` (
   `hash` varchar(32) COLLATE utf8_bin NOT NULL,
-  `data` mediumblob NOT NULL,
-  `mimetype` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT 'text/plain'
+  `data` mediumblob NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
@@ -110,7 +109,8 @@ CREATE TABLE `widgets-content` (
   `IDwidget` int(11) NOT NULL,
   `version` int(11) NOT NULL,
   `name` varchar(50) COLLATE utf8_bin NOT NULL,
-  `hash` varchar(32) COLLATE utf8_bin NOT NULL
+  `hash` varchar(32) COLLATE utf8_bin NOT NULL,
+  `mimetype` text COLLATE utf8_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------

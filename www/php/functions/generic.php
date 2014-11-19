@@ -173,11 +173,15 @@ function file_mimetype($filename) {
 			return 'application/octet-stream';
 		case 'bmp':
 			return 'image/bmp';
+		case 'bz':
+			return 'application/x-bzip';
+		case 'bz2':
+			return 'application/x-bzip2';
 		case 'css':
 			return 'text/css';
 		case 'gif':
 			return 'image/gif';
-		case 'gz':
+		case 'gz': case 'gzip':
 			return 'application/x-gzip';
 		case 'htm': case 'html':
 			return 'text/html';
@@ -189,24 +193,28 @@ function file_mimetype($filename) {
 			return 'application/x-javascript';
 		case 'm3u':
 			return 'audio/x-mpegurl';
-		case 'mid':
-			return 'audio/mid';
+		case 'mid': case 'midi':
+			return 'audio/x-mid';
 		case 'mov':
 			return 'video/quicktime';
 		case 'movie':
 			return 'video/x-sgi-movie';
-		case 'mp2': case 'mpa': case 'mpe': case 'mpeg': case 'mpg': case 'mpv2':
+		case 'mp2': case 'mpe': case 'mpeg': case 'mpg': case 'mpv2': case 'm1v': case 'm2v':
 			return 'video/mpeg';
-		case 'mp3':
+		case 'mp3': case 'm2a': case 'mp2': case 'mpa':
 			return 'audio/mpeg';
 		case 'pdf':
 			return 'application/pdf';
+		case 'png':
+			return 'image/png';
 		case 'pps': case 'ppt':
 			return 'application/vnd.ms-powerpoint';
 		case 'pub':
 			return 'application/x-mspublisher';
 		case 'rtf':
 			return 'application/rtf';
+		case 'smi': case 'smil':
+			return 'application/smil';
 		case 'svg':
 			return 'image/svg+xml';
 		case 'swf':
@@ -217,14 +225,16 @@ function file_mimetype($filename) {
 			return 'application/x-compressed';
 		case 'tif': case 'tiff':
 			return 'image/tiff';
-		case 'txt':
+		case 'txt': case 'conf':
 			return 'text/plain';
 		case 'vcf':
 			return 'text/x-vcard';
 		case 'wav':
 			return 'audio/x-wav';
-		case 'xls':
+		case 'xls': case 'xlsx':
 			return 'application/vnd.ms-excel';
+		case 'doc': case 'docx':
+			return 'application/msword';
 		case 'z':
 			return 'application/x-compress';
 		case 'zip':

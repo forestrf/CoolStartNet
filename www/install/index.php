@@ -6,6 +6,8 @@ Select steep:<p>
 <a href="?steep=install-widgets">Install default widgets</a><br>
 <a href="?steep=update-widgets">Update default widgets</a><br>
 
+<a href="?steep=create-default-user">Create user DEFAULT</a><br>
+
 <pre>
 <?php
 
@@ -63,12 +65,15 @@ switch ($steep) {
 			$version = 1;
 			var_dump($id);
 			print_r($widget);
-			$db->create_widget_version($id);
+			$res = $db->create_widget_version($id);
+			var_dump($res);
 			foreach ($widget['files'] as &$file) {
 				$file_contents = file_get_contents($file['path']);
-				$db->upload_widget_version_file($id, $version, $file['name'], file_mimetype($file['name']), $file_contents);
+				$res = $db->upload_widget_version_file($id, $version, $file['name'], file_mimetype($file['name']), $file_contents);
+				var_dump($res);
 			}
-			$db->publicate_widget_version($id, $version);
+			$res = $db->publicate_widget_version($id, $version);
+			var_dump($res);
 		}
 		
 	break;
