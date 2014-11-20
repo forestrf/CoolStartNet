@@ -97,11 +97,31 @@ class DB {
 	var $userID;
 	
 	function set_user_id($userID) {
-		$this->$userID = $userID;
+		$this->userID = $userID;
 	}
 	
 	
 	
+	
+	
+	
+	// Not the best option
+	function create_tables(&$content){
+		//remove comments
+		$instructions = preg_replace('/--.*?[\r\n]/', '', $content);
+		$instructions = preg_replace('|/\*.*?\*/|', '', $instructions);
+		$instructions = str_replace("\n", '', $instructions);
+		$instructions = str_replace("\r", '', $instructions);
+		//var_dump($instructions);
+		$instructions = explode(";", $instructions);
+		//var_dump($instructions);return;
+		foreach ($instructions as $instruction) {
+			if ($instruction === '') continue;
+			
+			var_dump($instruction);
+			var_dump($this->query($instruction));
+		}
+	}
 	
 	# ---------------------------------------------------------------------------
 	#
@@ -548,7 +568,7 @@ class DB {
 	function get_widget_version_file($widgetID, $version, $name){
 		if(can_be_widget_version($version) && ($this->check_using_widget_user($widgetID) || $this->CanIModifyWidget($widgetID))){
 			$name = mysql_escape_mimic($name);
-			return $this->query("SELECT *, `widgets-content`.`mimetype` FROM `files` WHERE `hash` = (SELECT `hash` FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}' AND `name` = '{$name}');");
+			return $this->query("SELECT * FROM `files` RIGHT JOIN `widgets-content` ON `files`.`hash` = `widgets-content`.`hash` WHERE `widgets-content`.`IDwidget` = '{$widgetID}' AND `widgets-content`.`version` = '{$version}' AND `widgets-content`.`name` = '{$name}'");
 		}
 		return false;
 	}

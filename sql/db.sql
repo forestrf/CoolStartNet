@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `forest`
+-- Database: `db`
 --
 
 -- --------------------------------------------------------
@@ -258,5 +258,5 @@ ADD CONSTRAINT `widgets-versions IDwidget` FOREIGN KEY (`IDwidget`) REFERENCES `
 
 
 -- This will allow global variables
-INSERT INTO `forest`.`users` (`ID`, `nick`, `password`, `email`, `RND`, `level`, `validation`, `recover_code_due_date`, `creation_date`) VALUES ('0', 'global', '-', '-', '-', '0', '', '', '');
-INSERT INTO `forest`.`widgets` (`ID`, `name`, `ownerID`, `published`) VALUES ('-1', 'global', '0', '-1');
+INSERT INTO `users` (`ID`, `nick`, `password`, `email`, `RND`, `level`, `validation`, `recover_code_due_date`, `creation_date`) VALUES ('0', 'global', '-', '-', '-', '0', '', '', '');
+INSERT INTO `widgets` (`ID`, `name`, `ownerID`, `published`) VALUES ('-1', 'global', '0', '-1');
