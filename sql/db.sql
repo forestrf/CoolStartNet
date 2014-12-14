@@ -96,7 +96,9 @@ CREATE TABLE `widgets` (
 `ID` int(11) NOT NULL,
   `name` varchar(30) COLLATE utf8_bin NOT NULL,
   `ownerID` int(11) NOT NULL,
-  `published` int(11) NOT NULL DEFAULT '-1' COMMENT 'Si se publica cambiar a 0 o + desde php. Nunca volver a -1'
+  `published` int(11) NOT NULL DEFAULT '-1' COMMENT 'Si se publica cambiar a 0 o + desde php. Nunca volver a -1',
+  `tags` text COLLATE utf8_bin,
+  `creation_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=14 ;
 
 -- --------------------------------------------------------

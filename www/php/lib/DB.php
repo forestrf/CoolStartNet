@@ -66,12 +66,14 @@ class DB {
 		if($cacheable){
 			$cached = $this->queryCache($query);
 			if($cached !== false){
+				if($this->d) $this->debug('cached result returned for: '.$query);
 				return $cached;
 			}
 		}
 		
 		if($this->opened_connection === false){
 			if(!$this->Open()){
+				if($this->d) $this->debug('Can\'t open the database');
 				return false;
 			}
 			$this->opened_connection = true;
@@ -80,8 +82,14 @@ class DB {
 		$result = $this->mysqli->query($query, MYSQLI_USE_RESULT);
 		if(strpos($query, 'INSERT') !== false){
 			$this->LAST_MYSQL_ID = $this->mysqli->insert_id;
+		} else {
+			$this->LAST_MYSQL_ID = null;
 		}
 		if($result === false || $result === true){
+			if($cacheable){
+				$this->cacheResult($query, $resultArray);
+			}
+			if($this->d) $this->debug('query: '.$query."\r\nresult: ".($result?'TRUE':'FALSE'));
 			return $result;
 		}
 		
@@ -90,14 +98,25 @@ class DB {
 		if($cacheable){
 			$this->cacheResult($query, $resultArray);
 		}
+		if($this->d) $this->debug('query: '.$query."\r\nresult: ".print_r($resultArray));
 		return $resultArray;
 	}
 	
 	// Variables
-	var $userID;
+	private $userID;
 	
 	function set_user_id($userID) {
 		$this->userID = $userID;
+	}
+	
+	
+	//debug mode
+	private $d = false;
+	function enable_debug_mode($bool) {
+		$this->d = $bool;
+	}
+	private function debug($txt) {
+		if($this->d) echo $txt."\r\n";
 	}
 	
 	
@@ -208,6 +227,12 @@ class DB {
 		$nick = mysql_escape_mimic($nick);
 		$new_email = hash_password($new_email);
 		return $this->query("UPDATE `users` SET `email` = '{$new_email}' WHERE `nick` = '{$nick}';");
+	}
+
+	// Remove user account
+	function delete_user($nick){
+		$nick = mysql_escape_mimic($nick);
+		return $this->query("DELETE FROM `users` WHERE `nick` = '{$nick}';");
 	}
 	
 	
@@ -412,6 +437,12 @@ class DB {
 			return true;
 		}
 		return false;
+	}
+	
+	function set_widget_tags($widgetID, &$tags_array){
+		$widgetID = mysql_escape_mimic($widgetID);
+		$tags = mysql_escape_mimic(json_encode($tags_array));
+		return $this->query("UPDATE `widgets` SET `tags` = '{$tags}' WHERE `ID` = '{$widgetID}';");
 	}
 	
 	
@@ -653,7 +684,7 @@ class DB {
 	
 	// Returns a list with the widgets available to the user.
 	function get_availabe_widgets_user(){
-		return $this->query("SELECT * FROM `widgets` WHERE `ownerID` = '-1' OR `ownerID` = '{$this->userID}' OR `published` > -1;"); // Por poner filtrado de widgets privados
+		return $this->query("SELECT * FROM `widgets` WHERE `ID` != -1 AND `ownerID` = '{GLOBAL_USER_ID}' OR `ownerID` = '{$this->userID}' OR `published` > -1;"); // Por poner filtrado de widgets privados
 	}
 	
 	// Returns a list with the widgets owned by the user.

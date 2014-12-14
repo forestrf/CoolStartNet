@@ -11,7 +11,7 @@ Select steep:<p>
 <pre>
 <?php
 
-$steep = $_GET['steep'];
+$steep = isset($_GET['steep']) ? $_GET['steep'] : '';
 
 switch ($steep) {
 	case 'install-db':
@@ -31,6 +31,7 @@ switch ($steep) {
 		
 		$db = new DB();
 		
+		$db->delete_user(DEFAULT_USER_NICK);
 		$db->create_new_user(DEFAULT_USER_NICK, DEFAULT_USER_PASSWORD, '', $validation);
 		
 		$userID = $db->LAST_MYSQL_ID;
@@ -44,12 +45,12 @@ switch ($steep) {
 			'global' => array(
 				'background_images' => array(array('img/bg/homepage.jpg','#000000','e','m','n'))
 			),
-			'background' => array(),
-			'clock' => array(
+			'Background image' => array(),
+			'Basic clock' => array(
 				'pos' => array('left'=>'76.7187','top'=>'0.814901','width'=>'20','height'=>'20')
 			),
-			'coolstart-title' => array(),
-			'login' => array()
+			'Coolstart Title' => array(),
+			'Login window' => array()
 		);
 		
 		$widgets_variables = array();
@@ -88,10 +89,14 @@ switch ($steep) {
 			if ($entry === '.' || $entry === '..') continue;
 			
 			if (is_dir($widgets_path.$entry)) {
-				// the widget name will be the folder name
-				$widget = array('name' => $entry, 'files' => array());
-				
 				$widget_path = $widgets_path . $entry . '/';
+				
+				$info = file_get_contents($widget_path . 'info.txt');
+				$info = preg_replace('@/\*.*?\*/@', '', $info); // Remove comments /* blabla */
+				//var_dump($info);
+				$widget = json_decode($info, true);
+				
+				$widget['files'] = array();
 				
 				$widget_d = dir($widget_path);
 				
@@ -117,24 +122,28 @@ switch ($steep) {
 		require_once '../php/lib/DB.php';
 		
 		$db = new DB();
-		$db->set_user_id(0);
+		$db->set_user_id(GLOBAL_USER_ID);
+		$db->enable_debug_mode(true);
 		
 		foreach ($widgets as &$widget) {
-			$res = $db->create_widget($widget['name']);
-			var_dump($res);
+			$db->create_widget($widget['name']);
 			$id = $db->LAST_MYSQL_ID;
+			if ($id === null) {
+				$id = $db->get_widget($widget['name']);
+				$id = $id['ID'];
+			}
 			$version = 1;
 			var_dump($id);
-			print_r($widget);
-			$res = $db->create_widget_version($id);
-			var_dump($res);
+			$db->create_widget_version($id);
 			foreach ($widget['files'] as &$file) {
 				$file_contents = file_get_contents($file['path']);
-				$res = $db->upload_widget_version_file($id, $version, $file['name'], file_mimetype($file['name']), $file_contents);
-				var_dump($res);
+				$db->upload_widget_version_file($id, $version, $file['name'], file_mimetype($file['name']), $file_contents);
 			}
-			$res = $db->publicate_widget_version($id, $version);
-			var_dump($res);
+			$db->set_widget_tags($id, $widget['tags']);
+			//$db->set_widget_creation_date($id, $widget['date']);
+			//$db->set_widget_autor();
+			$db->publicate_widget_version($id, $version);
+			$db->set_widget_version_visibility($id, $version, $widget['visible']);
 		}
 		
 	break;

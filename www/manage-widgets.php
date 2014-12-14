@@ -177,7 +177,7 @@
 			list.innerHTML = '';
 			
 			for (var i = 0; i < widgets.length; i++) {
-				list.appendChild(widgets[i].div);
+				list.appendChild(widgets[i]);
 			}
 		}
 		

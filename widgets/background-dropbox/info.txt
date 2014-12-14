@@ -1,0 +1,7 @@
+{
+	"name":"Background image from dropbox",
+	"autor":"Andrés Leone",
+	"date":"30/11/2014 12:00:00", /* DD/MM/YYYY HH:MM:SS*/
+	"tags":["Background","dropbox","random"],
+	"visible":1
+}
