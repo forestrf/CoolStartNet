@@ -38,7 +38,7 @@ if(!$widget){
 List of widget versions.<br/>
 
 <?php
-$widget_versions = $db->get_all_widget_versions($widget['ID']);
+$widget_versions = $db->get_all_widget_versions($widget['IDwidget']);
 
 $current = false;
 
@@ -47,8 +47,8 @@ foreach($widget_versions as &$widget_version){
 		' (<form method="POST" action="ipa.php">
 			<input type="hidden" name="switch" value="1">
 			<input type="hidden" name="action" value="3">
-			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
-			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
+			<input type="hidden" name="widgetID" value="'.$widget['IDwidget'].'">
+			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA).'">
 			<input type="hidden" name="widgetVersion" value="'.$widget_version['version'].'">
 			<input type="hidden" name="goback" value="1">
 			<input type="submit" value="Use this version">

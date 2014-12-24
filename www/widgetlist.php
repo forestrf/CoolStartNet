@@ -45,15 +45,15 @@ $widgets = $db->get_widgets_user_owns();
 foreach($widgets as &$widget){
 	echo $widget['name'].' (
 		<form method="GET" action="widgetedit.php">
-			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
+			<input type="hidden" name="widgetID" value="'.$widget['IDwidget'].'">
 			<input type="submit" value="Edit">
 		</form>';
 	if($widget['published'] === '-1'){
 		echo '<form method="POST" action="ipa.php">
 			<input type="hidden" name="switch" value="2">
 			<input type="hidden" name="action" value="2">
-			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
-			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
+			<input type="hidden" name="widgetID" value="'.$widget['IDwidget'].'">
+			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA).'">
 			<input type="hidden" name="goback" value="1">
 			<input type="submit" value="Delete">
 		</form>';
@@ -63,8 +63,8 @@ foreach($widgets as &$widget){
 		<form method="POST" action="ipa.php">
 			<input type="hidden" name="switch" value="5">
 			<input type="hidden" name="action" value="5">
-			<input type="hidden" name="widgetID" value="<?php echo $widget['ID']?>">
-			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA)?>">
+			<input type="hidden" name="widgetID" value="<?php echo $widget['IDwidget']?>">
+			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA)?>">
 			<input type="hidden" name="goback" value="1">
 			<input type="submit" value="Hide from the public">
 		</form>

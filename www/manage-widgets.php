@@ -23,8 +23,7 @@
 		
 		// GUI
 		
-		var search_txt, search_button, list,
-		tags;
+		var search_txt, search_button, list;
 		
 		C(div,
 			C('div', ['class', 'left'],
@@ -39,8 +38,10 @@
 					),
 					C('tr',
 						C('td', ['colspan', 2],
+							C('div', ['class', 'button big', 'onclick', fill_list_global], 'All widgets'),
 							C('div', ['class', 'button big', 'onclick', fill_list_mywidgets], 'My widgets'),
-							tags = C('div', ['class', 'tags'])
+							C('div', ['class', 'button', 'onclick', function(){}], 'Category 1'),
+							C('div', ['class', 'button', 'onclick', function(){}], 'Category 2')
 						)
 					)
 				)
@@ -50,68 +51,19 @@
 			)
 		);
 		
-		var tags_in_use = [];
-		
-		var tags_arr = {};
-		
-		function draw_tags(){
-			// for each tag, create a div that contains the tag and the
-			for(var i in tags_arr){
-				var t_elem;
-				C(tags,
-					t_elem = C('div', ['class', 'button', 'onclick', add_tag_to_filter_callback(i)], i)
-				);
-				t_elem.keyword = i;
-				tags_arr[i].div_tag = t_elem;
-			}
-		}
-		
 		
 		search_txt.onkeyup = tipying_search_txt;
 		function tipying_search_txt() {
 			filter_results(search_txt.value);
-			filter_tags(search_txt.value);
 		}
 		
 		function filter_results(by) {
 			for (var i = 0; i < widgets.length; i++) {
 				if (widgets[i].txt.toLowerCase().indexOf(by.toLowerCase()) === -1) {
-					widgets[i].div.style.display = 'none';
+					widgets[i].style.display = 'none';
 				} else {
-					widgets[i].div.style.display = '';
+					widgets[i].style.display = '';
 				}
-			}
-		}
-		
-		// repaint tags (show onlt the tags of the widgets not filtered
-		function filter_tags() {
-			var tags_left = [];
-			for (var i = 0; i < widgets.length; i++) {
-				if (widgets[i].div.style.display !== 'none') {
-					tags_left = tags_left.concat(widgets[i].data.tags);
-				}
-			}
-			var tags_left_length = tags_left.length;
-			//console.log(tags_left);
-			
-			for (var i in tags_arr) {
-				var visible = false;
-				for (var j = 0; j < tags_left_length; j++) {
-					if(tags_left[j] === i){
-						visible = true;
-						break;
-					}
-				}
-				
-				tags_arr[i].div_tag.style.display = visible ? '' : 'none';
-			}
-		}
-		
-		
-		function add_tag_to_filter_callback(elem) {
-			return function() {
-				tags_in_use.push(elem);
-				filter_tags(search_txt.value);
 			}
 		}
 		
@@ -146,8 +98,6 @@
 						for (var i = 0; i < data.response.length; i++) {
 							widgets.push(generate_widget(data.response[i]));
 						}
-						
-						draw_tags();
 
 						if (last === 0) {
 							// When no last, delete previous list
@@ -189,13 +139,9 @@
 		
 		
 		function generate_widget(data) {
-			var obj = generate_widget_element(data);
-		
-			for(var i = 0; i < data.tags.length; i++){
-				tags_arr[data.tags[i]] = obj;
-			}
-			
-			return obj;
+			var w = generate_widget_element(data);
+			w.txt = data.name + " " + data.description;
+			return w;
 		}
 		
 		// borrar

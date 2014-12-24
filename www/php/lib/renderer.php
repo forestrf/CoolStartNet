@@ -122,16 +122,16 @@ function render(&$db, $compress = false){
 			$version = $db->get_using_widget_version_user($widget);
 
 			// Create the html that will call the script
-			//echo "<script src=\"widgetfile.php?widgetID={$widget['ID']}&widgetVersion={$version}&name=main.js\"></script>";
-			$data = $db->get_widget_version_file($widget['ID'], $version, 'main.js');
+			//echo "<script src=\"widgetfile.php?widgetID={$widget['IDwidget']}&widgetVersion={$version}&name=main.js\"></script>";
+			$data = $db->get_widget_version_file($widget['IDwidget'], $version, 'main.js');
 			if (!$data) {
 				continue;
 			}
 			?>
 
 			(function(API){
-				API = API.init("<?=$widget['ID'];?>",
-						"<?=hash_api($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_API)?>",
+				API = API.init("<?=$widget['IDwidget'];?>",
+						"<?=hash_api($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_API)?>",
 						<?=server_vars_js();?>);
 
 

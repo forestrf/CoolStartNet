@@ -1,3 +1,21 @@
+<style>
+body, a {
+	background-color:#000;
+	color:#fff;
+}
+.ok {
+	color:#0f0;
+}
+.fail {
+	color:#f00;
+}
+.info {
+	color:#ff0;
+}
+.query {
+	color:#0ff;
+}
+</style>
 Select steep:<p>
 
 <a href="?steep=install-db">Install database</a><br>
@@ -21,6 +39,7 @@ switch ($steep) {
 		require_once '../php/lib/DB.php';
 		
 		$db = new DB();
+		$db->enable_debug_mode(true);
 		
 		$db->create_tables($db_instructions);
 	break;
@@ -30,6 +49,7 @@ switch ($steep) {
 		require_once '../php/lib/DB.php';
 		
 		$db = new DB();
+		$db->enable_debug_mode(true);
 		
 		$db->delete_user(DEFAULT_USER_NICK);
 		$db->create_new_user(DEFAULT_USER_NICK, DEFAULT_USER_PASSWORD, '', $validation);
@@ -58,11 +78,11 @@ switch ($steep) {
 		foreach ($widgets as $name => &$elem) {
 			$widget = $db->get_widget($name);
 			
-			if ($widget['ID'] != '-1') {
-				$db->add_using_widget_user($widget['ID']);
+			if ($widget['IDwidget'] != '-1') {
+				$db->add_using_widget_user($widget['IDwidget']);
 			}
 			
-			$widgets_variables[$widget['ID']] = &$elem;
+			$widgets_variables[$widget['IDwidget']] = &$elem;
 			var_dump($widget);
 		}
 
@@ -130,7 +150,7 @@ switch ($steep) {
 			$id = $db->LAST_MYSQL_ID;
 			if ($id === null) {
 				$id = $db->get_widget($widget['name']);
-				$id = $id['ID'];
+				$id = $id['IDwidget'];
 			}
 			$version = 1;
 			var_dump($id);
@@ -139,7 +159,6 @@ switch ($steep) {
 				$file_contents = file_get_contents($file['path']);
 				$db->upload_widget_version_file($id, $version, $file['name'], file_mimetype($file['name']), $file_contents);
 			}
-			$db->set_widget_tags($id, $widget['tags']);
 			//$db->set_widget_creation_date($id, $widget['date']);
 			//$db->set_widget_autor();
 			$db->publicate_widget_version($id, $version);

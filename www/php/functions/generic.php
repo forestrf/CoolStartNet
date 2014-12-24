@@ -113,7 +113,7 @@ function open_db_session($to_return = 'db'){
 		$_SESSION['user'] = $user;
 	}
 	
-	$db->set_user_id($_SESSION['user']['ID']);
+	$db->set_user_id($_SESSION['user']['IDuser']);
 	
 	return $$to_return;
 }

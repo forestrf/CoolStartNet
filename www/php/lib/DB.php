@@ -89,7 +89,7 @@ class DB {
 			if($cacheable){
 				$this->cacheResult($query, $resultArray);
 			}
-			if($this->d) $this->debug('query: '.$query."\r\nresult: ".($result?'TRUE':'FALSE'));
+			if($this->d) $this->debug('<span class="info">query</span>: <span class="query">'.$query."</span>\r\n<span class='info'>result</span>: <b class=\"".($result?'ok">TRUE':'fail">FALSE')."</b>\r\n");
 			return $result;
 		}
 		
@@ -98,7 +98,7 @@ class DB {
 		if($cacheable){
 			$this->cacheResult($query, $resultArray);
 		}
-		if($this->d) $this->debug('query: '.$query."\r\nresult: ".print_r($resultArray));
+		if($this->d) $this->debug('<span class="info">query</span>: <span class="query">'.$query."</span>\r\n<span class='info'>result</span>: ".print_r($resultArray)."\r\n");
 		return $resultArray;
 	}
 	
@@ -135,10 +135,8 @@ class DB {
 		$instructions = explode(";", $instructions);
 		//var_dump($instructions);return;
 		foreach ($instructions as $instruction) {
-			if ($instruction === '') continue;
-			
-			var_dump($instruction);
-			var_dump($this->query($instruction));
+			if ($instruction !== '')
+				$this->query($instruction);
 		}
 	}
 	
@@ -253,7 +251,7 @@ class DB {
 	// Returns the widget configuration given a widget ID or false if the widget doesn't exists.
 	function get_widget_by_ID($ID){
 		$ID = mysql_escape_mimic($ID);
-		$result = $this->query("SELECT * FROM `widgets` WHERE `ID` = '{$ID}';");
+		$result = $this->query("SELECT * FROM `widgets` WHERE `IDwidget` = '{$ID}';");
 		return count($result) > 0 ? $result[0] : false;
 	}
 	
@@ -410,8 +408,8 @@ class DB {
 	// Create a widget.
 	function create_widget($name){
 		$name = mysql_escape_mimic($name);
-		$result = $this->query("SELECT `ID` FROM `widgets` WHERE `name` = '{$name}';");
-		if(!$result){
+		$result = $this->query("SELECT `IDwidget` FROM `widgets` WHERE `name` = '{$name}';");
+		if (!$result) {
 			return $this->query("INSERT INTO `widgets` (`name`, `ownerID`) VALUES ('{$name}', '{$this->userID}');");
 		}
 		return false;
@@ -421,7 +419,7 @@ class DB {
 	// Deleting a widget also deletes the widget variables of users and users lose it if they are using it.
 	// Doesn't delete from the table 'files' because other file can has the same hash. The unlinked content is deleted from other function that is called from a cronjob.
 	function delete_widget($widgetID){
-		if($this->CanIModifyWidget($widgetID) && $this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `published` = '-1';")){
+		if ($this->CanIModifyWidget($widgetID) && $this->query("SELECT * FROM `widgets` WHERE `IDwidget` = '{$widgetID}' AND `published` = '-1';")) {
 			/*
 			$this->query("DELETE FROM `widgets` WHERE `ID` = '{$widgetID}';");
 			$this->query("DELETE FROM `variables` WHERE `IDwidget` = '{$widgetID}';");
@@ -429,20 +427,13 @@ class DB {
 			$this->query("DELETE FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}';");
 			$this->query("DELETE FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}';");
 			*/
-			$this->query("DELETE FROM `widgets` WHERE `ID` = '{$widgetID}';" .
+			return $this->query("DELETE FROM `widgets` WHERE `IDwidget` = '{$widgetID}';" .
 					"DELETE FROM `variables` WHERE `IDwidget` = '{$widgetID}';" .
 					"DELETE FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}';" .
 					"DELETE FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}';" .
 					"DELETE FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}';");
-			return true;
 		}
 		return false;
-	}
-	
-	function set_widget_tags($widgetID, &$tags_array){
-		$widgetID = mysql_escape_mimic($widgetID);
-		$tags = mysql_escape_mimic(json_encode($tags_array));
-		return $this->query("UPDATE `widgets` SET `tags` = '{$tags}' WHERE `ID` = '{$widgetID}';");
 	}
 	
 	
@@ -498,7 +489,7 @@ class DB {
 				can_be_widget_version($version) &&
 				// Check if the version exists and is public
 				$this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `public` = '1' AND `version` = '{$version}';")){
-			return $this->query("UPDATE `widgets` SET `published` = '{$version}' WHERE `ID` = '{$widgetID}';");
+			return $this->query("UPDATE `widgets` SET `published` = '{$version}' WHERE `IDwidget` = '{$widgetID}';");
 		}
 		return false;
 	}
@@ -530,8 +521,8 @@ class DB {
 		if($this->CanIModifyWidget($widgetID) && can_be_widget_version($version) &&
 		$this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';")){
 			$this->query("UPDATE `widgets-versions` SET `public` = '1' WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';");
-			if($this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `published` = '-1';")){
-				$this->query("UPDATE `widgets` SET `published` = '{$version}' WHERE `ID` = '{$widgetID}';");
+			if($this->query("SELECT * FROM `widgets` WHERE `IDwidget` = '{$widgetID}' AND `published` = '-1';")){
+				$this->query("UPDATE `widgets` SET `published` = '{$version}' WHERE `IDwidget` = '{$widgetID}';");
 			}
 			return true;
 		}
@@ -569,7 +560,7 @@ class DB {
 	// Retorna la versión default o de lo contrario la versión pública más avanzada
 	function get_widget_default_version($widgetID){
 		$widgetID = mysql_escape_mimic($widgetID);
-		$public_version = $this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `published` > -1;");
+		$public_version = $this->query("SELECT * FROM `widgets` WHERE `IDwidget` = '{$widgetID}' AND `published` > -1;");
 		if($public_version){
 			$public_version = $public_version[0]['published'];
 			$public_version_1 = $this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `public` = '1' AND `visible` = '1' AND `version` = '{$public_version}' ORDER BY `version`;");
@@ -581,7 +572,7 @@ class DB {
 			}
 		}
 		else{
-			if($this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `ownerID` = '{$this->userID}';")){
+			if($this->query("SELECT * FROM `widgets` WHERE `IDwidget` = '{$widgetID}' AND `ownerID` = '{$this->userID}';")){
 				return $this->get_widget_last_version($widgetID, false);
 			}	
 		}
@@ -599,7 +590,7 @@ class DB {
 	function get_widget_version_file($widgetID, $version, $name){
 		if(can_be_widget_version($version) && ($this->check_using_widget_user($widgetID) || $this->CanIModifyWidget($widgetID))){
 			$name = mysql_escape_mimic($name);
-			return $this->query("SELECT * FROM `files` RIGHT JOIN `widgets-content` ON `files`.`hash` = `widgets-content`.`hash` WHERE `widgets-content`.`IDwidget` = '{$widgetID}' AND `widgets-content`.`version` = '{$version}' AND `widgets-content`.`name` = '{$name}'");
+			return $this->query("SELECT * FROM `files` RIGHT JOIN `widgets-content` USING (`hash`) WHERE `widgets-content`.`IDwidget` = '{$widgetID}' AND `widgets-content`.`version` = '{$version}' AND `widgets-content`.`name` = '{$name}'");
 		}
 		return false;
 	}
@@ -647,7 +638,7 @@ class DB {
 			$content = mysql_escape_mimic($content);
 			$hash = file_hash($content);
 			$this->query("INSERT INTO `widgets-content` (`IDwidget`, `version`, `name`, `hash`, `mimetype`) VALUES ('{$widgetID}', '{$version}', '{$name}', '{$hash}', '{$mimetype}');");
-			if(!$this->query("SELECT * FROM `files` WHERE `hash` = '{$hash}';")){
+			if (!$this->query("SELECT * FROM `files` WHERE `hash` = '{$hash}';")) {
 				return $this->query("INSERT INTO `files` (`hash`, `data`) VALUES ('{$hash}', '{$content}');");
 			}
 			return true;
@@ -656,8 +647,8 @@ class DB {
 	}
 	
 	// Delete a file from a widget version.
-	function delete_widget_version_file($widgetID, $version, $hash){
-		if($this->CanIModifyWidget($widgetID) && can_be_widget_version($version)){
+	function delete_widget_version_file($widgetID, $version, $hash) {
+		if ($this->CanIModifyWidget($widgetID) && can_be_widget_version($version)) {
 			$hash = mysql_escape_mimic($hash);
 			return $this->query("DELETE FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}' AND `hash` = '{$hash}';");
 		}
@@ -672,30 +663,30 @@ class DB {
 	# ---------------------------------------------------------------------------
 	
 	// Returns a list with the widgets of the user.
-	function get_widgets_user(){
-		return $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` ON `widgets-user`.`IDwidget` = `widgets`.`ID` WHERE `IDuser` = '{$this->userID}';");
+	function get_widgets_user() {
+		return $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` USING (`IDwidget`) WHERE `IDuser` = '{$this->userID}';");
 	}
 	
 	// Returns a widget of the user.
-	function get_widget_user($widgetID){
-		$result = $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` ON `widgets-user`.`IDwidget` = `widgets`.`ID` WHERE `IDuser` = '{$this->userID}' AND `widgets`.`ID` = '{$widgetID}';");
+	function get_widget_user($widgetID) {
+		$result = $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` USING (`IDwidget`) WHERE `IDuser` = '{$this->userID}' AND `widgets`.`IDwidget` = '{$widgetID}';");
 		return $result ? $result[0] : false;
 	}
 	
 	// Returns a list with the widgets available to the user.
-	function get_availabe_widgets_user(){
-		return $this->query("SELECT * FROM `widgets` WHERE `ID` != -1 AND `ownerID` = '{GLOBAL_USER_ID}' OR `ownerID` = '{$this->userID}' OR `published` > -1;"); // Por poner filtrado de widgets privados
+	function get_availabe_widgets_user() {
+		return $this->query("SELECT * FROM `widgets` WHERE `widgets`.`IDwidget` != -1 AND `ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}' OR `published` > -1;"); // Por poner filtrado de widgets privados
 	}
 	
 	// Returns a list with the widgets owned by the user.
-	function get_widgets_user_owns(){
+	function get_widgets_user_owns() {
 		return $this->query("SELECT * FROM `widgets` WHERE `ownerID` = '{$this->userID}';");
 	}
 	
 	// Returns true if the widget can be manipulated by the user (true if user is the owner of te widget). Otherwise returns false.
-	function CanIModifyWidget(&$widgetID){
+	function CanIModifyWidget(&$widgetID) {
 		$widgetID = mysql_escape_mimic($widgetID);
-		return $this->query("SELECT * FROM `widgets` WHERE `ID` = '{$widgetID}' AND `ownerID` = '{$this->userID}';") ? true : false;
+		return $this->query("SELECT * FROM `widgets` WHERE `IDwidget` = '{$widgetID}' AND `ownerID` = '{$this->userID}';") ? true : false;
 	}
 	
 	// Makes the user stop using a widget without deleting the widget configurations.
@@ -731,7 +722,7 @@ class DB {
 		}
 		
 		if($widgetObject['autoupdate'] === '1'){
-			$version = $this->get_widget_default_version($widgetObject['ID']);
+			$version = $this->get_widget_default_version($widgetObject['IDwidget']);
 			return $version['version'];
 		}
 		else{

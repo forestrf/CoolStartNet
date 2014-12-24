@@ -70,7 +70,7 @@ function login(){
 			if ($valid !== false) {
 				$user = &$valid;
 				$user['valid'] = true; //Anonymous user has valid = false
-				$accessTokens = $db->getAllAccessToken($user['ID']);
+				$accessTokens = $db->getAllAccessToken($user['IDuser']);
 				foreach($accessTokens as $service => $accessToken){
 					$user[$service] = $accessToken;
 				}

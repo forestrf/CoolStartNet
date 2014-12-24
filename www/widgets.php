@@ -45,6 +45,7 @@ if (isset($_REQUEST['action'])) {
 require_once __DIR__.'/php/functions/generic.php';
 
 $db = open_db_session();
+
 if(!user_check_access(false, true)){
 	end_fail('User not logged in');
 }
@@ -144,12 +145,11 @@ function generate_widget_array(&$widgets) {
 
 function return_widget_array_element(&$widget) {
 	return array(
-		'ID'          => $widget['ID'],
+		'IDwidget'    => $widget['IDwidget'],
 		'name'        => $widget['name'],
 		'description' => 'Example description.',
 		'image'       => '',
-		'tags'        => json_decode($widget['tags'], true),
-		//'token'       => hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA),
+		//'token'       => hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA),
 		'version'     => isset($widget['version']) ? $widget['version'] : '',
 		'autoupdate'  => isset($widget['autoupdate']) ? $widget['autoupdate'] : ''
 	);

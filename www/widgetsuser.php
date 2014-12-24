@@ -34,21 +34,21 @@ foreach($widgets_usuario as &$widget){
 	echo $widget['name'].' (<form method="POST" action="ipa">
 			<input type="hidden" name="switch" value="1">
 			<input type="hidden" name="action" value="1">
-			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
-			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
+			<input type="hidden" name="widgetID" value="'.$widget['IDwidget'].'">
+			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA).'">
 			<input type="hidden" name="goback" value="1">
 			<input type="submit" value="Remove">
 		</form>)
 		<form method="GET" action="widgetsuserversion">
-			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
+			<input type="hidden" name="widgetID" value="'.$widget['IDwidget'].'">
 			<input type="submit" value="Select a version">
 		</form>';
 	if($widget['autoupdate'] === '0'){
 		echo '<form method="POST" action="ipa">
 			<input type="hidden" name="switch" value="1">
 			<input type="hidden" name="action" value="4">
-			<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
-			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
+			<input type="hidden" name="widgetID" value="'.$widget['IDwidget'].'">
+			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA).'">
 			<input type="hidden" name="goback" value="1">
 			<input type="submit" value="Use always the latest public version (If there is not a public version, use the last private version)">
 		</form> (using the version ' . $widget['version'] . ')';
@@ -71,7 +71,7 @@ if($widgets_disponibles){
 	foreach($widgets_disponibles as &$widget){
 		$widget_en_uso = false;
 		foreach($widgets_usuario as &$widget_uso){
-			if($widget['ID'] === $widget_uso['ID']){
+			if($widget['IDwidget'] === $widget_uso['IDwidget']){
 				$widget_en_uso = true;
 				break;
 			}
@@ -83,8 +83,8 @@ if($widgets_disponibles){
 			echo $widget['name'].' (<form method="POST" action="ipa">
 					<input type="hidden" name="switch" value="1">
 					<input type="hidden" name="action" value="2">
-					<input type="hidden" name="widgetID" value="'.$widget['ID'].'">
-					<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['ID'], PASSWORD_TOKEN_IPA).'">
+					<input type="hidden" name="widgetID" value="'.$widget['IDwidget'].'">
+					<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA).'">
 					<input type="hidden" name="goback" value="1">
 					<input type="submit" value="Use">
 				</form>)<br/>';
