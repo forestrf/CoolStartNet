@@ -83,9 +83,9 @@ switch ($steep) {
 			}
 			
 			$widgets_variables[$widget['IDwidget']] = &$elem;
-			var_dump($widget);
 		}
 
+		var_dump($widgets_variables);
 		$db->set_variable($widgets_variables);
 		
 		//$db->add_using_widget_user($widgetID);
@@ -129,6 +129,8 @@ switch ($steep) {
 				}
 				$widget_d->close();
 				
+				$widget['staticfiles'] = array_merge($widget['staticfiles'], array('128.jpg'));
+				
 				$widgets[] = $widget;
 			}
 		}
@@ -146,23 +148,27 @@ switch ($steep) {
 		$db->enable_debug_mode(true);
 		
 		foreach ($widgets as &$widget) {
-			$db->create_widget($widget['name']);
-			$id = $db->LAST_MYSQL_ID;
-			if ($id === null) {
-				$id = $db->get_widget($widget['name']);
-				$id = $id['IDwidget'];
+			if ($db->create_widget($widget['name'])) {
+				$IDwidget = $db->LAST_MYSQL_ID;
+			} else {
+				$IDwidget = $db->get_widget($widget['name']);
+				$IDwidget = $IDwidget['IDwidget'];
 			}
 			$version = 1;
-			var_dump($id);
-			$db->create_widget_version($id);
+			var_dump($IDwidget);
+			if (isset($widget['description'])) {
+				$db->set_widget_description($IDwidget, $widget['description']);
+			}
+			$db->create_widget_version($IDwidget);
 			foreach ($widget['files'] as &$file) {
 				$file_contents = file_get_contents($file['path']);
-				$db->upload_widget_version_file($id, $version, $file['name'], file_mimetype($file['name']), $file_contents);
+				$v = in_array($file['name'], $widget['staticfiles']) ? -1 : $version;
+				$db->upload_widget_version_file($IDwidget, $v, $file['name'], file_mimetype($file['name']), $file_contents);
 			}
 			//$db->set_widget_creation_date($id, $widget['date']);
 			//$db->set_widget_autor();
-			$db->publicate_widget_version($id, $version);
-			$db->set_widget_version_visibility($id, $version, $widget['visible']);
+			$db->publicate_widget_version($IDwidget, $version);
+			$db->set_widget_version_visibility($IDwidget, $version, $widget['visible']);
 		}
 		
 	break;

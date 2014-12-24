@@ -415,6 +415,14 @@ class DB {
 		return false;
 	}
 	
+	function set_widget_description($widgetID, $description){
+		if ($this->CanIModifyWidget($widgetID)) {
+			$description = mysql_escape_mimic($description);
+			return $this->query("UPDATE `widgets` SET `description` = '{$description}' WHERE `IDwidget` = '{$widgetID}';");
+		}
+		return false;
+	}
+	
 	// Delete a widget given the ID of the widget.
 	// Deleting a widget also deletes the widget variables of users and users lose it if they are using it.
 	// Doesn't delete from the table 'files' because other file can has the same hash. The unlinked content is deleted from other function that is called from a cronjob.
@@ -588,7 +596,7 @@ class DB {
 	
 	// Get a file of a widget version given its name. The user needs to be the owner or be using the widget.
 	function get_widget_version_file($widgetID, $version, $name){
-		if(can_be_widget_version($version) && ($this->check_using_widget_user($widgetID) || $this->CanIModifyWidget($widgetID))){
+		if($version === -1 || can_be_widget_version($version) && ($this->check_using_widget_user($widgetID) || $this->CanIModifyWidget($widgetID))){
 			$name = mysql_escape_mimic($name);
 			return $this->query("SELECT * FROM `files` RIGHT JOIN `widgets-content` USING (`hash`) WHERE `widgets-content`.`IDwidget` = '{$widgetID}' AND `widgets-content`.`version` = '{$version}' AND `widgets-content`.`name` = '{$name}'");
 		}
@@ -627,7 +635,7 @@ class DB {
 	
 	// Save a file for a widget version with a name and a mimetype. Checks if the file can be uploaded to the version.
 	function upload_widget_version_file($widgetID, $version, $name, $mimetype, &$content){
-		if($this->CanIModifyWidget($widgetID) && can_be_widget_version($version)){
+		if($this->CanIModifyWidget($widgetID) && $version === -1 || can_be_widget_version($version)){
 			
 			// Check if the widget version reached the number of files
 			if(count($this->query("SELECT * FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';")) >= WIDGET_VERSION_MAX_FILES_NUMBER){
@@ -638,7 +646,7 @@ class DB {
 			$content = mysql_escape_mimic($content);
 			$hash = file_hash($content);
 			$this->query("INSERT INTO `widgets-content` (`IDwidget`, `version`, `name`, `hash`, `mimetype`) VALUES ('{$widgetID}', '{$version}', '{$name}', '{$hash}', '{$mimetype}');");
-			if (!$this->query("SELECT * FROM `files` WHERE `hash` = '{$hash}';")) {
+			if (!$this->query("SELECT `hash` FROM `files` WHERE `hash` = '{$hash}';")) {
 				return $this->query("INSERT INTO `files` (`hash`, `data`) VALUES ('{$hash}', '{$content}');");
 			}
 			return true;

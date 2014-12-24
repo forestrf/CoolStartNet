@@ -18,36 +18,44 @@ user_check_access(true);
 
 // Ask for the variables to identify the file.
 // widgetID
-if(!isset($_GET['widgetID']) || !isInteger($_GET['widgetID']) || $_GET['widgetID'] < 0){
+if (!isset($_GET['widgetID']) || !isInteger($_GET['widgetID']) || $_GET['widgetID'] < 0) {
 	exit;
 }
 $widgetID = &$_GET['widgetID'];
 
 // name
-if(!isset($_GET['name']) || strlen($_GET['name']) > FILENAME_MAX_LENGTH || strlen($_GET['name']) < 1){
+if (!isset($_GET['name']) || strlen($_GET['name']) > FILENAME_MAX_LENGTH || strlen($_GET['name']) < 1) {
 	exit;
 }
 $name = &$_GET['name'];
 
-
-
-// If the call comes from the api the widget version comes from a query to the database.
-if(isset($_GET['api'])){
-	// widgetVersion
-	$widgetVersion = $db->get_using_widget_version_user($widgetID);
+// mode
+if (!isset($_GET['mode'])) {
+	exit;
 }
-else{
-	// widgetVersion
-	if(!isset($_GET['widgetVersion']) || !isInteger($_GET['widgetVersion']) || $_GET['widgetVersion'] < 0){
-		exit;
-	}
-	$widgetVersion = &$_GET['widgetVersion'];
-}
+$mode = &$_GET['mode'];
 
+
+// widgetVersion
+switch($mode) {
+	case 'static':
+		$widgetVersion = -1;
+		break;
+	case 'api':
+		$widgetVersion = $db->get_using_widget_version_user($widgetID);
+		break;
+	default:
+		if (!isInteger($mode) || $mode < 0) {
+			exit;
+		}
+		$widgetVersion = $mode;
+		break;
+}
 
 $file = $db->get_widget_version_file($widgetID, $widgetVersion, $name);
 
-if($file){
+
+if ($file) {
 	// var_dump($file[0]);
 	header('Content-type: '.$file[0]['mimetype']);
 	echo $file[0]['data'];

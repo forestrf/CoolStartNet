@@ -32,6 +32,14 @@
 	#####################################
 	
 	RewriteRule ^externalfile/(.*)$ external.php?m=2&file=/$1 [NC,L]
+	
+	
+	
+	#####################################
+	# widgetfile shortcut
+	#####################################
+	
+	RewriteRule ^widgetfile/([0-9]+)/(static|api|[0-9]+)/(.+)$ file.php?widgetID=$1&mode=$2&name=$3 [NC,L]
 
 	
 	

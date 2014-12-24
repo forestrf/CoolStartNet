@@ -15,8 +15,8 @@
 <script>
 	(function(API, IPA){
 		var C = crel2;
-		var API = API.init();
-		var IPA = IPA.init(<?=server_vars_js()?>);
+		API = API.init();
+		IPA = IPA.init(<?=server_vars_js()?>);
 		var div = document.getElementById('widgets0');
 		
 		
@@ -139,7 +139,7 @@
 		
 		
 		function generate_widget(data) {
-			var w = generate_widget_element(data);
+			var w = generate_widget_element(data, IPA);
 			w.txt = data.name + " " + data.description;
 			return w;
 		}

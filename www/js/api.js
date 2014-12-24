@@ -151,7 +151,7 @@
 	
 	// Return an url to get a file of the widget
 	var getUrl = function (widgetID, filename) {
-		return 'widgetfile?widgetID=' + widgetID + '&api=1&name=' + encodeURIComponent(filename);
+		return 'widgetfile/' + widgetID + '/api/' + encodeURIComponent(filename);
 	};
 	
 	

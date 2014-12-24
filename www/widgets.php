@@ -147,7 +147,7 @@ function return_widget_array_element(&$widget) {
 	return array(
 		'IDwidget'    => $widget['IDwidget'],
 		'name'        => $widget['name'],
-		'description' => 'Example description.',
+		'description' => isset($widget['description']) ? $widget['description'] : 'No description available.',
 		'image'       => '',
 		//'token'       => hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA),
 		'version'     => isset($widget['version']) ? $widget['version'] : '',

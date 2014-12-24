@@ -103,6 +103,7 @@ CREATE TABLE `variables` (
 CREATE TABLE `widgets` (
 	`IDwidget` int(11) NOT NULL AUTO_INCREMENT,
 	`name` varchar(30) COLLATE utf8_bin NOT NULL,
+	`description` TEXT NOT NULL, 
 	`ownerID` int(11) NOT NULL,
 	`published` int(11) NOT NULL DEFAULT '-1' COMMENT 'Si se publica cambiar a 0 o + desde php. Nunca volver a -1',
 	`creation_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
