@@ -145,16 +145,24 @@ function generate_widget_array(&$widgets) {
 
 function return_widget_array_element(&$widget) {
 	return array(
-		'IDwidget'    => $widget['IDwidget'],
-		'name'        => $widget['name'],
-		'description' => isset($widget['description']) ? $widget['description'] : 'No description available.',
-		'image'       => '',
-		//'token'       => hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA),
-		'version'     => isset($widget['version']) ? $widget['version'] : '',
-		'autoupdate'  => isset($widget['autoupdate']) ? $widget['autoupdate'] : ''
+		'IDwidget'        => $widget['IDwidget'],
+		'name'            => $widget['name'],
+		'description'     => check_and_default($widget, 'description', 'No description available.'),
+		'fulldescription' => check_and_default($widget, 'fulldescription', 'No full description available.'),
+		'images'          => json_decode(check_and_default($widget, 'images', '[]')),
+		//'token'           => hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA),
+		'version'         => isset($widget['version']) ? $widget['version'] : '',
+		'autoupdate'      => isset($widget['autoupdate']) ? $widget['autoupdate'] : ''
 	);
 }
 
+
+
+
+
+function check_and_default(&$widget, $param, $default) {
+	return isset($widget[$param]) && $widget[$param] !== '' ? $widget[$param] : $default;
+}
 
 
 

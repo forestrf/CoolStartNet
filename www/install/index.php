@@ -102,6 +102,8 @@ switch ($steep) {
 		
 		$widgets_path = '../../widgets/';
 		
+		$default_static_files = array('128.jpg');
+		
 		$widgets = array();
 		
 		$d = dir($widgets_path);
@@ -129,7 +131,9 @@ switch ($steep) {
 				}
 				$widget_d->close();
 				
-				$widget['staticfiles'] = array_merge($widget['staticfiles'], array('128.jpg'));
+				if (!isset($widget['staticfiles'])) $widget['staticfiles'] = array();
+				
+				$widget['staticfiles'] = array_merge($widget['staticfiles'], $default_static_files);
 				
 				$widgets[] = $widget;
 			}
@@ -158,6 +162,12 @@ switch ($steep) {
 			var_dump($IDwidget);
 			if (isset($widget['description'])) {
 				$db->set_widget_description($IDwidget, $widget['description']);
+			}
+			if (isset($widget['fulldescription'])) {
+				$db->set_widget_fulldescription($IDwidget, $widget['fulldescription']);
+			}
+			if (isset($widget['images'])) {
+				$db->set_widget_images($IDwidget, json_encode($widget['images']));
 			}
 			$db->create_widget_version($IDwidget);
 			foreach ($widget['files'] as &$file) {

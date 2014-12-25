@@ -423,6 +423,22 @@ class DB {
 		return false;
 	}
 	
+	function set_widget_fulldescription($widgetID, $fulldescription){
+		if ($this->CanIModifyWidget($widgetID)) {
+			$fulldescription = mysql_escape_mimic($fulldescription);
+			return $this->query("UPDATE `widgets` SET `fulldescription` = '{$fulldescription}' WHERE `IDwidget` = '{$widgetID}';");
+		}
+		return false;
+	}
+
+	function set_widget_images($widgetID, $images){
+		if ($this->CanIModifyWidget($widgetID)) {
+			$images = mysql_escape_mimic($images);
+			return $this->query("UPDATE `widgets` SET `images` = '{$images}' WHERE `IDwidget` = '{$widgetID}';");
+		}
+		return false;
+	}
+	
 	// Delete a widget given the ID of the widget.
 	// Deleting a widget also deletes the widget variables of users and users lose it if they are using it.
 	// Doesn't delete from the table 'files' because other file can has the same hash. The unlinked content is deleted from other function that is called from a cronjob.

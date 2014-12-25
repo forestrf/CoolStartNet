@@ -48,14 +48,14 @@ if (isset($_REQUEST['m'])) {
 
 
 
-function start(){
+function start() {
 	# Include the Dropbox SDK libraries
 	require_once __DIR__.'/php/lib/Dropbox/autoload.php';
 	
 	return new \Dropbox\Client($_SESSION['user']['dropbox_accessToken'], DROPBOX_APP_NAME);
 }
 
-function echoPath(&$dbxClient, &$path){
+function echoPath(&$dbxClient, &$path) {
 	$folderMetadata = $dbxClient->getMetadataWithChildren($path);
 	$response = array(
 		'folders' => array(),
@@ -77,7 +77,7 @@ function echoPath(&$dbxClient, &$path){
 	echo json_encode($response);
 }
 
-function echoFile(&$dbxClient, &$file){
+function echoFile(&$dbxClient, &$file) {
 	// Save the file in the buffer cache and then store the buffer in $data
 	ob_start();
 	$f = fopen('php://output', 'w');
@@ -90,7 +90,7 @@ function echoFile(&$dbxClient, &$file){
 	header('Content-type: '.$fileMetadata['mime_type']);
 
 	header('Pragma: public');
-	header('Etag: '.base64_encode($file));
+	header('Etag: ' . base64_encode($file));
 	header('Cache-Control: max-age=2592000, public'); // 30 days
 
 	echo $data;

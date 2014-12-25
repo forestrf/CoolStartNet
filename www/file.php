@@ -54,9 +54,20 @@ switch($mode) {
 
 $file = $db->get_widget_version_file($widgetID, $widgetVersion, $name);
 
-
 if ($file) {
-	// var_dump($file[0]);
-	header('Content-type: '.$file[0]['mimetype']);
-	echo $file[0]['data'];
+	$etag = base64_encode(md5($file[0]['hash']));
+	
+	header('Pragma: public');
+	header('Etag: ' . $etag);
+	header('Cache-Control: max-age=2592000, public'); // 30 days
+	
+	if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && trim($_SERVER['HTTP_IF_NONE_MATCH']) === $etag) {
+		header('HTTP/1.1 304 Not Modified');
+		exit;
+	} else {
+		// var_dump($file[0]);
+		header('Content-type: '.$file[0]['mimetype']);
+		
+		echo $file[0]['data'];
+	}
 }

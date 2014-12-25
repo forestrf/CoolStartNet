@@ -74,9 +74,59 @@
 	display: none;
 }
 .widget_element.full .maximized {
-	background-color: #001725;
+	background-color: #000B12;
 	margin-top: 10px;
 	display: inherit;
-	padding: 10px;
+	display: table;
+	padding: 1.5%;
+	width: 97%;
+}
+
+.widget_element.full .maximized .text {
+	vertical-align: top;
+	display: table-cell;
+	width: 30%;
+}
+
+
+.widget_element.full .maximized .images {
+	vertical-align: top;
+	text-align: right;
+	position: relative;
+	display: table-cell;
+	width: 70%;
+}
+
+.widget_element.full .maximized .images .capture {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	display: inline-block;
+	cursor: pointer;
+	height: 8em;
+	margin: 5px;
+	width: 14em;
+}
+
+.widget_element.full .maximized .images .big_preview {
+	background-color: #000;
+	background-color: rgba(0, 0, 0, 0.75);
+	position: fixed;
+	z-index: 100;
+	cursor: pointer;
+	height: 100%;
+	width: 100%;
+	left: 0;
+	top: 0;
+}
+.widget_element.full .maximized .images .big_preview_image {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	position: absolute;
+	height: 90%;
+	width: 90%;
+	left: 5%;
+	top: 5%;
 }
 

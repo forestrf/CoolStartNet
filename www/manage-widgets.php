@@ -9,6 +9,7 @@
 
 <script src="//<?=WEB_PATH?>js/ipa.js"></script>
 <script src="//<?=WEB_PATH?>js/generic.js"></script>
+<script src="//<?=WEB_PATH?>js/scrollto.js"></script>
 <link href="//<?=WEB_PATH?>css/widget-box.css" rel="stylesheet"/>
 <link href="//<?=WEB_PATH?>css/manage-widgets.css" rel="stylesheet"/>
 
@@ -23,10 +24,10 @@
 		
 		// GUI
 		
-		var search_txt, search_button, list;
+		var search_txt, search_button, list, left, right;
 		
 		C(div,
-			C('div', ['class', 'left'],
+			left = C('div', ['class', 'left'],
 				C('table', ['class', 'panel'],
 					C('tr', ['class', 'search_bar'],
 						C('td', ['class', 'search_bar_cell'],
@@ -46,7 +47,7 @@
 					)
 				)
 			),
-			C('div', ['class', 'right'],
+			right = C('div', ['class', 'right'],
 				list = C('div', ['class', 'list'])
 			)
 		);
@@ -136,7 +137,11 @@
 			var w = generate_widget_element(data, IPA);
 			API.document.wrapElement(w);
 			w.txt = data.name + " " + data.description;
-			w.minimized.onclick = function(){console.log(w);w.flipflopClass('full')};
+			w.minimized.onclick = function(){
+				console.log(w);
+				w.flipflopClass('full');
+				scrollToX(right, right.scrollTop, w.offsetTop, 0, 1/200, 20);
+			};
 			return w;
 		}
 		

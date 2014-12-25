@@ -1,7 +1,10 @@
 {
 	"name":"Basic clock",
 	"description":"Big clock with date and positionable.",
+	"fulldescription":"full desc: Big clock with date and positionable.",
+	"images":["capture 1.png", "capture 2.png", "capture 3.png", "capture 4.png", "capture 5.png"],
 	"autor":"Andrés Leone",
 	"date":"30/11/2014 12:00:00", /* DD/MM/YYYY HH:MM:SS*/
+	"staticfiles":["capture 1.png", "capture 2.png", "capture 3.png", "capture 4.png", "capture 5.png"],
 	"visible":1
 }
