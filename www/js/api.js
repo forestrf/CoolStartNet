@@ -225,6 +225,11 @@
 			div.className = div.className.split(className).join("").trim();
 			return div;
 		};
+		div.flipflopClass = function (className) {
+			return div.className.indexOf(className) !== -1 ?
+				div.removeClass(className) :
+				div.addClass(className);
+		};
 		
 		div.clear = function () {
 			div.innerHTML = '';

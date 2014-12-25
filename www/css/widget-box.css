@@ -1,13 +1,11 @@
 .widget_element {
 	background-color: #001623;
 	border-bottom: 1px solid #164e6c;
-	color: #fafafa;
-	height: 140px;
 	position: relative;
-	cursor: pointer;
 	overflow: hidden;
+	color: #fafafa;
 }
-.widget_element:hover {
+.widget_element:hover, .widget_element.full {
 	background-color: #00253c;
 }
 
@@ -20,19 +18,19 @@
 }
 
 
-
 .widget_element .image > .image_bg, .widget_element .image > .image_front {
+	background-color: #000;
 	position: absolute;
 	height: 120px;
 	width: 120px;
 }
 .widget_element .image {
+	position: absolute;
+	display: inline-block;
 	height: 120px;
 	width: 120px;
-	display: inline-block;
 	left: 10px;
 	top: 10px;
-	position: absolute;
 }
 
 .widget_element .image > .image_bg {
@@ -40,31 +38,45 @@
 	left: 0;
 	top: 0;
 }
-.widget_element:hover .image > .image_bg {
-	box-shadow: 0 0 30px 0 #7dcbfb;
-}
-.widget_element:hover .image > .image_bg {
+.widget_element:hover .image > .image_bg,
+.widget_element.full .image > .image_bg {
 	height: 140px;
+	width: 140px;
 	left: -10px;
 	top: -10px;
-	width: 140px;
-	box-shadow: 0 0 30px 0 #7dcbfb;
 }
 
 
 .widget_element .name {
-	font-size: 14px;
 	font-weight: bold;
+	line-height: 25px;
+	font-size: 14px;
+	position: absolute;
 	height: 25px;
 	left: 170px;
-	line-height: 25px;
-	position: absolute;
 	top: 0;
 }
 
 
 .widget_element .description {
-	left: 170px;
 	position: absolute;
+	left: 170px;
 	top: 25px;
 }
+
+
+
+.widget_element .minimized {
+	cursor: pointer;
+	height: 140px;
+}
+.widget_element .maximized {
+	display: none;
+}
+.widget_element.full .maximized {
+	background-color: #001725;
+	margin-top: 10px;
+	display: inherit;
+	padding: 10px;
+}
+

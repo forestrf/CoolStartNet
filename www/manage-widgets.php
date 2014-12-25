@@ -131,16 +131,12 @@
 			}
 		}
 		
-		function detail_widget(ID, div) {
-			console.log(ID);
-			console.log(div);
-		}
-		
-		
 		
 		function generate_widget(data) {
 			var w = generate_widget_element(data, IPA);
+			API.document.wrapElement(w);
 			w.txt = data.name + " " + data.description;
+			w.minimized.onclick = function(){console.log(w);w.flipflopClass('full')};
 			return w;
 		}
 		
