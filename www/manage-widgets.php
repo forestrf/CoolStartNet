@@ -55,7 +55,8 @@
 		
 		search_txt.onkeyup = tipying_search_txt;
 		function tipying_search_txt() {
-			filter_results(search_txt.value);
+			fill_list('global-list-search', 0, 'search=' + encodeURIComponent(search_txt.value));
+			//filter_results(search_txt.value);
 		}
 		
 		function filter_results(by) {
@@ -80,18 +81,17 @@
 		var widgets = [];
 		
 		// last widget from the list for stacked requests
-		function fill_list(action, last) {
-			if (undefined === last) {
-				last = 0;
+		function fill_list(action, last, post) {
+			if (last === undefined) {
+				post = 0;
 			}
-			if (last === 0) {
-				// When no last, delete previous list
-				list.innerHTML = '';
+			if (post === undefined) {
+				post = '';
 			}
 			
 			API.xhr(
 				'widgets?action=' + action,
-				'last=' + last,
+				'last=' + last + '&' + post,
 				function (data) {
 					data = JSON.parse(data);
 					if (data.status === 'OK') {
@@ -137,9 +137,12 @@
 			var w = generate_widget_element(data, IPA);
 			API.document.wrapElement(w);
 			w.txt = data.name + " " + data.description;
-			w.minimized.onclick = function(){
-				console.log(w);
+			w.body.onclick = function(){
 				w.flipflopClass('full');
+				
+				if (w.minimized) w.maximize();
+				else w.minimize();
+				
 				scrollToX(right, right.scrollTop, w.offsetTop, 0, 1/200, 20);
 			};
 			return w;

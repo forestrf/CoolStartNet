@@ -86,13 +86,12 @@ function user_created_list(&$db) {
 }
 
 function global_list_search(&$db) {
-	$widgets = $db->get_availabe_widgets_user();
+	$widgets = $db->search_availabe_widgets_user($_POST['search']);
 	$result = generate_widget_array($widgets);
 	end_ok($result);
 }
 
 /*
-,'global-list-search'                => 0 // Get
 ,'user-created-version-list'         => 0 // Get
 ,'user-created-version-info'         => 0 // Get
 ,'user-created-version-files-list'   => 0 // Get

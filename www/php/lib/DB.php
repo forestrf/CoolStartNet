@@ -699,7 +699,12 @@ class DB {
 	
 	// Returns a list with the widgets available to the user.
 	function get_availabe_widgets_user() {
-		return $this->query("SELECT * FROM `widgets` WHERE `widgets`.`IDwidget` != -1 AND `ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}' OR `published` > -1;"); // Por poner filtrado de widgets privados
+		return $this->query("SELECT * FROM `widgets` WHERE `widgets`.`IDwidget` != -1 AND (`ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}' OR `published` > -1);"); // Por poner filtrado de widgets privados
+	}
+	
+	// Returns a list with the widgets available to the user.
+	function search_availabe_widgets_user($word) {
+		return $this->query("SELECT * FROM `widgets` WHERE `widgets`.`IDwidget` != -1 AND (`ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}' OR `published` > -1) AND (`name` LIKE '%{$word}%' OR `description` LIKE '%{$word}%' OR `fulldescription` LIKE '%{$word}%');"); // Por poner filtrado de widgets privados
 	}
 	
 	// Returns a list with the widgets owned by the user.

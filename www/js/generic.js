@@ -8,16 +8,28 @@ function generate_widget_element(data, IPA) {
 			),
 			crel2('div', ['class', 'name'], data.name),
 			crel2('div', ['class', 'description'], data.description)
-		),
-		M = crel2('div', ['class', 'maximized'],
+		)
+	);
+	
+	w.body = m;
+	
+	w.minimized = true;
+	
+	w.maximize = function() {
+		if (M === undefined) crel2(w, M = crel2('div', ['class', 'maximized']));
+		
+		crel2(M,
 			crel2('div', ['class', 'text'],
 				data.fulldescription
 			),
 			imagesFromArray(crel2('div', ['class', 'images']), data.images)
-		)
-	);
-	w.minimized = m;
-	w.maximized = M;
+		);
+		w.minimized = false;
+	}
+	w.minimize = function() {
+		M.innerHTML = '';
+		w.minimized = true;
+	}
 	return w;
 	
 	function imagesFromArray(div, dataImages) {
@@ -32,11 +44,11 @@ function generate_widget_element(data, IPA) {
 		return crel2('div', [
 			'class', 'capture',
 			'style', 'background-image: url(' + url + ');',
-			'onclick', function(){ maximize(div, url) }
+			'onclick', function(){ showBig(div, url) }
 		]);
 	}
 	
-	function maximize(div, url) {
+	function showBig(div, url) {
 		var pic = crel2('div', ['class', 'big_preview'],
 			crel2('div', [
 				'class', 'big_preview_image',
