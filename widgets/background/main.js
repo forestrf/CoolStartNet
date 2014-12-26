@@ -4,6 +4,7 @@ API.widget.linkMyCSS('bgcss.css');
 // Make the div container for the background and style it.
 var fondoDiv = API.widget.create();
 var fondoDiv2 = API.widget.create();
+var source = API.widget.create();
 
 // Style the background div
 fondoDiv.addClass('background_widget_bg1');
@@ -11,6 +12,15 @@ fondoDiv.addClass('background_widget_bg1');
 // Style of the inner background div (used for transitioning backgrounds)
 fondoDiv2.addClass('background_widget_bg2');
 fondoDiv2.style.opacity = 0;
+
+source.addClass('background_widget_source');
+
+fondoDiv.setSource = fondoDiv2.setSource = function(url) {
+	source.innerHTML = '';
+	if (url !== undefined) {
+		crel2(source, crel2('a', ['href', url, 'target', '_blank'], 'View background source'));
+	}
+}
 
 
 
@@ -87,6 +97,9 @@ function launch(force){
 
 
 	setBackground(fondoDiv, backgrounds[next]);
+	if (backgrounds[next].length === 6) {
+		fondoDiv.setSource(backgrounds[next][5]);
+	}
 
 	if(++next > backgrounds.length -1){
 		next = 0;
@@ -107,6 +120,9 @@ function launch(force){
 		else{
 			fondoDiv2.style.opacity = 1;
 			var nextDiv = fondoDiv;
+			if (backgrounds[next].length === 6) {
+				fondoDiv2.setSource(backgrounds[next][5]);
+			}
 		}
 		
 		//Preload the next background

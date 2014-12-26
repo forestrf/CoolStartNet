@@ -63,7 +63,11 @@ switch ($steep) {
 		
 		$widgets = array(
 			'global' => array(
-				'background_images' => array(array('img/bg/homepage.jpg','#000000','e','m','n'))
+				'background_images' => array(
+					array('img/bg/caldeum_by_tituslunter-d5qinlq.jpg','#000000','e','m','n','http://tituslunter.deviantart.com/art/Caldeum-346871294'),
+					array('img/bg/stronghold_by_tituslunter-d5pno2d.jpg','#000000','e','m','n','http://tituslunter.deviantart.com/art/Stronghold-345425557'),
+					array('img/bg/view_afternoon_in_the_future_by_campanoo-d6dvcta.jpg','#000000','e','m','n','http://campanoo.deviantart.com/art/view-afternoon-in-the-future-386095006')
+				)
 			),
 			'Background image' => array(),
 			'Basic clock' => array(

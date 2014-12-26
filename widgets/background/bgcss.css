@@ -25,3 +25,23 @@
 	max-width: 25em;
 	box-shadow: 0 0 0.5em #151515;
 }
+
+.background_widget_source {
+	margin-bottom: 0.5em;
+	margin-right: 0.5em;
+	text-align: right;
+	font-size: 1.2em;
+	height: 1em;
+	bottom: 0;
+	color: #fff;
+	right: 0;
+}
+
+.background_widget_source a {
+	text-decoration: none;
+	color: #fff;
+}
+
+.background_widget_source a:hover {
+	text-decoration: underline;
+}
