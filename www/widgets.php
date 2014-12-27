@@ -146,9 +146,9 @@ function return_widget_array_element(&$widget) {
 	return array(
 		'IDwidget'        => $widget['IDwidget'],
 		'name'            => $widget['name'],
-		'description'     => check_and_default($widget, 'description', 'No description available.'),
-		'fulldescription' => check_and_default($widget, 'fulldescription', 'No full description available.'),
-		'images'          => json_decode(check_and_default($widget, 'images', '[]')),
+		'description'     => isset_and_default($widget, 'description', 'No description available.'),
+		'fulldescription' => isset_and_default($widget, 'fulldescription', 'No full description available.'),
+		'images'          => json_decode(isset_and_default($widget, 'images', '[]')),
 		//'token'           => hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA),
 		'version'         => isset($widget['version']) ? $widget['version'] : '',
 		'autoupdate'      => isset($widget['autoupdate']) ? $widget['autoupdate'] : ''
@@ -159,9 +159,6 @@ function return_widget_array_element(&$widget) {
 
 
 
-function check_and_default(&$widget, $param, $default) {
-	return isset($widget[$param]) && $widget[$param] !== '' ? $widget[$param] : $default;
-}
 
 
 
