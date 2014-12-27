@@ -608,6 +608,15 @@
 		document.getElementsByTagName("head")[0].appendChild(link);
 	}
 	
+	function create_script_src(src, callback) {
+		var s = document.createElement('script');
+		s.setAttribute('src', src);
+		if (callback !== undefined) {
+			s.onload = callback;
+		}
+		document.body.appendChild(s);
+	}
+	
 	
 	
 	var widgets = document.getElementById("widgets0");
@@ -688,11 +697,9 @@
 					//"widgetsContainer": widgets,
 					"create": function () {
 						var div = document.createElement("div");
-						div.style.display  = "block";
-						div.style.position = "absolute";
-						//document.body.appendChild(div);
-						widgets.appendChild(div);
 						div_base(div);
+						div.addClass('widget_base');
+						widgets.appendChild(div);
 						return div;
 					},
 					"linkMyCSS": function (name) {
@@ -701,6 +708,14 @@
 					},
 					"linkExternalCSS": function (href) {
 						create_link_css(href);
+						return this; //API.widget
+					},
+					"linkMyJS": function (name, callback) {
+						create_script_src(getUrl(widgetID, name), callback);
+						return this; //API.widget
+					},
+					"linkExternalJS": function (href, callback) {
+						create_script_src(href, callback);
 						return this; //API.widget
 					}
 				},

@@ -243,3 +243,22 @@ function file_mimetype($filename) {
 			return 'application/octet-stream';
 	}
 }
+
+function filter_directory(&$directory_resource, $show_folders = true, $show_files = true) {
+	if (false !== $entry = $directory_resource->read()) {
+		if ($entry === '.' || $entry === '..') {
+			return filter_directory($directory_resource, $show_folders, $show_files);
+		} else {
+			if ($show_folders && is_dir($directory_resource->path . $entry) ||
+					$show_files && is_file($directory_resource->path . $entry)) {
+				return $entry;
+			}
+		}
+	} else {
+		return false;
+	}
+}
+
+function isset_and_default(&$array, $param, $default) {
+	return isset($array[$param]) && $array[$param] !== '' ? $array[$param] : $default;
+}

@@ -25,10 +25,12 @@ function generate_widget_element(data, IPA) {
 			imagesFromArray(crel2('div', ['class', 'images']), data.images)
 		);
 		w.minimized = false;
+		w.addClass('full');
 	}
 	w.minimize = function() {
 		M.innerHTML = '';
 		w.minimized = true;
+		w.removeClass('full');
 	}
 	return w;
 	

@@ -49,19 +49,18 @@
 
 .widget_element .name {
 	font-weight: bold;
-	line-height: 25px;
-	font-size: 14px;
+	font-size: 1.4em;
 	position: absolute;
-	height: 25px;
 	left: 170px;
-	top: 0;
+	top: 10px;
 }
 
 
 .widget_element .description {
+	left: 180px;
+	margin-top: 2em;
 	position: absolute;
-	left: 170px;
-	top: 25px;
+	top: 10px;
 }
 
 

@@ -29,6 +29,8 @@ footer, header, hgroup, menu, nav, section{
 }
 body{
 	line-height:1;
+	font-family:Helvetica,Verdana,Tahoma;
+	font-size:.8em;
 }
 ol, ul{
 	list-style:none;

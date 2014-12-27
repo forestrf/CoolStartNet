@@ -132,16 +132,23 @@
 			}
 		}
 		
+		function minimize_all_widgets() {
+			for (var i = 0; i < widgets.length; i++) {
+				if (!widgets[i].minimized) {
+					widgets[i].minimize();
+				}
+			}
+		}
 		
 		function generate_widget(data) {
 			var w = generate_widget_element(data, IPA);
 			API.document.wrapElement(w);
 			w.txt = data.name + " " + data.description;
 			w.body.onclick = function(){
-				w.flipflopClass('full');
+				var temp = w.minimized;
+				minimize_all_widgets();
 				
-				if (w.minimized) w.maximize();
-				else w.minimize();
+				if (temp) w.maximize();
 				
 				scrollToX(right, right.scrollTop, w.offsetTop, 0, 1/200, 20);
 			};

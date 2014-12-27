@@ -60,3 +60,8 @@
 	box-shadow: 0 0 0 10px #ffffff;
 	background-color: #fff;
 }
+
+.wrapper .widgets .widget_base {
+	position: absolute;
+	display: block;
+}

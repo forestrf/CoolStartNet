@@ -29,6 +29,8 @@ Select steep:<p>
 <pre>
 <?php
 
+require_once '../php/functions/generic.php';
+
 $steep = isset($_GET['steep']) ? $_GET['steep'] : '';
 
 switch ($steep) {
@@ -112,8 +114,6 @@ switch ($steep) {
 		
 		$d = dir($widgets_path);
 		while (false !== ($entry = filter_directory($d, true, false))) {
-			if ($entry === '.' || $entry === '..') continue;
-			
 			if (is_dir($widgets_path.$entry)) {
 				$widget_path = $widgets_path . $entry . '/';
 				
@@ -186,19 +186,4 @@ switch ($steep) {
 		}
 		
 	break;
-}
-
-function filter_directory(&$directory_resource, $show_folders = true, $show_files = true) {
-	if (false !== $entry = $directory_resource->read()) {
-		if ($entry === '.' || $entry === '..') {
-			return filter_directory($directory_resource, $show_folders, $show_files);
-		} else {
-			if ($show_folders && is_dir($directory_resource->path . $entry) ||
-					$show_files && is_file($directory_resource->path . $entry)) {
-				return $entry;
-			}
-		}
-	} else {
-		return false;
-	}
 }
