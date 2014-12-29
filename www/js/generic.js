@@ -38,10 +38,10 @@ function generate_widget_element(data, IPA, useFunc, removeFunc) {
 	w.setUsingStatus = function(inuse) {
 		if (inuse) {
 			buttonuse.className = 'use_button remove';
-			buttonuse.innerHTML = 'REMOVE';
+			buttonuse.innerHTML = 'DISABLED';
 		} else {
 			buttonuse.className = 'use_button use';
-			buttonuse.innerHTML = 'USE';
+			buttonuse.innerHTML = 'ENABLED';
 		}
 		canChangeUsingStatus = true;
 		data.inuse = inuse;

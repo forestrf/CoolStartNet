@@ -93,17 +93,17 @@
 	text-shadow: -1px -1px 0 #08cd06, 1px 1px 0 #ffffff;
 }
 .widget_element .use_button.remove {
-	background-color: #e66552;
-	border-color: #ffdada;
-	box-shadow: 0 0 10px #de1b1b;
-	color: #bc1f1f;
-	text-shadow: -1px -1px 0 #8f0000, 1px 1px 0 #ffd6d6;
+	background-color: #d9d9d9;
+	border-color: #ffffff;
+	box-shadow: 0 0 10px #dedbdb;
+	color: #bcbcbc;
+	text-shadow: -1px -1px 0 #8f8f8f, 1px 1px 0 #fffefe;
 }
 .widget_element .use_button.remove:hover {
-	background-color: #f2bbbb;
-	box-shadow: 0 0 10px #fbd9d9;
-	color: #f1a9a9;
-	text-shadow: -1px -1px 0 #cd0606, 1px 1px 0 #ffffff;
+	background-color: #f2f2f2;
+	box-shadow: 0 0 10px #fbfbfb;
+	color: #f1f1f1;
+	text-shadow: -1px -1px 0 #cdcdcd, 1px 1px 0 #ffffff;
 }
 
 
