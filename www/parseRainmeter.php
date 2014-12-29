@@ -5,8 +5,9 @@ $useInterval = true;
 $globalG = true;
 
 
-$ini = 'Clock.ini';
-$skin = 'Big_Clock_/Skins/Big Clock';
+
+$ini = 'Calendar.ini';
+$skin = 'isteve_by_minhtrimatrix-d4dojjk/Skins/iSteve/Calendar';
 /*
 $ini = 'Clock.ini';
 $skin = 'Black_Vintage_Clock_/Skins/Vintage Clock';
@@ -66,7 +67,7 @@ foreach ($sub_ini as $a => $b) {
 		add_to_operate("G['{$a}'] = {};");
 	}
 	
-	add_to_operate("G['{$a}'].style = G['{$a}'].styletxt = \"" . extractStyles($b) . "\";");
+	add_to_operate("G['{$a}'].styletxt = \"" . extractStyles($b) . "\";");
 	if (isset($b['METER'])) {
 		// Prevent text collapse
 		add_to_operate("G['{$a}'].setSize(100, 0);");
@@ -89,6 +90,8 @@ foreach ($sub_ini as $a => $b) {
 		$style = '';
 		if ($MeterStyle) {
 			$style = "G['{$MeterStyle}'].styletxt +";
+		} else {
+			$style = "G['{$a}'].styletxt +";
 		}
 		
 		
@@ -227,7 +230,7 @@ function toRGBA($color) {
 	}
 }
 
-// No soporta ClipString, StringEffect (?), StringCase (?), StringAlign (Vertical, ?)
+// No soporta ClipString, StringEffect (?), StringCase (?), StringAlign (Vertical)
 function extractStyles($b) {
 	$styles = '';
 	
@@ -237,30 +240,30 @@ function extractStyles($b) {
 	
 	$styles .= "color: " . toRGBA(isset_and_default($b, 'FONTCOLOR', '0,0,0,255')) . ";";
 	
-	$StringAlign = isset_and_default($b, 'StringAlign', 'Left');
-	if (strpos($StringAlign, 'Left') === 0) $styles .= "text-align: left;";
-	if (strpos($StringAlign, 'Right') === 0) $styles .= "text-align: right;";
-	if (strpos($StringAlign, 'Center') === 0) $styles .= "text-align: center;";
-	if (strpos($StringAlign, 'Top') > 0) $styles .= "vertical-align: top;";
-	if (strpos($StringAlign, 'Bottom') > 0) $styles .= "vertical-align: bottom;";
-	if (strpos($StringAlign, 'Center') > 0) $styles .= "vertical-align: middle;";
+	$StringAlign = strtoupper(isset_and_default($b, 'STRINGALIGN', 'LEFT'));
+	if (strpos($StringAlign, 'LEFT') === 0) $styles .= "text-align: left;";
+	if (strpos($StringAlign, 'RIGHT') === 0) $styles .= "text-align: right;width: 100%;margin-left:-100%;";
+	if (strpos($StringAlign, 'CENTER') === 0) $styles .= "text-align: center;width: 100%;margin-left:-50%;";
+	if (strpos($StringAlign, 'TOP') > 0) $styles .= "vertical-align: top;";
+	if (strpos($StringAlign, 'BOTTOM') > 0) $styles .= "vertical-align: bottom;";
+	if (strpos($StringAlign, 'CENTER') > 0) $styles .= "vertical-align: middle;";
 	
-	$StringStyle = isset_and_default($b, 'STRINGSTYLE', 'Normal');
-	if (strpos($StringStyle, 'Bold') === 0) $styles .= "font-weight: bold;";
-	if (strpos($StringStyle, 'Italic') !== false) $styles .= "font-style: italic;";
+	$StringStyle = strtoupper(isset_and_default($b, 'STRINGSTYLE', 'NORMAL'));
+	if (strpos($StringStyle, 'BOLD') === 0) $styles .= "font-weight: bold;";
+	if (strpos($StringStyle, 'ITALIC') !== false) $styles .= "font-style: italic;";
 	
-	$StringCase = isset_and_default($b, 'STRINGCASE', 'Normal');
+	$StringCase = strtoupper(isset_and_default($b, 'STRINGCASE', 'NORMAL'));
 	switch ($StringCase) {
-		case 'Upper':$styles .= "text-transform: uppercase;";break;
-		case 'Lower':$styles .= "text-transform: lowercase;";break;
-		case 'Proper':$styles .= "font-variant: small-caps;";break;
+		case 'UPPER':$styles .= "text-transform: uppercase;";break;
+		case 'LOWER':$styles .= "text-transform: lowercase;";break;
+		case 'PROPER':$styles .= "font-variant: small-caps;";break;
 	}
 	
-	$StringEffect = isset_and_default($b, 'STRINGEFFECT', false);
-	$FontEffectColor = toRGBA(isset_and_default($b, '$FontEffectColor', '0,0,0,255'));
+	$StringEffect = strtoupper(isset_and_default($b, 'STRINGEFFECT', false));
+	$FontEffectColor = toRGBA(isset_and_default($b, 'FONTEFFECTCOLOR', '0,0,0,255'));
 	switch ($StringEffect) {
-		case 'Shadow':$styles .= "text-shadow: 2px 2px 3px {$FontEffectColor};";break;
-		case 'Border':$styles .= "text-shadow: 1px 1px 0 {$FontEffectColor};";break;
+		case 'SHADOW':$styles .= "text-shadow: 2px 2px 3px {$FontEffectColor};";break;
+		case 'BORDER':$styles .= "text-shadow: 1px 1px 0 {$FontEffectColor};";break;
 	}
 	
 	//ClipString  (0)
