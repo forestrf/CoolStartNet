@@ -34,6 +34,7 @@ function generate_widget_element(data, IPA, useFunc, removeFunc) {
 		w.removeClass('full');
 	}
 	
+	var canChangeUsingStatus = false;
 	w.setUsingStatus = function(inuse) {
 		if (inuse) {
 			buttonuse.className = 'use_button remove';
@@ -42,6 +43,7 @@ function generate_widget_element(data, IPA, useFunc, removeFunc) {
 			buttonuse.className = 'use_button use';
 			buttonuse.innerHTML = 'USE';
 		}
+		canChangeUsingStatus = true;
 		data.inuse = inuse;
 	}
 	w.setUsingStatus(data.inuse);
@@ -76,7 +78,10 @@ function generate_widget_element(data, IPA, useFunc, removeFunc) {
 	}
 	
 	function useRemove(event) {
-		data.inuse ? removeFunc(data, w) : useFunc(data, w);
+		if (canChangeUsingStatus) {
+			data.inuse ? removeFunc(data, w) : useFunc(data, w);
+		}
+		canChangeUsingStatus = false;
 		event.stopPropagation();
 	}
 }
