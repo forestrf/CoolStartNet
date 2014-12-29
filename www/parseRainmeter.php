@@ -1,14 +1,12 @@
 <?php
 
-require_once __DIR__.'/php/defaults.php';
-require_once __DIR__.'/php/functions/generic.php';
+
+$useInterval = true;
+$globalG = true;
 
 
-$useInterval = false;
-
-
-$ini = 'Digital 24H.ini';
-$skin = 'isteve_by_minhtrimatrix-d4dojjk/Skins/iSteve/Clock/Digital';
+$ini = 'Clock.ini';
+$skin = 'Big_Clock_/Skins/Big Clock';
 /*
 $ini = 'Clock.ini';
 $skin = 'Black_Vintage_Clock_/Skins/Vintage Clock';
@@ -40,7 +38,9 @@ function add_to_interval($elem) {
 
 $previous = array(
 	'x' => 0,
-	'y' => 0
+	'y' => 0,
+	'w' => 0,
+	'h' => 0
 );
 
 
@@ -52,12 +52,12 @@ $sub_ini = file_get_contents($ini_file);
 $sub_ini = parse_ini($sub_ini);
 print_r($sub_ini);
 
-$update_interval = isset_and_default($sub_ini['Rainmeter'], 'UPDATE', 1000);
-$dragableBox = isset_and_default($sub_ini['Rainmeter'], 'DRAGMARGINS', '0,0,0,0');
+$update_interval = isset_and_default($sub_ini['RAINMETER'], 'UPDATE', 1000);
+$dragableBox = isset_and_default($sub_ini['RAINMETER'], 'DRAGMARGINS', '0,0,0,0');
 
 
 
-
+// No supported:  local filesystem or @Resources folder
 foreach ($sub_ini as $a => $b) {
 	// $operate
 	if (isset($b['METER'])) {
@@ -66,10 +66,14 @@ foreach ($sub_ini as $a => $b) {
 		add_to_operate("G['{$a}'] = {};");
 	}
 	
-	add_to_operate("G['{$a}'].style = \"" . extractStyles($b) . '"');
+	add_to_operate("G['{$a}'].style = G['{$a}'].styletxt = \"" . extractStyles($b) . "\";");
+	if (isset($b['METER'])) {
+		// Prevent text collapse
+		add_to_operate("G['{$a}'].setSize(100, 0);");
+	}
 	
 	if (isset($b['FONTFACE'])) {
-		add_to_operate("API.widget.linkExternalCSS('//fonts.googleapis.com/css?family=" . urlencode($b['FontFace']) . "');");
+		add_to_operate("API.widget.linkExternalCSS('//fonts.googleapis.com/css?family=" . urlencode($b['FONTFACE']) . "');");
 	}
 	
 	
@@ -78,17 +82,19 @@ foreach ($sub_ini as $a => $b) {
 	if (isset($b['METER'])) {
 		$x = position(isset_and_default($b, 'X', '0'), 'x');
 		$y = position(isset_and_default($b, 'Y', '0'), 'y');
+		$w = position(isset_and_default($b, 'W', 'auto'), 'w'); // 0 will collapse text
+		$h = position(isset_and_default($b, 'H', 'auto'), 'h'); // 0 will collapse text
 		
 		$MeterStyle = isset_and_default($b, 'METERSTYLE', false);
 		$style = '';
 		if ($MeterStyle) {
-			$style = "G['{$MeterStyle}'].style +";
+			$style = "G['{$MeterStyle}'].styletxt +";
 		}
 		
 		
 		$T = "G['{$a}'].innerHTML = '';\n" .
 				"G['{$a}'].setPosition(pos.left, pos.top);\n" .
-				"var elem = C('div', ['class', 'rainmeter_positionable', 'style', {$style} 'left: {$x}px; top: {$y}px;']);\n";
+				"var elem = C('div', ['class', 'rainmeter_pos', 'style', {$style} 'left: {$x}px; top: {$y}px; width: {$w}px; height: {$h}px;']);\n";
 		
 		$MeasureName = isset_and_default($b, 'MEASURENAME', false);
 		
@@ -99,16 +105,13 @@ foreach ($sub_ini as $a => $b) {
 				$T .= "C(elem, C('img', ['src', '{$ImageName}']));\n";
 				break;
 			case 'STRING':
+				// No supported: Text, multiple MeasureName. Everything except one MeasureName
 				if ($MeasureName) {
-					switch (strtoupper($sub_ini[$MeasureName]['MEASURE'])) {
-						case 'TIME':
-							$T .= "elem.innerHTML = G['{$MeasureName}'];\n";
-							break;
-					}
-					
+					$T .= "elem.innerHTML = G['{$MeasureName}'].txt;\n";
 				}
 				break;
 			case 'BITMAP':
+				// No supported: BitmapAlign, BitmapSeparation, BitmapExtend = 0, BitmapZeroFrame, BitmapTransitionFrames
 				$BitmapImage = image(isset_and_default($b, 'BITMAPIMAGE', false));
 				$imageAnalisys = analize_image($BitmapImage);
 				
@@ -134,50 +137,73 @@ foreach ($sub_ini as $a => $b) {
 						$T .= "elem.txt = number_to_size(elem.txt, {$BitmapDigits});\n";
 					}
 					
-					$T .= "for (var i = 0; i < elem.txt.length; i++) {
-							C(elem, C('div', ['class', 'rainmeter_positionable', 'style', '" .
-								"width: {$Size['x']}px;" .
-								"height: {$Size['y']}px;" .
-								"background-image: url(\'{$BitmapImage}\');";
-					if ($axis === 'x') {
-						$T .= "left: ' + (i * {$Size['x']}) + 'px;" .
-									"top: 0px;" .
+					$T .= "for (var i = 0; i < elem.txt.length; i++) {\n" .
+							"C(elem, C('div', ['class', 'rainmeter_pos', 'style', 'width: {$Size['x']}px; height: {$Size['y']}px; background-image: url(\'{$BitmapImage}\');";
+								
+								if ($axis === 'x')
+								$T .= "left: ' + (i * {$Size['x']}) + 'px; top: 0px;" .
 									"background-position: -' + ({$Size['x']} * +elem.txt[i]) + 'px 0;";
-					} else {
-						$T .= "left: 0px;" .
-									"top: ' + (i * {$Size['y']}) + 'px;" .
+								else
+								$T .= "left: 0px; top: ' + (i * {$Size['y']}) + 'px;" .
 									"background-position: 0 -' + ({$Size['y']} * +elem.txt[i]) + 'px;";
-					}
-									
+								
 							$T .= "']));
 						}\n";
-					
-					
 				}
+				break;
+			case 'ROUNDLINE':
+				// No supported: Solid
+				$LineWidth = isset_and_default($b, 'LINEWIDTH', 1);
+				$LineColor = toRGBA(isset_and_default($b, 'LINECOLOR', '255,255,255,255'));
+				$LineLength = isset_and_default($b, 'LINELENGTH', 0);
+				$ValueRemainder = isset_and_default($b, 'VALUEREMAINDER', false); //modulo on the value
+				$StartAngle = isset_and_default($b, 'STARTANGLE', 0); // start point in rad. 0 = pointing to right
+				$RotationAngle = isset_and_default($b, 'ROTATIONANGLE', deg2rad(360)); // rad
 				
+				$T .= "elem.angle = extract_numbers(G['{$MeasureName}']);\n";
 				
+				if ($ValueRemainder !== false) {
+					$T .= "elem.angle %= {$ValueRemainder};\n";
+					$T .= "elem.angle /= {$ValueRemainder};\n";
+				}
+				$T .= "elem.angle = elem.angle * {$RotationAngle};\n";
+				$T .= "console.log(elem.angle * (180/Math.PI));\n";
 				
-				print_r($imageAnalisys);
+				$T .= "elem.style.transform = 'rotate(' + ({$StartAngle} + elem.angle) + 'rad)';\n";
+				
+				$T .= "var div = C('div', ['class', 'rainmeter_pos', 'style', 'top:" . ($h / 2) . "px; left: " . ($w / 2) . "px;" .
+						"background-color: {$LineColor}; width: {$LineLength}px; height: {$LineWidth}px;']);\n";
+				$T .= "elem.appendChild(div);\n";
+						
+				
 				break;
 		}
 		$T .= "G['{$a}'].appendChild(elem);\n";
 		add_to_interval($T);
 	}
 	if (isset($b['MEASURE'])) {
+		// MinValue and MaxValue are not dynamic. Also not in use
+		$MinValue = isset_and_default($b, 'MINVALUE', 0);
+		$MaxValue = isset_and_default($b, 'MAXVALUE', 1);
+		
 		switch (strtoupper($b['MEASURE'])) {
 			case 'TIME':
 				$Format = isset_and_default($b, 'FORMAT', '%H:%M:%S');
-				$T = "G['{$a}'] = '{$Format}';\n" .
-						"G['{$a}'] = (new Date()).format('{$Format}');\n";
-				if (isset($b['SUBSTITUTE'])) {
-					$subtitutions = json_decode('{' . $b['SUBSTITUTE'] . '}', true);
-					foreach($subtitutions as $from => $to) {
-						$T .= "G['{$a}'] = G['{$a}'].replace('{$from}', '{$to}');\n";
-					}
+				$T = "G['{$a}'] = {};\n";
+				$T = "G['{$a}'].txt = (new Date()).format('{$Format}');\n";
+				if ($Format === '%H:%M:%S') {
+					$T .= "G['{$a}'].number = local_timestamp();\n";
 				}
-				add_to_interval($T);
 				break;
 		}
+		if (isset($b['SUBSTITUTE'])) {
+			$subtitutions = json_decode('{' . $b['SUBSTITUTE'] . '}', true);
+			foreach($subtitutions as $from => $to) {
+				$T .= "while(G['{$a}'].txt.indexOf('{$from}') !== -1) G['{$a}'].txt = G['{$a}'].txt.replace('{$from}', '{$to}');\n";
+			}
+		}
+		$T .= "G['{$a}'].txt = G['{$a}'].txt.replace(/ /g, '&nbsp;');\n";
+		add_to_interval($T);
 	}
 	
 }
@@ -192,6 +218,9 @@ function toRGBA($color) {
 		case 2:
 			return "rgb({$color})";
 		case 3:
+			$color = explode(',', $color);
+			$color[3] /= 255;
+			$color = implode(',', $color);
 			return "rgba({$color})";
 		default:
 			return "#{$color}";
@@ -202,11 +231,11 @@ function toRGBA($color) {
 function extractStyles($b) {
 	$styles = '';
 	
-	$styles .= "font-family: '" . isset_and_default($b, 'FontFace', 'Arial') . "';";
+	$styles .= "font-family: '" . isset_and_default($b, 'FONTFACE', 'Arial') . "';";
 	
-	$styles .= "font-size: " . isset_and_default($b, 'FontSize', 10) . "pt;";
+	$styles .= "font-size: " . isset_and_default($b, 'FONTSIZE', 10) . "pt;";
 	
-	$styles .= "color: " . toRGBA(isset_and_default($b, 'FontColor', '0,0,0,255')) . ";";
+	$styles .= "color: " . toRGBA(isset_and_default($b, 'FONTCOLOR', '0,0,0,255')) . ";";
 	
 	$StringAlign = isset_and_default($b, 'StringAlign', 'Left');
 	if (strpos($StringAlign, 'Left') === 0) $styles .= "text-align: left;";
@@ -216,25 +245,18 @@ function extractStyles($b) {
 	if (strpos($StringAlign, 'Bottom') > 0) $styles .= "vertical-align: bottom;";
 	if (strpos($StringAlign, 'Center') > 0) $styles .= "vertical-align: middle;";
 	
-	$StringStyle = isset_and_default($b, 'StringStyle', 'Normal');
+	$StringStyle = isset_and_default($b, 'STRINGSTYLE', 'Normal');
 	if (strpos($StringStyle, 'Bold') === 0) $styles .= "font-weight: bold;";
 	if (strpos($StringStyle, 'Italic') !== false) $styles .= "font-style: italic;";
 	
-	$StringCase = isset_and_default($b, 'StringCase', 'Normal');
+	$StringCase = isset_and_default($b, 'STRINGCASE', 'Normal');
 	switch ($StringCase) {
 		case 'Upper':$styles .= "text-transform: uppercase;";break;
 		case 'Lower':$styles .= "text-transform: lowercase;";break;
 		case 'Proper':$styles .= "font-variant: small-caps;";break;
 	}
 	
-	$StringCase = isset_and_default($b, 'StringCase', 'Normal');
-	switch ($StringCase) {
-		case 'Upper':$styles .= "text-transform: uppercase;";break;
-		case 'Lower':$styles .= "text-transform: lowercase;";break;
-		case 'Proper':$styles .= "font-variant: small-caps;";break;
-	}
-	
-	$StringEffect = isset_and_default($b, 'StringEffect', false);
+	$StringEffect = isset_and_default($b, 'STRINGEFFECT', false);
 	$FontEffectColor = toRGBA(isset_and_default($b, '$FontEffectColor', '0,0,0,255'));
 	switch ($StringEffect) {
 		case 'Shadow':$styles .= "text-shadow: 2px 2px 3px {$FontEffectColor};";break;
@@ -242,7 +264,7 @@ function extractStyles($b) {
 	}
 	
 	//ClipString  (0)
-	$Angle = isset_and_default($b, 'Angle', false);
+	$Angle = isset_and_default($b, 'ANGLE', false);
 	if ($Angle) {
 		$styles .= "transform: rotate({$Angle}deg);";
 	}
@@ -310,9 +332,7 @@ API.storage.remoteStorage.get("pos", function(entrada){
 });
 
 
-
-var G = {};
-';
+' . (!$globalG ? 'var ' : '') . "G = {};\n";
 
 $widget_content .= "function operate() {\n";
 foreach ($operate as $op) {
@@ -403,6 +423,13 @@ function separators($path) {
 	return str_replace('\\', '/', $path);
 }
 
+function isset_and_default(&$array, $param, $default) {
+	global $sub_ini;
+	return isset($array[$param]) && $array[$param] !== '' ? $array[$param] : (
+		isset($array['METERSTYLE']) ? isset_and_default($sub_ini[$array['METERSTYLE']], $param, $default) : $default
+	);
+}
+
 
 
 
@@ -416,10 +443,12 @@ function parse_ini($contents) {
 	foreach ($contents as $elem) {
 		if (preg_match('#^\[(.+?)\]#', $elem, $matches)) {
 			$result[$last = $matches[1]] = array();
-		} else if (preg_match('#(.+?)=(.*)#', $elem, $matches)) {
+		} else if (preg_match('#^([^;]+?)=(.*)#', $elem, $matches)) {
 			if (substr_count($matches[2], '"') === 2 && $matches[2][0] === '"') {
 				$matches[2] = substr($matches[2], 1, -1);
 			}
+			$matches[1] = trim(strtoupper($matches[1]));
+			if ($matches[1] === 'VALUEREMINDER') $matches[1] = 'VALUEREMAINDER';
 			$result[$last][strtoupper($matches[1])] = trim($matches[2]);
 		}
 	}

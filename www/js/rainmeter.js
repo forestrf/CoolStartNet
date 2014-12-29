@@ -72,7 +72,10 @@ Date.replaceChars = {
 };
 
 function extract_numbers(from) {
-	var n = /^[0-9]*/.exec(from);
+	if (from === undefined) return '0';
+	if (from.number !== undefined) return from.number;
+	var n = /^[0-9]*/.exec(from.txt);
+	n = n[0];
 	if (n === '') n = '0';
 	return n;
 }
@@ -89,4 +92,9 @@ function number_to_size(number, size) {
 	if (n === '') n = '0';
 	  
 	return n;
+}
+
+function local_timestamp() {
+	var t = new Date();
+	return (t.getTime() - t.getTimezoneOffset()*60*1000)/1000;
 }
