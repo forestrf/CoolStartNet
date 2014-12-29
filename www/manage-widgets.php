@@ -141,7 +141,7 @@
 		}
 		
 		function generate_widget(data) {
-			var w = generate_widget_element(data, IPA);
+			var w = generate_widget_element(data, IPA, useFunc, removeFunc);
 			API.document.wrapElement(w);
 			w.txt = data.name + " " + data.description;
 			w.body.onclick = function(){
@@ -155,9 +155,25 @@
 			return w;
 		}
 		
-		// borrar
-		function rnd(loops) {
-			return (Math.random()*10).toFixed() + (loops > 1 ? rnd(loops -1) : '');
+		function useFunc(data, w) {
+			useremoveFunc(data, w, 'user-using-add');
+		}
+		
+		function removeFunc(data, w) {
+			useremoveFunc(data, w, 'user-using-remove');
+		}
+		
+		function useremoveFunc(data2, w, action) {
+			API.xhr(
+				'widgets?action=' + action,
+				'IDwidget=' + data2.IDwidget,
+				function (data) {
+					data = JSON.parse(data);
+					if (data.status === 'OK') {
+						w.setUsingStatus(!data2.inuse);
+					}
+				}
+			);
 		}
 		
 	})(API, IPA);

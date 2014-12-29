@@ -57,11 +57,56 @@
 
 
 .widget_element .description {
-	left: 180px;
 	margin-top: 2em;
 	position: absolute;
+	left: 180px;
 	top: 10px;
 }
+
+
+
+
+.widget_element .use_button {
+	border-radius: 4px;
+	line-height: 25px;
+	font-weight: bold;
+	transition: .2s all ease;
+	text-align: center;
+	font-size: 15px;
+	position: absolute;
+	border: 1px solid;
+	width: 150px;
+	right: 25px;
+	top: 25px;
+}
+.widget_element .use_button.use {
+	background-color: #53e652;
+	border-color: #ddffda;
+	box-shadow: 0 0 10px #51de1b;
+	color: #36bc1f;
+	text-shadow: -1px -1px 0 #028f00, 1px 1px 0 #d6ffd6;
+}
+.widget_element .use_button.use:hover {
+	background-color: #bcf2bb;
+	box-shadow: 0 0 10px #e3fbd9;
+	color: #b3f1a9;
+	text-shadow: -1px -1px 0 #08cd06, 1px 1px 0 #ffffff;
+}
+.widget_element .use_button.remove {
+	background-color: #e66552;
+	border-color: #ffdada;
+	box-shadow: 0 0 10px #de1b1b;
+	color: #bc1f1f;
+	text-shadow: -1px -1px 0 #8f0000, 1px 1px 0 #ffd6d6;
+}
+.widget_element .use_button.remove:hover {
+	background-color: #f2bbbb;
+	box-shadow: 0 0 10px #fbd9d9;
+	color: #f1a9a9;
+	text-shadow: -1px -1px 0 #cd0606, 1px 1px 0 #ffffff;
+}
+
+
 
 
 
@@ -80,6 +125,9 @@
 	padding: 1.5%;
 	width: 97%;
 }
+
+
+
 
 .widget_element.full .maximized .text {
 	vertical-align: top;

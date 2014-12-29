@@ -112,7 +112,7 @@ class DB {
 	
 	//debug mode
 	private $d = false;
-	function enable_debug_mode($bool) {
+	function debug_mode($bool) {
 		$this->d = $bool;
 	}
 	private function debug($txt) {
@@ -686,30 +686,35 @@ class DB {
 	#
 	# ---------------------------------------------------------------------------
 	
+	// left = all widgets, right = only used widgets
+	private function SELECT_FROM_WIDGETS_JOIN_WIDGETSUER($JOIN_TYPE = 'LEFT') {
+		return "SELECT `widgets`.*, `widgets-user`.`IDuser`, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets` {$JOIN_TYPE} JOIN `widgets-user` ON (`widgets`.`IDwidget` = `widgets-user`.`IDwidget` AND `widgets-user`.`IDuser` = {$this->userID}) ";
+	}
+	
 	// Returns a list with the widgets of the user.
 	function get_widgets_user() {
-		return $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` USING (`IDwidget`) WHERE `IDuser` = '{$this->userID}';");
+		return $this->query($this->SELECT_FROM_WIDGETS_JOIN_WIDGETSUER('RIGHT') . "WHERE `IDuser` = '{$this->userID}';");
 	}
 	
 	// Returns a widget of the user.
 	function get_widget_user($widgetID) {
-		$result = $this->query("SELECT `widgets`.*, `widgets-user`.`autoupdate`, `widgets-user`.`version` FROM `widgets-user` LEFT JOIN `widgets` USING (`IDwidget`) WHERE `IDuser` = '{$this->userID}' AND `widgets`.`IDwidget` = '{$widgetID}';");
+		$result = $this->query($this->SELECT_FROM_WIDGETS_JOIN_WIDGETSUER('RIGHT') . "WHERE `IDuser` = '{$this->userID}' AND `widgets`.`IDwidget` = '{$widgetID}';");
 		return $result ? $result[0] : false;
 	}
 	
 	// Returns a list with the widgets available to the user.
 	function get_availabe_widgets_user() {
-		return $this->query("SELECT * FROM `widgets` WHERE `widgets`.`IDwidget` != -1 AND (`ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}' OR `published` > -1);"); // Por poner filtrado de widgets privados
+		return $this->query($this->SELECT_FROM_WIDGETS_JOIN_WIDGETSUER('LEFT') . "WHERE `widgets`.`IDwidget` != -1 AND (`ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}' OR `published` > -1);"); // Por poner filtrado de widgets privados
 	}
 	
 	// Returns a list with the widgets available to the user.
 	function search_availabe_widgets_user($word) {
-		return $this->query("SELECT * FROM `widgets` WHERE `widgets`.`IDwidget` != -1 AND (`ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}' OR `published` > -1) AND (`name` LIKE '%{$word}%' OR `description` LIKE '%{$word}%' OR `fulldescription` LIKE '%{$word}%');"); // Por poner filtrado de widgets privados
+		return $this->query($this->SELECT_FROM_WIDGETS_JOIN_WIDGETSUER('LEFT') . "WHERE `widgets`.`IDwidget` != -1 AND (`ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}' OR `published` > -1) AND (`name` LIKE '%{$word}%' OR `description` LIKE '%{$word}%' OR `fulldescription` LIKE '%{$word}%');"); // Por poner filtrado de widgets privados
 	}
 	
 	// Returns a list with the widgets owned by the user.
 	function get_widgets_user_owns() {
-		return $this->query("SELECT * FROM `widgets` WHERE `ownerID` = '{$this->userID}';");
+		return $this->query($this->SELECT_FROM_WIDGETS_JOIN_WIDGETSUER('LEFT') . "WHERE `ownerID` = '{$this->userID}';");
 	}
 	
 	// Returns true if the widget can be manipulated by the user (true if user is the owner of te widget). Otherwise returns false.
@@ -724,14 +729,10 @@ class DB {
 		$this->query("DELETE FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}' AND `IDuser` = '{$this->userID}';");
 	}
 	
-	// Makes the user to use a widget.
+	// Makes the user to use a widget. TO DO: Check if the user has access to the widget
 	function add_using_widget_user($widgetID){
 		$widgetID = mysql_escape_mimic($widgetID);
-		
-		// Checks if the users already uses the widget.
-		if(count($this->query("SELECT * FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}' AND `IDuser` = '{$this->userID}';")) === 0){
-			$this->query("INSERT INTO `widgets-user` (`IDwidget`, `IDuser`) VALUES ('{$widgetID}', '{$this->userID}');");
-		}
+		$this->query("INSERT INTO `widgets-user` (`IDwidget`, `IDuser`) VALUES ('{$widgetID}', '{$this->userID}');");
 	}
 	
 	// Returns true if the user is using the widget, otherwise returns false.

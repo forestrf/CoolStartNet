@@ -67,6 +67,8 @@ $action($db);
 //
 /////////////////////////////////////////////////////////
 
+// -- GET -- //
+
 function global_list(&$db) {
 	$widgets = $db->get_availabe_widgets_user();
 	$result = generate_widget_array($widgets);
@@ -86,6 +88,7 @@ function user_created_list(&$db) {
 }
 
 function global_list_search(&$db) {
+	if ($_POST['search'] === '') return global_list($db);
 	$widgets = $db->search_availabe_widgets_user($_POST['search']);
 	$result = generate_widget_array($widgets);
 	end_ok($result);
@@ -105,9 +108,19 @@ function global_list_search(&$db) {
 ,'user-created-version-files-edit'   => 1 // Set
 ,'user-created-version-files-remove' => 1 // Set
 ,'user-created-remove'               => 1 // Set
-,'user-using-add'                    => 1 // Set
-,'user-using-remove'                 => 1 // Set
 */
+
+// -- SET -- //
+
+function user_using_add(&$db) {
+	$result = $db->add_using_widget_user($_POST['IDwidget']);
+	end_ok($result);
+}
+
+function user_using_remove(&$db) {
+	$result = $db->remove_using_widget_user($_POST['IDwidget']);
+	end_ok($result);
+}
 
 
 
@@ -150,8 +163,9 @@ function return_widget_array_element(&$widget) {
 		'fulldescription' => isset_and_default($widget, 'fulldescription', 'No full description available.'),
 		'images'          => json_decode(isset_and_default($widget, 'images', '[]')),
 		//'token'           => hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA),
-		'version'         => isset($widget['version']) ? $widget['version'] : '',
-		'autoupdate'      => isset($widget['autoupdate']) ? $widget['autoupdate'] : ''
+		'version'         => isset_and_default($widget, 'version', ''),
+		'autoupdate'      => isset_and_default($widget, 'autoupdate', ''),
+		'inuse'           => isset_and_default($widget, 'IDuser', false) !== false ? true : false,
 	);
 }
 
