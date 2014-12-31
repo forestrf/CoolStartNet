@@ -41,7 +41,7 @@ switch ($steep) {
 		require_once '../php/lib/DB.php';
 		
 		$db = new DB();
-		$db->enable_debug_mode(true);
+		$db->debug_mode(true);
 		
 		$db->create_tables($db_instructions);
 	break;
@@ -51,7 +51,7 @@ switch ($steep) {
 		require_once '../php/lib/DB.php';
 		
 		$db = new DB();
-		$db->enable_debug_mode(true);
+		$db->debug_mode(true);
 		
 		$db->delete_user(DEFAULT_USER_NICK);
 		$db->create_new_user(DEFAULT_USER_NICK, DEFAULT_USER_PASSWORD, '', $validation);
@@ -153,7 +153,7 @@ switch ($steep) {
 		
 		$db = new DB();
 		$db->set_user_id(GLOBAL_USER_ID);
-		$db->enable_debug_mode(true);
+		$db->debug_mode(true);
 		
 		foreach ($widgets as &$widget) {
 			if ($db->create_widget($widget['name'])) {
