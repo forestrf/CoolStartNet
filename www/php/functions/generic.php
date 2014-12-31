@@ -190,7 +190,7 @@ function file_mimetype($filename) {
 		case 'jpe': case 'jpeg': case 'jpg':
 			return 'image/jpeg';
 		case 'js':
-			return 'application/x-javascript';
+			return 'application/javascript';
 		case 'm3u':
 			return 'audio/x-mpegurl';
 		case 'mid': case 'midi':
