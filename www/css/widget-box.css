@@ -79,27 +79,27 @@
 	right: 25px;
 	top: 25px;
 }
-.widget_element .use_button.use {
+.widget_element .use_button.enabled {
 	background-color: #53e652;
 	border-color: #ddffda;
 	box-shadow: 0 0 10px #51de1b;
 	color: #36bc1f;
 	text-shadow: -1px -1px 0 #028f00, 1px 1px 0 #d6ffd6;
 }
-.widget_element .use_button.use:hover {
+.widget_element .use_button.enabled:hover {
 	background-color: #bcf2bb;
 	box-shadow: 0 0 10px #e3fbd9;
 	color: #b3f1a9;
 	text-shadow: -1px -1px 0 #08cd06, 1px 1px 0 #ffffff;
 }
-.widget_element .use_button.remove {
+.widget_element .use_button.disabled {
 	background-color: #d9d9d9;
 	border-color: #ffffff;
 	box-shadow: 0 0 10px #dedbdb;
 	color: #bcbcbc;
 	text-shadow: -1px -1px 0 #8f8f8f, 1px 1px 0 #fffefe;
 }
-.widget_element .use_button.remove:hover {
+.widget_element .use_button.disabled:hover {
 	background-color: #f2f2f2;
 	box-shadow: 0 0 10px #fbfbfb;
 	color: #f1f1f1;

@@ -24,8 +24,10 @@ define('PASSWORD_ZEBRA_SESSION', 'write random characters here');
 define('ZEBRA_SESSION_TIME', 2592000); // 30 Days
 
 # path to the web with / in the end, starting with the subdomain (if there is) and without protocol.
-define('WEB_PATH', 'www.mywebhere.com/folder/to/site/');
-define('FORUM_WEB_PATH', 'forum.mywebhere.com/folder/to/site/');
+define('WEB_PATH', 'www.mydomain.com/folder/to/site/');
+define('FORUM_WEB_PATH', 'forum.mydomain.com/folder/to/site/');
+define('DOMAIN', 'mydomain.com');
+define('MAIL_DIRECTION', 'do-not-reply' . DOMAIN);
 
 # Max file size for the uploaded widget files. In bytes.
 define('MAX_FILE_SIZE_BYTES', 512000);
@@ -50,9 +52,6 @@ define('USER_MAX_BYTES_STORED_DB', 5242880); // 5MB
 # Windows has a lot of problems. For future conditionals.
 define('MACHINE', strtoupper(substr(PHP_OS, 0, 3)));
 
-# Dropbox app name
-define('DROPBOX_APP_NAME', 'coolstart.net/1.0');
-
 # Registration
 define('USERS_CAN_REGISTER', false);
 
@@ -60,6 +59,8 @@ define('USERS_CAN_REGISTER', false);
 define('DEFAULT_USER_NICK', 'ANONYMOUS');
 define('DEFAULT_USER_PASSWORD', 'ANONYMOUS');
 define('DEFAULT_USER_ACCESSIBLE', false);
+
+define('GLOBAL_USER_ID', 0);
 
 #Captcha ReCaptcha
 define('CAPTCHA_PUBLIC_KEY', 'key here');
@@ -73,5 +74,6 @@ define('LOGIN_FAIL_WAIT', 10); // minutes
 define('ANALYTICS_JS', "JS Analytics from GA or other service. Without <script></script>");
 
 # Dropbox
+define('DROPBOX_APP_NAME', 'coolstart.net/1.0');
 define('DROPBOX_KEY', 'app key');
 define('DROPBOX_SECRET', 'app secret');
