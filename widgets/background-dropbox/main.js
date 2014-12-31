@@ -30,16 +30,27 @@ API.storage.remoteStorage.get('delay', function(entrada){
 		transitionTime = entrada;
 		fondoDiv2.style.transition = 'opacity ' + transitionTime/1000 + 's ease';
 	}
-}).get('backgrounds', function(entrada){
+});
+
+API.storage.localStorage.get('backgrounds', function(entrada){
 	if(entrada){
 		backgrounds = entrada;
 		launch();
 	} else {
-		API.dropbox.getPathContents('/wallpapers', function(data){
-			if(data){
-				backgrounds = data['files'];
+		API.storage.remoteStorage.get('backgrounds', function(entrada){
+			if(entrada){
+				backgrounds = entrada;
 				launch();
-				API.storage.remoteStorage.set('backgrounds', backgrounds);
+				API.storage.localStorage.set('backgrounds', backgrounds);
+			} else {
+				API.dropbox.getPathContents('/wallpapers', function(data){
+					if(data){
+						backgrounds = data['files'];
+						launch();
+						API.storage.localStorage.set('backgrounds', backgrounds);
+						API.storage.remoteStorage.set('backgrounds', backgrounds);
+					}
+				});
 			}
 		});
 	}
