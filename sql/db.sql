@@ -28,9 +28,9 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `access-token` (
 	`IDuser` int(11) NOT NULL,
-	`dropbox_accessToken` text COLLATE utf8_bin NOT NULL,
-	PRIMARY KEY (`IDuser`)
+	`dropbox_accessToken` text COLLATE utf8_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE `access-token` ADD PRIMARY KEY (`IDuser`);
 
 -- --------------------------------------------------------
 
@@ -40,9 +40,9 @@ CREATE TABLE `access-token` (
 
 CREATE TABLE `files` (
 	`hash` varchar(32) COLLATE utf8_bin NOT NULL,
-	`data` mediumblob NOT NULL,
-	PRIMARY KEY (`hash`)
+	`data` mediumblob NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE `files` ADD PRIMARY KEY (`hash`);
 
 -- --------------------------------------------------------
 
@@ -54,9 +54,9 @@ CREATE TABLE `session_data` (
 	`session_id` varchar(32) NOT NULL DEFAULT '',
 	`hash` varchar(32) NOT NULL DEFAULT '',
 	`session_data` blob NOT NULL,
-	`session_expire` int(11) NOT NULL DEFAULT '0',
-	PRIMARY KEY (`session_id`)
+	`session_expire` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ALTER TABLE `session_data` ADD PRIMARY KEY (`session_id`);
 
 -- --------------------------------------------------------
 
@@ -73,11 +73,11 @@ CREATE TABLE `users` (
 	`level` int(11) NOT NULL DEFAULT '0',
 	`validation` varchar(5) COLLATE utf8_bin NOT NULL,
 	`recover_code_due_date` date NOT NULL,
-	`creation_date` date NOT NULL,
-	PRIMARY KEY (`IDuser`),
-	UNIQUE KEY `nick` (`nick`),
-	UNIQUE KEY `email` (`email`)
+	`creation_date` date NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE `users` ADD PRIMARY KEY (`IDuser`);
+ALTER TABLE `users` ADD UNIQUE KEY `nick` (`nick`);
+ALTER TABLE `users` ADD UNIQUE KEY `email` (`email`);
 
 -- --------------------------------------------------------
 
@@ -89,10 +89,10 @@ CREATE TABLE `variables` (
 	`IDuser` int(11) NOT NULL,
 	`IDwidget` int(11) NOT NULL,
 	`variable` varchar(30) COLLATE utf8_bin NOT NULL,
-	`value` text COLLATE utf8_bin NOT NULL,
-	PRIMARY KEY (`IDuser`,`IDwidget`,`variable`),
-	KEY `variables IDwidget` (`IDwidget`)
+	`value` text COLLATE utf8_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE `variables` ADD PRIMARY KEY (`IDuser`,`IDwidget`,`variable`);
+ALTER TABLE `variables` ADD KEY `variables IDwidget` (`IDwidget`);
 
 -- --------------------------------------------------------
 
@@ -108,11 +108,11 @@ CREATE TABLE `widgets` (
 	`images` TEXT NOT NULL COMMENT 'JSON array with the static image filenames', 
 	`ownerID` int(11) NOT NULL,
 	`published` int(11) NOT NULL DEFAULT '-1' COMMENT 'Si se publica cambiar a 0 o + desde php. Nunca volver a -1',
-	`creation_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (`IDwidget`),
-	UNIQUE KEY `name` (`name`),
-	KEY `ownerID` (`ownerID`)
+	`creation_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE `widgets` ADD PRIMARY KEY (`IDwidget`);
+ALTER TABLE `widgets` ADD UNIQUE KEY `name` (`name`);
+ALTER TABLE `widgets` ADD KEY `ownerID` (`ownerID`);
 
 -- --------------------------------------------------------
 
@@ -125,9 +125,9 @@ CREATE TABLE `widgets-content` (
 	`version` int(11) NOT NULL,
 	`name` varchar(50) COLLATE utf8_bin NOT NULL,
 	`hash` varchar(32) COLLATE utf8_bin NOT NULL,
-	`mimetype` text COLLATE utf8_bin NOT NULL,
-	PRIMARY KEY (`IDwidget`,`version`,`name`)
+	`mimetype` text COLLATE utf8_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE `widgets-content` ADD PRIMARY KEY (`IDwidget`,`version`,`name`);
 
 -- --------------------------------------------------------
 
@@ -139,10 +139,10 @@ CREATE TABLE `widgets-user` (
 	`IDuser` int(11) NOT NULL,
 	`IDwidget` int(11) NOT NULL,
 	`autoupdate` tinyint(1) NOT NULL DEFAULT '1',
-	`version` int(11) NOT NULL COMMENT 'Mirar cuando autoupdate = 0',
-	PRIMARY KEY (`IDuser`,`IDwidget`),
-	KEY `widgets-user IDwidget` (`IDwidget`)
+	`version` int(11) NOT NULL COMMENT 'Mirar cuando autoupdate = 0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE `widgets-user` ADD PRIMARY KEY (`IDuser`,`IDwidget`);
+ALTER TABLE `widgets-user` ADD KEY `widgets-user IDwidget` (`IDwidget`);
 
 -- --------------------------------------------------------
 
@@ -156,9 +156,9 @@ CREATE TABLE `widgets-versions` (
 	`public` tinyint(1) NOT NULL COMMENT '0 = privada, 1 = pública',
 	`visible` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 = oculto, 1 = visible',
 	`comment` tinytext COLLATE utf8_bin NOT NULL,
-	`creation_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (`IDwidget`,`version`)
+	`creation_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE `widgets-versions` ADD PRIMARY KEY (`IDwidget`,`version`);
 
 --
 -- Constraints for dumped tables
