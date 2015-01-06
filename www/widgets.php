@@ -13,6 +13,7 @@ $options = array(
 	,'user-using-list'                   => 0 // Get
 	
 	,'user-created-create'               => 1 // Set
+	,'user-created-update'               => 1 // Set
 	,'user-created-version-add'          => 1 // Set
 	,'user-created-version-remove'       => 1 // Set
 	,'user-created-version-info-edit'    => 1 // Set
@@ -88,7 +89,7 @@ function user_created_list(&$db) {
 }
 
 function global_list_search(&$db) {
-	if ($_POST['search'] === '') return global_list($db);
+	if (!isset($_POST['search']) || $_POST['search'] === '') return global_list($db);
 	$widgets = $db->search_availabe_widgets_user($_POST['search']);
 	$result = generate_widget_array($widgets);
 	end_ok($result);
@@ -101,6 +102,7 @@ function global_list_search(&$db) {
 
 
 ,'user-created-create'               => 1 // Set
+,'user-created-update'               => 1 // Set
 ,'user-created-version-add'          => 1 // Set
 ,'user-created-version-remove'       => 1 // Set
 ,'user-created-version-info-edit'    => 1 // Set
@@ -122,6 +124,14 @@ function user_using_remove(&$db) {
 	end_ok($result);
 }
 
+function user_created_create(&$db) {
+	if(isset($_POST['name']) && $_POST['name'] !== '' && preg_match('@[a-zA-Z0-9 ]{1,30}@', $_POST['name'])){
+		$result = $db->create_widget($_POST['name']);
+		end_ok($result);
+	} else {
+		end_fail('invalid widget name');
+	}
+}
 
 
 
@@ -161,6 +171,7 @@ function return_widget_array_element(&$widget) {
 		'name'            => $widget['name'],
 		'description'     => isset_and_default($widget, 'description', 'No description available.'),
 		'fulldescription' => isset_and_default($widget, 'fulldescription', 'No full description available.'),
+		'preview'         => isset_and_default($widget, 'preview', '128.jpg'),
 		'images'          => json_decode(isset_and_default($widget, 'images', '[]')),
 		//'token'           => hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA),
 		'version'         => isset_and_default($widget, 'version', ''),
@@ -189,6 +200,10 @@ function end_ok(&$array_response) {
 }
 
 function end_fail($txt) {
-	echo '{"status":"FAIL","problem":"'.$txt.'"}';
+	$response = array (
+		'status' => 'FAIL'
+		,'problem' => $txt
+	);
+	echo json_encode($response);
 	exit;
 }

@@ -147,7 +147,6 @@ function submit(){
 	}
 	
 	API.xhr(url, data, function(data){
-		data = JSON.parse(data);
 		if(data.status === 'OK'){
 			if(register.checked){
 				ok('Please, check you e-mail inbox to validate your account');

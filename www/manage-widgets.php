@@ -93,7 +93,6 @@
 				'widgets?action=' + action,
 				'last=' + last + '&' + post,
 				function (data) {
-					data = JSON.parse(data);
 					if (data.status === 'OK') {
 						widgets = [];
 						for (var i = 0; i < data.response.length; i++) {
@@ -168,7 +167,6 @@
 				'widgets?action=' + action,
 				'IDwidget=' + data2.IDwidget,
 				function (data) {
-					data = JSON.parse(data);
 					if (data.status === 'OK') {
 						w.setUsingStatus(!data2.inuse);
 					}

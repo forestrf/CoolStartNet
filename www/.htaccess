@@ -40,6 +40,14 @@
 	#####################################
 	
 	RewriteRule ^widgetfile/([0-9]+)/(static|api|[0-9]+)/(.+)$ file.php?widgetID=$1&mode=$2&name=$3 [NC,L]
+	
+	
+	
+	#####################################
+	# widgets shortcut
+	#####################################
+	
+	RewriteRule ^widgets/([0-9a-zA-Z-]+)$ widgets.php?action=$1 [NC,L]
 
 	
 	

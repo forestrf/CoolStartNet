@@ -65,7 +65,7 @@ ALTER TABLE `session_data` ADD PRIMARY KEY (`session_id`);
 --
 
 CREATE TABLE `users` (
-	`IDuser` int(11) NOT NULL AUTO_INCREMENT,
+	`IDuser` int(11) NOT NULL,
 	`nick` varchar(15) COLLATE utf8_bin NOT NULL,
 	`password` varchar(32) COLLATE utf8_bin NOT NULL,
 	`email` varchar(50) COLLATE utf8_bin NOT NULL,
@@ -76,6 +76,7 @@ CREATE TABLE `users` (
 	`creation_date` date NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `users` ADD PRIMARY KEY (`IDuser`);
+ALTER TABLE `users` MODIFY COLUMN `IDuser` int(11) AUTO_INCREMENT;
 ALTER TABLE `users` ADD UNIQUE KEY `nick` (`nick`);
 ALTER TABLE `users` ADD UNIQUE KEY `email` (`email`);
 
@@ -101,7 +102,7 @@ ALTER TABLE `variables` ADD KEY `variables IDwidget` (`IDwidget`);
 --
 
 CREATE TABLE `widgets` (
-	`IDwidget` int(11) NOT NULL AUTO_INCREMENT,
+	`IDwidget` int(11) NOT NULL,
 	`name` varchar(30) COLLATE utf8_bin NOT NULL,
 	`description` TEXT NOT NULL, 
 	`fulldescription` TEXT NOT NULL, 
@@ -111,6 +112,7 @@ CREATE TABLE `widgets` (
 	`creation_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `widgets` ADD PRIMARY KEY (`IDwidget`);
+ALTER TABLE `widgets` MODIFY COLUMN `IDwidget` int(11) AUTO_INCREMENT;
 ALTER TABLE `widgets` ADD UNIQUE KEY `name` (`name`);
 ALTER TABLE `widgets` ADD KEY `ownerID` (`ownerID`);
 

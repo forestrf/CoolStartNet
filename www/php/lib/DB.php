@@ -89,7 +89,7 @@ class DB {
 			if($cacheable){
 				$this->cacheResult($query, $resultArray);
 			}
-			if($this->d) $this->debug('<span class="info">query</span>: <span class="query">'.$query."</span>\r\n<span class='info'>result</span>: <b class=\"".($result?'ok">TRUE':'fail">FALSE')."</b>\r\n");
+			if($this->d) $this->debug('<span class="info">query</span>: <span class="query">'.$query."</span>\r\n<span class='info'>result</span>: <b class=\"".($result?'ok">TRUE':'fail">FALSE ('.$this->mysqli->error.')')."</b>\r\n");
 			return $result;
 		}
 		
@@ -519,7 +519,7 @@ class DB {
 	}
 	
 	// Create a version of the widget.
-	function create_widget_version($widgetID){
+	function create_widget_version($widgetID, &$new_version){
 		if(!$this->CanIModifyWidget($widgetID)){
 			return false;
 		}

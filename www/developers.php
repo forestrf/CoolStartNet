@@ -27,14 +27,15 @@
 		GitHub
 		*/
 		
-		var widgets_menu, own_widgets_list, developers_menu, developers_back, widgets_back;
+		var widgets_menu, own_widgets_list, developers_menu, developers_back, widgets_back,
+		create_button, create_name;
 		
 		C(div,
 			C("div", ["class", "left panel"],
 				widgets_menu = C("div",
 					C("div", ["class", "create"],
-						C("input", ["class", "name", "placeholder", "Widget name"]),
-						C("input", ["class", "button", "type","button", "value", "Create widget"])
+						create_name = C("input", ["class", "name", "placeholder", "Widget name"]),
+						create_button = C("input", ["class", "button", "type","button", "value", "Create widget"])
 					),
 					C("div", ["class", "manage"],
 						"Manage your own widgets",
@@ -63,6 +64,23 @@
 				developers_space = C("div", ["class", "developers_space"])
 			)
 		);
+		
+		create_button.onclick = function() {
+			API.xhr(
+				'widgets?action=user-created-create',
+				'name=' + create_name.value,
+				function (data) {
+					if (data.status === 'OK') {
+						refresh_widgets_list();
+					}
+				}
+			);
+		}
+		
+		
+		
+		
+		
 		
 		function show_docs(path) {
 			if (path === undefined || typeof path !== "string") {
@@ -112,16 +130,58 @@
 			widgs_fwd();
 			
 			C(widgets_space,
-				C("input", ["type", "text", "value", data.name, "name", "name"]), "Name", C("br"),
-				C("input", ["type", "text", "value", data.description, "name", "description"]), "Description", C("br"),
-				C("input", ["type", "file", "value", data.image, "name", "image"]), "Image", C("br"),
-				C("input", ["type", "text", "value", data.tags, "name", "tags"]), "Tags (Comma-separated)", C("br"),
+				C("form", ["onsubmit", update],
+					C("input", ["type", "hidden", "name", "IDwidget", "value", data.IDwidget]),
+					C("table",
+						C("tr",
+							C("td", "Name"),
+							C("td", C("input", ["type", "text", "value", data.name, "name", "name"]))
+						),
+						C("tr",
+							C("td", "Description"),
+							C("td", C("input", ["type", "text", "value", data.description, "name", "description"]))
+						),
+						C("tr",
+							C("td", "Full Description"),
+							C("td", C("textarea", ["name", "fulldescription"], data.fulldescription))
+						),
+						C("tr",
+							C("td", "Image"),
+							C("td", C("img", ["src", IPA.widgetImage(data.IDwidget, data.preview)]), C("input", ["type", "file", "value", data.image, "name", "image"]))
+						),
+						C("tr",
+							C("td", C("input", ["type", "reset", "value", "Reset"])),
+							C("td", C("input", ["type", "submit", "value", "Update"]))
+						)
+					)
+				),
 				"Versions", C("br")
 			);
 			
 			console.log(data);
 			
 			widgets_space.appendChild(C("div"));
+			
+			function update(event) {
+				event.preventDefault();
+				console.log(event);
+				//debugger;
+				var formData = new FormData(event.originalTarget);
+				API.xhr(
+					'widgets/user-created-update',
+					formData,
+					function (data) {
+						if (data.status === 'OK') {
+							alert("Widget updated");
+						} else {
+							alert("There was a problem updating the widget");
+						}
+					},
+					function () {
+						alert("There was a problem updating the widget");
+					}
+				);
+			}
 		}
 		
 		
@@ -129,28 +189,27 @@
 		
 		
 		
-		
-		API.xhr(
-			'widgets?action=user-created-list',
-			'',
-			function (data) {
-				data = JSON.parse(data);
-				if (data.status === "OK") {
-					for (var i = 0, l = data.response.length; i < l; i++) {
-						own_widgets_list.appendChild(generate_widget(data.response[i]));
+		function refresh_widgets_list() {
+			API.xhr(
+				'widgets?action=user-created-list',
+				'',
+				function (data) {
+					if (data.status === "OK") {
+						for (var i = 0, l = data.response.length; i < l; i++) {
+							own_widgets_list.appendChild(generate_widget(data.response[i]));
+						}
 					}
 				}
-			}
-		);
+			);
+		}
+		refresh_widgets_list();
 		
 		function generate_widget(data) {
-			var widget = generate_widget_element(data);
-			
-			widget.appendChild(
-				C("div", ["class", "settings", "onclick", function(){
-					manage_widget(data)
-				}], "M A N A G E")
-			);
+			var widget = generate_widget_element(data, IPA);
+			widget.buttonuse.remove();
+			widget.onclick = function(){
+				manage_widget(data)
+			};
 			
 			return widget;
 		}

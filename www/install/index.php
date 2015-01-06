@@ -66,9 +66,9 @@ switch ($steep) {
 		$widgets = array(
 			'global' => array(
 				'background_images' => array(
-					array('img/bg/caldeum_by_tituslunter-d5qinlq.jpg','#000000','e','m','n','http://tituslunter.deviantart.com/art/Caldeum-346871294'),
-					array('img/bg/stronghold_by_tituslunter-d5pno2d.jpg','#000000','e','m','n','http://tituslunter.deviantart.com/art/Stronghold-345425557'),
-					array('img/bg/view_afternoon_in_the_future_by_campanoo-d6dvcta.jpg','#000000','e','m','n','http://campanoo.deviantart.com/art/view-afternoon-in-the-future-386095006')
+					array('img/bg/caldeum_by_tituslunter-d5qinlq.jpg','http://tituslunter.deviantart.com/art/Caldeum-346871294'),
+					array('img/bg/stronghold_by_tituslunter-d5pno2d.jpg','http://tituslunter.deviantart.com/art/Stronghold-345425557'),
+					array('img/bg/view_afternoon_in_the_future_by_campanoo-d6dvcta.jpg','http://campanoo.deviantart.com/art/view-afternoon-in-the-future-386095006')
 				)
 			),
 			'Background image' => array(),
@@ -173,7 +173,7 @@ switch ($steep) {
 			if (isset($widget['images'])) {
 				$db->set_widget_images($IDwidget, json_encode($widget['images']));
 			}
-			$db->create_widget_version($IDwidget);
+			$db->create_widget_version($IDwidget, $version);
 			foreach ($widget['files'] as &$file) {
 				$file_contents = file_get_contents($file['path']);
 				$v = in_array($file['name'], $widget['staticfiles']) ? -1 : $version;

@@ -6,10 +6,10 @@ var fondoDiv = API.widget.create();
 var fondoDiv2 = API.widget.create();
 
 // Style the background div
-fondoDiv.addClass('background_widget_bg1');
+fondoDiv.addClass('background_widget_bg').addClass('bg1');
 
 // Style of the inner background div (used for transitioning backgrounds)
-fondoDiv2.addClass('background_widget_bg2');
+fondoDiv2.addClass('background_widget_bg').addClass('bg2');
 fondoDiv2.style.opacity = 0;
 
 
@@ -59,37 +59,37 @@ API.storage.localStorage.get('backgrounds', function(entrada){
 
 
 var next = 0;
-var interval;
 
 function launch(){
-	
-	// next === backgrounds.length => nearly impossible
-	var next = Math.floor(Math.random() *backgrounds.length);
-	setBackground(fondoDiv, backgrounds[next]);
-	
-	next = Math.floor(Math.random() *backgrounds.length);
+	next = calcNext();
 	setBackground(fondoDiv2, backgrounds[next]);
 
+	interval();
+}
 
-	// Interval to change backgrounds over time
-	interval = setInterval(function(){
-		next = Math.floor(Math.random() *backgrounds.length);
-		
-		if(fondoDiv2.style.opacity === '1'){
-			fondoDiv2.style.opacity = 0;
-			var nextDiv = fondoDiv2;
-		}
-		else{
-			fondoDiv2.style.opacity = 1;
-			var nextDiv = fondoDiv;
-		}
-		
-		//Preload the next background
-		setTimeout(function(){
-			setBackground(nextDiv, backgrounds[next]);
-		}, transitionTime);
-		
-	}, - -delayBackground - -transitionTime);
+function calcNext() {
+	return Math.floor(Math.random() *backgrounds.length);
+}
+
+// Interval to change backgrounds over time
+function interval() {
+	if(fondoDiv2.style.opacity === '1'){
+		fondoDiv2.style.opacity = 0;
+		var nextDiv = fondoDiv2;
+	}
+	else{
+		fondoDiv2.style.opacity = 1;
+		var nextDiv = fondoDiv;
+	}
+	
+	next = calcNext();
+	
+	//Preload the next background
+	setTimeout(function(){
+		setBackground(nextDiv, backgrounds[next]);
+	}, transitionTime);
+	
+	setTimeout(interval, +delayBackground + +transitionTime);
 }
 
 
@@ -98,13 +98,7 @@ function launch(){
 function setBackground(div, background){
 	background = API.dropbox.getFileURI(background);
 	div.style.backgroundImage = 'url("'+background+'")';
-	div.style.backgroundColor = '#000';
-	div.style.backgroundPosition = 'center center';
-	div.style.backgroundRepeat = 'no-repeat';
-	div.style.backgroundSize = 'cover';
 }
-
-
 
 
 
@@ -144,8 +138,6 @@ var CONFIG_function = function(){
 						API.dropbox.getPathContents('/wallpapers', function(data){
 							if(data){
 								backgrounds = data['files'];
-								clearInterval(interval);
-								launch();
 								API.storage.remoteStorage.set('backgrounds', backgrounds, function(status){
 									alert(status ? 'Cache refreshed!' : 'Cache refresh failed!');
 								});

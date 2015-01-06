@@ -1,10 +1,10 @@
-// Requires IPA.js
+// Requires IPA.js and API.js
 function generate_widget_element(data, IPA, useFunc, removeFunc) {
 	var m, M, buttonuse, w = crel2('div', ['class', 'widget_element'],
 		m = crel2('div', ['class', 'minimized'],
 			crel2('div', ['class', 'image'],
 				crel2('div', ['class', 'image_bg']),
-				crel2('img', ['class', 'image_front', 'src', IPA.widgetImage(data.IDwidget, '128.jpg')])
+				crel2('img', ['class', 'image_front', 'src', IPA.widgetImage(data.IDwidget, data.preview)])
 			),
 			crel2('div', ['class', 'name'], data.name),
 			crel2('div', ['class', 'description'], data.description),
@@ -13,6 +13,7 @@ function generate_widget_element(data, IPA, useFunc, removeFunc) {
 	);
 	
 	w.body = m;
+	w.buttonuse = buttonuse;
 	
 	w.minimized = true;
 	

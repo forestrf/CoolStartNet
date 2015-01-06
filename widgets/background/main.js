@@ -7,10 +7,10 @@ var fondoDiv2 = API.widget.create();
 var source = API.widget.create();
 
 // Style the background div
-fondoDiv.addClass('background_widget_bg1');
+fondoDiv.addClass('background_widget_bg').addClass('bg1');
 
 // Style of the inner background div (used for transitioning backgrounds)
-fondoDiv2.addClass('background_widget_bg2');
+fondoDiv2.addClass('background_widget_bg').addClass('bg2');
 fondoDiv2.style.opacity = 0;
 
 source.addClass('background_widget_source');
@@ -23,30 +23,6 @@ fondoDiv.setSource = fondoDiv2.setSource = function(url) {
 }
 
 
-
-var relations = {
-	0:'backgroundImage',
-	1:'backgroundColor',
-	2:'backgroundPosition',
-	3:'backgroundRepeat',
-	4:'backgroundSize',
-	'a':'left top',
-	'b':'left center',
-	'c':'left bottom',
-	'd':'center top',
-	'e':'center center',
-	'f':'center bottom',
-	'g':'right top',
-	'h':'right center',
-	'i':'right bottom',
-	'j':'repeat',
-	'k':'repeat-x',
-	'l':'repeat-y',
-	'm':'no-repeat',
-	'n':'cover',
-	'o':'contain',
-	'p':'auto'
-};
 
 
 // Default variables
@@ -74,77 +50,53 @@ API.storage.sharedStorage.get('background_delay', function(entrada){
 
 
 
-
-
-var launched = false;
 var next = 0;
 
-var intervalPlaceHolder;
-
-function launch(force){
-	if(force === true){
-		if(launched){
-			clearInterval(intervalPlaceHolder);
-		}
-	}
-	else if(launched){
-		return;
-	}
-	launched = true;
-	
-	// next === backgrounds.length => nearly impossible
-	var next = Math.floor(Math.random() *backgrounds.length);
-
-
-	setBackground(fondoDiv, backgrounds[next]);
-	if (backgrounds[next].length === 6) {
-		fondoDiv.setSource(backgrounds[next][5]);
-	}
-
-	if(++next > backgrounds.length -1){
-		next = 0;
-	}
-
+function launch(){
+	next = calcNext();
 	setBackground(fondoDiv2, backgrounds[next]);
 
+	interval();
+}
 
-	// Interval to change backgrounds over time
-	intervalPlaceHolder = setInterval(function(){
-		if(++next > backgrounds.length -1){
-			next = 0;
-		}
-		if(fondoDiv2.style.opacity === '1'){
-			fondoDiv2.style.opacity = 0;
-			var nextDiv = fondoDiv2;
-		}
-		else{
-			fondoDiv2.style.opacity = 1;
-			var nextDiv = fondoDiv;
-			if (backgrounds[next].length === 6) {
-				fondoDiv2.setSource(backgrounds[next][5]);
-			}
-		}
-		
-		//Preload the next background
-		setTimeout(function(){
-			setBackground(nextDiv, backgrounds[next]);
-		}, transitionTime);
-		
-	}, - -delayBackground - -transitionTime);
+function calcNext() {
+	return Math.floor(Math.random() *backgrounds.length);
+}
+
+// Interval to change backgrounds over time
+function interval() {
+	if(fondoDiv2.style.opacity === '1'){
+		fondoDiv2.style.opacity = 0;
+		var nextDiv = fondoDiv2;
+		var currentDiv = fondoDiv;
+	}
+	else{
+		fondoDiv2.style.opacity = 1;
+		var nextDiv = fondoDiv;
+		var currentDiv = fondoDiv2;
+	}
+	
+	if (backgrounds[next].length > 1)
+		currentDiv.setSource(backgrounds[next][1]);
+	else
+		currentDiv.setSource();
+	
+	next = calcNext();
+	
+	//Preload the next background
+	setTimeout(function(){
+		setBackground(nextDiv, backgrounds[next]);
+	}, transitionTime);
+	
+	setTimeout(interval, +delayBackground + +transitionTime);
 }
 
 
 
 // Change the style of a div to make it a background with the options of the background variable
 function setBackground(div, background){
-	div.style[relations[0]] = 'url("'+background[0]+'")';
-	div.style[relations[1]] = background[1];
-	for(var i = 2; i < 5; ++i){
-		div.style[relations[i]] = relations[background[i]];
-	}
+	div.style.backgroundImage = 'url("'+background[0]+'")';
 }
-
-
 
 
 
@@ -204,7 +156,7 @@ var CONFIG_function = function(){
 	
 	function addBackground(){
 		// This is the default background
-		backgrounds_copy.push(['','#000000','e','m','n']);
+		backgrounds_copy.push(['']);
 		tableBackgrounds.appendChild(createBGTableElement(backgrounds_copy[backgrounds_copy.length-1]));
 	}
 	
@@ -235,8 +187,6 @@ var CONFIG_function = function(){
 				alert('NOT saved.');
 			}
 		});*/
-		
-		launch(true);
 	}
 	
 	
@@ -267,58 +217,6 @@ var CONFIG_function = function(){
 							])
 						),
 						C('td', 'URL of the background')
-					),
-					// COLOR input
-					C('tr',
-						C('td',
-							C('input', [
-								'type', 'text',
-								'placeholder', '#000000',
-								'value', background ? background[1] : '#000000',
-								'onchange', function(){background[1] = this.value;}
-							])
-						),
-						C('td', 'Hexadecimal color to fill the background outsides')
-					),
-					// POSITION input
-					C('tr',
-						C('td',
-							C('select', ['onchange', function(){background[2] = this.value;}],
-								C('option', ['value', 'e'], 'center center'),
-								C('option', ['value', 'd'], 'center top'),
-								C('option', ['value', 'f'], 'center bottom'),
-								C('option', ['value', 'a'], 'left top'),
-								C('option', ['value', 'b'], 'left center'),
-								C('option', ['value', 'c'], 'left bottom'),
-								C('option', ['value', 'g'], 'right top'),
-								C('option', ['value', 'h'], 'right center'),
-								C('option', ['value', 'i'], 'right bottom')
-							)
-						),
-						C('td', 'Position of the background')
-					),
-					// REPEAT input
-					C('tr',
-						C('td',
-							C('select', ['onchange', function(){background[3] = this.value;}],
-								C('option', ['value', 'j'], 'Repeat'),
-								C('option', ['value', 'k'], 'Repeat horizontally'),
-								C('option', ['value', 'l'], 'Repeat vertically'),
-								C('option', ['value', 'm'], 'No repeat')
-							)
-						),
-						C('td', 'Background repeating to fill the window')
-					),
-					// SIZE input
-					C('tr',
-						C('td',
-							C('select', ['onchange', function(){background[4] = this.value;}],
-								C('option', ['value', 'n'], 'Fit Best and maintain Aspect Ratio (Clip Edges)'),
-								C('option', ['value', 'o'], 'Fit Best and maintain Aspect Ratio (No Clipping)'),
-								C('option', ['value', 'p'], 'Original size')
-							)
-						),
-						C('td', 'How the background scales to fill the window')
 					),
 					// REMOVE input
 					C('tr',

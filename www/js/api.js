@@ -132,17 +132,28 @@
 			x = new ActiveXObject("Microsoft.XMLHTTP");
 		}
 		x.open('POST', url, true);
-		x.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		x.timeout = 5000;
 		x.onreadystatechange = x.ontimeout = function () {
 			if (x.readyState == 4) {
 				if (x.status == 200) {
-					callbackOK(x.responseText);
+					// Don`t fail if it is not a json
+					try {
+						var response = JSON.parse(x.responseText);
+					} catch(e) {
+						callbackFAIL();
+						return;
+					}
+					callbackOK(response);
 				} else {
 					callbackFAIL();
 				}
 			}
 		};
+		
+		if (typeof data === "string") {
+			x.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		}
+		// else data = new FormData(); ...
 		
 		x.send(data);
 	}
@@ -749,11 +760,6 @@
 				"dropbox": {
 					"getPathContents": function (path, callback) {
 						xhr('/external', 'm=0&path='+encodeURIComponent(path), function (response) {
-							try {
-								response = JSON.parse(response);
-							} catch (e) {
-								callback(null);
-							}
 							
 							// Go over the cb and generate a response
 							if (response && response.folders && response.files) {
@@ -772,11 +778,6 @@
 					"available": function (callback) {
 						if (callback === undefined) callback = function () {};
 						xhr('/external', 'm=1', function (response) {
-							try {
-								response = JSON.parse(response);
-							} catch (e) {
-								callback(false);
-							}
 							
 							// Go over the cb and generate a response
 							if (response && response.available) {
