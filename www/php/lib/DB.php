@@ -734,8 +734,8 @@ class DB {
 			
 			$user_owned_published = $this->query("SELECT `published` FROM `widgets` WHERE `IDwidget` = '{$widgetID}' AND `ownerID` = '{$this->userID}'");
 			
-			if (isset($user_owned_published[0])) {
-				if ($user_owned_published[0] === '-1') {
+			if (isset($user_owned_published[0]['published'])) {
+				if ($user_owned_published[0]['published'] === '-1') {
 					return false;
 				} else {
 					$widgetObject = $this->get_widget_last_version($widgetID, false);
