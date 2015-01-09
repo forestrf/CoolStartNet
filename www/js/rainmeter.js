@@ -98,3 +98,18 @@ function local_timestamp() {
 	var t = new Date();
 	return (t.getTime() - t.getTimezoneOffset()*60*1000)/1000;
 }
+
+// http://docs.rainmeter.net/manual/formulas
+function resolve_formula_no_calc(txt) {
+	if (/[a-zA-Z]/.test(txt)) return txt;
+
+	var r = /\([^(]*?\)/.exec(txt);
+	var t = r[0];
+	var r = eval(r[0]);
+	txt = txt.replace(t, r);
+	console.log(txt)
+	if (txt.indexOf('(') !== -1) {
+		txt = resolve_formula_no_calc(txt);
+	}
+	return txt;
+}

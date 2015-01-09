@@ -227,6 +227,16 @@ function file_mimetype($filename) {
 			return 'image/tiff';
 		case 'txt': case 'conf':
 			return 'text/plain';
+		case 'svg':
+			return 'image/svg+xml';
+		case 'ttf':
+			return 'application/x-font-ttf';
+		case 'otf':
+			return 'application/x-font-opentype';
+		case 'woff':
+			return 'application/font-woff';
+		case 'eot':
+			return 'application/vnd.ms-fontobject';
 		case 'vcf':
 			return 'text/x-vcard';
 		case 'wav':

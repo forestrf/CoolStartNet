@@ -122,6 +122,10 @@ switch ($steep) {
 				//var_dump($info);
 				$widget = json_decode($info, true);
 				
+				if (strlen($widget['name']) > 30 ) {
+					$widget['name'] = substr($entry, 0, 30);
+				}
+				
 				$widget['files'] = array();
 				
 				$widget_d = dir($widget_path);

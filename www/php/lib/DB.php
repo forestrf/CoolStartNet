@@ -580,28 +580,6 @@ class DB {
 		return count($result) > 0 ? $result[0] : false;
 	}
 	
-	// POR TESTEAR
-	// Retorna la versión default o de lo contrario la versión pública más avanzada
-	function get_widget_default_version($widgetID){
-		$widgetID = mysql_escape_mimic($widgetID);
-		$public_version = $this->query("SELECT * FROM `widgets` WHERE `IDwidget` = '{$widgetID}' AND `published` > -1;");
-		if($public_version){
-			$public_version = $public_version[0]['published'];
-			$public_version_1 = $this->query("SELECT * FROM `widgets-versions` WHERE `IDwidget` = '{$widgetID}' AND `public` = '1' AND `visible` = '1' AND `version` = '{$public_version}' ORDER BY `version`;");
-			if($public_version_1){
-				return $public_version_1[0];
-			}
-			else{
-				return $this->get_widget_last_version($widgetID, true);
-			}
-		}
-		else{
-			if($this->query("SELECT * FROM `widgets` WHERE `IDwidget` = '{$widgetID}' AND `ownerID` = '{$this->userID}';")){
-				return $this->get_widget_last_version($widgetID, false);
-			}	
-		}
-		return false;
-	}
 	
 	
 	# ---------------------------------------------------------------------------
@@ -748,16 +726,25 @@ class DB {
 			$widgetObject = $this->get_widget_user($WidgetID_o_widgetObject);
 		}
 		else{
-			$widgetObject = &$WidgetID_o_widgetObject;
+			$widgetObject = $WidgetID_o_widgetObject;
 		}
 		
 		if($widgetObject['autoupdate'] === '1'){
-			$version = $this->get_widget_default_version($widgetObject['IDwidget']);
-			return $version['version'];
+			$widgetID = $widgetObject['IDwidget'];
+			
+			$user_owned_published = $this->query("SELECT `published` FROM `widgets` WHERE `IDwidget` = '{$widgetID}' AND `ownedID` = '{$this->userID}'");
+			
+			if (isset($user_owned_published[0])) {
+				if ($user_owned_published[0] === '-1') {
+					return false;
+				} else {
+					$widgetObject = $this->get_widget_last_version($widgetID, false);
+				}
+			} else {
+				$widgetObject = $this->get_widget_last_version($widgetID, true);
+			}
 		}
-		else{
-			return $widgetObject['version'];
-		}
+		return $widgetObject['version'];
 	}
 	
 	// Sets the widget version (number) used for the especified widget ID for the user.

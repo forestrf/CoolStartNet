@@ -83,13 +83,6 @@
 		xhr('api', data, function (response) { //OK
 			var i = 0;
 			//console.log(xhr.responseText);
-			try {
-				response = JSON.parse(response);
-			} catch(e) {
-				while (i < cb.length) {
-					cb[i++].callback(null);
-				}
-			}
 			
 			// Go over the cb and generate a response
 			if (response && response.response && response.response === 'OK') {
@@ -619,6 +612,12 @@
 		document.getElementsByTagName("head")[0].appendChild(link);
 	}
 	
+	function create_css(css_text) {
+		var newStyle = document.createElement('style');
+		newStyle.appendChild(document.createTextNode(css_text));
+		document.getElementsByTagName("head")[0].appendChild(newStyle);
+	}
+	
 	function create_script_src(src, callback) {
 		var s = document.createElement('script');
 		s.setAttribute('src', src);
@@ -719,6 +718,10 @@
 					},
 					"linkExternalCSS": function (href) {
 						create_link_css(href);
+						return this; //API.widget
+					},
+					"InlineCSS": function (css_txt) {
+						create_css(css_txt);
 						return this; //API.widget
 					},
 					"linkMyJS": function (name, callback) {
