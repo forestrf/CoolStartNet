@@ -255,6 +255,11 @@ class DB {
 		return count($result) > 0 ? $result[0] : false;
 	}
 	
+	// global is a invisible widget with id -1
+	function calc_widgetID($widgetID_mixed) {
+		return $widgetID_mixed === 'global' ? '-1' : substr($widgetID_mixed, 0, strpos($widgetID_mixed, '-'));
+	}
+	
 	// Returns a variable of the user.
 	// $widgetID_variable must be an array that follows the next pattern:
 	/*
@@ -271,7 +276,7 @@ class DB {
 			$widgetID = mysql_escape_mimic($widgetID);
 			
 			// Global widget handler here
-			$widgetID_calc = $widgetID === 'global' ? '-1' : $widgetID; //global is a invisible widget with id -1
+			$widgetID_calc = $this->calc_widgetID($widgetID);
 			
 			// Ignore value
 			foreach($variables as $variable => &$value){
@@ -291,7 +296,7 @@ class DB {
 			$widgetID = mysql_escape_mimic($widgetID);
 			
 			// Global widget handler here
-			$widgetID_calc = $widgetID === 'global' ? '-1' : $widgetID; //global is a invisible widget with id -1
+			$widgetID_calc = $this->calc_widgetID($widgetID);
 			
 			// Ignore value
 			foreach($variables as $variable => &$value){
@@ -322,7 +327,7 @@ class DB {
 			$widgetID = mysql_escape_mimic($widgetID);
 			
 			// Global widget handler here
-			$widgetID_calc = $widgetID === 'global' ? '-1' : $widgetID; //global is a invisible widget with id -1
+			$widgetID_calc = $this->calc_widgetID($widgetID);
 			
 			foreach($variable_value as $variable => &$value){
 				$value = json_encode($value);
@@ -376,7 +381,7 @@ class DB {
 			$widgetID = mysql_escape_mimic($widgetID);
 			
 			// Global widget handler here
-			$widgetID_calc = $widgetID === 'global' ? '-1' : $widgetID; //global is a invisible widget with id -1
+			$widgetID_calc = $this->calc_widgetID($widgetID);
 			
 			foreach($variable_value as $variable => &$value){
 				$variable = mysql_escape_mimic($variable);
@@ -397,7 +402,7 @@ class DB {
 			if($private_only && $widgetID === 'global'){
 				continue;
 			}
-			$widgetID_calc = $widgetID === 'global' ? '-1' : $widgetID; //global is a invisible widget with id -1
+			$widgetID_calc = $this->calc_widgetID($widgetID);
 			
 			$SQL_statement[] = "`IDwidget` = '{$widgetID_calc}'";
 		}
