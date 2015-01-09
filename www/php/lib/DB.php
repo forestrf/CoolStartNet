@@ -732,7 +732,7 @@ class DB {
 		if($widgetObject['autoupdate'] === '1'){
 			$widgetID = $widgetObject['IDwidget'];
 			
-			$user_owned_published = $this->query("SELECT `published` FROM `widgets` WHERE `IDwidget` = '{$widgetID}' AND `ownedID` = '{$this->userID}'");
+			$user_owned_published = $this->query("SELECT `published` FROM `widgets` WHERE `IDwidget` = '{$widgetID}' AND `ownerID` = '{$this->userID}'");
 			
 			if (isset($user_owned_published[0])) {
 				if ($user_owned_published[0] === '-1') {
