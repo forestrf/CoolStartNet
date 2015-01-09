@@ -257,7 +257,11 @@ class DB {
 	
 	// global is a invisible widget with id -1
 	function calc_widgetID($widgetID_mixed) {
-		return $widgetID_mixed === 'global' ? '-1' : substr($widgetID_mixed, 0, strpos($widgetID_mixed, '-'));
+		if ($widgetID_mixed === 'global' || strpos($widgetID_mixed, '-1') === 0) {
+			return '-1';
+		} else {
+			return substr($widgetID_mixed, 0, strpos($widgetID_mixed, '-'));
+		}
 	}
 	
 	// Returns a variable of the user.
