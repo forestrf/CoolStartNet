@@ -125,7 +125,7 @@
 			x = new ActiveXObject("Microsoft.XMLHTTP");
 		}
 		x.open('POST', url, true);
-		x.timeout = 5000;
+		x.timeout = 30000;
 		x.onreadystatechange = x.ontimeout = function () {
 			if (x.readyState == 4) {
 				if (x.status == 200) {
