@@ -19,11 +19,11 @@
 // Ignore warnings. They can be harmful for the json response
 error_reporting(E_ALL ^ E_WARNING);
 
-require_once __DIR__.'/php/defaults.php';
-require_once __DIR__.'/php/functions/generic.php';
+require_once __DIR__ . '/php/defaults.php';
+require_once __DIR__ . '/php/functions/generic.php';
 
 $db = open_db_session();
-if(!isset($_SESSION['user'])){
+if (!isset($_SESSION['user'])) {
 	exit;
 }
 
@@ -51,20 +51,20 @@ Perfects:
 1 => Saved perfectly
 */
 
-if(!isset($_POST['data']) || !isset($_POST['action'])){
+if (!isset($_POST['data']) || !isset($_POST['action'])) {
 	fail(1);
 }
 
 $data = &$_POST['data'];
 $action = &$_POST['action'];
 
-if(
-	$action !== 'set' &&
-	$action !== 'get' &&
-	$action !== 'del' &&
+if (
+	$action !== 'set'    &&
+	$action !== 'get'    &&
+	$action !== 'del'    &&
 	$action !== 'delall' &&
 	$action !== 'check'
-){
+) {
 	fail(5);
 }
 
@@ -82,42 +82,39 @@ The request needs a widget ID / the text "public" and a variable
 */
 
 $data_json = json_decode($data, true);
-if($data_json === null){
+if ($data_json === null) {
 	fail(9);
 }
 
 
 widget_variables_valid($data_json);
 
-switch(isset($action)?$action:null){
+switch (isset($action)?$action:null) {
 	case 'get':
 		$response = getHandler($data_json);
 		perfect(json_encode($response));
 	break;
 	case 'set':
 		$response = setHandler($data_json);
-		if(is_array($response) && count($response) > 0){
+		if (is_array($response) && count($response) > 0) {
 			perfect(json_encode($response));
-		}
-		else{
+		} else {
 			fail(json_encode($response));
 		}
 	break;
 	case 'del':
 		$response = delHandler($data_json);
-		if(is_array($response) && count($response) > 0){
+		if (is_array($response) && count($response) > 0) {
 			perfect(json_encode($response));
-		}
-		else{
+		} else {
 			fail(json_encode($response));
 		}
 	break;
 	case 'delall':
 		$response = delallHandler($data_json);
-		if(is_array($response) && count($response) > 0){
+		if (is_array($response) && count($response) > 0) {
 			perfect(json_encode($response));
-		}
-		else{
+		} else {
 			fail(json_encode($response));
 		}
 	break;
@@ -145,16 +142,15 @@ $hashes = array();
 
 // Validate a widget list
 // returns true or false
-function widget_variables_valid(&$widgets){
+function widget_variables_valid(&$widgets) {
 	global $db, $hashes;
-	foreach($widgets as $widgetID => &$variables){
-		if($widgetID != -1){
+	foreach ($widgets as $widgetID => &$variables) {
+		if ($widgetID != -1) {
 			widget_remove_secret($widgetID, $widgetID_real, $secret);
-			if(!validateWidget($widgetID_real, $secret, $hash)){
+			if (!validateWidget($widgetID_real, $secret, $hash)) {
 				unset($widgets[$widgetID]);
-			}
-			else{
-				if(!$db->get_widget_by_ID($widgetID_real)){
+			} else {
+				if (!$db->get_widget_by_ID($widgetID_real)) {
 					unset($widgets[$widgetID]);
 				}
 				$hashes[$widgetID_real] = $widgetID;
@@ -163,21 +159,21 @@ function widget_variables_valid(&$widgets){
 	}
 }
 
-function widget_add_secret(&$widgetID, &$secret){
+function widget_add_secret(&$widgetID, &$secret) {
 	return $widgetID . '-' . $secret;
 }
 
-function widget_remove_secret(&$widgetSecret, &$widgetID, &$secret){
-	$secret = substr($widgetSecret, strpos($widgetSecret, '-')+1);
+function widget_remove_secret(&$widgetSecret, &$widgetID, &$secret) {
+	$secret = substr($widgetSecret, strpos($widgetSecret, '-') + 1);
 	$widgetID = substr($widgetSecret, 0, strpos($widgetSecret, '-'));
 }
 
 // Call before the function widget_variables_valid()
-function getHandler(&$widgets){
+function getHandler(&$widgets) {
 	global $db, $hashes;
 	$array_response = array();
 	$response = $db->get_variable($widgets);
-	foreach($response as &$result){
+	foreach ($response as &$result) {
 		//global is a invisible widget with id -1
 		$array_response[$result['IDwidget'] === '-1' ? '-1' : $hashes[$result['IDwidget']]][$result['variable']] = $result['value'];
 	}
@@ -185,11 +181,11 @@ function getHandler(&$widgets){
 }
 
 // Call before the function widget_variables_valid()
-function checkHandler(&$widgets){
+function checkHandler(&$widgets) {
 	global $db, $hashes;
 	$array_response = array();
 	$response = $db->check_variable($widgets);
-	foreach($response as &$result){
+	foreach ($response as &$result) {
 		//global is a invisible widget with id -1
 		$array_response[$result['IDwidget'] === '-1' ? '-1' : $hashes[$result['IDwidget']]][$result['variable']] = 1;
 	}
@@ -197,12 +193,12 @@ function checkHandler(&$widgets){
 }
 
 // Call before the function widget_variables_valid()
-function setHandler(&$widgets){
+function setHandler(&$widgets) {
 	global $db;
 	$array_response = array();
 	$response = $db->set_variable($widgets);
-	foreach($widgets as $widgetID => &$variables_widget){
-		foreach($variables_widget as $variable => &$value){
+	foreach ($widgets as $widgetID => &$variables_widget) {
+		foreach ($variables_widget as $variable => &$value) {
 			$array_response[$widgetID][$variable] = $response;
 		}
 	}
@@ -210,12 +206,12 @@ function setHandler(&$widgets){
 }
 
 // Call before the function widget_variables_valid()
-function delHandler(&$widgets){
+function delHandler(&$widgets) {
 	global $db, $hashes;
 	$array_response = array();
 	$response = $db->del_variable($widgets);
-	foreach($widgets as $widgetID => &$variables_widget){
-		foreach($variables_widget as $variable => &$value){
+	foreach ($widgets as $widgetID => &$variables_widget) {
+		foreach ($variables_widget as $variable => &$value) {
 			$array_response[$widgetID][$variable] = $response;
 		}
 	}
@@ -223,12 +219,12 @@ function delHandler(&$widgets){
 }
 
 // Call before the function widget_variables_valid()
-function delallHandler(&$widgets){
+function delallHandler(&$widgets) {
 	global $db, $hashes;
 	$array_response = array();
 	$response = $db->delall_variable($widgets, true);
-	foreach($widgets as $widgetID => &$variables_widget){
-		foreach($variables_widget as $variable => &$value){
+	foreach ($widgets as $widgetID => &$variables_widget) {
+		foreach ($variables_widget as $variable => &$value) {
 			$array_response[$widgetID][$variable] = $response;
 		}
 	}
@@ -237,7 +233,7 @@ function delallHandler(&$widgets){
 
 
 
-function validateWidget($widgetID, $secret, &$hash){
+function validateWidget($widgetID, $secret, &$hash) {
 	$hash = hash_api($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_API);
 	return $secret === $hash;
 }
@@ -251,16 +247,16 @@ function validateWidget($widgetID, $secret, &$hash){
 #
 # --------------------------------------------------------------------------------------------------------------
 
-function fail($n){
+function fail($n) {
 	respond('FAIL', $n);
 	exit;
 }
 
-function perfect($n){
+function perfect($n) {
 	respond('OK', $n);
 	exit;
 }
 
-function respond($response, $content){
+function respond($response, $content) {
 	echo '{"response":"'.$response.'","content":'.$content.'}';
 }

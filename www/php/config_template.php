@@ -8,9 +8,6 @@ define('MYSQL_USER', 'root');
 define('MYSQL_PASSWORD', 'password');
 define('MYSQL_DATABASE', 'database_name');
 
-# Seed to generate the hash of the user's password. A password reset is necessary to change this variable.
-define('USER_PASSWORD_HMAC_SEED', 'write random characters here');
-
 # Seed to generate the hash of the ipa token. A cache reset is necessary to change it.
 define('PASSWORD_TOKEN_IPA', 'write random characters here');
 

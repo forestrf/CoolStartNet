@@ -168,15 +168,14 @@ switch ($steep) {
 			}
 			$version = 1;
 			var_dump($IDwidget);
-			if (isset($widget['description'])) {
-				$db->set_widget_description($IDwidget, $widget['description']);
-			}
-			if (isset($widget['fulldescription'])) {
-				$db->set_widget_fulldescription($IDwidget, $widget['fulldescription']);
-			}
-			if (isset($widget['images'])) {
-				$db->set_widget_images($IDwidget, json_encode($widget['images']));
-			}
+			
+			$data = array(
+				'description' => isset_and_default($widget, 'description', ''),
+				'fulldescription' => isset_and_default($widget, 'fulldescription', ''),
+				'images' => isset_and_default($widget, 'images', '')
+			);
+			$db->set_widget_data($IDwidget, $data);
+			
 			$db->create_widget_version($IDwidget, $version);
 			foreach ($widget['files'] as &$file) {
 				$file_contents = file_get_contents($file['path']);

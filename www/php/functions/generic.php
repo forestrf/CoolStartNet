@@ -1,24 +1,23 @@
 <?php
 
-function isInteger($input){
+function isInteger($input) {
     return ctype_digit(strval($input));
 }
 
-function custom_hmac($hash_func='md5', $data, $key, $raw_output=false){
+function custom_hmac($hash_func='md5', $data, $key, $raw_output = false) {
 	$hash_func = strtolower($hash_func);
 	$pack = 'H'.strlen($hash_func('test'));
 	$size = 64;
 	$opad = str_repeat(chr(0x5C), $size);
 	$ipad = str_repeat(chr(0x36), $size);
 	
-	if(strlen($key) > $size){
+	if (strlen($key) > $size)
 		$key = str_pad(pack($pack, $hash_func($key)), $size, chr(0x00));
-	}
-	else{
+	else
 		$key = str_pad($key, $size, chr(0x00));
-	}
 	
-	for($i = 0; $i < strlen($key) - 1; $i++){
+	
+	for ($i = 0; $i < strlen($key) - 1; $i++) {
 		$opad[$i] = $opad[$i] ^ $key[$i];
 		$ipad[$i] = $ipad[$i] ^ $key[$i];
 	}
@@ -28,42 +27,40 @@ function custom_hmac($hash_func='md5', $data, $key, $raw_output=false){
 	return ($raw_output) ? pack($pack, $output) : $output;
 }
 
-function hash_ipa($userRND, $widgetID, $password){
+function hash_ipa($userRND, $widgetID, $password) {
 	return md5($userRND.'-'.$widgetID.'-'.$password);
 }
 
-function hash_api($userRND, $widgetID, $password){
+function hash_api($userRND, $widgetID, $password) {
 	return hash_ipa($userRND, $widgetID, $password);
 }
 
-function file_hash(&$content){
+function file_hash(&$content) {
 	return md5($content);
 }
 
-function random_string($size, $chr_start=34, $chr_end=255){
+function random_string($size, $chr_start=34, $chr_end=255) {
 	$cadena = '';
-	for($i=0; $i<$size; ++$i){
+	for ($i=0; $i<$size; ++$i) {
 		$cadena .= chr(mt_rand($chr_start, $chr_end));
 	}
 	return $cadena;
 }
 
-function truncate_filename($name, $max){
-	if(strlen($name) > $max){
-		if(strpos($name, '.') !== false){
+function truncate_filename($name, $max) {
+	if (strlen($name) > $max) {
+		if (strpos($name, '.') !== false) {
 			$dot      = strrpos($name, '.');
 			$name_ext = substr($name, $dot +1);
-			$name     = substr($name, 0, $max -1 -strlen($name_ext)).
-						'.'.$name_ext;
-		}
-		else{
+			$name     = substr($name, 0, $max -1 -strlen($name_ext)) . '.' . $name_ext;
+		} else {
 			$name     = substr($name, 0, $max);
 		}
 	}
 	return $name;
 }
 
-function insert_nocache_headers(){
+function insert_nocache_headers() {
 	header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 	header("Cache-Control: post-check=0, pre-check=0", false);
 	header("Pragma: no-cache");
@@ -77,7 +74,7 @@ echo test(function(){for($i=0;$i<100000; ++$i){
 	// Hacer algo 100.000 veces
 }});
 */
-function test($funcion){
+function test($funcion) {
 	$time_start = microtime(true);
 	$funcion();
 	return number_format(microtime(true) - $time_start, 3);
@@ -85,28 +82,29 @@ function test($funcion){
 
 // Must be called before any echo to be able to output headers
 // 'db' | 'session'
-function open_db_session($to_return = 'db'){
+function open_db_session($to_return = 'db') {
 	require_once __DIR__.'/../config.php';
 	require_once __DIR__.'/../lib/DB.php';
 	require_once __DIR__.'/../lib/zebra_session/Zebra_Session.php';
 	
-	if(substr_count($_SERVER['SERVER_NAME'], '.') > 1){
+	if(substr_count($_SERVER['SERVER_NAME'], '.') > 1)
 		$domain = substr($_SERVER['SERVER_NAME'], strpos($_SERVER['SERVER_NAME'], '.'));
-	} else {
+	else
 		$domain = '.' .$_SERVER['SERVER_NAME'];
-	}
+	
 	ini_set('session.cookie_domain', $domain);
 	
 	$db = new DB();
 	$db->Open();
-
-	$session = new Zebra_Session($db->mysqli, PASSWORD_ZEBRA_SESSION, ZEBRA_SESSION_TIME, true, true);
 	
-	if(isset($_COOKIE['PHPSESSID'])){
+	if (isset($_COOKIE['PHPSESSID'])) {
+		$session = new Zebra_Session($db->mysqli, PASSWORD_ZEBRA_SESSION, ZEBRA_SESSION_TIME, true, true);
 		setcookie('PHPSESSID', $_COOKIE['PHPSESSID'], time() + ZEBRA_SESSION_TIME, '/', $domain);
+	} else {
+		$session = array();
 	}
 	
-	if(!isset($_SESSION['user'])){
+	if (!isset($_SESSION['user'])) {
 		// Anonymous
 		$user = $db -> check_nick_password(DEFAULT_USER_NICK, DEFAULT_USER_PASSWORD);
 		$user['valid'] = false; //Anonymous user has valid = false
@@ -118,24 +116,24 @@ function open_db_session($to_return = 'db'){
 	return $$to_return;
 }
 
-function user_check_access($allow_default = false, $custom_error_action = false){
-	if($_SESSION['user']['valid']){
-		if(DEFAULT_USER_ACCESSIBLE){
+function user_check_access($allow_default = false, $custom_error_action = false) {
+	if ($_SESSION['user']['valid']) {
+		if (DEFAULT_USER_ACCESSIBLE) {
 			return true;
-		} elseif($_SESSION['user']['nick'] !== DEFAULT_USER_NICK){
+		} elseif($_SESSION['user']['nick'] !== DEFAULT_USER_NICK) {
 			return true;
 		}
-	} elseif ($allow_default && $_SESSION['user']['nick'] === DEFAULT_USER_NICK){
+	} elseif ($allow_default && $_SESSION['user']['nick'] === DEFAULT_USER_NICK) {
 		return true;
 	}
 
-	if(!$custom_error_action){
+	if (!$custom_error_action) {
 		header('Location: //'.WEB_PATH, true, 302);
 		exit;
 	}
 }
 
-function send_mail($for, $subject, $body){
+function send_mail($for, $subject, $body) {
 	$extra_headers = "MIME-Version: 1.0\r\n"
 					."Content-type: text/html; charset=UTF-8\r\n"
 					."To: {$for} <{$for}>\r\n"
@@ -146,7 +144,7 @@ function send_mail($for, $subject, $body){
 	mail($for, $subject, $body, $extra_headers);
 }
 
-function server_vars_js(){
+function server_vars_js() {
 	return '{
 		"CAPTCHA_PUB_KEY": "'.CAPTCHA_PUBLIC_KEY.'",
 		"WEB_PATH": "'.WEB_PATH.'"
@@ -256,17 +254,12 @@ function file_mimetype($filename) {
 
 function filter_directory(&$directory_resource, $show_folders = true, $show_files = true) {
 	if (false !== $entry = $directory_resource->read()) {
-		if ($entry === '.' || $entry === '..') {
+		if ($entry === '.' || $entry === '..')
 			return filter_directory($directory_resource, $show_folders, $show_files);
-		} else {
-			if ($show_folders && is_dir($directory_resource->path . $entry) ||
-					$show_files && is_file($directory_resource->path . $entry)) {
-				return $entry;
-			}
-		}
-	} else {
-		return false;
+		else if ($show_folders && is_dir($directory_resource->path . $entry) || $show_files && is_file($directory_resource->path . $entry))
+			return $entry;
 	}
+	return false;
 }
 
 function isset_and_default(&$array, $param, $default) {
