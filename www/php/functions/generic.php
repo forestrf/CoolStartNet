@@ -61,8 +61,8 @@ function truncate_filename($name, $max) {
 }
 
 function insert_nocache_headers() {
-	header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-	header("Cache-Control: post-check=0, pre-check=0", false);
+	header('Expires: Tue, 03 Jul 2001 06:00:00 GMT');
+	header('Cache-Control: max-age=0, no-cache, must-revalidate, proxy-revalidate');
 	header("Pragma: no-cache");
 }
 
@@ -97,12 +97,7 @@ function open_db_session($to_return = 'db') {
 	$db = new DB();
 	$db->Open();
 	
-	if (isset($_COOKIE['PHPSESSID'])) {
-		$session = new Zebra_Session($db->mysqli, PASSWORD_ZEBRA_SESSION, ZEBRA_SESSION_TIME, true, true);
-		setcookie('PHPSESSID', $_COOKIE['PHPSESSID'], time() + ZEBRA_SESSION_TIME, '/', $domain);
-	} else {
-		$session = array();
-	}
+	$session = new Zebra_Session($db->mysqli, PASSWORD_ZEBRA_SESSION, ZEBRA_SESSION_TIME, true, true);
 	
 	if (!isset($_SESSION['user'])) {
 		// Anonymous
@@ -118,9 +113,7 @@ function open_db_session($to_return = 'db') {
 
 function user_check_access($allow_default = false, $custom_error_action = false) {
 	if ($_SESSION['user']['valid']) {
-		if (DEFAULT_USER_ACCESSIBLE) {
-			return true;
-		} elseif($_SESSION['user']['nick'] !== DEFAULT_USER_NICK) {
+		if (DEFAULT_USER_ACCESSIBLE || $_SESSION['user']['nick'] !== DEFAULT_USER_NICK) {
 			return true;
 		}
 	} elseif ($allow_default && $_SESSION['user']['nick'] === DEFAULT_USER_NICK) {
@@ -131,6 +124,7 @@ function user_check_access($allow_default = false, $custom_error_action = false)
 		header('Location: //'.WEB_PATH, true, 302);
 		exit;
 	}
+	return false;
 }
 
 function send_mail($for, $subject, $body) {
@@ -264,4 +258,22 @@ function filter_directory(&$directory_resource, $show_folders = true, $show_file
 
 function isset_and_default(&$array, $param, $default) {
 	return isset($array[$param]) && $array[$param] !== '' ? $array[$param] : $default;
+}
+
+function file_upload_widget_version(DB &$db, $widgetID, $widgetVersion, &$FILE_REFERENCE, $name = NULL){
+	if($FILE_REFERENCE['size'] <= MAX_FILE_SIZE_BYTES){
+		$fp      = fopen($FILE_REFERENCE['tmp_name'], 'rb');
+		$content = fread($fp, filesize($FILE_REFERENCE['tmp_name']));
+		fclose($fp);
+		
+		// Innecesario borrarlo, php lo borra automaticamente.
+		unlink($FILE_REFERENCE['tmp_name']);
+		
+		if ($name === NULL) {
+			$name = truncate_filename($FILE_REFERENCE['name'], FILENAME_MAX_LENGTH);
+		}
+		$mimetype = $FILE_REFERENCE['type'];
+		
+		$db->upload_widget_version_file($widgetID, $widgetVersion, $name, file_mimetype($FILE_REFERENCE['name']), $content);
+	}
 }

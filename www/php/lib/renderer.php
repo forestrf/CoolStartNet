@@ -94,7 +94,7 @@ function render_wrapper($title = 'Homepage - CoolStart.net', $content, $compress
 }
 
 // This function generates the full html page of the user page. It can be cached
-function render(&$db, $compress = false){
+function render(DB &$db, $compress = false){
 	require_once __DIR__.'/../config.php';
 
 	ob_start();

@@ -21,6 +21,12 @@ require_once __DIR__.'/../functions/generic.php';
 // All the queries to the database are here. Change the database engine or the queries only have to be done here.
 class DB {
 	
+	// global constants
+	const GLOBAL_VERSION = -1;
+	const GLOBAL_WIDGET  = -1;
+	
+	
+	
 	// Login data to access the database. change in the config file.
 	private $host = MYSQL_HOST;
 	private $user = MYSQL_USER;
@@ -250,8 +256,8 @@ class DB {
 	
 	// global is a invisible widget with id -1
 	function calc_widgetID($widgetID_mixed) {
-		if ($widgetID_mixed === 'global' || strpos($widgetID_mixed, '-1') === 0)
-			return '-1';
+		if ($widgetID_mixed === 'global' || strpos($widgetID_mixed, ''.self::GLOBAL_WIDGET) === 0)
+			return self::GLOBAL_WIDGET;
 		else if (strpos($widgetID_mixed, '-') !== false)
 			return substr($widgetID_mixed, 0, strpos($widgetID_mixed, '-'));
 		else
@@ -351,7 +357,7 @@ class DB {
 	function get_user_size_variable() {
 		$pre_occupied = $this->query("SELECT `IDwidget`, `variable`, LENGTH(`value`) AS `total_size` FROM `variables` WHERE `IDuser` = '{$this->userID}';");
 		$occupied = array();
-		for ($i = 0; $i < $i_t = count($pre_occupied); $i++)
+		for ($i = 0, $i_t = count($pre_occupied); $i < $i_t; $i++)
 			$occupied[$pre_occupied[$i]['IDwidget']][$pre_occupied[$i]['variable']] = intval($pre_occupied[$i]['total_size']);
 		
 		return $occupied;
@@ -413,7 +419,11 @@ class DB {
 			$sql = array();
 			foreach ($data_arr as $name => $value) {
 				$name = mysql_escape_mimic($name);
-				$value = mysql_escape_mimic($value);
+				if (is_array($value)) {
+					$value = json_encode($value);
+				} else {
+					$value = mysql_escape_mimic($value);
+				}
 				$sql[] = "`{$name}` = '{$value}'";
 			}
 			return $this->query("UPDATE `widgets` SET " . implode(', ', $sql) . " WHERE `IDwidget` = '{$widgetID}';");
@@ -560,7 +570,7 @@ class DB {
 	
 	// Get a file of a widget version given its name. The user needs to be the owner or be using the widget.
 	function get_widget_version_file($widgetID, $version, $name) {
-		if ($version === -1 || can_be_widget_version($version) && ($this->check_using_widget_user($widgetID) || $this->CanIModifyWidget($widgetID))) {
+		if ($version === self::GLOBAL_VERSION || can_be_widget_version($version) && ($this->check_using_widget_user($widgetID) || $this->CanIModifyWidget($widgetID))) {
 			$name = mysql_escape_mimic($name);
 			return $this->query("SELECT * FROM `files` RIGHT JOIN `widgets-content` USING (`hash`) WHERE `widgets-content`.`IDwidget` = '{$widgetID}' AND `widgets-content`.`version` = '{$version}' AND `widgets-content`.`name` = '{$name}'");
 		}
@@ -597,7 +607,7 @@ class DB {
 	
 	// Save a file for a widget version with a name and a mimetype. Checks if the file can be uploaded to the version.
 	function upload_widget_version_file($widgetID, $version, $name, $mimetype, &$content) {
-		if ($this->CanIModifyWidget($widgetID) && $version === -1 || can_be_widget_version($version)) {
+		if ($this->CanIModifyWidget($widgetID) && $version === self::GLOBAL_VERSION || can_be_widget_version($version)) {
 			
 			// Check if the widget version reached the number of files
 			if (count($this->query("SELECT * FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}';")) >= WIDGET_VERSION_MAX_FILES_NUMBER) {
@@ -651,12 +661,12 @@ class DB {
 	
 	// Returns a list with the widgets available to the user.
 	function get_availabe_widgets_user() {
-		return $this->query($this->SELECT_FROM_WIDGETS_JOIN_WIDGETSUER('LEFT') . "WHERE `widgets`.`IDwidget` != -1 AND (`ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}' OR `published` > -1);"); // Por poner filtrado de widgets privados
+		return $this->query($this->SELECT_FROM_WIDGETS_JOIN_WIDGETSUER('LEFT') . "WHERE `widgets`.`IDwidget` != ".self::GLOBAL_WIDGET." AND (`ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}' OR `published` > -1);"); // Por poner filtrado de widgets privados
 	}
 	
 	// Returns a list with the widgets available to the user.
 	function search_availabe_widgets_user($word) {
-		return $this->query($this->SELECT_FROM_WIDGETS_JOIN_WIDGETSUER('LEFT') . "WHERE `widgets`.`IDwidget` != -1 AND (`ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}' OR `published` > -1) AND (`name` LIKE '%{$word}%' OR `description` LIKE '%{$word}%' OR `fulldescription` LIKE '%{$word}%');"); // Por poner filtrado de widgets privados
+		return $this->query($this->SELECT_FROM_WIDGETS_JOIN_WIDGETSUER('LEFT') . "WHERE `widgets`.`IDwidget` != ".self::GLOBAL_WIDGET." AND (`ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}' OR `published` > -1) AND (`name` LIKE '%{$word}%' OR `description` LIKE '%{$word}%' OR `fulldescription` LIKE '%{$word}%');"); // Por poner filtrado de widgets privados
 	}
 	
 	// Returns a list with the widgets owned by the user.

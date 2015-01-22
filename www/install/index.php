@@ -108,7 +108,7 @@ switch ($steep) {
 		
 		$widgets_path = '../../widgets/';
 		
-		$default_static_files = array('128.jpg');
+		$default_static_files = array('preview.jpg');
 		
 		$widgets = array();
 		

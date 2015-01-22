@@ -150,6 +150,10 @@
 							C("td", C("img", ["src", IPA.widgetImage(data.IDwidget, data.preview)]), C("input", ["type", "file", "value", data.image, "name", "image"]))
 						),
 						C("tr",
+							C("td", "Images"),
+							C("td", "prev images")
+						),
+						C("tr",
 							C("td", C("input", ["type", "reset", "value", "Reset"])),
 							C("td", C("input", ["type", "submit", "value", "Update"]))
 						)

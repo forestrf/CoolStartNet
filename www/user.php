@@ -68,7 +68,6 @@ function login(){
 			$valid = $db -> check_nick_password($_POST['nick'], $_POST['password']);
 			
 			if ($valid !== false) {
-				$session = new Zebra_Session($db->mysqli, PASSWORD_ZEBRA_SESSION, ZEBRA_SESSION_TIME, true, true);
 				$user = &$valid;
 				$user['valid'] = true; //Anonymous user has valid = false
 				$accessTokens = $db->getAllAccessToken($user['IDuser']);

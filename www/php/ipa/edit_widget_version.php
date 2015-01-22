@@ -66,19 +66,3 @@ foreach($possibles_referrer as $referer_temp){
 		}
 	}
 }
-
-function file_upload_widget_version(&$db, $widgetID, $widgetVersion, &$FILE_REFERENCE){
-	if($FILE_REFERENCE['size'] <= MAX_FILE_SIZE_BYTES){
-		$fp      = fopen($FILE_REFERENCE['tmp_name'], 'rb');
-		$content = fread($fp, filesize($FILE_REFERENCE['tmp_name']));
-		fclose($fp);
-		
-		// Innecesario borrarlo, php lo borra automaticamente.
-		unlink($FILE_REFERENCE['tmp_name']);
-		
-		$name = truncate_filename($FILE_REFERENCE['name'], FILENAME_MAX_LENGTH);
-		$mimetype = $FILE_REFERENCE['type'];
-		
-		$db->upload_widget_version_file($widgetID, $widgetVersion, $name, $mimetype, $content);
-	}
-}
