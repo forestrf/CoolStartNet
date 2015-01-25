@@ -47,20 +47,6 @@ ALTER TABLE `files` ADD PRIMARY KEY (`hash`);
 -- --------------------------------------------------------
 
 --
--- Table structure for table `session_data`
---
-
-CREATE TABLE `session_data` (
-	`session_id` varchar(32) NOT NULL DEFAULT '',
-	`hash` varchar(32) NOT NULL DEFAULT '',
-	`session_data` blob NOT NULL,
-	`session_expire` int(11) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-ALTER TABLE `session_data` ADD PRIMARY KEY (`session_id`);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `users`
 --
 

@@ -21,6 +21,10 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once 'php/functions/generic.php';
 $db = open_db_session();
 
+
+// TO DO: save the render to the database (cache it). Update it (to a blank page) when a widget update affects a cache.
+// If the cache is a blank page, regenerate cache and serve it. Otherwise serve cache.
+
 require_once 'php/lib/renderer.php';
 
 echo render($db, false);
