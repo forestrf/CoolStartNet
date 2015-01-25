@@ -35,18 +35,6 @@ ALTER TABLE `access-token` ADD PRIMARY KEY (`IDuser`);
 -- --------------------------------------------------------
 
 --
--- Table structure for table `files`
---
-
-CREATE TABLE `files` (
-	`hash` varchar(32) COLLATE utf8_bin NOT NULL,
-	`data` mediumblob NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-ALTER TABLE `files` ADD PRIMARY KEY (`hash`);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `users`
 --
 
