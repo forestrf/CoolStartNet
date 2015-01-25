@@ -136,7 +136,9 @@ function render(DB &$db, $compress = false){
 
 
 
-				<?=$data[0]['data'];?>
+				<?php
+					readfile($db->get_widget_file_path_from_hash($data['hash']));
+				?>
 
 				if(typeof CONFIG_function !== 'undefined'){
 					CONFIG.push({

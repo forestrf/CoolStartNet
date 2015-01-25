@@ -589,7 +589,8 @@ class DB {
 	function get_widget_version_file($widgetID, $version, $name) {
 		if ($version === self::GLOBAL_VERSION || can_be_widget_version($version) && ($this->check_using_widget_user($widgetID) || $this->CanIModifyWidget($widgetID))) {
 			$name = mysql_escape_mimic($name);
-			return $this->query("SELECT * FROM `files` RIGHT JOIN `widgets-content` USING (`hash`) WHERE `widgets-content`.`IDwidget` = '{$widgetID}' AND `widgets-content`.`version` = '{$version}' AND `widgets-content`.`name` = '{$name}'");
+			$result = $this->query("SELECT * FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `version` = '{$version}' AND `name` = '{$name}';");
+			return isset($result) ? $result[0] : false;
 		}
 		return false;
 	}
@@ -632,15 +633,20 @@ class DB {
 			}
 			
 			$name = mysql_escape_mimic($name);
-			$content = mysql_escape_mimic($content);
 			$hash = file_hash($content);
 			$this->query("INSERT INTO `widgets-content` (`IDwidget`, `version`, `name`, `hash`, `mimetype`) VALUES ('{$widgetID}', '{$version}', '{$name}', '{$hash}', '{$mimetype}') ON DUPLICATE KEY UPDATE `hash` = VALUES(`hash`), `mimetype` = VALUES (`mimetype`);");
-			if (!$this->query("SELECT `hash` FROM `files` WHERE `hash` = '{$hash}';")) {
-				return $this->query("INSERT INTO `files` (`hash`, `data`) VALUES ('{$hash}', '{$content}');");
+			
+			$filename = $this->get_widget_file_path_from_hash($hash);
+			if (!is_file($filename)) {
+				file_put_contents($filename, $content);
 			}
 			return true;
 		}
 		return false;
+	}
+	
+	function get_widget_file_path_from_hash($hash) {
+		return __DIR__.'/../../'.WIDGET_FILES_PATH.$hash;
 	}
 	
 	// Delete a file from a widget version.

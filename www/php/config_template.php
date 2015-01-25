@@ -29,6 +29,9 @@ define('MAIL_DIRECTION', 'do-not-reply' . DOMAIN);
 # Max file size for the uploaded widget files. In bytes.
 define('MAX_FILE_SIZE_BYTES', 512000);
 
+# Path to store all the widget files, without / at the start
+define('WIDGET_FILES_PATH', 'widget-files/');
+
 # Max user nickname lengths
 define('NICK_MAX_LENGTH', 15);
 define('PASSWORD_MAX_LENGTH', 30);

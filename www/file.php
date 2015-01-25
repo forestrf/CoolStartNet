@@ -55,7 +55,7 @@ switch($mode) {
 $file = $db->get_widget_version_file($widgetID, $widgetVersion, $name);
 
 if ($file) {
-	$etag = base64_encode(md5($file[0]['hash']));
+	$etag = base64_encode(md5($file['hash']));
 	
 	header('Pragma: public');
 	header('Etag: ' . $etag);
@@ -66,8 +66,8 @@ if ($file) {
 		exit;
 	} else {
 		// var_dump($file[0]);
-		header('Content-type: '.$file[0]['mimetype']);
+		header('Content-type: '.$file['mimetype']);
 		
-		echo $file[0]['data'];
+		readfile($db->get_widget_file_path_from_hash($file['hash']));
 	}
 }
