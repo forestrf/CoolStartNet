@@ -14,11 +14,11 @@ define('PASSWORD_TOKEN_IPA', 'write random characters here');
 # Seed to generate the hash of the api token. A cache reset is necessary to change it.
 define('PASSWORD_TOKEN_API', 'write random characters here');
 
-# Password for the zebra_session. A user session reset is necessary to change it.
-define('PASSWORD_ZEBRA_SESSION', 'write random characters here');
-
 # Max time, in seconds, that a session lasts
-define('ZEBRA_SESSION_TIME', 2592000); // 30 Days
+define('SESSION_TIME', 2592000); // 30 Days
+
+# Max time, in seconds, that a cached query is saved in ram
+define('QUERY_CACHE_TTL', 10800); // 3 Hours
 
 # path to the web with / in the end, starting with the subdomain (if there is) and without protocol.
 define('WEB_PATH', 'www.mydomain.com/folder/to/site/');
@@ -55,7 +55,6 @@ define('USERS_CAN_REGISTER', false);
 # Default user (when not logged in)
 define('DEFAULT_USER_NICK', 'ANONYMOUS');
 define('DEFAULT_USER_PASSWORD', 'ANONYMOUS');
-define('DEFAULT_USER_ACCESSIBLE', false);
 
 define('GLOBAL_USER_ID', 0);
 

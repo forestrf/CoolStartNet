@@ -28,7 +28,7 @@ foreach($possibles_referrer as $referer_temp){
 			// Valid referer
 			
 			// Check token
-			$token_objetivo = hash_ipa($_SESSION['user']['RND'], $_POST['widgetID'], PASSWORD_TOKEN_IPA);
+			$token_objetivo = hash_ipa(G::$SESSION->get_user_random(), $_POST['widgetID'], PASSWORD_TOKEN_IPA);
 			if($_POST['token'] === $token_objetivo){
 				
 				switch($_POST['action']){

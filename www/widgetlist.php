@@ -4,7 +4,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
 require_once 'php/functions/generic.php';
 $db = open_db_session();
-if(!isset($_SESSION['user'])){
+if(!G::$SESSION->exists()){
 	exit;
 }
 
@@ -32,7 +32,7 @@ Create and delete widgets<br/>
 	<input type="hidden" name="switch" value="2">
 	<input type="hidden" name="action" value="1">
 	<input type="hidden" name="widgetID" value="-1">
-	<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], -1, PASSWORD_TOKEN_IPA)?>">
+	<input type="hidden" name="token" value="<?php echo hash_ipa(G::$SESSION->get_user_random(), -1, PASSWORD_TOKEN_IPA)?>">
 	<input type="hidden" name="goback" value="1">
 	<input type="submit" value="Create">
 </form>
@@ -53,7 +53,7 @@ foreach($widgets as &$widget){
 			<input type="hidden" name="switch" value="2">
 			<input type="hidden" name="action" value="2">
 			<input type="hidden" name="widgetID" value="'.$widget['IDwidget'].'">
-			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA).'">
+			<input type="hidden" name="token" value="'.hash_ipa(G::$SESSION->get_user_random(), $widget['IDwidget'], PASSWORD_TOKEN_IPA).'">
 			<input type="hidden" name="goback" value="1">
 			<input type="submit" value="Delete">
 		</form>';
@@ -64,7 +64,7 @@ foreach($widgets as &$widget){
 			<input type="hidden" name="switch" value="5">
 			<input type="hidden" name="action" value="5">
 			<input type="hidden" name="widgetID" value="<?php echo $widget['IDwidget']?>">
-			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA)?>">
+			<input type="hidden" name="token" value="<?php echo hash_ipa(G::$SESSION->get_user_random(), $widget['IDwidget'], PASSWORD_TOKEN_IPA)?>">
 			<input type="hidden" name="goback" value="1">
 			<input type="submit" value="Hide from the public">
 		</form>

@@ -52,9 +52,11 @@ function login(){
 			&& isset($_POST['nick'][0])
 			&& isset($_POST['password'][0])) {
 		
+		/*
 		if ($_POST['nick'] == DEFAULT_USER_NICK && !DEFAULT_USER_ACCESSIBLE) {
 			exit;
 		}
+		*/
 		
 		$apc_key = 'login_fail_'.$_SERVER['REMOTE_ADDR'];
 		$tries = apc_fetch($apc_key);
@@ -68,13 +70,7 @@ function login(){
 			$valid = $db -> check_nick_password($_POST['nick'], $_POST['password']);
 			
 			if ($valid !== false) {
-				$user = &$valid;
-				$user['valid'] = true; //Anonymous user has valid = false
-				$accessTokens = $db->getAllAccessToken($user['IDuser']);
-				foreach($accessTokens as $service => $accessToken){
-					$user[$service] = $accessToken;
-				}
-				$_SESSION['user'] = &$user;
+				G::$SESSION->create_session($valid['IDuser']);
 				apc_delete($apc_key);
 				end_ok();
 			} else {
@@ -141,8 +137,8 @@ function register(){
 }
 
 function logout(){
-	$session = open_db_session('session');
-	$session->stop();
+	open_db_session();
+	G::$SESSION->remove_session();
 	header('Location: //'.WEB_PATH, true, 302);
 }
 

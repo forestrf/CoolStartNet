@@ -131,7 +131,7 @@ function render(DB &$db, $compress = false){
 
 			(function(API){
 				API = API.init("<?=$widget['IDwidget'];?>",
-						"<?=hash_api($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_API)?>",
+						"<?=hash_api(G::$SESSION->get_user_random(), $widget['IDwidget'], PASSWORD_TOKEN_API)?>",
 						<?=server_vars_js();?>);
 
 

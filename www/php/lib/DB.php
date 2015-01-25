@@ -40,9 +40,8 @@ class DB {
 	// Auto inserted id number
 	var $LAST_MYSQL_ID = '';
 	
-	private $cache = array();
-	
 	function Open($host=null, $user=null, $pass=null, $bd=null) {
+		if($this->d) $this->debug('Opening database');
 		if ($host !== null)
 			$this->host = $host;
 		if ($user !== null)
@@ -57,11 +56,12 @@ class DB {
 		// To open a persistent connection you must prepend p: to the hostname when connecting. 
 		$this->mysqli = new mysqli('p:'.$this->host, $this->user, $this->pass, $this->bd);
 		if ($this->mysqli->connect_errno) {
-			// echo "Failed to connect to MySQL: (" . $this->mysqli->connect_errno . ") " . $this->mysqli->connect_error;
+			if($this->d) $this->debug('Failed to connect to MySQL: (' . $this->mysqli->connect_errno . ') ' . $this->mysqli->connect_error);
 			return false;
 		}
 		$this->mysqli->set_charset('utf8');
 
+		if($this->d) $this->debug('Database opened');
 		return true;
 	}
 	
@@ -115,12 +115,23 @@ class DB {
 	
 	
 	//debug mode
+	var $debug_array = array();
 	private $d = false;
+	private $d_array = false;
 	function debug_mode($bool) {
 		$this->d = $bool;
 	}
+	function debug_to_array($bool) {
+		$this->d_array = $bool;
+	}
 	private function debug($txt) {
-		if ($this->d) echo $txt . "\r\n";
+		if ($this->d) {
+			if ($this->d_array) {
+				$this->debug_array[] = $txt;
+			} else {
+				echo $txt . "\r\n";
+			}
+		}
 	}
 	
 	
@@ -164,6 +175,12 @@ class DB {
 	function get_random_from_user_nick($nick) {
 		$result = $this->query("SELECT `RND` FROM `users` WHERE `nick` = '{$nick}';");
 		return count($result) === 1 ? $result[0]['RND'] : '';
+	}
+	
+	function get_user_random($userID) {
+		$userID = mysql_escape_mimic($userID);
+		$result = $this->query("SELECT `RND` FROM `users` WHERE `IDuser` = '{$userID}';", true);
+		return count($result) > 0 ? $result[0]['RND'] : '';
 	}
 	
 	// Insert a new user. Data previously validated and sanitized
@@ -730,19 +747,21 @@ class DB {
 	# ---------------------------------------------------------------------------
 	
 	// Returns all the tokens that the current user have
-	function getAllAccessToken($ID) {
-		if(!$ID) $ID = $this->userID;
-		$resp = $this->query("SELECT `dropbox_accessToken` FROM `access-token` WHERE `IDuser` = '{$ID}';");
+	function getAllAccessToken() {
+		$resp = $this->query($this->query_getAllAccessToken(), true);
 		return isset($resp[0]) ? $resp[0] : array();
 	}
+	private function query_getAllAccessToken() {return "SELECT `dropbox_accessToken` FROM `access-token` WHERE `IDuser` = '{$this->userID}';";}
 	
 	// Set the dropbox token of the current user
 	function setDropboxAccessToken($accessToken) {
+		deleteCache($this->query_getAllAccessToken());
 		return $this->query("INSERT INTO `access-token` (`IDuser`, `dropbox_accessToken`) VALUES ('{$this->userID}', '{$accessToken}') ON DUPLICATE KEY UPDATE `dropbox_accessToken` = '{$accessToken}';");
 	}
 	
 	// Delete the dropbox token of the current user
-	function delDropboxAccessToken($accessToken) {
+	function delDropboxAccessToken() {
+		deleteCache($this->query_getAllAccessToken());
 		return $this->query("UPDATE `access-token` SET `dropbox_accessToken` = '' WHERE `IDuser` = '{$this->userID}';");
 	}
 	
@@ -752,12 +771,17 @@ class DB {
 	
 	// (SET) Cache a result. $query is the sql to be cached, $result is the array of the response.
 	function cacheResult($query, $result) {
-		$this->cache[$query] = $result;
+		apc_store($query, $result, QUERY_CACHE_TTL);
 	}
 	
 	// (GET) Cache a result. $query is the sql to search in the cache, $result is the array of the response.
 	function queryCache($query) {
-		return isset($this->cache[$query]) ? $this->cache[$query] : false;
+		return apc_fetch($query); // false if it fails
+	}
+	
+	// (DEL) Cache a result. $query is the sql to delete from the cache.
+	function deleteCache($query) {
+		apc_delete($query);
 	}
 }
 
@@ -774,7 +798,7 @@ function mysql_escape_mimic($inp) {
 }
 
 function hash_password($password, $salt) {
-	return custom_hmac('md5', $password, $salt);
+	return custom_hmac($password, $salt);
 }
 
 function can_be_widget_version($version) {

@@ -31,7 +31,7 @@ foreach($possibles_referrer as $referer_temp){
 			// check widget ID
 			if(isset($_POST['widgetID']) && isInteger($_POST['widgetID']) && $_POST['widgetID'] >= 0){
 				// Check token
-				if($_POST['token'] === hash_ipa($_SESSION['user']['RND'], $_POST['widgetID'], PASSWORD_TOKEN_IPA)){
+				if($_POST['token'] === hash_ipa(G::$SESSION->get_user_random(), $_POST['widgetID'], PASSWORD_TOKEN_IPA)){
 					if($_POST['action'] === '5'){
 						$db->hide_all_widget_versions($_POST['widgetID']);
 					}

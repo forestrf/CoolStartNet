@@ -4,7 +4,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
 require_once 'php/functions/generic.php';
 $db = open_db_session();
-if(!isset($_SESSION['user'])){
+if(!G::$SESSION->exists()){
 	exit;
 }
 
@@ -68,7 +68,7 @@ foreach($files as $file){
 		<input type="hidden" name="action" value="3">
 		<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 		<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
-		<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+		<input type="hidden" name="token" value="<?php echo hash_ipa(G::$SESSION->get_user_random(), $widgetID, PASSWORD_TOKEN_IPA)?>">
 		<input type="hidden" name="hash" value="<?php echo $file['hash']?>">
 		<input type="text" name="name" value="<?php echo $file['name']?>">
 		<input type="submit" value="Change name">
@@ -87,7 +87,7 @@ foreach($files as $file){
 			<input type="hidden" name="action" value="4">
 			<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 			<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
-			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+			<input type="hidden" name="token" value="<?php echo hash_ipa(G::$SESSION->get_user_random(), $widgetID, PASSWORD_TOKEN_IPA)?>">
 			<input type="hidden" name="hash" value="<?php echo $file['hash']?>">
 			<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo MAX_FILE_SIZE_BYTES?>" /> Max size: <?php echo MAX_FILE_SIZE_BYTES/1024?>Kb
 			<input type="file" name="file">
@@ -99,7 +99,7 @@ foreach($files as $file){
 			<input type="hidden" name="action" value="2">
 			<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 			<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
-			<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+			<input type="hidden" name="token" value="<?php echo hash_ipa(G::$SESSION->get_user_random(), $widgetID, PASSWORD_TOKEN_IPA)?>">
 			<input type="hidden" name="hash" value="<?php echo $file['hash']?>">
 			<input type="submit" value="Delete">
 			<input type="hidden" name="goback" value="1">
@@ -114,7 +114,7 @@ foreach($files as $file){
 	<input type="hidden" name="action" value="1">
 	<input type="hidden" name="widgetID" value="<?php echo $widgetID?>">
 	<input type="hidden" name="widgetVersion" value="<?php echo $version['version']?>">
-	<input type="hidden" name="token" value="<?php echo hash_ipa($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_IPA)?>">
+	<input type="hidden" name="token" value="<?php echo hash_ipa(G::$SESSION->get_user_random(), $widgetID, PASSWORD_TOKEN_IPA)?>">
 	<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo MAX_FILE_SIZE_BYTES?>" /> Max size: <?php echo MAX_FILE_SIZE_BYTES/1024?>Kb
 	<input type="file" name="file"><br/>
 	<input type="submit" value="Send">

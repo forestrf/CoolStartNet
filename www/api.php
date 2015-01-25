@@ -23,7 +23,7 @@ require_once __DIR__ . '/php/defaults.php';
 require_once __DIR__ . '/php/functions/generic.php';
 
 $db = open_db_session();
-if (!isset($_SESSION['user'])) {
+if(!G::$SESSION->exists()){
 	exit;
 }
 
@@ -234,7 +234,7 @@ function delallHandler(&$widgets) {
 
 
 function validateWidget($widgetID, $secret, &$hash) {
-	$hash = hash_api($_SESSION['user']['RND'], $widgetID, PASSWORD_TOKEN_API);
+	$hash = hash_api(G::$SESSION->get_user_random(), $widgetID, PASSWORD_TOKEN_API);
 	return $secret === $hash;
 }
 

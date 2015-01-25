@@ -4,7 +4,7 @@ function isInteger($input) {
     return ctype_digit(strval($input));
 }
 
-function custom_hmac($hash_func='md5', $data, $key, $raw_output = false) {
+function custom_hmac($data, $key, $hash_func='md5', $raw_output = false) {
 	$hash_func = strtolower($hash_func);
 	$pack = 'H'.strlen($hash_func('test'));
 	$size = 64;
@@ -17,7 +17,7 @@ function custom_hmac($hash_func='md5', $data, $key, $raw_output = false) {
 		$key = str_pad($key, $size, chr(0x00));
 	
 	
-	for ($i = 0; $i < strlen($key) - 1; $i++) {
+	for ($i = 0, $i_t = strlen($key) - 1; $i < $i_t; $i++) {
 		$opad[$i] = $opad[$i] ^ $key[$i];
 		$ipad[$i] = $ipad[$i] ^ $key[$i];
 	}
@@ -67,56 +67,34 @@ function insert_nocache_headers() {
 }
 
 
-
-// To make benchmarks. Receives a function and returns the time it takes to execute the function:
-/*
-echo test(function(){for($i=0;$i<100000; ++$i){
-	// Hacer algo 100.000 veces
-}});
-*/
-function test($funcion) {
-	$time_start = microtime(true);
-	$funcion();
-	return number_format(microtime(true) - $time_start, 3);
+class G {
+	/**
+	 * @var Session
+	 */
+	public static $SESSION;
 }
-
 // Must be called before any echo to be able to output headers
 // 'db' | 'session'
-function open_db_session($to_return = 'db') {
+function open_db_session() {
 	require_once __DIR__.'/../config.php';
 	require_once __DIR__.'/../lib/DB.php';
-	require_once __DIR__.'/../lib/zebra_session/Zebra_Session.php';
-	
-	if(substr_count($_SERVER['SERVER_NAME'], '.') > 1)
-		$domain = substr($_SERVER['SERVER_NAME'], strpos($_SERVER['SERVER_NAME'], '.'));
-	else
-		$domain = '.' .$_SERVER['SERVER_NAME'];
-	
-	ini_set('session.cookie_domain', $domain);
+	require_once __DIR__.'/../lib/Session/Session.php';
 	
 	$db = new DB();
-	$db->Open();
+	G::$SESSION = new Session($db);
 	
-	$session = new Zebra_Session($db->mysqli, PASSWORD_ZEBRA_SESSION, ZEBRA_SESSION_TIME, true, true);
-	
-	if (!isset($_SESSION['user'])) {
+	if (!G::$SESSION->exists()) {
 		// Anonymous
 		$user = $db -> check_nick_password(DEFAULT_USER_NICK, DEFAULT_USER_PASSWORD);
-		$user['valid'] = false; //Anonymous user has valid = false
-		$_SESSION['user'] = $user;
+		G::$SESSION->userID = $user['IDuser'];
 	}
+	$db->set_user_id(G::$SESSION->userID);
 	
-	$db->set_user_id($_SESSION['user']['IDuser']);
-	
-	return $$to_return;
+	return $db;
 }
 
 function user_check_access($allow_default = false, $custom_error_action = false) {
-	if ($_SESSION['user']['valid']) {
-		if (DEFAULT_USER_ACCESSIBLE || $_SESSION['user']['nick'] !== DEFAULT_USER_NICK) {
-			return true;
-		}
-	} elseif ($allow_default && $_SESSION['user']['nick'] === DEFAULT_USER_NICK) {
+	if (G::$SESSION->exists() || $allow_default) {
 		return true;
 	}
 

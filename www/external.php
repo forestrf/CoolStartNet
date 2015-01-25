@@ -13,27 +13,31 @@ user_check_access();
 if (isset($_REQUEST['m'])) {
 	switch ($_REQUEST['m']) {
 		case '0':
-			if (isset($_POST['path']) &&
-					isset($_POST['path'][0]) &&
-					$_POST['path'][0] === '/' &&
-					isset($_SESSION['user']['dropbox_accessToken'])) {
+			if (
+				isset($_POST['path']) &&
+				isset($_POST['path'][0]) &&
+				$_POST['path'][0] === '/' &&
+				get_dropbox_token($db)
+			) {
 				echoPath(start(), $_POST['path']);
 			}
 		break;
 		case '1':
-			if (isset($_SESSION['user'])) {
+			if(G::$SESSION->exists()){
 				echo json_encode(
 					array(
-						'available' => isset($_SESSION['user']['dropbox_accessToken'])
+						'available' => get_dropbox_token($db)
 					)
 				);
 			}
 		break;
 		case '2':
-			if (isset($_GET['file']) &&
-					isset($_GET['file'][0]) &&
-					$_GET['file'][0] === '/' &&
-					isset($_SESSION['user']['dropbox_accessToken'])) {
+			if (
+				isset($_GET['file']) &&
+				isset($_GET['file'][0]) &&
+				$_GET['file'][0] === '/' &&
+				get_dropbox_token($db)
+			) {
 				
 				if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] === base64_encode($_GET['file'])) {
 					header('HTTP/1.1 304 Not Modified');
@@ -46,13 +50,20 @@ if (isset($_REQUEST['m'])) {
 	}
 }
 
+function get_dropbox_token(DB &$db) {
+	global $tokens;
+	$tokens = $db->getAllAccessToken();
+	return $tokens && isset($tokens['dropbox_accessToken']) && isset($tokens['dropbox_accessToken'][1]);
+}
+
 
 
 function start() {
+	global $tokens;
 	# Include the Dropbox SDK libraries
 	require_once __DIR__.'/php/lib/Dropbox/autoload.php';
 	
-	return new \Dropbox\Client($_SESSION['user']['dropbox_accessToken'], DROPBOX_APP_NAME);
+	return new \Dropbox\Client($tokens['dropbox_accessToken'], DROPBOX_APP_NAME);
 }
 
 function echoPath(&$dbxClient, &$path) {

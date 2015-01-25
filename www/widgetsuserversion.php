@@ -4,7 +4,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
 require_once 'php/functions/generic.php';
 $db = open_db_session();
-if(!isset($_SESSION['user'])){
+if(!G::$SESSION->exists()){
 	exit;
 }
 
@@ -48,7 +48,7 @@ foreach($widget_versions as &$widget_version){
 			<input type="hidden" name="switch" value="1">
 			<input type="hidden" name="action" value="3">
 			<input type="hidden" name="widgetID" value="'.$widget['IDwidget'].'">
-			<input type="hidden" name="token" value="'.hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA).'">
+			<input type="hidden" name="token" value="'.hash_ipa(G::$SESSION->get_user_random(), $widget['IDwidget'], PASSWORD_TOKEN_IPA).'">
 			<input type="hidden" name="widgetVersion" value="'.$widget_version['version'].'">
 			<input type="hidden" name="goback" value="1">
 			<input type="submit" value="Use this version">

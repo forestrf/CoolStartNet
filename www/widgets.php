@@ -198,7 +198,7 @@ function return_widget_array_element(&$widget) {
 		'fulldescription' => isset_and_default($widget, 'fulldescription', 'No full description available.'),
 		'preview'         => 'preview.jpg',
 		'images'          => json_decode(isset_and_default($widget, 'images', '[]')),
-		//'token'           => hash_ipa($_SESSION['user']['RND'], $widget['IDwidget'], PASSWORD_TOKEN_IPA),
+		//'token'           => hash_ipa(G::$SESSION->get_user_random(), $widget['IDwidget'], PASSWORD_TOKEN_IPA),
 		'version'         => isset_and_default($widget, 'version', ''),
 		'autoupdate'      => isset_and_default($widget, 'autoupdate', ''),
 		'inuse'           => isset_and_default($widget, 'IDuser', false) !== false ? true : false,

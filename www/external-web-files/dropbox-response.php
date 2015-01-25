@@ -35,7 +35,6 @@ catch (dbx\Exception $ex) {
 // All ok
 // Save the token with the user
 $db->setDropboxAccessToken($accessToken);
-$_SESSION['user']['dropbox_accessToken'] = $accessToken;
 
 
 // We can now use $accessToken to make API requests.
