@@ -29,30 +29,15 @@ if (!isset($_GET['name']) || strlen($_GET['name']) > FILENAME_MAX_LENGTH || strl
 }
 $name = &$_GET['name'];
 
+/*
 // mode
 if (!isset($_GET['mode'])) {
 	exit;
 }
 $mode = &$_GET['mode'];
+*/
 
-
-// widgetVersion
-switch($mode) {
-	case 'static':
-		$widgetVersion = -1;
-		break;
-	case 'api':
-		$widgetVersion = $db->get_using_widget_version_user($widgetID);
-		break;
-	default:
-		if (!isInteger($mode) || $mode < 0) {
-			exit;
-		}
-		$widgetVersion = $mode;
-		break;
-}
-
-$file = $db->get_widget_version_file($widgetID, $widgetVersion, $name);
+$file = $db->get_widget_file($widgetID, $name);
 
 if ($file) {
 	$etag = base64_encode(md5($file['hash']));

@@ -4,25 +4,20 @@ require_once __DIR__.'/php/defaults.php';
 # option === function name
 
 $options = array(	
-	'global-list'                        => 0 // Get
-	,'global-list-search'                => 0 // Get
-	,'user-created-list'                 => 0 // Get
-	,'user-created-version-list'         => 0 // Get
-	,'user-created-version-info'         => 0 // Get
-	,'user-created-version-files-list'   => 0 // Get
-	,'user-using-list'                   => 0 // Get
+	'global-list'                => 0 // Get
+	,'global-list-search'        => 0 // Get
+	,'user-created-list'         => 0 // Get
+	,'user-created-files-list'   => 0 // Get
+	,'user-using-list'           => 0 // Get
 	
-	,'user-created-create'               => 1 // Set
-	,'user-created-update'               => 1 // Set
-	,'user-created-version-add'          => 1 // Set
-	,'user-created-version-remove'       => 1 // Set
-	,'user-created-version-info-edit'    => 1 // Set
-	,'user-created-version-files-add'    => 1 // Set
-	,'user-created-version-files-edit'   => 1 // Set
-	,'user-created-version-files-remove' => 1 // Set
-	,'user-created-remove'               => 1 // Set
-	,'user-using-add'                    => 1 // Set
-	,'user-using-remove'                 => 1 // Set
+	,'user-created-create'       => 1 // Set
+	,'user-created-update'       => 1 // Set
+	,'user-created-files-add'    => 1 // Set
+	,'user-created-files-edit'   => 1 // Set
+	,'user-created-files-remove' => 1 // Set
+	,'user-created-remove'       => 1 // Set
+	,'user-using-add'            => 1 // Set
+	,'user-using-remove'         => 1 // Set
 );
 
 
@@ -96,20 +91,14 @@ function global_list_search(DB &$db) {
 }
 
 /*
-,'user-created-version-list'         => 0 // Get
-,'user-created-version-info'         => 0 // Get
-,'user-created-version-files-list'   => 0 // Get
 
 
-,'user-created-create'               => 1 // Set
-,'user-created-update'               => 1 // Set
-,'user-created-version-add'          => 1 // Set
-,'user-created-version-remove'       => 1 // Set
-,'user-created-version-info-edit'    => 1 // Set
-,'user-created-version-files-add'    => 1 // Set
-,'user-created-version-files-edit'   => 1 // Set
-,'user-created-version-files-remove' => 1 // Set
-,'user-created-remove'               => 1 // Set
+,'user-created-create'       => 1 // Set
+,'user-created-update'       => 1 // Set
+,'user-created-files-add'    => 1 // Set
+,'user-created-files-edit'   => 1 // Set
+,'user-created-files-remove' => 1 // Set
+,'user-created-remove'       => 1 // Set
 */
 
 // -- SET -- //
@@ -152,7 +141,7 @@ function user_created_update(DB &$db) {
 		
 		if (isset($_FILES['image'])) {
 			$widget_data['preview'] = 'preview.jpg';
-			file_upload_widget_version($db, $_POST['IDwidget'], DB::GLOBAL_VERSION, $_FILES['image'], 'preview.jpg');
+			file_upload_widget($db, $_POST['IDwidget'], $_FILES['image'], 'preview.jpg');
 		}
 		
 		$db->set_widget_data($_POST['IDwidget'], $widget_data);
@@ -199,8 +188,6 @@ function return_widget_array_element(&$widget) {
 		'preview'         => 'preview.jpg',
 		'images'          => json_decode(isset_and_default($widget, 'images', '[]')),
 		//'token'           => hash_ipa(G::$SESSION->get_user_random(), $widget['IDwidget'], PASSWORD_TOKEN_IPA),
-		'version'         => isset_and_default($widget, 'version', ''),
-		'autoupdate'      => isset_and_default($widget, 'autoupdate', ''),
 		'inuse'           => isset_and_default($widget, 'IDuser', false) !== false ? true : false,
 	);
 }

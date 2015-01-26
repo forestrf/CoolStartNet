@@ -82,7 +82,7 @@ CREATE TABLE `widgets` (
 	`fulldescription` TEXT NOT NULL, 
 	`images` TEXT NOT NULL COMMENT 'JSON array with the static image filenames', 
 	`ownerID` int(11) NOT NULL,
-	`published` int(11) NOT NULL DEFAULT '-1' COMMENT 'Si se publica cambiar a 0 o + desde php. Nunca volver a -1',
+	`status` int(11) NOT NULL DEFAULT '0',
 	`creation_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `widgets` ADD PRIMARY KEY (`IDwidget`);
@@ -98,12 +98,12 @@ ALTER TABLE `widgets` ADD KEY `ownerID` (`ownerID`);
 
 CREATE TABLE `widgets-content` (
 	`IDwidget` int(11) NOT NULL,
-	`version` int(11) NOT NULL,
 	`name` varchar(50) COLLATE utf8_bin NOT NULL,
 	`hash` varchar(32) COLLATE utf8_bin NOT NULL,
-	`mimetype` text COLLATE utf8_bin NOT NULL
+	`mimetype` text COLLATE utf8_bin NOT NULL,
+	`static` text COLLATE utf8_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-ALTER TABLE `widgets-content` ADD PRIMARY KEY (`IDwidget`,`version`,`name`);
+ALTER TABLE `widgets-content` ADD PRIMARY KEY (`IDwidget`, `name`);
 
 -- --------------------------------------------------------
 
@@ -113,28 +113,10 @@ ALTER TABLE `widgets-content` ADD PRIMARY KEY (`IDwidget`,`version`,`name`);
 
 CREATE TABLE `widgets-user` (
 	`IDuser` int(11) NOT NULL,
-	`IDwidget` int(11) NOT NULL,
-	`autoupdate` tinyint(1) NOT NULL DEFAULT '1',
-	`version` int(11) NOT NULL COMMENT 'Mirar cuando autoupdate = 0'
+	`IDwidget` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `widgets-user` ADD PRIMARY KEY (`IDuser`,`IDwidget`);
 ALTER TABLE `widgets-user` ADD KEY `widgets-user IDwidget` (`IDwidget`);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `widgets-versions`
---
-
-CREATE TABLE `widgets-versions` (
-	`IDwidget` int(11) NOT NULL,
-	`version` int(11) NOT NULL,
-	`public` tinyint(1) NOT NULL COMMENT '0 = privada, 1 = pública',
-	`visible` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 = oculto, 1 = visible',
-	`comment` tinytext COLLATE utf8_bin NOT NULL,
-	`creation_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-ALTER TABLE `widgets-versions` ADD PRIMARY KEY (`IDwidget`,`version`);
 
 --
 -- Constraints for dumped tables
@@ -166,12 +148,6 @@ ALTER TABLE `widgets-user`
 ADD CONSTRAINT `widgets-user IDuser` FOREIGN KEY (`IDuser`) REFERENCES `users` (`IDuser`) ON DELETE CASCADE ON UPDATE CASCADE,
 ADD CONSTRAINT `widgets-user IDwidget` FOREIGN KEY (`IDwidget`) REFERENCES `widgets` (`IDwidget`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `widgets-versions`
---
-ALTER TABLE `widgets-versions`
-ADD CONSTRAINT `widgets-versions IDwidget` FOREIGN KEY (`IDwidget`) REFERENCES `widgets` (`IDwidget`) ON DELETE CASCADE ON UPDATE CASCADE;
-
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
@@ -182,4 +158,4 @@ ADD CONSTRAINT `widgets-versions IDwidget` FOREIGN KEY (`IDwidget`) REFERENCES `
 
 -- This will allow global variables
 INSERT INTO `users` (`IDuser`, `nick`, `password`, `email`, `RND`, `level`, `validation`, `recover_code_due_date`, `creation_date`) VALUES ('0', 'global', '-', '-', '-', '0', '', '', '');
-INSERT INTO `widgets` (`IDwidget`, `name`, `ownerID`, `published`) VALUES ('-1', 'global', '0', '-1');
+INSERT INTO `widgets` (`IDwidget`, `name`, `ownerID`, `status`) VALUES ('-1', 'global', '0', '0');

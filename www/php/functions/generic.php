@@ -247,7 +247,7 @@ function isset_and_default(&$array, $param, $default) {
 	return isset($array[$param]) && $array[$param] !== '' ? $array[$param] : $default;
 }
 
-function file_upload_widget_version(DB &$db, $widgetID, $widgetVersion, &$FILE_REFERENCE, $name = NULL){
+function file_upload_widget(DB &$db, $widgetID, &$FILE_REFERENCE, $name = NULL){
 	if($FILE_REFERENCE['size'] <= MAX_FILE_SIZE_BYTES){
 		$content = file_get_contents($FILE_REFERENCE['tmp_name']);
 		
@@ -259,7 +259,7 @@ function file_upload_widget_version(DB &$db, $widgetID, $widgetVersion, &$FILE_R
 		}
 		$mimetype = $FILE_REFERENCE['type'];
 		
-		$db->upload_widget_version_file($widgetID, $widgetVersion, $name, file_mimetype($FILE_REFERENCE['name']), $content);
+		$db->upload_widget_file($widgetID, $name, file_mimetype($FILE_REFERENCE['name']), $content);
 	}
 }
 

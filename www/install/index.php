@@ -93,8 +93,6 @@ switch ($steep) {
 
 		var_dump($widgets_variables);
 		$db->set_variable($widgets_variables);
-		
-		//$db->add_using_widget_user($widgetID);
 	break;
 
 
@@ -166,7 +164,6 @@ switch ($steep) {
 				$IDwidget = $db->get_widget($widget['name']);
 				$IDwidget = $IDwidget['IDwidget'];
 			}
-			$version = 1;
 			var_dump($IDwidget);
 			
 			$data = array(
@@ -176,16 +173,14 @@ switch ($steep) {
 			);
 			$db->set_widget_data($IDwidget, $data);
 			
-			$db->create_widget_version($IDwidget, $version);
 			foreach ($widget['files'] as &$file) {
 				$file_contents = file_get_contents($file['path']);
-				$v = in_array($file['name'], $widget['staticfiles']) ? -1 : $version;
-				$db->upload_widget_version_file($IDwidget, $v, $file['name'], file_mimetype($file['name']), $file_contents);
+				//$v = in_array($file['name'], $widget['staticfiles']) ? -1 : $version;
+				$db->upload_widget_file($IDwidget, $file['name'], file_mimetype($file['name']), $file_contents);
 			}
 			//$db->set_widget_creation_date($id, $widget['date']);
 			//$db->set_widget_autor();
-			$db->publicate_widget_version($IDwidget, $version);
-			$db->set_widget_version_visibility($IDwidget, $version, $widget['visible']);
+			//$db->set_widget_visibility($IDwidget, $widget['visible']);
 		}
 		
 	break;

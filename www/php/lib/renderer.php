@@ -118,12 +118,9 @@ function render(DB &$db, $compress = false){
 		// Widgets del usuario
 		$widgets_usuario = $db->get_widgets_user();
 		foreach($widgets_usuario as &$widget){
-			// Pick the correct widget version
-			$version = $db->get_using_widget_version_user($widget);
-
 			// Create the html that will call the script
 			//echo "<script src=\"widgetfile.php?widgetID={$widget['IDwidget']}&widgetVersion={$version}&name=main.js\"></script>";
-			$data = $db->get_widget_version_file($widget['IDwidget'], $version, 'main.js');
+			$data = $db->get_widget_file($widget['IDwidget'], 'main.js');
 			if (!$data) {
 				continue;
 			}
