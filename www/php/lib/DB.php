@@ -173,6 +173,7 @@ class DB {
 	}
 	
 	function get_random_from_user_nick($nick) {
+		$nick = mysql_escape_mimic($nick);
 		$result = $this->query("SELECT `RND` FROM `users` WHERE `nick` = '{$nick}';");
 		return count($result) === 1 ? $result[0]['RND'] : '';
 	}
@@ -185,12 +186,11 @@ class DB {
 	
 	// Insert a new user. Data previously validated and sanitized
 	function create_new_user($nick, $password, $email, &$validation) {
-		require_once __DIR__ . '/../functions/generic.php';
 		$nick = mysql_escape_mimic($nick);
 		$email = mysql_escape_mimic($email);
 		$rnd = mysql_escape_mimic(utf8_encode(random_string(32)));
 		$password = hash_password($password, $rnd);
-		$validation = mysql_escape_mimic(utf8_encode(random_string(5)));
+		$validation = mysql_escape_mimic(utf8_encode(random_string(5, G::$abcABC09)));
 		return $this->query("INSERT INTO `users` (`nick`, `password`, `email`, `RND`, `validation`, `creation_date`) VALUES ('{$nick}', '{$password}', '{$email}', '{$rnd}', '{$validation}', NOW());") === true;
 	}
 	
@@ -208,12 +208,11 @@ class DB {
 	
 	// pre-change a users password. Data previously validated and sanitized. Returns bool
 	function recover_account($email, &$nick, &$validation) {
-		require_once __DIR__ . '/../functions/generic.php';
 		$email = mysql_escape_mimic($email);
 		$resp = $this->query("SELECT `nick` FROM `users` WHERE `email` = '{$email}' AND `level` >= 200;");
 		if ($resp) {
 			$nick = $resp[0]['nick'];
-			$validation = mysql_escape_mimic(utf8_encode(random_string(5)));
+			$validation = mysql_escape_mimic(utf8_encode(random_string(5, G::$abcABC09)));
 			return $this->query("UPDATE `users` set `validation` = '{$validation}', `recover_code_due_date` = NOW() + INTERVAL 1 DAY WHERE `nick` = '{$nick}' AND `email` = '{$email}';") === true;
 		}
 		return false;
@@ -221,7 +220,6 @@ class DB {
 	
 	// pre-change a users password. Data previously validated and sanitized. Returns the email or false
 	function recover_account_validate($nick, $validation) {
-		require_once __DIR__ . '/../functions/generic.php';
 		$nick = mysql_escape_mimic($nick);
 		$validation = mysql_escape_mimic($validation);
 		$resp = $this->query("SELECT `email` FROM `users` WHERE `nick` = '{$nick}' AND `validation` = '{$validation}' AND `level` >= 200;");

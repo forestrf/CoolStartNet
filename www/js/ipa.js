@@ -10,7 +10,7 @@ var IPA = (function(){
 				"widgetImage": function(widgetID, filename){
 					return '//' + server_vars.WEB_PATH + 'widgetfile/' + widgetID + '/static/' + encodeURIComponent(filename);
 				}
-			}
+			};
 		}
-	}
+	};
 })();

@@ -11,13 +11,14 @@ var tabindex = 'tabindex';
 
 var js = document.createElement("script");
 js.type = "text/javascript";
-js.src = '//www.google.com/recaptcha/api/js/recaptcha_ajax.js';
+js.src = '//www.google.com/recaptcha/api.js?onload=instantiateCaptcha&render=explicit';
 document.body.appendChild(js);
 
 var login = API.widget.create();
 login.addClass('login');
 
-var register ,captcha_placeholder, mail, user, pass, button, form, messages, forgot;
+var register ,mail, user, pass, button, form, messages, forgot;
+window.captcha_placeholder;
 
 C(login,
 	form = C('form', ['onsubmit', 'return false;'],
@@ -43,6 +44,11 @@ API.document.wrapElement(user).wrapElement(pass).wrapElement(mail).wrapElement(m
 register.checked = false;
 
 register.onclick = function(){
+	if (typeof grecaptcha == 'undefined') {
+		register.checked = false;
+		return;
+	}
+	
 	if(register.disabled) return;
 	
 	if(register.checked){
@@ -56,12 +62,7 @@ register.onclick = function(){
 		button.setAttribute(tabindex, 5);
 		mail.setAttribute(tabindex, 3);
 		
-		Recaptcha.create(API.globals.captchaPublicKey, captcha_placeholder, {
-			theme: "red",
-			callback: function(){
-				document.getElementById('recaptcha_response_field').setAttribute(tabindex, 4);
-			}
-		});
+		captcha_placeholder.style.display = '';
 	}
 	else{
 		backToNormal();
@@ -69,6 +70,11 @@ register.onclick = function(){
 }
 
 forgot.onclick = function(){
+	if (typeof grecaptcha == 'undefined') {
+		forgot.checked = false;
+		return;
+	}
+	
 	if(forgot.disabled) return;
 	
 	if(forgot.checked){
@@ -86,12 +92,7 @@ forgot.onclick = function(){
 		button.setAttribute(tabindex, 3);
 		mail.setAttribute(tabindex, 1);
 		
-		Recaptcha.create(API.globals.captchaPublicKey, captcha_placeholder, {
-			theme: "red",
-			callback: function(){
-				document.getElementById('recaptcha_response_field').setAttribute(tabindex, 2);
-			}
-		});
+		captcha_placeholder.style.display = '';
 	}
 	else{
 		backToNormal();
@@ -114,7 +115,7 @@ function backToNormal(){
 	pass.setAttribute(tabindex, 2);
 	user.setAttribute(tabindex, 1);
 	
-	captcha_placeholder.innerHTML = '';
+	captcha_placeholder.style.display = 'none';
 	
 	register.checked = false;
 	forgot.checked = false;
@@ -126,8 +127,7 @@ function submit(){
 	var elems = [button, user, pass];
 	
 	if(register.checked || forgot.checked){
-		elems.push(document.getElementById('recaptcha_response_field'));
-		elems.push(document.getElementById('recaptcha_challenge_field'));
+		elems.push(document.getElementById('g-recaptcha-response'));
 		elems.push(mail);
 	}
 	
@@ -160,7 +160,7 @@ function submit(){
 			}
 		}
 		else{
-			fail(data.problem);
+			fail(data.message);
 		}
 	}, function(){fail('Server unreachable');});
 	
@@ -198,11 +198,16 @@ function fail(txt){
 function of(){
 	if(register.checked){
 		button.value = txt_register;
-		Recaptcha.reload();
 	} else if(forgot.checked){
 		button.value = txt_remember;
-		Recaptcha.reload();
 	} else {
 		button.value = txt_login;
 	}
+}
+
+window.instantiateCaptcha = function() {
+	grecaptcha.render(captcha_placeholder, {
+		"sitekey": API.globals.captchaPublicKey,
+		"theme": "dark"
+	});
 }

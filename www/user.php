@@ -1,6 +1,10 @@
 <?php
 
 require_once __DIR__.'/php/defaults.php';
+require_once __DIR__.'/php/config.php';
+require_once __DIR__.'/php/lib/DB.php';
+require_once __DIR__.'/php/functions/generic.php';
+require_once __DIR__.'/php/lib/recaptcha-php/recaptchalib.php';
 
 # option === function name
 
@@ -30,7 +34,6 @@ if (isset($_GET['action'])) {
 
 // Launch option function
 
-require_once __DIR__.'/php/functions/generic.php';
 
 $action();
 
@@ -46,41 +49,32 @@ $action();
 
 function login(){
 	$db = open_db_session();
-	if(isset($_POST['submit'])
-			&& isset($_POST['nick'])
-			&& isset($_POST['password'])
-			&& isset($_POST['nick'][0])
-			&& isset($_POST['password'][0])) {
-		
+	if(
+		isset($_POST['submit'])
+		&& filter_input(INPUT_POST, 'nick', FILTER_CALLBACK, array('options' => 'filter_nick'))
+		&& filter_input(INPUT_POST, 'password', FILTER_CALLBACK, array('options' => 'filter_password'))
+	) {
 		/*
 		if ($_POST['nick'] == DEFAULT_USER_NICK && !DEFAULT_USER_ACCESSIBLE) {
 			exit;
 		}
 		*/
 		
-		$apc_key = 'login_fail_'.$_SERVER['REMOTE_ADDR'];
-		$tries = apc_fetch($apc_key);
-		if ($tries === false) {
-			$tries = 1;
-		} else {
-			$tries++;
-		}
-		
-		if ($tries <= MAX_LOGIN_FAILS) {	
-			$valid = $db -> check_nick_password($_POST['nick'], $_POST['password']);
+		if (tries_get() > 0) {
+			$user = $db -> check_nick_password($_POST['nick'], $_POST['password']);
 			
-			if ($valid !== false) {
-				G::$SESSION->create_session($valid['IDuser']);
-				apc_delete($apc_key);
+			if ($user !== false) {
+				G::$SESSION->create_session($user['IDuser']);
+				tries_reset();
 				end_ok();
 			} else {
 				// Loggin attempt reduce
-				apc_store($apc_key, $tries, LOGIN_FAIL_WAIT * 60);
+				tries_decrease();
 				
-				if($tries == MAX_LOGIN_FAILS){
-					end_fail('Your IP is banned for '.LOGIN_FAIL_WAIT.' minutes');
+				if (tries_get() > 0) {
+					end_fail('Invalid login. '.tries_get().' attempts left');
 				} else {
-					end_fail('Invalid login. '.(MAX_LOGIN_FAILS - $tries).' attempts left');
+					end_fail('Your IP is banned for '.LOGIN_FAIL_WAIT.' minutes');
 				}
 			}
 		} else end_fail('Your IP is banned for '.LOGIN_FAIL_WAIT.' minutes');
@@ -88,52 +82,37 @@ function login(){
 }
 
 function register(){
-	require_once __DIR__.'/php/config.php';
-	
 	if (!USERS_CAN_REGISTER) {
-		echo '{"status":"FAIL","problem":"Registration is closed"}';
+		end_fail('Registration is closed');
 	}
 
-	if (isset($_POST['submit'])
-			&& isset($_POST['nick'])
-			&& isset($_POST['password'])
-			&& isset($_POST['email'])
-			&& isset($_POST['recaptcha_challenge_field'])
-			&& isset($_POST['recaptcha_response_field'])) {
-		
-		require_once __DIR__.'/php/lib/recaptcha-php/recaptchalib.php';
-		
-		$resp = recaptcha_check_answer(CAPTCHA_PRIVATE_KEY, $_SERVER["REMOTE_ADDR"], $_POST["recaptcha_challenge_field"], $_POST["recaptcha_response_field"]);
+	if (
+		isset($_POST['submit'])
+		&& isset($_POST['g-recaptcha-response'])
+		&& filter_input(INPUT_POST, 'nick', FILTER_CALLBACK, array('options' => 'filter_nick'))
+		&& filter_input(INPUT_POST, 'password', FILTER_CALLBACK, array('options' => 'filter_password'))
+		&& filter_input(INPUT_POST, 'email', FILTER_CALLBACK, array('options' => 'filter_email'))
+	) {
+		$reCaptcha = new ReCaptcha(CAPTCHA_PRIVATE_KEY);
+		$resp = $reCaptcha->verifyResponse($_SERVER['REMOTE_ADDR'], $_POST['g-recaptcha-response']);
 
-		if ($resp->is_valid) {
-			require_once __DIR__.'/php/lib/DB.php';
+		if ($resp != null && $resp->success) {
+			$db = new DB();
 			
-			if (!isset($_POST['nick'][NICK_MAX_LENGTH+1])
-					&& !isset($_POST['password'][PASSWORD_MAX_LENGTH+1])
-					&& !isset($_POST['email'][EMAIL_MAX_LENGTH+1])
-					&& isset($_POST['nick'][0])
-					&& isset($_POST['password'][0])
-					&& isset($_POST['email'][0])
-					&& filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+			if ($db -> create_new_user($_POST['nick'], $_POST['password'], $_POST['email'], $validation)) {
 				
-				$db = new DB();
-				$db -> Open();
+				$validation_link = 'https://'.WEB_PATH.'user?action=validate&nick='.urlencode($_POST['nick']).'&validation='.urlencode($validation);
 				
-				if ($db -> create_new_user($_POST['nick'], $_POST['password'], $_POST['email'], $validation)) {
-					
-					$validation_link = 'https://'.WEB_PATH.'user?action=validate&nick='.urlencode($_POST['nick']).'&validation='.urlencode(base64_encode($validation));
-					
-					$subject = 'Validate your account';
-					$body = "Validate your account by following the next link:<br/><br/>"
-					      . "<a href=\"{$validation_link}\">{$validation_link}</a>";
-					
-					send_mail($_POST['email'], $subject, $body);
-					
-					end_ok();
-				} else end_fail('The user already exists');
-			} else end_fail('Incorrect nick, password or email');
+				$subject = 'Validate your account';
+				$body = "Validate your account by following the next link:<br/><br/>"
+				      . "<a href=\"{$validation_link}\">{$validation_link}</a>";
+				
+				send_mail($_POST['email'], $subject, $body);
+				
+				end_ok();
+			} else end_fail('The user already exists');
 		} else end_fail('Incorrect captcha');
-	} else end_fail('There are missing values');
+	} else end_fail('Incorrect nick, password or email');
 }
 
 function logout(){
@@ -145,19 +124,14 @@ function logout(){
 function validate(){
 	// Do not give info about invalid validations.
 	
-	require_once __DIR__.'/php/config.php';
-	require_once __DIR__.'/php/lib/DB.php';
-	
-	if (isset($_GET['nick'])
-			&& !isset($_GET['nick'][NICK_MAX_LENGTH+1])
-			&& isset($_GET['nick'][0])
-			&& isset($_GET['validation'])
-			&& isset($_GET['validation'][0])) {
-		
+	if (
+		filter_input(INPUT_GET, 'nick', FILTER_CALLBACK, array('options' => 'filter_nick'))
+		&& filter_input(INPUT_GET, 'validation', FILTER_CALLBACK, array('options' => 'filter_validation'))
+		&& tries_get() > 0
+	) {
 		$db = new DB();
-		$db -> Open();
 		
-		$email = $db -> validate_new_user($_GET['nick'], base64_decode($_GET['validation']));
+		$email = $db -> validate_new_user($_GET['nick'], $_GET['validation']);
 		
 		if ($email) {
 			$link = 'https://'.WEB_PATH;
@@ -169,30 +143,27 @@ function validate(){
 			
 			send_mail($email, $subject, $body);
 			
-			header('Location: https://'.WEB_PATH);
-		}
+			tries_reset();
+		} else tries_decrease();
 	}
+	header('Location: //'.WEB_PATH, true, 302);
 }
 
 function recover(){
 	// Do not give info about invalid recoveries.
 	
-	require_once __DIR__.'/php/config.php';
-	require_once __DIR__.'/php/lib/DB.php';
-	
-	if (isset($_GET['nick'])
-			&& !isset($_GET['nick'][NICK_MAX_LENGTH+1])
-			&& isset($_GET['nick'][0])
-			&& isset($_GET['validation'])
-			&& isset($_GET['validation'][0])) {
-		
+	if (
+		filter_input(INPUT_GET, 'nick', FILTER_CALLBACK, array('options' => 'filter_nick'))
+		&& filter_input(INPUT_GET, 'validation', FILTER_CALLBACK, array('options' => 'filter_validation'))
+		&& tries_get() > 0
+	) {
 		$db = new DB();
-		$db -> Open();
+		$db->debug_mode(true);
 		
-		$email = $db -> recover_account_validate($_GET['nick'], base64_decode($_GET['validation']));
+		$email = $db -> recover_account_validate($_GET['nick'], $_GET['validation']);
 		
 		if ($email) {
-			$new_password = random_string(10, 48, 57);
+			$new_password = random_string(5, G::$abcABC09);
 			
 			$db -> modify_password($_GET['nick'], $new_password);
 			
@@ -204,46 +175,52 @@ function recover(){
 			
 			send_mail($email, $subject, $body);
 			
-			header('Location: //'.WEB_PATH, true, 302);
-		}
+			tries_reset();
+		} else tries_decrease();
 	}
+	header('Location: //'.WEB_PATH, true, 302);
 }
 
 function forgot(){
-	if (isset($_POST['submit'])
-			&& isset($_POST['email'])
-			&& isset($_POST['recaptcha_challenge_field'])
-			&& isset($_POST['recaptcha_response_field'])) {
-		
-		require_once __DIR__.'/php/config.php';
-		require_once __DIR__.'/php/lib/recaptcha-php/recaptchalib.php';
-		
-		$resp = recaptcha_check_answer(CAPTCHA_PRIVATE_KEY, $_SERVER["REMOTE_ADDR"], $_POST["recaptcha_challenge_field"], $_POST["recaptcha_response_field"]);
+	if (
+		isset($_POST['submit'])
+		&& isset($_POST['g-recaptcha-response'])
+		&& filter_input(INPUT_POST, 'email', FILTER_CALLBACK, array('options' => 'filter_email'))
+	) {
+		$reCaptcha = new ReCaptcha(CAPTCHA_PRIVATE_KEY);
+		$resp = $reCaptcha->verifyResponse($_SERVER['REMOTE_ADDR'], $_POST['g-recaptcha-response']);
 
-		if ($resp->is_valid) {
-			require_once __DIR__.'/php/lib/DB.php';
+		if ($resp != null && $resp->success) {
+			$db = new DB();
 			
-			if (!isset($_POST['email'][EMAIL_MAX_LENGTH+1])
-					&& isset($_POST['email'][0])
-					&& filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+			if ($db -> recover_account($_POST['email'], $nick, $validation)) {
+				$validation_link = 'https://'.WEB_PATH.'user?action=recover&nick='.urlencode($nick).'&validation='.urlencode($validation);
 				
-				$db = new DB();
-				$db -> Open();
+				$subject = 'Recover your account';
+				$body = "Your nick is: {$nick}<br/>Recover your account by following this link:<br/><br/>"
+				      . '<a href="'.$validation_link.'">'.$validation_link.'</a>';
 				
-				if ($db -> recover_account($_POST['email'], $nick, $validation)) {
-					$validation_link = 'https://'.WEB_PATH.'user?action=recover&nick='.urlencode($nick).'&validation='.urlencode(base64_encode($validation));
-					
-					$subject = 'Recover your account';
-					$body = "Your nick is: {$nick}<br/>Recover your account by following the next link:<br/><br/>"
-					      . '<a href="'.$validation_link.'">'.$validation_link.'</a>';
-					
-					send_mail($_POST['email'], $subject, $body);
-				}
-				// OK, even if it fails, to prevent information leak.
-				end_ok();
-			} else end_fail('Incorrect nick, password or email');
+				send_mail($_POST['email'], $subject, $body);
+			}
+			// OK, even if it fails, to prevent information leak.
+			end_ok();
 		} else end_fail('Incorrect captcha');
-	} else end_fail('There are missing values');
+	} else end_fail('Incorrect nick, password or email');
+}
+
+
+
+// Contabilize how many attemps has the user left (by IP)
+function tries_get() {
+	$tries = apc_fetch('login_fail_'.$_SERVER['REMOTE_ADDR']);
+	if ($tries === false) $tries = MAX_LOGIN_FAILS;
+	return $tries;
+}
+function tries_decrease() {
+	apc_store('login_fail_'.$_SERVER['REMOTE_ADDR'], tries_get() - 1, LOGIN_FAIL_WAIT * 60);
+}
+function tries_reset() {
+	$tries = apc_delete('login_fail_'.$_SERVER['REMOTE_ADDR']);
 }
 
 
@@ -254,12 +231,12 @@ function forgot(){
 //
 /////////////////////////////////////////////////////////
 
-function end_ok(){
-	echo '{"status":"OK"}';
+function end_ok($txt = ''){
+	echo '{"status":"OK","message":'.json_encode($txt, true).'}';
 	exit;
 }
 
-function end_fail($txt){
-	echo '{"status":"FAIL","problem":"'.$txt.'"}';
+function end_fail($txt = ''){
+	echo '{"status":"FAIL","message":'.json_encode($txt, true).'}';
 	exit;
 }

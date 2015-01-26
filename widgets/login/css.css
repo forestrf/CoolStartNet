@@ -93,6 +93,10 @@
 	width: 90%;
 }
 
+.login .captcha_placeholder div div {
+	display: inline-block;
+}
+
 
 #recaptcha_area, #recaptcha_table {
 	display: inline;

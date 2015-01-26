@@ -39,10 +39,18 @@ function file_hash(&$content) {
 	return md5($content);
 }
 
+// if $chr_start is a string, use it as the available chars
 function random_string($size, $chr_start=34, $chr_end=255) {
 	$cadena = '';
-	for ($i=0; $i<$size; ++$i) {
-		$cadena .= chr(mt_rand($chr_start, $chr_end));
+	if (is_int($chr_start)) {
+		for ($i=0; $i<$size; ++$i) {
+			$cadena .= chr(mt_rand($chr_start, $chr_end));
+		}
+	} else {
+		$f = strlen($chr_start);
+		for ($i=0; $i<$size; ++$i) {
+			$cadena .= $chr_start[mt_rand(0, $f)];
+		}
 	}
 	return $cadena;
 }
@@ -72,6 +80,7 @@ class G {
 	 * @var Session
 	 */
 	public static $SESSION;
+	public static $abcABC09 = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 }
 // Must be called before any echo to be able to output headers
 // 'db' | 'session'
@@ -240,9 +249,7 @@ function isset_and_default(&$array, $param, $default) {
 
 function file_upload_widget_version(DB &$db, $widgetID, $widgetVersion, &$FILE_REFERENCE, $name = NULL){
 	if($FILE_REFERENCE['size'] <= MAX_FILE_SIZE_BYTES){
-		$fp      = fopen($FILE_REFERENCE['tmp_name'], 'rb');
-		$content = fread($fp, filesize($FILE_REFERENCE['tmp_name']));
-		fclose($fp);
+		$content = file_get_contents($FILE_REFERENCE['tmp_name']);
 		
 		// Innecesario borrarlo, php lo borra automaticamente.
 		unlink($FILE_REFERENCE['tmp_name']);
@@ -254,4 +261,17 @@ function file_upload_widget_version(DB &$db, $widgetID, $widgetVersion, &$FILE_R
 		
 		$db->upload_widget_version_file($widgetID, $widgetVersion, $name, file_mimetype($FILE_REFERENCE['name']), $content);
 	}
+}
+
+function filter_nick($value) {
+	return strlen($value) <= NICK_MAX_LENGTH;
+}
+function filter_password($value) {
+	return strlen($value) <= PASSWORD_MAX_LENGTH;
+}
+function filter_email($value) {
+	return strlen($value) <= EMAIL_MAX_LENGTH && filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+}
+function filter_validation($value) {
+	return strlen($value) <= 5;
 }
