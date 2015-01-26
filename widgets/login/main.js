@@ -25,7 +25,7 @@ C(login,
 		user = C('input', ['type', 'text',     'name', 'nick',      'placeholder', 'User',     'class', 'c', tabindex, 1]),
 		pass = C('input', ['type', 'password', 'name', 'password',  'placeholder', 'Password', 'class', 'c', tabindex, 2]),
 		mail = C('input', ['type', 'text',     'name', 'email',     'placeholder', 'email',    'class', 'c ' + invisible]),
-		captcha_placeholder = C('div', ['class', 'captcha_placeholder']),
+		captcha_placeholder = C('div', ['class', 'captcha_placeholder', 'style', 'display:none']),
 		C('label', ['class', 'c'],
 			register = C('input', ['type', 'checkbox']),
 			"I don't have an account"
