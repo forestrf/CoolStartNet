@@ -19,12 +19,23 @@
 // Ignore warnings. They can be harmful for the json response
 error_reporting(E_ALL ^ E_WARNING);
 
+$actions = array(
+	0 => 'get',
+	1 => 'check',
+	2 => 'set',
+	3 => 'del',
+	4 => 'delall'
+);
+
 require_once __DIR__ . '/php/defaults.php';
 require_once __DIR__ . '/php/functions/generic.php';
 
 $db = open_db_session();
-if(!G::$SESSION->exists()){
-	exit;
+if (!G::$SESSION->exists()) {
+	// User can't save or delete, only read
+	unset($actions[2]);
+	unset($actions[3]);
+	unset($actions[4]);
 }
 
 insert_nocache_headers();
@@ -32,23 +43,13 @@ insert_nocache_headers();
 /*
 $_GET['data'] => json(
 	widget => (
-		variable => value
+		hash => '' / null
+		keys => (
+			variable => value
+		)
 	)
 )
-$_GET['action'] => get/set
-*/
-
-/*
-Fails:
-1 => There are no specified variables
-5 => The variable "action" must be "set" o "get"
-7 => Problem saving the data
-9 => Bad JSON in the "data" variable
-*/
-
-/*
-Perfects:
-1 => Saved perfectly
+$_GET['action'] => get/set...
 */
 
 if (!isset($_POST['data']) || !isset($_POST['action'])) {
@@ -58,19 +59,9 @@ if (!isset($_POST['data']) || !isset($_POST['action'])) {
 $data = &$_POST['data'];
 $action = &$_POST['action'];
 
-if (
-	$action !== 'set'    &&
-	$action !== 'get'    &&
-	$action !== 'del'    &&
-	$action !== 'delall' &&
-	$action !== 'check'
-) {
+if (!in_array($action, $actions)) {
 	fail(5);
 }
-
-
-// Solo permitir default sin login en caso de get o check
-user_check_access($action === 'get' || $action === 'check');
 
 
 
@@ -88,6 +79,7 @@ if ($data_json === null) {
 
 
 widget_variables_valid($data_json);
+if ($db->is_away()) fail(11);
 
 switch (isset($action)?$action:null) {
 	case 'get':
@@ -138,56 +130,40 @@ switch (isset($action)?$action:null) {
 #
 # --------------------------------------------------------------------------------------------------------------
 
-$hashes = array();
-
-// Validate a widget list
-// returns true or false
+// Validate a widget list. removing the invalid widgets
 function widget_variables_valid(&$widgets) {
-	global $db, $hashes;
-	foreach ($widgets as $widgetID => &$variables) {
-		if ($widgetID != -1) {
-			widget_remove_secret($widgetID, $widgetID_real, $secret);
-			if (!validateWidget($widgetID_real, $secret, $hash)) {
+	global $db;
+	foreach ($widgets as $widgetID => &$variables)
+		if ($widgetID != DB::GLOBAL_WIDGET)
+			if (!validateWidget($widgetID, $variables['hash']))
 				unset($widgets[$widgetID]);
-			} else {
-				if (!$db->get_widget_by_ID($widgetID_real)) {
-					unset($widgets[$widgetID]);
-				}
-				$hashes[$widgetID_real] = $widgetID;
-			}
-		}
-	}
-}
-
-function widget_add_secret(&$widgetID, &$secret) {
-	return $widgetID . '-' . $secret;
-}
-
-function widget_remove_secret(&$widgetSecret, &$widgetID, &$secret) {
-	$secret = substr($widgetSecret, strpos($widgetSecret, '-') + 1);
-	$widgetID = substr($widgetSecret, 0, strpos($widgetSecret, '-'));
+	
+	$ids = array_keys($widgets);
+	$valid_ids = $db->exists_widgets($ids);
+	
+	foreach ($widgets as $widgetID => &$variables)
+		if (!in_array($widgetID, $valid_ids))
+			unset($widgets[$widgetID]);
 }
 
 // Call before the function widget_variables_valid()
 function getHandler(&$widgets) {
-	global $db, $hashes;
+	global $db;
 	$array_response = array();
 	$response = $db->get_variable($widgets);
 	foreach ($response as &$result) {
-		//global is a invisible widget with id -1
-		$array_response[$result['IDwidget'] === '-1' ? '-1' : $hashes[$result['IDwidget']]][$result['variable']] = $result['value'];
+		$array_response[$result['IDwidget']][$result['variable']] = $result['value'];
 	}
 	return $array_response;
 }
 
 // Call before the function widget_variables_valid()
 function checkHandler(&$widgets) {
-	global $db, $hashes;
+	global $db;
 	$array_response = array();
 	$response = $db->check_variable($widgets);
 	foreach ($response as &$result) {
-		//global is a invisible widget with id -1
-		$array_response[$result['IDwidget'] === '-1' ? '-1' : $hashes[$result['IDwidget']]][$result['variable']] = 1;
+		$array_response[$result['IDwidget']][$result['variable']] = true;
 	}
 	return $array_response;
 }
@@ -198,7 +174,7 @@ function setHandler(&$widgets) {
 	$array_response = array();
 	$response = $db->set_variable($widgets);
 	foreach ($widgets as $widgetID => &$variables_widget) {
-		foreach ($variables_widget as $variable => &$value) {
+		foreach ($variables_widget['keys'] as $variable => &$value) {
 			$array_response[$widgetID][$variable] = $response;
 		}
 	}
@@ -207,11 +183,11 @@ function setHandler(&$widgets) {
 
 // Call before the function widget_variables_valid()
 function delHandler(&$widgets) {
-	global $db, $hashes;
+	global $db;
 	$array_response = array();
 	$response = $db->del_variable($widgets);
 	foreach ($widgets as $widgetID => &$variables_widget) {
-		foreach ($variables_widget as $variable => &$value) {
+		foreach ($variables_widget['keys'] as $variable => &$value) {
 			$array_response[$widgetID][$variable] = $response;
 		}
 	}
@@ -220,11 +196,11 @@ function delHandler(&$widgets) {
 
 // Call before the function widget_variables_valid()
 function delallHandler(&$widgets) {
-	global $db, $hashes;
+	global $db;
 	$array_response = array();
 	$response = $db->delall_variable($widgets, true);
 	foreach ($widgets as $widgetID => &$variables_widget) {
-		foreach ($variables_widget as $variable => &$value) {
+		foreach ($variables_widget['keys'] as $variable => &$value) {
 			$array_response[$widgetID][$variable] = $response;
 		}
 	}
@@ -233,9 +209,9 @@ function delallHandler(&$widgets) {
 
 
 
-function validateWidget($widgetID, $secret, &$hash) {
-	$hash = hash_api(G::$SESSION->get_user_random(), $widgetID, PASSWORD_TOKEN_API);
-	return $secret === $hash;
+function validateWidget($widgetID, $hash) {
+	$hash_generated = hash_api(G::$SESSION->get_user_random(), $widgetID, PASSWORD_TOKEN_API);
+	return $hash_generated === $hash;
 }
 
 
@@ -248,7 +224,14 @@ function validateWidget($widgetID, $secret, &$hash) {
 # --------------------------------------------------------------------------------------------------------------
 
 function fail($n) {
-	respond('FAIL', $n);
+	$fails = array(
+		1 => 'Incomplete request (data and action are required)',
+		5 => 'Invalid action',
+		7 => 'Problem saving the data',
+		9 => 'Data not valid. JSON parse fail',
+		11 => 'Database unreachable'
+	);
+	respond('FAIL', '"' . $fails[$n] . '"');
 	exit;
 }
 

@@ -35,6 +35,8 @@ $steep = isset($_GET['steep']) ? $_GET['steep'] : '';
 
 switch ($steep) {
 	case 'install-db':
+		delete_apc_cache();
+		
 		$sql_path = '../../sql/db.sql';
 		$db_instructions = file_get_contents($sql_path);
 		
@@ -48,6 +50,8 @@ switch ($steep) {
 	
 	// It needs the default widgets
 	case 'create-default-user':
+		delete_apc_cache();
+		
 		require_once '../php/lib/DB.php';
 		
 		$db = new DB();
@@ -101,6 +105,8 @@ switch ($steep) {
 
 
 	case 'install-widgets':
+		delete_apc_cache();
+		
 		// search inside the widgets folder and add all the widgets to the user with id -1.
 		// Admin user must be able to edit this afterwards
 		
@@ -184,4 +190,12 @@ switch ($steep) {
 		}
 		
 	break;
+}
+
+function delete_apc_cache() {
+	$info = apc_cache_info('user');
+	foreach ($info['cache_list'] as $obj) {
+	    apc_delete($obj['info']);
+	    print 'Deleted: ' . $obj['info'] . PHP_EOL;
+	}
 }

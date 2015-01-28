@@ -8,10 +8,6 @@
 		execute_modes = [],
 		requests = [];
 	
-	function widget_add_secret(widgetID, secret) {
-		return widgetID + '-' + secret;
-	}
-	
 	var local_precall = function (mode, widgetID, key, value, callback) {
 		if (callback === undefined) callback = function () {};
 		
@@ -55,9 +51,6 @@
 	*/
 	var precall = function (mode, widgetID, secret, key, value, callback) {
 		if (callback === undefined) callback = function () {};
-		if (secret) {
-			widgetID = widget_add_secret(widgetID, secret);
-		}
 		
 		if (requests[mode] === undefined) {
 			requests[mode]  = {};
@@ -67,9 +60,11 @@
 		
 		if (requests[mode][widgetID] === undefined) {
 			requests[mode][widgetID] = {};
+			requests[mode][widgetID]['hash'] = secret;
+			requests[mode][widgetID]['keys'] = {};
 		}
 		
-		requests[mode][widgetID][key] = value;
+		requests[mode][widgetID]['keys'][key] = value;
 		
 		callbacks[mode].push({"callback":callback,"widgetID":widgetID,"key":key});
 		clearTimeout(timeouts[mode]);

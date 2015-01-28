@@ -54,15 +54,22 @@ function render_wrapper($title = 'Homepage - CoolStart.net', $content, $compress
 			var menu = document.getElementById("bottom_bar");
 			
 			C(menu
-				,C("a", ["class", "btn",                     "href", "//<?=WEB_PATH?>"],                           "Home")
-				,C("a", ["class", "btn",                     "href", "//<?=WEB_PATH?>manage-widgets"],             "Manage widgets")
-				,C("a", ["class", "btn",                     "href", "//<?=WEB_PATH?>options"],                    "Options")
-				,C("a", ["class", "btn",                     "href", "//<?=WEB_PATH?>developers"],                 "Developers")
-				,C("a", ["class", "btn", "target", "_blank", "href", "http://<?=FORUM_WEB_PATH?>"],                "forum")
-				,C("a", ["class", "btn",                     "href", "//<?=WEB_PATH?>help"],                       "help")
-				,C("a", ["class", "btn",                     "href", "//<?=WEB_PATH?>about"],                      "about")
-				,C("a", ["class", "btn", "target", "_blank", "href", "https://github.com/forestrf/CoolStartNet"],  "GitHub")
-				,C("a", ["class", "btn",                     "href", "//<?=WEB_PATH?>user?action=logout"],         "Logout")
+				,C("a", ["href", "//<?=WEB_PATH?>", "class", "btn"], "Home")
+				<?php if (G::$SESSION->exists()) { ?>
+					,C("a", ["href", "//<?=WEB_PATH?>manage-widgets", "class", "btn"], "Manage widgets")
+					,C("a", ["href", "//<?=WEB_PATH?>options", "class", "btn"], "Options")
+				<?php }?>
+				,C("a", ["href", "//<?=WEB_PATH?>developers", "class", "btn"], "Developers")
+				,C("a", ["href", "http://<?=FORUM_WEB_PATH?>", "class", "btn", "target", "_blank"], "forum")
+				,C("a", ["href", "//<?=WEB_PATH?>help", "class", "btn"], "help")
+				,C("a", ["href", "//<?=WEB_PATH?>about", "class", "btn"], "about")
+				<?php if (!G::$SESSION->exists()) { ?>
+					,C("a", ["href", "//<?=WEB_PATH?>example", "class", "btn"], "View example")
+				<?php }?>
+				,C("a", ["href", "https://github.com/forestrf/CoolStartNet", "class", "btn", "target", "_blank"], "GitHub")
+				<?php if (G::$SESSION->exists()) { ?>
+					,C("a", ["href", "//<?=WEB_PATH?>user?action=logout", "class", "btn"], "Logout")
+				<?php }?>
 			);
 		})();
 	</script>

@@ -255,7 +255,7 @@ function global_delete_test(){
 		}
 	});
 
-	API.storage.remoteStorage.get('test', function(entrada){
+	API.storage.sharedStorage.get('test', function(entrada){
 		if(entrada){
 			log('GLOBAL DELETE Test confirmed FAIL.');
 		}

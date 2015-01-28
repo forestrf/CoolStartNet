@@ -22,7 +22,7 @@ require_once __DIR__.'/../functions/generic.php';
 class DB {
 	
 	// global constants
-	const GLOBAL_WIDGET  = -1;
+	const GLOBAL_WIDGET  = '-1';
 	
 	
 	
@@ -56,8 +56,10 @@ class DB {
 		$this->mysqli = new mysqli('p:'.$this->host, $this->user, $this->pass, $this->bd);
 		if ($this->mysqli->connect_errno) {
 			if($this->d) $this->debug('Failed to connect to MySQL: (' . $this->mysqli->connect_errno . ') ' . $this->mysqli->connect_error);
+			$this->away = true;
 			return false;
 		}
+		$this->away = false;
 		$this->mysqli->set_charset('utf8');
 
 		if($this->d) $this->debug('Database opened');
@@ -107,6 +109,7 @@ class DB {
 	
 	// Variables
 	private $userID;
+	private $away = false;
 	
 	function set_user_id($userID) {
 		$this->userID = $userID;
@@ -115,6 +118,9 @@ class DB {
 		return $this->userID;
 	}
 	
+	function is_away() {
+		return $this->away;
+	}
 	
 	//debug mode
 	var $debug_array = array();
@@ -270,56 +276,47 @@ class DB {
 		return count($result) > 0 ? $result[0] : false;
 	}
 	
-	// global is a invisible widget with id -1
-	function calc_widgetID($widgetID_mixed) {
-		if ($widgetID_mixed === 'global' || strpos($widgetID_mixed, ''.self::GLOBAL_WIDGET) === 0)
-			return self::GLOBAL_WIDGET;
-		else if (strpos($widgetID_mixed, '-') !== false)
-			return substr($widgetID_mixed, 0, strpos($widgetID_mixed, '-'));
-		else
-			return $widgetID_mixed;
+	// array with widgets ID. Returns an array with the existent widgets ID.
+	function exists_widgets(&$widgets) {
+		$SQL_statement = array();
+		foreach ($widgets as $widgetID) {
+			$widgetID = mysql_escape_mimic($widgetID);
+			$SQL_statement[] = " `IDwidget` = '{$widgetID}' ";
+		}
+		$result = $this->query("SELECT `IDwidget` FROM `widgets` WHERE ".implode('OR', $SQL_statement).";");
+		$to_return = array();
+		foreach ($result as $widget) {
+			$to_return[] = $widget['IDwidget'];
+		}
+		return $to_return;
 	}
 	
 	// Returns a variable of the user.
-	// $widgetID_variable must be an array that follows the next pattern:
-	/*
-		array(
-			'widgetID' => array(
-				'variable' => '', ...
-			), ...
-		);
-	*/
-	function get_variable(&$widgetID_variable) {
+	function get_variable(&$widgets) {
 		$SQL_statement = array();
-		foreach ($widgetID_variable as $widgetID => &$variables) {
+		foreach ($widgets as $widgetID => &$variables) {
 			$widgetID = mysql_escape_mimic($widgetID);
 			
-			// Global widget handler here
-			$widgetID_calc = $this->calc_widgetID($widgetID);
-			
 			// Ignore $value
-			foreach ($variables as $variable => &$value) {
+			foreach ($variables['keys'] as $variable => &$value) {
 				$variable = mysql_escape_mimic($variable);
-				$SQL_statement[] = "(`IDwidget` = '{$widgetID_calc}' AND `variable` = '{$variable}')";
+				$SQL_statement[] = "(`IDwidget` = '{$widgetID}' AND `variable` = '{$variable}')";
 			}
 		}
 		
 		return $this->query("SELECT `IDwidget`, `variable`, `value` FROM `variables` WHERE `IDuser` = '{$this->userID}' AND (".implode('OR', $SQL_statement).");");
 	}
 	
-	
-	function check_variable(&$widgetID_variable) {
+	// Returns if the variable exists.
+	function check_variable(&$widgets) {
 		$SQL_statement = array();
-		foreach ($widgetID_variable as $widgetID => &$variables) {
+		foreach ($widgets as $widgetID => &$variables) {
 			$widgetID = mysql_escape_mimic($widgetID);
 			
-			// Global widget handler here
-			$widgetID_calc = $this->calc_widgetID($widgetID);
-			
 			// Ignore $value
-			foreach ($variables as $variable => &$value) {
+			foreach ($variables['keys'] as $variable => &$value) {
 				$variable = mysql_escape_mimic($variable);
-				$SQL_statement[] = "(`IDwidget` = '{$widgetID_calc}' AND `variable` = '{$variable}')";
+				$SQL_statement[] = "(`IDwidget` = '{$widgetID}' AND `variable` = '{$variable}')";
 			}
 		}
 		
@@ -328,30 +325,19 @@ class DB {
 	
 	// Doesn't check if the widget exists. This check is done in api.php
 	// Check if the user has space to save the new data
-	// $widgetID_variable_value must be an array that follows the next pattern:
-	/*
-		array(
-			'widgetID' => array(
-				'variable' => 'value', ...
-			), ...
-		);
-	*/
-	function set_variable(&$widgetID_variable_value) {
+	function set_variable(&$widgets) {
 		$occupied = $this->get_user_size_variable();
 		
 		$SQL_statement = array();
-		foreach ($widgetID_variable_value as $widgetID => &$variable_value) {
+		foreach ($widgets as $widgetID => &$variables) {
 			$widgetID = mysql_escape_mimic($widgetID);
 			
-			// Global widget handler here
-			$widgetID_calc = $this->calc_widgetID($widgetID);
-			
-			foreach ($variable_value as $variable => &$value) {
+			foreach ($variables['keys'] as $variable => &$value) {
 				$value = json_encode($value);
-				$occupied[$widgetID_calc][$variable] = strlen($value);
+				$occupied[$widgetID][$variable] = strlen($value);
 				$value = mysql_escape_mimic($value);
 				$variable = mysql_escape_mimic($variable);
-				$SQL_statement[] = "('{$this->userID}', '{$widgetID_calc}', '{$variable}', '{$value}')";
+				$SQL_statement[] = "('{$this->userID}', '{$widgetID}', '{$variable}', '{$value}')";
 			}
 		}
 		
@@ -361,14 +347,6 @@ class DB {
 		return false;
 	}
 	
-	
-	/*
-	array(
-		'IDwidget' => array(
-			'variable' => (int)size, ...
-		), ...
-	)
-	*/
 	// Return an array with all the variables with its sizes from a user
 	function get_user_size_variable() {
 		$pre_occupied = $this->query("SELECT `IDwidget`, `variable`, LENGTH(`value`) AS `total_size` FROM `variables` WHERE `IDuser` = '{$this->userID}';");
@@ -388,35 +366,30 @@ class DB {
 		return $totalSize;
 	}
 	
-	function del_variable(&$widgetID_variable_value) {
+	function del_variable(&$widgets) {
 		$SQL_statement = array();
-		foreach ($widgetID_variable_value as $widgetID => &$variable_value) {
+		foreach ($widgets as $widgetID => &$variables) {
 			$widgetID = mysql_escape_mimic($widgetID);
 			
-			// Global widget handler here
-			$widgetID_calc = $this->calc_widgetID($widgetID);
-			
-			foreach ($variable_value as $variable => &$value) {
+			foreach ($variables['keys'] as $variable => &$value) {
 				$variable = mysql_escape_mimic($variable);
-				$SQL_statement[] = "(`IDwidget` = '{$widgetID_calc}' AND `variable` = '{$variable}')";
+				$SQL_statement[] = "(`IDwidget` = '{$widgetID}' AND `variable` = '{$variable}')";
 			}
 		}
 		
 		return $this->query("DELETE FROM `variables` WHERE `IDuser` = '{$this->userID}' AND (".implode(' OR ', $SQL_statement).");");
 	}
 	
-	function delall_variable(&$widgetID_variable_value, $private_only = true) {
+	function delall_variable(&$widgets, $private_only = true) {
 		$SQL_statement = array();
-		foreach ($widgetID_variable_value as $widgetID => &$variable_value) {
+		foreach ($widgets as $widgetID => &$variable_value) {
 			$widgetID = mysql_escape_mimic($widgetID);
 			
 			// Global widget handler here
 			if ($private_only && $widgetID === 'global')
 				continue;
 			
-			$widgetID_calc = $this->calc_widgetID($widgetID);
-			
-			$SQL_statement[] = "`IDwidget` = '{$widgetID_calc}'";
+			$SQL_statement[] = "`IDwidget` = '{$widgetID}'";
 		}
 		
 		return $this->query("DELETE FROM `variables` WHERE `IDuser` = '{$this->userID}' AND (".implode(' OR ', $SQL_statement).");");
@@ -451,7 +424,7 @@ class DB {
 	// Deleting a widget also deletes the widget variables of users and users lose it if they are using it.
 	// Doesn't delete from the table 'files' because other file can has the same hash. The unlinked content is deleted from other function that is called from a cronjob.
 	function delete_widget($widgetID) {
-		if ($this->CanIModifyWidget($widgetID) && $this->query("SELECT * FROM `widgets` WHERE `IDwidget` = '{$widgetID}' AND `published` = '-1';")) {
+		if ($this->CanIModifyWidget($widgetID) && $this->query("SELECT * FROM `widgets` WHERE `IDwidget` = '{$widgetID}';")) {
 			/*
 			$this->query("DELETE FROM `widgets` WHERE `ID` = '{$widgetID}';");
 			$this->query("DELETE FROM `variables` WHERE `IDwidget` = '{$widgetID}';");
@@ -564,12 +537,12 @@ class DB {
 	
 	// Returns a list with the widgets available to the user.
 	function get_availabe_widgets_user() {
-		return $this->query($this->SELECT_FROM_WIDGETS_JOIN_WIDGETSUER('LEFT') . "WHERE `widgets`.`IDwidget` != ".self::GLOBAL_WIDGET." AND (`ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}' OR `published` > -1);"); // Por poner filtrado de widgets privados
+		return $this->query($this->SELECT_FROM_WIDGETS_JOIN_WIDGETSUER('LEFT') . "WHERE `widgets`.`IDwidget` != ".self::GLOBAL_WIDGET." AND (`ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}');"); // Por poner filtrado de widgets privados
 	}
 	
 	// Returns a list with the widgets available to the user.
 	function search_availabe_widgets_user($word) {
-		return $this->query($this->SELECT_FROM_WIDGETS_JOIN_WIDGETSUER('LEFT') . "WHERE `widgets`.`IDwidget` != ".self::GLOBAL_WIDGET." AND (`ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}' OR `published` > -1) AND (`name` LIKE '%{$word}%' OR `description` LIKE '%{$word}%' OR `fulldescription` LIKE '%{$word}%');"); // Por poner filtrado de widgets privados
+		return $this->query($this->SELECT_FROM_WIDGETS_JOIN_WIDGETSUER('LEFT') . "WHERE `widgets`.`IDwidget` != ".self::GLOBAL_WIDGET." AND (`ownerID` = '".GLOBAL_USER_ID."' OR `ownerID` = '{$this->userID}') AND (`name` LIKE '%{$word}%' OR `description` LIKE '%{$word}%' OR `fulldescription` LIKE '%{$word}%');"); // Por poner filtrado de widgets privados
 	}
 	
 	// Returns a list with the widgets owned by the user.

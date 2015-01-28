@@ -4,6 +4,8 @@
 	require_once __DIR__.'/php/functions/generic.php';
 	require_once __DIR__.'/php/lib/renderer.php';
 	
+	$db = open_db_session();
+	
 	ob_start();
 ?>
 
@@ -83,15 +85,15 @@
 		// last widget from the list for stacked requests
 		function fill_list(action, last, post) {
 			if (last === undefined) {
-				post = 0;
+				last = 0;
 			}
 			if (post === undefined) {
 				post = '';
-			}
+			} else post = '&' + post;
 			
 			API.xhr(
 				'widgets?action=' + action,
-				'last=' + last + '&' + post,
+				'last=' + last + post,
 				function (data) {
 					if (data.status === 'OK') {
 						widgets = [];

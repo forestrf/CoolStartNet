@@ -3,6 +3,7 @@
 class Session {
 	
 	var $userID = null;
+	private $logged_in = false;
 	
 	private $user_random;
 	private $db;
@@ -29,17 +30,19 @@ class Session {
 		$this->user_random = $this->db->get_user_random($this->userID);
 		$session_string = $this->generate_session_string($this->userID, $this->user_random);
 		setcookie('session', $session_string, time() + SESSION_TIME, '/', DOMAIN, false, true);
+		$this->logged_in = true;
 	}
 	
 	// Remove the current (and only) session
 	function remove_session() {
 		setcookie('session', '', time() - 3600, '/', DOMAIN, false, true);
 		$this->userID = null;
+		$this->logged_in = false;
 	}
 	
 	// is there a session?
 	function exists() {
-		return $this->userID !== null;
+		return $this->logged_in;
 	}
 	
 	// This must NO be printed never ever. A leak can be solved changing all the user's random strings and emailing a password reset form to all the users.
