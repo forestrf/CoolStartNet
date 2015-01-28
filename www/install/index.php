@@ -69,18 +69,22 @@ switch ($steep) {
 		
 		$widgets = array(
 			'global' => array(
-				'background_images' => array(
-					array('img/bg/caldeum_by_tituslunter-d5qinlq.jpg','http://tituslunter.deviantart.com/art/Caldeum-346871294'),
-					array('img/bg/stronghold_by_tituslunter-d5pno2d.jpg','http://tituslunter.deviantart.com/art/Stronghold-345425557'),
-					array('img/bg/view_afternoon_in_the_future_by_campanoo-d6dvcta.jpg','http://campanoo.deviantart.com/art/view-afternoon-in-the-future-386095006')
+				'keys' => array(
+					'background_images' => array(
+						array('img/bg/caldeum_by_tituslunter-d5qinlq.jpg','http://tituslunter.deviantart.com/art/Caldeum-346871294'),
+						array('img/bg/stronghold_by_tituslunter-d5pno2d.jpg','http://tituslunter.deviantart.com/art/Stronghold-345425557'),
+						array('img/bg/view_afternoon_in_the_future_by_campanoo-d6dvcta.jpg','http://campanoo.deviantart.com/art/view-afternoon-in-the-future-386095006')
+					)
 				)
 			),
-			'Background image' => array(),
 			'Basic clock' => array(
-				'pos' => array('left'=>'76.7187','top'=>'0.814901','width'=>'20','height'=>'20')
+				'keys' => array(
+					'pos' => array('left'=>'76.7187','top'=>'0.814901','width'=>'20','height'=>'20')
+				)
 			),
-			'Coolstart Title' => array(),
-			'Login window' => array()
+			'Background image' => array('keys' => array()),
+			'Coolstart Title' => array('keys' => array()),
+			'Login window' => array('keys' => array())
 		);
 		
 		$widgets_variables = array();
@@ -88,7 +92,7 @@ switch ($steep) {
 		foreach ($widgets as $name => &$elem) {
 			$widget = $db->get_widget($name);
 			
-			if ($widget['IDwidget'] != '-1') {
+			if ($widget['IDwidget'] != DB::GLOBAL_WIDGET) {
 				$db->add_using_widget_user($widget['IDwidget']);
 			}
 			
