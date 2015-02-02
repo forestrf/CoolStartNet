@@ -143,6 +143,12 @@
 
 
 
+.widgets_space {
+	height: 100%;
+}
+.widgets_space:empty {
+	height: 0;
+}
 .widgets_space td:nth-child(1) {
 	text-align: right;
 	width: 30%;
@@ -154,9 +160,6 @@
 .widgets_space td input {
 	width: 75%;
 }
-.widgets_space table {
-	width: 100%;
-}
 .widgets_space textarea {
 	height: 10em;
 	width: 75%;
@@ -164,6 +167,54 @@
 .widgets_space img {
 	width: 128px;
 }
+
+
+
+
+
+
+
+
+
+.left_bar {
+	background-color: #1b1b1b;
+	float: left;
+	height: 100%;
+	width: 40px;
+	box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.5);
+}
+
+
+.left_bar > div:hover {
+	background-color: #9a9a9a;
+}
+.left_bar > div {
+	background-color: #333;
+	cursor: pointer;
+	font-size: 20px;
+	height: 36px;
+	line-height: 36px;
+	margin-left: 1px;
+	margin-top: 2px;
+	text-align: center;
+	width: 36px;
+}
+.left_bar > div > span {
+	display: none;
+}
+.left_bar > div:hover > span {
+	background-color: #9a9a9a;
+	display: block;
+	font-size: 16px;
+	left: 37px;
+	line-height: 36px;
+	margin-top: -36px;
+	position: absolute;
+	box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.5);
+	font-family: Verdana;
+	padding: 0 10px;
+}
+
 
 
 

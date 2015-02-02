@@ -186,7 +186,7 @@ switch ($steep) {
 			foreach ($widget['files'] as &$file) {
 				$file_contents = file_get_contents($file['path']);
 				//$v = in_array($file['name'], $widget['staticfiles']) ? -1 : $version;
-				$db->upload_widget_file($IDwidget, $file['name'], file_mimetype($file['name']), $file_contents);
+				$db->upload_widget_file($IDwidget, $file['name'], $file_contents);
 			}
 			//$db->set_widget_creation_date($id, $widget['date']);
 			//$db->set_widget_autor();

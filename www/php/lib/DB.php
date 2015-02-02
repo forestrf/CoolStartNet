@@ -241,11 +241,19 @@ class DB {
 		return count($result) > 0 ? $result[0] : false;
 	}
 	
+	// Returns the user after validating the userID and the password or returns false if the user doesn't match.
+	function check_user_password($userID, $password) {
+		$userID = mysql_escape_mimic($userID);
+		$password = hash_password($password, $this->get_user_random($userID));
+		$result = $this->query("SELECT * FROM `users` WHERE `level` >= 200 && `IDuser` = '{$userID}' AND `password` = '{$password}';");
+		return count($result) > 0 ? $result[0] : false;
+	}
+	
 	// Change the password of the user. Returns bool = success
-	function modify_password($nick, $new_password) {
-		$nick = mysql_escape_mimic($nick);
-		$new_password = hash_password($new_password, $this->get_random_from_user_nick($nick));
-		return $this->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `nick` = '{$nick}';");
+	function modify_password($userID, $new_password) {
+		$userID = mysql_escape_mimic($userID);
+		$new_password = hash_password($new_password, $this->get_user_random($userID));
+		return $this->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `IDuser` = '{$userID}';");
 	}
 
 	// Remove user account
@@ -487,7 +495,7 @@ class DB {
 			
 			$name = mysql_escape_mimic($name);
 			$hash = file_hash($content);
-			$this->query("INSERT INTO `widgets-content` (`IDwidget`, `name`, `hash`, `mimetype`) VALUES ('{$widgetID}', '{$name}', '{$hash}', '{$mimetype}') ON DUPLICATE KEY UPDATE `hash` = VALUES(`hash`), `mimetype` = VALUES (`mimetype`);");
+			$this->query("INSERT INTO `widgets-content` (`IDwidget`, `name`, `hash`) VALUES ('{$widgetID}', '{$name}', '{$hash}') ON DUPLICATE KEY UPDATE `hash` = VALUES(`hash`);");
 			
 			$filename = $this->get_widget_file_path_from_hash($hash);
 			if (!is_file($filename)) {

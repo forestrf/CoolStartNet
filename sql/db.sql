@@ -100,7 +100,6 @@ CREATE TABLE `widgets-content` (
 	`IDwidget` int(11) NOT NULL,
 	`name` varchar(50) COLLATE utf8_bin NOT NULL,
 	`hash` varchar(32) COLLATE utf8_bin NOT NULL,
-	`mimetype` text COLLATE utf8_bin NOT NULL,
 	`static` text COLLATE utf8_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `widgets-content` ADD PRIMARY KEY (`IDwidget`, `name`);

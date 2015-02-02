@@ -83,6 +83,13 @@ function user_created_list(DB &$db) {
 	end_ok($result);
 }
 
+function user_created_files_list(DB &$db) {
+	if (!isset($_POST['widgetID']) || $_POST['widgetID'] === '') end_fail();
+	$widgets = $db->get_widget_contents($_POST['widgetID']);
+	$result = generate_widget_list_array($widgets);
+	end_ok($result);
+}
+
 function global_list_search(DB &$db) {
 	if (!isset($_POST['search']) || $_POST['search'] === '') return global_list($db);
 	$widgets = $db->search_availabe_widgets_user($_POST['search']);
@@ -170,37 +177,41 @@ function user_created_update(DB &$db) {
 function generate_widget_array(&$widgets) {
 	$result = array();
 
-	if ($widgets) {
-		foreach ($widgets as &$widget) {
-			$result[] = return_widget_array_element($widget);
-		}
+	foreach ($widgets as &$widget) {
+		$result[] = array(
+			'IDwidget'        => $widget['IDwidget'],
+			'name'            => $widget['name'],
+			'description'     => isset_and_default($widget, 'description', 'No description available.'),
+			'fulldescription' => isset_and_default($widget, 'fulldescription', 'No full description available.'),
+			'preview'         => 'preview.jpg',
+			'images'          => json_decode(isset_and_default($widget, 'images', '[]')),
+			//'token'           => hash_ipa(G::$SESSION->get_user_random(), $widget['IDwidget'], PASSWORD_TOKEN_IPA),
+			'inuse'           => isset_and_default($widget, 'IDuser', false) !== false ? true : false,
+		);
 	}
 
 	return $result;
 }
 
-function return_widget_array_element(&$widget) {
-	return array(
-		'IDwidget'        => $widget['IDwidget'],
-		'name'            => $widget['name'],
-		'description'     => isset_and_default($widget, 'description', 'No description available.'),
-		'fulldescription' => isset_and_default($widget, 'fulldescription', 'No full description available.'),
-		'preview'         => 'preview.jpg',
-		'images'          => json_decode(isset_and_default($widget, 'images', '[]')),
-		//'token'           => hash_ipa(G::$SESSION->get_user_random(), $widget['IDwidget'], PASSWORD_TOKEN_IPA),
-		'inuse'           => isset_and_default($widget, 'IDuser', false) !== false ? true : false,
-	);
+function generate_widget_list_array(&$widget_contents) {
+	$result = array();
+
+	foreach ($widget_contents as &$Content) {
+		$result[] = array(
+			'name' => $Content['name']
+		);
+	}
+
+	return $result;
 }
 
 
 
-
-
-
-
-
-
-
+/////////////////////////////////////////////////////////
+//
+// END FUNCTIONS
+//
+/////////////////////////////////////////////////////////
 
 function end_ok(&$array_response) {
 	$response = array (

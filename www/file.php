@@ -51,7 +51,7 @@ if ($file) {
 		exit;
 	} else {
 		// var_dump($file[0]);
-		header('Content-type: '.$file['mimetype']);
+		header('Content-type: ' . file_mimetype($name));
 		
 		readfile($db->get_widget_file_path_from_hash($file['hash']));
 	}

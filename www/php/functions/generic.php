@@ -81,6 +81,51 @@ class G {
 	 */
 	public static $SESSION;
 	public static $abcABC09 = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+	public static $mimetype_extensions = array(
+		'video/x-ms-asf' => array('asf', 'asr', 'asx'),
+		'video/x-msvideo' => array('avi'),
+		'application/octet-stream' => array('bin'),
+		'image/bmp' => array('bmp'),
+		'application/x-bzip' => array('bz'),
+		'application/x-bzip2' => array('bz2'),
+		'text/css' => array('css'),
+		'image/gif' => array('gif'),
+		'application/x-gzip' => array('gz', 'gzip'),
+		'text/html' => array('htm', 'html'),
+		'image/x-icon' => array('ico'),
+		'image/jpeg' => array('jpe', 'jpeg', 'jpg'),
+		'application/javascript' => array('js'),
+		'audio/x-mpegurl' => array('m3u'),
+		'audio/x-mid' => array('mid', 'midi'),
+		'video/quicktime' => array('mov'),
+		'video/x-sgi-movie' => array('movie'),
+		'video/mpeg' => array('mp2', 'mpe', 'mpeg', 'mpg', 'mpv2', 'm1v', 'm2v'),
+		'audio/mpeg' => array('mp3', 'm2a', 'mp2', 'mpa'),
+		'application/pdf' => array('pdf'),
+		'image/png' => array('png'),
+		'application/vnd.ms-powerpoint' => array('pps', 'ppt'),
+		'application/x-mspublisher' => array('pub'),
+		'application/rtf' => array('rtf'),
+		'application/smil' => array('smi', 'smil'),
+		'image/svg+xml' => array('svg'),
+		'application/x-shockwave-flash' => array('swf'),
+		'application/x-tar' => array('tar'),
+		'application/x-compressed' => array('tgz'),
+		'image/tiff' => array('tif', 'tiff'),
+		'text/plain' => array('txt', 'conf'),
+		'image/svg+xml' => array('svg'),
+		'application/x-font-ttf' => array('ttf'),
+		'application/x-font-opentype' => array('otf'),
+		'application/font-woff' => array('woff'),
+		'application/vnd.ms-fontobject' => array('eot'),
+		'text/x-vcard' => array('vcf'),
+		'audio/x-wav' => array('wav'),
+		'application/vnd.ms-excel' => array('xls', 'xlsx'),
+		'application/msword' => array('doc', 'docx'),
+		'application/x-compress' => array('z'),
+		'application/zip' => array('zip'),
+		'application/octet-stream' => array('')
+	);
 }
 // Must be called before any echo to be able to output headers
 // 'db' | 'session'
@@ -139,99 +184,16 @@ function file_mimetype($filename) {
 	}
 	$extension = substr($filename, $pos + 1);
 	
-	switch ($extension) {
-		case 'aif': case 'aifc': case 'aiff':
-			return 'audio/x-aiff';
-		case 'asf': case 'asr': case 'asx':
-			return 'video/x-ms-asf';
-		case 'au':
-			return 'audio/basic';
-		case 'avi':
-			return 'video/x-msvideo';
-		case 'bin':
-			return 'application/octet-stream';
-		case 'bmp':
-			return 'image/bmp';
-		case 'bz':
-			return 'application/x-bzip';
-		case 'bz2':
-			return 'application/x-bzip2';
-		case 'css':
-			return 'text/css';
-		case 'gif':
-			return 'image/gif';
-		case 'gz': case 'gzip':
-			return 'application/x-gzip';
-		case 'htm': case 'html':
-			return 'text/html';
-		case 'ico':
-			return 'image/x-icon';
-		case 'jpe': case 'jpeg': case 'jpg':
-			return 'image/jpeg';
-		case 'js':
-			return 'application/javascript';
-		case 'm3u':
-			return 'audio/x-mpegurl';
-		case 'mid': case 'midi':
-			return 'audio/x-mid';
-		case 'mov':
-			return 'video/quicktime';
-		case 'movie':
-			return 'video/x-sgi-movie';
-		case 'mp2': case 'mpe': case 'mpeg': case 'mpg': case 'mpv2': case 'm1v': case 'm2v':
-			return 'video/mpeg';
-		case 'mp3': case 'm2a': case 'mp2': case 'mpa':
-			return 'audio/mpeg';
-		case 'pdf':
-			return 'application/pdf';
-		case 'png':
-			return 'image/png';
-		case 'pps': case 'ppt':
-			return 'application/vnd.ms-powerpoint';
-		case 'pub':
-			return 'application/x-mspublisher';
-		case 'rtf':
-			return 'application/rtf';
-		case 'smi': case 'smil':
-			return 'application/smil';
-		case 'svg':
-			return 'image/svg+xml';
-		case 'swf':
-			return 'application/x-shockwave-flash';
-		case 'tar':
-			return 'application/x-tar';
-		case 'tgz':
-			return 'application/x-compressed';
-		case 'tif': case 'tiff':
-			return 'image/tiff';
-		case 'txt': case 'conf':
-			return 'text/plain';
-		case 'svg':
-			return 'image/svg+xml';
-		case 'ttf':
-			return 'application/x-font-ttf';
-		case 'otf':
-			return 'application/x-font-opentype';
-		case 'woff':
-			return 'application/font-woff';
-		case 'eot':
-			return 'application/vnd.ms-fontobject';
-		case 'vcf':
-			return 'text/x-vcard';
-		case 'wav':
-			return 'audio/x-wav';
-		case 'xls': case 'xlsx':
-			return 'application/vnd.ms-excel';
-		case 'doc': case 'docx':
-			return 'application/msword';
-		case 'z':
-			return 'application/x-compress';
-		case 'zip':
-			return 'application/zip';
-		default:
-			return 'application/octet-stream';
+	foreach(G::$mimetype_extensions as $mimetype => $extensions) {
+		if (in_array($extension, $extensions)) {
+			return $mimetype;
+		}
 	}
+	
+	return 'application/octet-stream';
 }
+
+
 
 function filter_directory(&$directory_resource, $show_folders = true, $show_files = true) {
 	if (false !== $entry = $directory_resource->read()) {
@@ -267,7 +229,7 @@ function filter_nick($value) {
 	return strlen($value) <= NICK_MAX_LENGTH;
 }
 function filter_password($value) {
-	return strlen($value) <= PASSWORD_MAX_LENGTH;
+	return strlen($value) <= PASSWORD_MAX_LENGTH && strlen($value) >= PASSWORD_MIN_LENGTH;
 }
 function filter_email($value) {
 	return strlen($value) <= EMAIL_MAX_LENGTH && filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);

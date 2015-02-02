@@ -15,6 +15,10 @@ $options = array(
 	,'logout'   => 0 // REDIRECT
 	,'validate' => 0 // REDIRECT
 	,'recover'  => 0 // REDIRECT
+	
+	,'update-password' => 0 // JSON
+	,'update-email'    => 0 // JSON
+	,'delete-account'  => 0 // JSON
 );
 
 
@@ -34,7 +38,7 @@ if (isset($_GET['action'])) {
 
 // Launch option function
 
-
+$action = str_replace('-', '_', $action);
 $action();
 
 
@@ -50,8 +54,7 @@ $action();
 function login(){
 	$db = open_db_session();
 	if(
-		isset($_POST['submit'])
-		&& filter_input(INPUT_POST, 'nick', FILTER_CALLBACK, array('options' => 'filter_nick'))
+		filter_input(INPUT_POST, 'nick', FILTER_CALLBACK, array('options' => 'filter_nick'))
 		&& filter_input(INPUT_POST, 'password', FILTER_CALLBACK, array('options' => 'filter_password'))
 	) {
 		/*
@@ -73,12 +76,10 @@ function login(){
 				
 				if (tries_get() > 0) {
 					end_fail('Invalid login. '.tries_get().' attempts left');
-				} else {
-					end_fail('Your IP is banned for '.LOGIN_FAIL_WAIT.' minutes');
 				}
 			}
-		} else end_fail('Your IP is banned for '.LOGIN_FAIL_WAIT.' minutes');
-	} else end_fail('Incomplete login attempt');
+		} end_fail('Your IP is banned for '.LOGIN_FAIL_WAIT.' minutes');
+	} end_fail('Incomplete login attempt');
 }
 
 function register(){
@@ -87,8 +88,7 @@ function register(){
 	}
 
 	if (
-		isset($_POST['submit'])
-		&& isset($_POST['g-recaptcha-response'])
+		isset($_POST['g-recaptcha-response'])
 		&& filter_input(INPUT_POST, 'nick', FILTER_CALLBACK, array('options' => 'filter_nick'))
 		&& filter_input(INPUT_POST, 'password', FILTER_CALLBACK, array('options' => 'filter_password'))
 		&& filter_input(INPUT_POST, 'email', FILTER_CALLBACK, array('options' => 'filter_email'))
@@ -137,9 +137,9 @@ function validate(){
 			$link = 'https://'.WEB_PATH;
 			
 			$subject = 'Account validated';
-			$body = "Welcome to CoolStart.net!<br/><br/>"
-				  . "Have a good time here!<br/><br/>"
-				  . '<a href="'.$link.'">'.$link.'</a>';
+			$body = 'Welcome to CoolStart.net!<br/><br/>'
+			      . 'Have a good time here!<br/><br/>'
+			      . '<a href="'.$link.'">'.$link.'</a>';
 			
 			send_mail($email, $subject, $body);
 			
@@ -158,7 +158,6 @@ function recover(){
 		&& tries_get() > 0
 	) {
 		$db = new DB();
-		$db->debug_mode(true);
 		
 		$email = $db -> recover_account_validate($_GET['nick'], $_GET['validation']);
 		
@@ -183,8 +182,7 @@ function recover(){
 
 function forgot(){
 	if (
-		isset($_POST['submit'])
-		&& isset($_POST['g-recaptcha-response'])
+		isset($_POST['g-recaptcha-response'])
 		&& filter_input(INPUT_POST, 'email', FILTER_CALLBACK, array('options' => 'filter_email'))
 	) {
 		$reCaptcha = new ReCaptcha(CAPTCHA_PRIVATE_KEY);
@@ -208,7 +206,32 @@ function forgot(){
 	} else end_fail('Incorrect nick, password or email');
 }
 
+function update_password() {
+	if (
+		filter_input(INPUT_POST, 'current-password', FILTER_CALLBACK, array('options' => 'filter_password'))
+		&& filter_input(INPUT_POST, 'new-password', FILTER_CALLBACK, array('options' => 'filter_password'))
+		&& filter_input(INPUT_POST, 'new-password-2', FILTER_CALLBACK, array('options' => 'filter_password'))
+	) {
+		if ($_POST['new-password'] === $_POST['new-password-2']) {
+			$db = open_db_session();
+			if ($db->check_user_password(G::$SESSION->userID, $_POST['current-password'])) {
+				$db->modify_password(G::$SESSION->userID, $_POST['new-password']);
+				end_ok('Password updated');
+			} else end_fail('Incorrect current password');
+		} else end_fail('Type the same new password in both fields');
+	}
+}
 
+
+
+
+
+
+/////////////////////////////////////////////////////////
+//
+// FUNCTIONS TO TRACK FAILED ATTEMPTS BY IP
+//
+/////////////////////////////////////////////////////////
 
 // Contabilize how many attemps has the user left (by IP)
 function tries_get() {

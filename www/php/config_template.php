@@ -34,6 +34,7 @@ define('WIDGET_FILES_PATH', 'widget-files/');
 
 # Max user nickname lengths
 define('NICK_MAX_LENGTH', 15);
+define('PASSWORD_MIN_LENGTH', 6);
 define('PASSWORD_MAX_LENGTH', 30);
 define('EMAIL_MAX_LENGTH', 50);
 
