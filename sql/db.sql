@@ -80,7 +80,7 @@ CREATE TABLE `widgets` (
 	`name` varchar(30) COLLATE utf8_bin NOT NULL,
 	`description` TEXT NOT NULL DEFAULT '', 
 	`fulldescription` TEXT NOT NULL DEFAULT '', 
-	`images` TEXT NOT NULL COMMENT 'JSON array with the static image filenames', 
+	`images` TEXT NOT NULL DEFAULT '' COMMENT 'JSON array with the static image filenames', 
 	`ownerID` int(11) NOT NULL,
 	`status` int(11) NOT NULL DEFAULT '0',
 	`creation_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
