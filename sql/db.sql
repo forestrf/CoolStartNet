@@ -46,8 +46,8 @@ CREATE TABLE `users` (
 	`RND` varchar(32) COLLATE utf8_bin NOT NULL,
 	`level` int(11) NOT NULL DEFAULT '0',
 	`validation` varchar(5) COLLATE utf8_bin NOT NULL,
-	`recover_code_due_date` date NOT NULL,
-	`creation_date` date NOT NULL
+	`recover_code_due_date` date NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`creation_date` date NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `users` ADD PRIMARY KEY (`IDuser`);
 ALTER TABLE `users` MODIFY COLUMN `IDuser` int(11) AUTO_INCREMENT;
