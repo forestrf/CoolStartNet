@@ -78,8 +78,8 @@ ALTER TABLE `variables` ADD KEY `variables IDwidget` (`IDwidget`);
 CREATE TABLE `widgets` (
 	`IDwidget` int(11) NOT NULL,
 	`name` varchar(30) COLLATE utf8_bin NOT NULL,
-	`description` TEXT NOT NULL, 
-	`fulldescription` TEXT NOT NULL, 
+	`description` TEXT NOT NULL DEFAULT '', 
+	`fulldescription` TEXT NOT NULL DEFAULT '', 
 	`images` TEXT NOT NULL COMMENT 'JSON array with the static image filenames', 
 	`ownerID` int(11) NOT NULL,
 	`status` int(11) NOT NULL DEFAULT '0',
