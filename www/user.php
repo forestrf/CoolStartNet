@@ -164,7 +164,7 @@ function recover(){
 		if ($email) {
 			$new_password = random_string(PASSWORD_MIN_LENGTH, G::$abcABC09);
 			
-			$db -> modify_password($_GET['nick'], $new_password);
+			$db -> modify_password_nick($_GET['nick'], $new_password);
 			
 			$subject = 'Here is your new password';
 			

@@ -255,6 +255,13 @@ class DB {
 		$new_password = hash_password($new_password, $this->get_user_random($userID));
 		return $this->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `IDuser` = '{$userID}';");
 	}
+	
+	// Change the password of the user. Returns bool = success
+	function modify_password_nick($nick, $new_password) {
+		$nick = mysql_escape_mimic($nick);
+		$new_password = hash_password($new_password, $this->get_random_from_user_nick($nick));
+		return $this->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `nick` = '{$nick}';");
+	}
 
 	// Remove user account
 	function delete_user($nick) {
