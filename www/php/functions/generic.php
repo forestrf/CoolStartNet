@@ -221,7 +221,7 @@ function file_upload_widget(DB &$db, $widgetID, &$FILE_REFERENCE, $name = NULL){
 		}
 		$mimetype = $FILE_REFERENCE['type'];
 		
-		$db->upload_widget_file($widgetID, $name, file_mimetype($FILE_REFERENCE['name']), $content);
+		$db->upload_widget_file($widgetID, $name, $content);
 	}
 }
 

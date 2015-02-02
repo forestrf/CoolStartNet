@@ -487,7 +487,7 @@ class DB {
 	}
 	
 	// Save a file for a widget with a name and a mimetype. Checks if the file can be uploaded to the version.
-	function upload_widget_file($widgetID, $name, $mimetype, &$content, $flag_static = false) {
+	function upload_widget_file($widgetID, $name, &$content, $flag_static = false) {
 		if ($this->CanIModifyWidget($widgetID)) {
 			if (count($this->query("SELECT * FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}';")) >= WIDGET_MAX_FILES_NUMBER) {
 				return false;
