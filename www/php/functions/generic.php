@@ -80,7 +80,7 @@ class G {
 	 * @var Session
 	 */
 	public static $SESSION;
-	public static $abcABC09 = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+	const abcABC09 = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 	public static $mimetype_extensions = array(
 		'video/x-ms-asf' => array('asf', 'asr', 'asx'),
 		'video/x-msvideo' => array('avi'),
@@ -125,6 +125,13 @@ class G {
 		'application/x-compress' => array('z'),
 		'application/zip' => array('zip'),
 		'application/octet-stream' => array('')
+	);
+	
+	const TAG_PRIVATE = 0;
+	const TAG_IN_DEVELOPMENT = 1;
+	public static $tags = array(
+		self::TAG_PRIVATE  => 'private'
+		,self::TAG_IN_DEVELOPMENT  => 'in development'
 	);
 }
 // Must be called before any echo to be able to output headers
@@ -222,6 +229,23 @@ function file_upload_widget(DB &$db, $widgetID, &$FILE_REFERENCE, $name = NULL){
 		$mimetype = $FILE_REFERENCE['type'];
 		
 		$db->upload_widget_file($widgetID, $name, $content);
+	}
+}
+
+function tag_parser(&$tags, &$number, $tags_to_number = true) {
+	if ($tags_to_number) {
+		$number = 0;
+		foreach($tags as $tag_key) {
+			$number += 1 << $tag_key;
+		}
+	} else {
+		$tags = array();
+		$temp = decbin($number);
+		for ($i = $ii = strlen($temp) - 1; $i >= 0; --$i) {
+			if ($temp[$i] === '1') {
+				$tags[$ii - $i] = G::$tags[$ii - $i];
+			}
+		}
 	}
 }
 

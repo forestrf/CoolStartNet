@@ -162,7 +162,7 @@ function recover(){
 		$email = $db -> recover_account_validate($_GET['nick'], $_GET['validation']);
 		
 		if ($email) {
-			$new_password = random_string(PASSWORD_MIN_LENGTH, G::$abcABC09);
+			$new_password = random_string(PASSWORD_MIN_LENGTH, G::abcABC09);
 			
 			$db -> modify_password_nick($_GET['nick'], $new_password);
 			
