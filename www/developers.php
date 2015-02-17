@@ -23,6 +23,39 @@
 		var IPA = IPA.init(<?=server_vars_js()?>);
 		var div = document.getElementById('widgets0');
 		
+		C(div,
+			C("div", ["class", "menu_scrollable left"]),
+			C("div", ["class", "body_content left"]),
+			C("div", ["class", "body_content right"]),
+			C("div", ["class", "menu_scrollable right"])
+		);
+		
+		
+		
+		
+		
+		
+		
+		return;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		/*
 		Crear y administrar widgets
 		

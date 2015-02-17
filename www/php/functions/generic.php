@@ -84,7 +84,7 @@ class G {
 	public static $mimetype_extensions = array(
 		'video/x-ms-asf' => array('asf', 'asr', 'asx'),
 		'video/x-msvideo' => array('avi'),
-		'application/octet-stream' => array('bin'),
+		//'application/octet-stream' => array('bin'),
 		'image/bmp' => array('bmp'),
 		'application/x-bzip' => array('bz'),
 		'application/x-bzip2' => array('bz2'),
@@ -122,7 +122,6 @@ class G {
 		'audio/x-wav' => array('wav'),
 		'application/vnd.ms-excel' => array('xls', 'xlsx'),
 		'application/msword' => array('doc', 'docx'),
-		'application/x-compress' => array('z'),
 		'application/zip' => array('zip'),
 		'application/octet-stream' => array('')
 	);

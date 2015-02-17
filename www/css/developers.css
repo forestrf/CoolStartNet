@@ -5,6 +5,58 @@
 }
 
 
+
+
+
+
+
+
+.menu_scrollable.left {
+	background-color: #ff0000;
+}
+.menu_scrollable {
+	height: 100%;
+	position: absolute;
+	width: 40px;
+}
+
+.body_content.left {
+	background-color: #ffffff;
+}
+.body_content {
+	float: left;
+	height: 100%;
+	width: 50%;
+}
+
+.body_content.right {
+	background-color: #000000;
+}
+.body_content {
+	float: left;
+	height: 100%;
+	width: 50%;
+}
+
+.menu_scrollable.right {
+	background-color: #0000ff;
+	right: 0;
+}
+.menu_scrollable {
+	height: 100%;
+	position: absolute;
+	width: 40px;
+}
+
+
+
+
+
+
+
+
+
+/*
 .left {
 	left: 0;
 	top: 0;
@@ -215,7 +267,7 @@
 	padding: 0 10px;
 }
 
-
+*/
 
 
 

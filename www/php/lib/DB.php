@@ -197,7 +197,7 @@ class DB {
 		$rnd = utf8_encode(random_string(32));
 		$password = hash_password($password, $rnd);
 		$rnd = mysql_escape_mimic($rnd);
-		$validation = mysql_escape_mimic(utf8_encode(random_string(5, G::abcABC09)));
+		$validation = mysql_escape_mimic(random_string(5, G::abcABC09));
 		return $this->query("INSERT INTO `users` (`nick`, `password`, `email`, `RND`, `validation`, `creation_date`) VALUES ('{$nick}', '{$password}', '{$email}', '{$rnd}', '{$validation}', NOW());") === true;
 	}
 	
@@ -219,7 +219,7 @@ class DB {
 		$resp = $this->query("SELECT `nick` FROM `users` WHERE `email` = '{$email}' AND `level` >= 200;");
 		if ($resp) {
 			$nick = $resp[0]['nick'];
-			$validation = mysql_escape_mimic(utf8_encode(random_string(5, G::abcABC09)));
+			$validation = mysql_escape_mimic(random_string(5, G::abcABC09));
 			return $this->query("UPDATE `users` set `validation` = '{$validation}', `recover_code_due_date` = NOW() + INTERVAL 1 DAY WHERE `nick` = '{$nick}' AND `email` = '{$email}';") === true;
 		}
 		return false;

@@ -21,10 +21,10 @@ Select steep:<p>
 <a href="?steep=install-db">Install database</a><br>
 <a href="?steep=update-db">Update database</a><br>
 
-<a href="?steep=install-widgets">Install default widgets</a><br>
-<a href="?steep=update-widgets">Update default widgets</a><br>
+<a href="?steep=install-widgets">Install/update widgets from widgets folder</a><br>
 
 <a href="?steep=create-default-user">Create user DEFAULT and configure it</a><br>
+<a href="?steep=create-test-user">Create user TEST and configure it</a><br>
 
 <pre>
 <?php
@@ -103,6 +103,25 @@ switch ($steep) {
 		$db->set_variable($widgets_variables);
 	break;
 
+
+
+
+	case 'create-test-user':
+		delete_apc_cache();
+		
+		require_once '../php/lib/DB.php';
+		
+		$db = new DB();
+		$db->debug_mode(true);
+		
+		$db->delete_user('testing');
+		$db->create_new_user('testing', 'testing', 'testing@testing.testing', $validation);
+		
+		$userID = $db->LAST_MYSQL_ID;
+		var_dump($userID);
+		
+		$db->validate_new_user('testing', $validation);
+	break;
 
 
 
