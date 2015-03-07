@@ -24,7 +24,7 @@ define('QUERY_CACHE_TTL', 10800); // 3 Hours
 define('WEB_PATH', 'www.mydomain.com/folder/to/site/');
 define('FORUM_WEB_PATH', 'forum.mydomain.com/folder/to/site/');
 define('DOMAIN', 'mydomain.com');
-define('MAIL_DIRECTION', 'do-not-reply' . DOMAIN);
+define('MAIL_DIRECTION', 'do-not-reply@' . DOMAIN);
 
 # Max file size for the uploaded widget files. In bytes.
 define('MAX_FILE_SIZE_BYTES', 512000);

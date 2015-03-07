@@ -23,24 +23,37 @@
 		var IPA = IPA.init(<?=server_vars_js()?>);
 		var div = document.getElementById('widgets0');
 		
+		var menu_left, menu_right, content_left, content_right;
+		
 		C(div,
-			C("div", ["class", "menu_scrollable left"]),
-			C("div", ["class", "body_content left"]),
-			C("div", ["class", "body_content right"]),
-			C("div", ["class", "menu_scrollable right"])
+			menu_left = C("div", ["class", "menu_scrollable left"]/*,
+				C("div", ["class", "menu_elem"], "Back"),
+				C("div", ["class", "menu_elem"], "2"),
+				C("div", ["class", "menu_elem"], "3"),
+				C("div", ["class", "menu_elem"], "4"),
+				C("div", ["class", "menu_elem"], "5"),
+				C("div", ["class", "menu_elem"], "6"),
+				C("div", ["class", "menu_elem"], "7"),
+				C("div", ["class", "menu_elem"], "8"),
+				C("div", ["class", "menu_elem"], "9"),
+				C("div", ["class", "menu_elem"], "10"),
+				C("div", ["class", "menu_elem"], "11"),
+				C("div", ["class", "menu_elem"], "12"),
+				C("div", ["class", "menu_elem"], "13"),
+				C("div", ["class", "menu_elem"], "14"),
+				C("div", ["class", "menu_elem"], "15"),
+				C("div", ["class", "menu_elem"], "16"),
+				C("div", ["class", "menu_elem"], "17")*/
+			),
+			content_left = C("div", ["class", "body_content left"]),
+			content_right = C("div", ["class", "body_content right"]),
+			menu_right = C("div", ["class", "menu_scrollable right"])
 		);
 		
+		API.document.wrapElement(content_left);
+		API.document.wrapElement(content_right);
 		
-		
-		
-		
-		
-		
-		return;
-		
-		
-		
-		
+		menu_left.style = "display:none";
 		
 		
 		
@@ -51,6 +64,54 @@
 		
 		
 		
+		
+		
+		
+		
+		
+		
+		
+		
+		function draw_widget_list() {
+			var create_button, create_name;
+			
+			content_left.innerHTML = '';
+			content_left.removeClass("with_bar");
+			menu_left.innerHTML = '';
+			menu_left.style.display = 'none';
+			
+			C(content_left,
+				C("div", ["class", "create"],
+					create_name = C("input", ["class", "name", "placeholder", "Widget name"]),
+					create_button = C("input", ["class", "button", "type","button", "value", "Create widget"])
+				)
+			);
+			
+			create_button.onclick = function() {
+				API.xhr(
+					'widgets?action=user-created-create',
+					'name=' + create_name.value,
+					function (data) {
+						if (data.status === 'OK') {
+							draw_widget_list();
+						}
+					}
+				);
+			}		
+		
+			API.xhr(
+				'widgets?action=user-created-list',
+				'',
+				function (data) {
+					if (data.status === "OK") {
+						for (var i = 0, l = data.response.length; i < l; i++) {
+							content_left.appendChild(generate_widget(data.response[i]));
+						}
+					}
+				}
+			);
+		}
+		draw_widget_list();
 		
 		
 		
@@ -64,52 +125,7 @@
 		GitHub
 		*/
 		
-		var widgets_menu, own_widgets_list, developers_menu, developers_back, left_icon_list,
-		create_button, create_name;
-		
-		C(div,
-			C("div", ["class", "left panel"],
-				widgets_menu = C("div",
-					C("div", ["class", "create"],
-						create_name = C("input", ["class", "name", "placeholder", "Widget name"]),
-						create_button = C("input", ["class", "button", "type","button", "value", "Create widget"])
-					),
-					C("div", ["class", "manage"],
-						"Manage your own widgets",
-						own_widgets_list = C("div", ["class", "widget_list"])
-					)
-				),
-				widgets_space = C("div", ["class", "widgets_space"])
-			),
-			C("div", ["class", "right panel"],
-				C("div", ["class", "developers_menu"],
-					C("div", "Developer's FAQ"),
-					C("div", ["class", "links"],
-						developers_menu = C("ul",
-							C("li", C("a", ["href", "doc/reader.html", "onclick", show_docs], "Documentation")),
-							C("li", C("a", ["href", "//..."], "How to start")),
-							C("li", C("a", ["href", "//..."], "Limitations (What you can't do)")),
-							C("li", C("a", ["href", "//..."], "Benefits (What are you able to do)")),
-							C("li", C("a", ["href", "//..."], "Good practices"))
-						),
-						developers_back = C("a", ["style", "display:none", "onclick", devs_back], "Back")
-					)
-				),
-				developers_space = C("div", ["class", "developers_space"])
-			)
-		);
-		
-		create_button.onclick = function() {
-			API.xhr(
-				'widgets?action=user-created-create',
-				'name=' + create_name.value,
-				function (data) {
-					if (data.status === 'OK') {
-						refresh_widgets_list();
-					}
-				}
-			);
-		}
+		// C("li", C("a", ["href", "doc/reader.html", "onclick", show_docs], "Documentation")),
 		
 		
 		
@@ -120,51 +136,33 @@
 			if (path === undefined || typeof path !== "string") {
 				path = "";
 			}
-			devs_back();
-			devs_fwd();
 			
 			developers_space.appendChild(C("iframe", ["src", "doc/reader.html#" + path, "class", "doc_iframe"]));
 			return false;
-		}
-		
-		function devs_back() {
-			developers_menu.style.display = "";
-			developers_space.style.display = "";
-			developers_space.innerHTML = "";
-			developers_back.style.display = "none";
-		}
-		
-		function devs_fwd() {
-			developers_menu.style.display = "none";
-			developers_back.style.display = "";
-		}
-		
-		
-		
-		
-		
-		
-		function widgs_back() {
-			widgets_menu.style.display = "";
-			widgets_space.style.display = "";
-			widgets_space.innerHTML = "";
-		}
-		
-		function widgs_fwd() {
-			widgets_menu.style.display = "none";
 		}
 		
 		
 		
 		
 		function manage_widget(data){
-			widgs_back();
-			widgs_fwd();
 			
-			C(widgets_space,
-				left_icon_list = C("div", ["class", "left_bar"],
-					C("div", ["class", "fa fa-reply", "onclick", widgs_back])
-				),
+			content_left.innerHTML = '';
+			content_left.addClass("with_bar");
+			menu_left.innerHTML = '';
+			
+			menu_left.style.display = '';
+			C(menu_left,
+				C("div", ["class", "menu_elem", "onclick", draw_widget_list], "Back"),
+				C("div", ["class", "menu_elem", "onclick", function(data){manage_widget(data)}], "Manage info"),
+				C("div", ["class", "menu_elem", "onclick", ''], "Upload file"),
+				C("div", ["class", "menu_elem_title"], "widget files")
+			);
+			
+			
+			
+			
+			
+			C(content_left,
 				C("div",
 					C("form", ["onsubmit", update],
 						C("input", ["type", "hidden", "name", "IDwidget", "value", data.IDwidget]),
@@ -204,14 +202,16 @@
 				function (data) {
 					if (data.status === 'OK') {
 						for (var i = 0; i < data.response.length; i++) {
-							C(left_icon_list,
-								C("div", ["class", "fa " + icon_from_filename(data.response[i].name), "onclick", inspect_widget_file(data.IDwidget, data.response[i].name)], C('span', data.response[i].name))
+							C(menu_left,
+								C("div", ["class", "menu_elem", "onclick", inspect_widget_file(data.IDwidget, data.response[i].name)],
+									C("div", ["class", "file_icon fa " + icon_from_filename(data.response[i].name)]),
+									C('span', data.response[i].name)
+								)
 							)
 						}
 					}
 				}
 			);
-			//left_icon_list
 			
 			console.log(data);
 			
@@ -244,22 +244,6 @@
 		
 		
 		
-		
-		
-		function refresh_widgets_list() {
-			API.xhr(
-				'widgets?action=user-created-list',
-				'',
-				function (data) {
-					if (data.status === "OK") {
-						for (var i = 0, l = data.response.length; i < l; i++) {
-							own_widgets_list.appendChild(generate_widget(data.response[i]));
-						}
-					}
-				}
-			);
-		}
-		refresh_widgets_list();
 		
 		function generate_widget(data) {
 			var widget = generate_widget_element(data, IPA);

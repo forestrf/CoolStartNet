@@ -14,21 +14,21 @@
 .menu_scrollable.left {
 	background-color: #ff0000;
 }
+.menu_scrollable.right {
+	background-color: #0000ff;
+	right: 0;
+}
 .menu_scrollable {
 	height: 100%;
 	position: absolute;
 	width: 40px;
+	overflow: hidden;
+	transition: all 0.1s ease-out 0s;
 }
 
 .body_content.left {
 	background-color: #ffffff;
 }
-.body_content {
-	float: left;
-	height: 100%;
-	width: 50%;
-}
-
 .body_content.right {
 	background-color: #000000;
 }
@@ -38,17 +38,42 @@
 	width: 50%;
 }
 
-.menu_scrollable.right {
-	background-color: #0000ff;
-	right: 0;
+
+.body_content.with_bar > div {
+    margin-left: 50px;
+    margin-top: 10px;
 }
-.menu_scrollable {
-	height: 100%;
-	position: absolute;
+
+
+
+
+.menu_scrollable:hover {
+	overflow-x: hidden;
+	overflow-y: auto;
+	width: 150px;
+}
+.menu_scrollable .menu_elem {
+	background-color: #ff0;
+	font-size: 12px;
+	height: 40px;
+	line-height: 40px;
+	border-bottom: 2px solid #000;
+	overflow: hidden;
+	width: 40px;
+	transition: all 0.1s ease-out 0s;
+}
+.menu_scrollable:hover .menu_elem{
+	width: 150px;
+}
+
+
+.file_icon {
+	font-size: 30px;
+	height: 40px;
+	line-height: 40px !important;
+	text-align: center;
 	width: 40px;
 }
-
-
 
 
 
