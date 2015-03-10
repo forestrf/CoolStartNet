@@ -1,6 +1,14 @@
+# Ignore
+
 www/php/config.php
-www/.project
 .project
-www/tmp/
-www/widget-files/
+www/tmp/*
+www/widget-files/*
 www/webgrind/
+
+
+
+# Except
+
+!.htaccess
+!dummy.txt
