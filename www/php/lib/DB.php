@@ -467,7 +467,7 @@ class DB {
 		if ($force_get || $this->check_using_widget_user($widgetID) || $this->CanIModifyWidget($widgetID)) {
 			$name = mysql_escape_mimic($name);
 			$result = $this->query("SELECT * FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `name` = '{$name}';");
-			return isset($result) ? $result[0] : false;
+			return isset($result[0]) ? $result[0] : false;
 		}
 		return false;
 	}
