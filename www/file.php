@@ -6,7 +6,8 @@
 // Sessions are fucked up too
 // http://stackoverflow.com/questions/25255415/apache-php-crashes-when-calling-2-or-more-php-files-at-the-same-time
 
-header('Connection: Close');
+// Without this there is a bug sometimes with simultaneous request to php in the same http request
+// header('Connection: Close');
 
 require_once __DIR__.'/php/defaults.php';
 require_once __DIR__.'/php/functions/generic.php';
@@ -29,22 +30,16 @@ if (!isset($_GET['name']) || strlen($_GET['name']) > FILENAME_MAX_LENGTH || strl
 }
 $name = &$_GET['name'];
 
-/*
-// mode
-if (!isset($_GET['mode'])) {
-	exit;
-}
-$mode = &$_GET['mode'];
-*/
+// if the request comes with a correct referer, force the widget file
+$correct_referer = isset($_SERVER['HTTP_REFERER']) && preg_match('@^https?://' . WEB_PATH . '@', $_SERVER['HTTP_REFERER']);
 
-$file = $db->get_widget_file($widgetID, $name);
+$file = $db->get_widget_file($widgetID, $name, $correct_referer);
 
 if ($file) {
 	$etag = base64_encode(md5($file['hash']));
 	
-	header('Pragma: public');
 	header('Etag: ' . $etag);
-	header('Cache-Control: max-age=2592000, public'); // 30 days
+	header('Cache-Control: max-age=120, public'); // 2 min. This is a problem when developing. Force check.
 	
 	if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && trim($_SERVER['HTTP_IF_NONE_MATCH']) === $etag) {
 		header('HTTP/1.1 304 Not Modified');
@@ -56,3 +51,4 @@ if ($file) {
 		readfile($db->get_widget_file_path_from_hash($file['hash']));
 	}
 }
+

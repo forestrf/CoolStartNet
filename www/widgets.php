@@ -152,6 +152,8 @@ function user_created_update(DB &$db) {
 		}
 		
 		$db->set_widget_data($_POST['IDwidget'], $widget_data);
+		
+		end_ok('Widget updated');
 	}
 }
 
@@ -213,10 +215,10 @@ function generate_widget_list_array(&$widget_contents) {
 //
 /////////////////////////////////////////////////////////
 
-function end_ok(&$array_response) {
+function end_ok($response) {
 	$response = array (
 		'status' => 'OK'
-		,'response' => $array_response
+		,'response' => $response
 	);
 	echo json_encode($response);
 	exit;

@@ -9,16 +9,14 @@
 	ob_start();
 ?>
 
-<script src="//<?=WEB_PATH?>js/ipa.js"></script>
 <script src="//<?=WEB_PATH?>js/generic.js"></script>
 <link href="//<?=WEB_PATH?>css/widget-box.css" rel="stylesheet"/>
 <link href="//<?=WEB_PATH?>css/options.css" rel="stylesheet"/>
 
 <script>
-	(function(API, IPA){
+	(function(API){
 		var C = crel2;
-		var API = API.init();
-		var IPA = IPA.init(<?=server_vars_js()?>);
+		var API = API.init(0,'',<?=server_vars_js()?>);
 		var div = document.getElementById('widgets0');
 		
 		/*
@@ -53,7 +51,7 @@
 		));
 		
 		
-	})(API, IPA);
+	})(API);
 </script>
 
 <?php

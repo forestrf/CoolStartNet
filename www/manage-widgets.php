@@ -9,17 +9,15 @@
 	ob_start();
 ?>
 
-<script src="//<?=WEB_PATH?>js/ipa.js"></script>
 <script src="//<?=WEB_PATH?>js/generic.js"></script>
 <script src="//<?=WEB_PATH?>js/scrollto.js"></script>
 <link href="//<?=WEB_PATH?>css/widget-box.css" rel="stylesheet"/>
 <link href="//<?=WEB_PATH?>css/manage-widgets.css" rel="stylesheet"/>
 
 <script>
-	(function(API, IPA){
+	(function(API){
 		var C = crel2;
-		API = API.init();
-		IPA = IPA.init(<?=server_vars_js()?>);
+		API = API.init(0,'',<?=server_vars_js()?>);
 		var div = document.getElementById('widgets0');
 		
 		
@@ -142,7 +140,7 @@
 		}
 		
 		function generate_widget(data) {
-			var w = generate_widget_element(data, IPA, useFunc, removeFunc);
+			var w = generate_widget_element(data, API, useFunc, removeFunc);
 			API.document.wrapElement(w);
 			w.txt = data.name + " " + data.description;
 			w.body.onclick = function(){
@@ -176,7 +174,7 @@
 			);
 		}
 		
-	})(API, IPA);
+	})(API);
 </script>
 
 <?php

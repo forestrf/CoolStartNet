@@ -1,10 +1,10 @@
-// Requires IPA.js and API.js
-function generate_widget_element(data, IPA, useFunc, removeFunc) {
+// Requires API.js
+function generate_widget_element(data, API, useFunc, removeFunc) {
 	var m, M, buttonuse, w = crel2('div', ['class', 'widget_element'],
 		m = crel2('div', ['class', 'minimized'],
 			crel2('div', ['class', 'image'],
 				crel2('div', ['class', 'image_bg']),
-				crel2('img', ['class', 'image_front', 'src', IPA.widgetImage(data.IDwidget, data.preview)])
+				crel2('img', ['class', 'image_front', 'src', API.url(data.preview, data.IDwidget)])
 			),
 			crel2('div', ['class', 'name'], data.name),
 			crel2('div', ['class', 'description'], data.description),
@@ -28,12 +28,12 @@ function generate_widget_element(data, IPA, useFunc, removeFunc) {
 		);
 		w.minimized = false;
 		w.addClass('full');
-	}
+	};
 	w.minimize = function() {
 		M.innerHTML = '';
 		w.minimized = true;
 		w.removeClass('full');
-	}
+	};
 	
 	var canChangeUsingStatus = false;
 	w.setUsingStatus = function(inuse) {
@@ -46,14 +46,14 @@ function generate_widget_element(data, IPA, useFunc, removeFunc) {
 		}
 		canChangeUsingStatus = true;
 		data.inuse = inuse;
-	}
+	};
 	w.setUsingStatus(data.inuse);
 	
 	return w;
 	
 	function imagesFromArray(div, dataImages) {
 		for (var i = 0; i < dataImages.length; i++) {
-			var url = IPA.widgetImage(data.IDwidget, dataImages[i]);
+			var url = API.url(dataImages[i], data.IDwidget);
 			crel2(div, imageFromArray(div, url));
 		}
 		return div;
@@ -63,7 +63,7 @@ function generate_widget_element(data, IPA, useFunc, removeFunc) {
 		return crel2('div', [
 			'class', 'capture',
 			'style', 'background-image: url(' + url + ');',
-			'onclick', function(){ showBig(div, url) }
+			'onclick', function(){ showBig(div, url); }
 		]);
 	}
 	
@@ -74,7 +74,7 @@ function generate_widget_element(data, IPA, useFunc, removeFunc) {
 				'style', 'background-image: url(' + url + ');'
 			])
 		);
-		pic.onclick = function(){ pic.parentNode.removeChild(pic) };
+		pic.onclick = function(){ pic.parentNode.removeChild(pic); };
 		crel2(div, pic);
 	}
 	

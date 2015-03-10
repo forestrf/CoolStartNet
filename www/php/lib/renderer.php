@@ -38,8 +38,9 @@ function render_wrapper($title = 'Homepage - CoolStart.net', $content, $compress
 		</div>
 		
 		<div class="row">
-			<div class="bottom_bar" id="bottom_bar"></div>
+			<div class="false_bottom_bar"></div>
 		</div>
+		<div class="bottom_bar" id="bottom_bar"></div>
 	</div>
 	
 	<script src="//<?=WEB_PATH?>js/crel2.js"></script>

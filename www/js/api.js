@@ -110,7 +110,9 @@
 	
 	// callback takes one argument
 	// http://stackoverflow.com/questions/8567114/how-to-make-an-ajax-call-without-jquery
+	// data = null or undefined para usar GET
 	function xhr(url, data, callbackOK, callbackFAIL) {
+		var isPost = data !== undefined && data !== null;
 		var x;
 		if (window.XMLHttpRequest) {
 			// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -119,14 +121,15 @@
 			// code for IE6, IE5
 			x = new ActiveXObject("Microsoft.XMLHTTP");
 		}
-		x.open('POST', url, true);
+		if (isPost) x.open('POST', url, true);
+		else        x.open('GET', url, true);
 		x.timeout = 30000;
 		x.onreadystatechange = x.ontimeout = function () {
 			if (x.readyState == 4) {
 				if (x.status == 200) {
 					// Don`t fail if it is not a json
 					try {
-						var response = JSON.parse(x.responseText);
+						var response = isPost ? JSON.parse(x.responseText) : x.responseText;
 					} catch(e) {
 						callbackFAIL();
 						return;
@@ -138,12 +141,14 @@
 			}
 		};
 		
-		if (typeof data === "string") {
-			x.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-		}
-		// else data = new FormData(); ...
-		
-		x.send(data);
+		if (isPost) {
+			if (typeof data === "string") {
+				x.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			}
+			// else data = new FormData(); ...
+			
+			x.send(data);
+		} else x.send();
 	}
 	
 	
@@ -629,9 +634,9 @@
 	
 	return {
 		"init":function (widgetID, secret, server_vars) {
-			if (undefined === widgetID) {widgetID = -1;}
-			if (undefined === secret) {secret = '';}
-			if (undefined === server_vars) {server_vars = {};}
+			if (undefined === widgetID) widgetID = -1;
+			if (undefined === secret) secret = '';
+			if (undefined === server_vars) server_vars = {};
 			
 			return {
 				"storage": {
@@ -740,7 +745,9 @@
 					},
 					"widgets": widgets
 				},
-				"url": function (name) {return getUrl(widgetID, name);},
+				"url": function (name, widgetIDManual) {
+					return widgetIDManual === undefined ? getUrl(widgetID, name) : getUrl(widgetIDManual, name);
+				},
 				"xhr": xhr,
 				"siteURLs": {
 					'main'     : '//' + server_vars.WEB_PATH,

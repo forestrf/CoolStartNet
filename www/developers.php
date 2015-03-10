@@ -9,42 +9,23 @@
 	ob_start();
 ?>
 
-<script src="//<?=WEB_PATH?>js/ipa.js"></script>
 <script src="//<?=WEB_PATH?>js/generic.js"></script>
 <link href="//<?=WEB_PATH?>css/widget-box.css" rel="stylesheet"/>
 <link href="//<?=WEB_PATH?>css/developers.css" rel="stylesheet"/>
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet"/>
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"/>
 
 
 <script>
-	(function(API, IPA){
+	(function(API){
 		var C = crel2;
-		var API = API.init();
-		var IPA = IPA.init(<?=server_vars_js()?>);
+		var API_Original = API;
+		var API = API.init(0,'',<?=server_vars_js()?>);
 		var div = document.getElementById('widgets0');
 		
 		var menu_left, menu_right, content_left, content_right;
 		
 		C(div,
-			menu_left = C("div", ["class", "menu_scrollable left"]/*,
-				C("div", ["class", "menu_elem"], "Back"),
-				C("div", ["class", "menu_elem"], "2"),
-				C("div", ["class", "menu_elem"], "3"),
-				C("div", ["class", "menu_elem"], "4"),
-				C("div", ["class", "menu_elem"], "5"),
-				C("div", ["class", "menu_elem"], "6"),
-				C("div", ["class", "menu_elem"], "7"),
-				C("div", ["class", "menu_elem"], "8"),
-				C("div", ["class", "menu_elem"], "9"),
-				C("div", ["class", "menu_elem"], "10"),
-				C("div", ["class", "menu_elem"], "11"),
-				C("div", ["class", "menu_elem"], "12"),
-				C("div", ["class", "menu_elem"], "13"),
-				C("div", ["class", "menu_elem"], "14"),
-				C("div", ["class", "menu_elem"], "15"),
-				C("div", ["class", "menu_elem"], "16"),
-				C("div", ["class", "menu_elem"], "17")*/
-			),
+			menu_left = C("div", ["class", "menu_scrollable left"]),
 			content_left = C("div", ["class", "body_content left"]),
 			content_right = C("div", ["class", "body_content right"]),
 			menu_right = C("div", ["class", "menu_scrollable right"])
@@ -146,21 +127,21 @@
 		
 		function manage_widget(data){
 			
+			API = API_Original.init(data.IDwidget,'',<?=server_vars_js()?>);
+			
 			content_left.innerHTML = '';
 			content_left.addClass("with_bar");
 			menu_left.innerHTML = '';
 			
 			menu_left.style.display = '';
 			C(menu_left,
-				C("div", ["class", "menu_elem", "onclick", draw_widget_list], "Back"),
-				C("div", ["class", "menu_elem", "onclick", function(data){manage_widget(data)}], "Manage info"),
-				C("div", ["class", "menu_elem", "onclick", ''], "Upload file"),
-				C("div", ["class", "menu_elem_title"], "widget files")
+				C("div", ["class", "menu_elem", "onclick", draw_widget_list], C("div", ["class", "file_icon fa fa-reply"]), C('span', 'Back')),
+				C("div", ["class", "menu_elem", "onclick", function(){manage_widget(data)}], C("div", ["class", "file_icon fa fa-sliders"]), C('span', 'Manage info')),
+				C("div", ["class", "menu_elem", "onclick", 'function add files'], C("div", ["class", "file_icon fa fa-plus-square"]), C('span', 'Add files'))
 			);
 			
 			
-			
-			
+			var prevImages;
 			
 			C(content_left,
 				C("div",
@@ -181,11 +162,11 @@
 							),
 							C("tr",
 								C("td", "Image"),
-								C("td", C("img", ["src", IPA.widgetImage(data.IDwidget, data.preview)]), C("input", ["type", "file", "value", data.image, "name", "image"]))
+								C("td", C("img", ["src", API.url(data.preview, data.IDwidget)]), C("input", ["type", "file", "value", data.image, "name", "image"]))
 							),
 							C("tr",
 								C("td", "Images"),
-								C("td", "prev images")
+								prevImages = C("td", ["class", "preview_images"])
 							),
 							C("tr",
 								C("td", C("input", ["type", "reset", "value", "Reset"])),
@@ -196,6 +177,14 @@
 				)
 			);
 			
+			for (var i = 0; i < data.images.length; i++) {
+				C(prevImages, C("img", ["src", API.url(data.images[i], data.IDwidget)]));
+			}
+			
+			console.log(data.images);
+			
+			
+			
 			API.xhr(
 				'widgets/user-created-files-list',
 				'widgetID=' + data.IDwidget,
@@ -203,7 +192,11 @@
 					if (data.status === 'OK') {
 						for (var i = 0; i < data.response.length; i++) {
 							C(menu_left,
-								C("div", ["class", "menu_elem", "onclick", inspect_widget_file(data.IDwidget, data.response[i].name)],
+								C("div", ["class", "menu_elem", "onclick", (function(i){
+										return function(){
+											inspect_widget_file(data.IDwidget, data.response[i].name);
+										}
+									})(i)],
 									C("div", ["class", "file_icon fa " + icon_from_filename(data.response[i].name)]),
 									C('span', data.response[i].name)
 								)
@@ -238,7 +231,48 @@
 		}
 		
 		function inspect_widget_file(IDwidget, filename) {
+			content_left.innerHTML = '';
 			
+			switch(type_from_filename(filename)) {
+				case 'image':
+					C(content_left,
+						C("div", ["class", "widgetelement image"],
+							C("img", ["src", API.url(filename)]),
+							C("div", "update, delete, rename")
+						)
+					);
+				break;
+				case 'code':
+					var textarea;
+					C(content_left,
+						textarea = C("textarea", ["class", "widgetelement code"],
+							C("div", "update, delete, rename")
+						)
+					);
+					API.xhr(
+						API.url(filename),
+						null,
+						function (data) {
+							textarea.value = data;
+						},
+						function () {
+							alert("There was a problem loading the widget file");
+						}
+					);
+				break;
+				case 'text':
+				
+				break;
+				case 'video':
+				
+				break;
+				case 'audio':
+				
+				break;
+				case 'unknown':
+				
+				break;
+			}
 		}
 		
 		
@@ -246,7 +280,7 @@
 		
 		
 		function generate_widget(data) {
-			var widget = generate_widget_element(data, IPA);
+			var widget = generate_widget_element(data, API);
 			widget.buttonuse.remove();
 			widget.onclick = function(){
 				manage_widget(data)
@@ -255,18 +289,22 @@
 			return widget;
 		}
 		
-		function icon_from_filename(filename) {
-			if (filename.indexOf('.') !== -1) {
-				var extension = filename.substr(filename.lastIndexOf('.') + 1);
-				
-				for (var icon in icon_from_extension) {
-					console.log(icon);
-					if (icon_from_extension[icon].indexOf(extension) !== -1) {
-						return icon;
+		function type_from_filename(filename) {
+			var extension = filename.indexOf('.') !== -1 ? filename.substr(filename.lastIndexOf('.') + 1) : '';
+			
+			if (extension !== '') {
+				for (var type in filename_type_extensions) {
+					if (filename_type_extensions[type].indexOf(extension) !== -1) {
+						return type;
 					}
 				}
 			}
-			return 'fa-file-o';
+			
+			return 'unknown';
+		}
+		
+		function icon_from_filename(filename) {
+			return icon_filename_type[type_from_filename(filename)];
 		}
 		
 		/*
@@ -277,12 +315,21 @@
 		file-word-o
 		*/
 		
-		var icon_from_extension = {
-			'fa-file-image-o': ['ico', 'jpe', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'tif', 'tiff', 'svg'],
-			'fa-file-code-o':  ['js', 'css', 'htm', 'html'],
-			'fa-file-text-o':  ['txt'],
-			'fa-file-video-o': ['asf', 'asr', 'asx', 'avi', 'asf', 'webm', 'mp2', 'mpe', 'mpeg', 'mpg', 'mpv2', 'm1v', 'm2v', 'mov'],
-			'fa-file-audio-o': ['wav', 'mp3', 'm2a', 'mp2', 'mpa', 'm3u', 'mid', 'midi']
+		var icon_filename_type = {
+			'image': 'fa-file-image-o',
+			'code': 'fa-file-code-o',
+			'text': 'fa-file-text-o',
+			'video': 'fa-file-video-o',
+			'audio': 'fa-file-audio-o',
+			'unknown': 'fa-file-o'
+		}
+		
+		var filename_type_extensions = {
+			'image': ['ico', 'jpe', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'tif', 'tiff', 'svg'],
+			'code':  ['js', 'css', 'htm', 'html'],
+			'text':  ['txt'],
+			'video': ['asf', 'asr', 'asx', 'avi', 'asf', 'webm', 'mp2', 'mpe', 'mpeg', 'mpg', 'mpv2', 'm1v', 'm2v', 'mov'],
+			'audio': ['wav', 'mp3', 'm2a', 'mp2', 'mpa', 'm3u', 'mid', 'midi']
 		};
 		
 		
@@ -290,7 +337,7 @@
 		
 		
 		
-	})(API, IPA);
+	})(API);
 </script>
 
 <?php

@@ -463,8 +463,8 @@ class DB {
 	# ---------------------------------------------------------------------------
 	
 	// Get a file of a widget given its name. The user needs to be the owner or be using the widget.
-	function get_widget_file($widgetID, $name) {
-		if ($this->check_using_widget_user($widgetID) || $this->CanIModifyWidget($widgetID)) {
+	function get_widget_file($widgetID, $name, $force_get = false) {
+		if ($force_get || $this->check_using_widget_user($widgetID) || $this->CanIModifyWidget($widgetID)) {
 			$name = mysql_escape_mimic($name);
 			$result = $this->query("SELECT * FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}' AND `name` = '{$name}';");
 			return isset($result) ? $result[0] : false;

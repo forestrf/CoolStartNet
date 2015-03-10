@@ -39,7 +39,7 @@
 	# widgetfile shortcut
 	#####################################
 	
-	RewriteRule ^widgetfile/([0-9]+)/(static|api|[0-9]+)/(.+)$ file.php?widgetID=$1&mode=$2&name=$3 [NC,L]
+	RewriteRule ^widgetfile/([0-9]+)/(static|api)/(.+)$ file.php?widgetID=$1&name=$3 [NC,L]
 	
 	
 	
