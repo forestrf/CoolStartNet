@@ -1,5 +1,5 @@
 .widgets {
-	background: url("../img/bg/homepage-blur.jpg") no-repeat scroll center center / cover rgba(0, 0, 0, 0);
+	background: #000;
 	font-family: Verdana;
 	font-size: 0.9em;
 }
@@ -13,14 +13,16 @@
 
 .menu_scrollable.left {
 	background-color: #000;
+	left: 0;
 }
 .menu_scrollable.right {
 	background-color: #0000ff;
 	right: 0;
 }
 .menu_scrollable {
+	top: 0;
 	height: 100%;
-	position: absolute;
+	position: fixed;
 	width: 40px;
 	overflow: hidden;
 	transition: all 0.1s ease-out 0s;
@@ -34,7 +36,6 @@
 }
 .body_content {
 	float: left;
-	height: 100%;
 	width: 50%;
 }
 
@@ -56,6 +57,7 @@
 }
 .widgetelement.image img {
 	width: 96%;
+	box-shadow: 0 0 5px 2px #000;
 }
 
 

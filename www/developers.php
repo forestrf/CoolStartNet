@@ -212,7 +212,8 @@
 				event.preventDefault();
 				console.log(event);
 				//debugger;
-				var formData = new FormData(event.originalTarget);
+				var target = event.originalTarget !== undefined ? event.originalTarget : event.target;
+				var formData = new FormData(target);
 				API.xhr(
 					'widgets/user-created-update',
 					formData,
@@ -281,7 +282,10 @@
 		
 		function generate_widget(data) {
 			var widget = generate_widget_element(data, API);
-			widget.buttonuse.remove();
+			
+			var t = widget.buttonuse;
+			t.parentNode.removeChild(t);
+			
 			widget.onclick = function(){
 				manage_widget(data)
 			};
@@ -307,20 +311,13 @@
 			return icon_filename_type[type_from_filename(filename)];
 		}
 		
-		/*
-		file-archive-o
-		file-excel-o
-		file-pdf-o
-		file-powerpoint-o
-		file-word-o
-		*/
-		
 		var icon_filename_type = {
-			'image': 'fa-file-image-o',
-			'code': 'fa-file-code-o',
-			'text': 'fa-file-text-o',
-			'video': 'fa-file-video-o',
-			'audio': 'fa-file-audio-o',
+			'image':   'fa-file-image-o',
+			'code':    'fa-file-code-o',
+			'text':    'fa-file-text-o',
+			'video':   'fa-file-video-o',
+			'audio':   'fa-file-audio-o',
+			'pdf':     'file-pdf-o',
 			'unknown': 'fa-file-o'
 		}
 		
@@ -329,7 +326,8 @@
 			'code':  ['js', 'css', 'htm', 'html'],
 			'text':  ['txt'],
 			'video': ['asf', 'asr', 'asx', 'avi', 'asf', 'webm', 'mp2', 'mpe', 'mpeg', 'mpg', 'mpv2', 'm1v', 'm2v', 'mov'],
-			'audio': ['wav', 'mp3', 'm2a', 'mp2', 'mpa', 'm3u', 'mid', 'midi']
+			'audio': ['wav', 'mp3', 'm2a', 'mp2', 'mpa', 'm3u', 'mid', 'midi'],
+			'pdf':   ['pdf']
 		};
 		
 		
