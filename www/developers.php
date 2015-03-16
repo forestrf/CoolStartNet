@@ -10,9 +10,32 @@
 ?>
 
 <script src="//<?=WEB_PATH?>js/generic.js"></script>
-<link href="//<?=WEB_PATH?>css/widget-box.css" rel="stylesheet"/>
-<link href="//<?=WEB_PATH?>css/developers.css" rel="stylesheet"/>
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"/>
+<link rel="stylesheet" href="//<?=WEB_PATH?>css/widget-box.css">
+<link rel="stylesheet" href="//<?=WEB_PATH?>css/developers.css">
+<link rel="stylesheet"  href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+<!--Codemirror-->
+<link rel="stylesheet" href="//<?=WEB_PATH?>js/codemirror/lib/codemirror.css">
+<script src="//<?=WEB_PATH?>js/codemirror/lib/codemirror.js"></script>
+<link rel="stylesheet" href="//<?=WEB_PATH?>js/codemirror/addon/dialog/dialog.css">
+<link rel="stylesheet" href="//<?=WEB_PATH?>js/codemirror/addon/hint/show-hint.css">
+<link rel="stylesheet" href="//<?=WEB_PATH?>js/codemirror/addon/tern/tern.css">
+<link rel="stylesheet" href="//<?=WEB_PATH?>js/codemirror/theme/monokai.css">
+<script src="//<?=WEB_PATH?>js/codemirror/mode/javascript/javascript.js"></script>
+<script src="//<?=WEB_PATH?>js/codemirror/addon/dialog/dialog.js"></script>
+<script src="//<?=WEB_PATH?>js/codemirror/addon/hint/show-hint.js"></script>
+<script src="//<?=WEB_PATH?>js/codemirror/addon/tern/tern.js"></script>
+
+<script src="//marijnhaverbeke.nl/acorn/acorn.js"></script>
+<script src="//marijnhaverbeke.nl/acorn/acorn_loose.js"></script>
+<script src="//marijnhaverbeke.nl/acorn/util/walk.js"></script>
+<script src="//<?=WEB_PATH?>js/tern/doc/demo/polyfill.js"></script>
+<script src="//<?=WEB_PATH?>js/tern/lib/signal.js"></script>
+<script src="//<?=WEB_PATH?>js/tern/lib/tern.js"></script>
+<script src="//<?=WEB_PATH?>js/tern/lib/def.js"></script>
+<script src="//<?=WEB_PATH?>js/tern/lib/comment.js"></script>
+<script src="//<?=WEB_PATH?>js/tern/lib/infer.js"></script>
+<script src="//<?=WEB_PATH?>js/tern/plugin/doc_comment.js"></script>
 
 
 <script>
@@ -233,6 +256,7 @@
 		
 		function inspect_widget_file(IDwidget, filename) {
 			content_left.innerHTML = '';
+			var extension = filename.indexOf('.') !== -1 ? filename.substr(filename.lastIndexOf('.') + 1) : '';
 			
 			switch(type_from_filename(filename)) {
 				case 'image':
@@ -246,15 +270,41 @@
 				case 'code':
 					var textarea;
 					C(content_left,
-						textarea = C("textarea", ["class", "widgetelement code"],
-							C("div", "update, delete, rename")
+						C("div", ["class", "widgetelement code"],
+							textarea = C("textarea",
+								C("div", "update, delete, rename")
+							)
 						)
 					);
+					
+					//extension === 'js' o 'css'
+					
 					API.xhr(
 						API.url(filename),
 						null,
 						function (data) {
 							textarea.value = data;
+							
+							// set up codemirror
+							editor = CodeMirror.fromTextArea(textarea, {
+								lineNumbers: true,
+								mode: "javascript",
+								theme: "monokai",
+								indentWithTabs: true
+							});
+							
+							editor.setOption("extraKeys", {
+								"Ctrl-Space": function(cm) { server.complete(cm); },
+								"Ctrl-I": function(cm) { server.showType(cm); },
+								"Ctrl-O": function(cm) { server.showDocs(cm); },
+								"Alt-.": function(cm) { server.jumpToDef(cm); },
+								"Alt-,": function(cm) { server.jumpBack(cm); },
+								"Ctrl-Q": function(cm) { server.rename(cm); },
+								"Ctrl-.": function(cm) { server.selectName(cm); }
+							})
+							editor.on("cursorActivity", function(cm) { server.updateArgHints(cm); });
+							
+							document.querySelector(".CodeMirror").style.height = (window.innerHeight - 20) + "px";
 						},
 						function () {
 							alert("There was a problem loading the widget file");
@@ -332,7 +382,13 @@
 		
 		
 		
-		
+		var ecma5json = "";
+		var server;
+		API.xhr('//<?=WEB_PATH?>js/tern/defs/ecma5.json', null, function (data) {
+			ecma5json = data;
+			
+			server = new CodeMirror.TernServer({defs: [JSON.parse(ecma5json)]});
+		});
 		
 		
 	})(API);

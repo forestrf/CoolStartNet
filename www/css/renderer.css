@@ -54,6 +54,7 @@
 	position: fixed;
 	font-size: 1em;
 	background-color: #000;
+	z-index: 1001;
 }
 
 .wrapper .bottom_bar .btn {
