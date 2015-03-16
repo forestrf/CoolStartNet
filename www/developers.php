@@ -93,7 +93,7 @@
 			
 			create_button.onclick = function() {
 				API.xhr(
-					'widgets?action=user-created-create',
+					'widgets/user-created-create',
 					'name=' + create_name.value,
 					function (data) {
 						if (data.status === 'OK') {
@@ -104,7 +104,7 @@
 			}		
 		
 			API.xhr(
-				'widgets?action=user-created-list',
+				'widgets/user-created-list',
 				'',
 				function (data) {
 					if (data.status === "OK") {
@@ -112,6 +112,9 @@
 							content_left.appendChild(generate_widget(data.response[i]));
 						}
 					}
+				},
+				function() {
+					alert ("There was a problem downloading the list of widgets");
 				}
 			);
 		}
@@ -160,7 +163,7 @@
 			C(menu_left,
 				C("div", ["class", "menu_elem", "onclick", draw_widget_list], C("div", ["class", "file_icon fa fa-reply"]), C('span', 'Back')),
 				C("div", ["class", "menu_elem", "onclick", function(){manage_widget(data)}], C("div", ["class", "file_icon fa fa-sliders"]), C('span', 'Manage info')),
-				C("div", ["class", "menu_elem", "onclick", 'function add files'], C("div", ["class", "file_icon fa fa-plus-square"]), C('span', 'Add files'))
+				C("div", ["class", "menu_elem", "onclick", function(){add_files(data.IDwidget)}], C("div", ["class", "file_icon fa fa-plus-square"]), C('span', 'Add files'))
 			);
 			
 			
@@ -326,6 +329,41 @@
 			}
 		}
 		
+		function add_files(IDwidget) {
+			content_left.innerHTML = '';
+			C(content_left,
+				C("div",
+					C("form", ["onsubmit", upload_files],
+						C("input", ["type", "hidden", "name", "IDwidget", "value", IDwidget]),
+						C("input", ["type", "file", "name", "files[]", "multiple", "multiple"]),
+						C("input", ["type", "submit", "value", "Upload files"])
+					)
+				)
+			);
+			
+			function upload_files(event) {
+				event.preventDefault();
+				console.log(event);
+				//debugger;
+				var target = event.originalTarget !== undefined ? event.originalTarget : event.target;
+				var formData = new FormData(target);
+				API.xhr(
+					'widgets/user-created-files-add',
+					formData,
+					function (data) {
+						if (data.status === 'OK') {
+							alert("File(s) uploaded");
+						} else {
+							alert("There was a problem saving the uploaded file(s)");
+						}
+					},
+					function () {
+						alert("There was a problem uploading the file(s)");
+					}
+				);
+			}
+		}
+		
 		
 		
 		
@@ -348,7 +386,7 @@
 			
 			if (extension !== '') {
 				for (var type in filename_type_extensions) {
-					if (filename_type_extensions[type].indexOf(extension) !== -1) {
+					if (filename_type_extensions[type].indexOf(extension.toLowerCase()) !== -1) {
 						return type;
 					}
 				}

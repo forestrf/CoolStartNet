@@ -220,12 +220,12 @@ function file_upload_widget(DB &$db, $widgetID, &$FILE_REFERENCE, $name = NULL){
 		$content = file_get_contents($FILE_REFERENCE['tmp_name']);
 		
 		// Innecesario borrarlo, php lo borra automaticamente.
-		unlink($FILE_REFERENCE['tmp_name']);
+		//unlink($FILE_REFERENCE['tmp_name']);
 		
 		if ($name === NULL) {
 			$name = truncate_filename($FILE_REFERENCE['name'], FILENAME_MAX_LENGTH);
 		}
-		$mimetype = $FILE_REFERENCE['type'];
+		//$mimetype = $FILE_REFERENCE['type'];
 		
 		$db->upload_widget_file($widgetID, $name, $content);
 	}
