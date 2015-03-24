@@ -10,6 +10,11 @@ if (isset($_REQUEST['url'])) {
 	fin_default();
 }
 
+if (!preg_match("@^https?://@i", $url)) {
+	$url = 'http://' . $url;
+} elseif (strpos($url, '//') === 0) {
+	$url = 'http:' . $url;
+}
 
 
 // check login
