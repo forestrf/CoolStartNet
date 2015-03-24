@@ -38,7 +38,7 @@ if ($favicon !== null) {
 
 //echo $faviconURL;exit;
 header("HTTP/1.1 301 Moved Permanently");
-header('Location: //' . $faviconURL);
+header('Location: ' . $faviconURL);
 
 
 
