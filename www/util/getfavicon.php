@@ -29,16 +29,28 @@ $favicon = parseFavicon($html);
 if ($favicon !== null) {
 	if (preg_match('@^(?:https?:)?//@', $favicon)) {
 		$faviconURL = $favicon;
+	} elseif (strpos($favicon, '/') === 0) {
+		$faviconURL = 'http://' . $domain . $favicon;
 	} else {
-		$faviconURL = $domain . $favicon;
+		$faviconURL = 'http://' . $domain . '/' . $favicon;
 	}
 } else {
 	fin_default();
 }
 
 //echo $faviconURL;exit;
-header("HTTP/1.1 301 Moved Permanently");
-header('Location: ' . $faviconURL);
+$imgHeaders = CargaWebCurl($faviconURL, false, true);
+$img = CargaWebCurl($faviconURL, true, false);
+if (preg_match("@Content-Type:{$s}(.*?)$@im", $imgHeaders)) {
+	$type = $matches[1];
+} else {
+	$type = 'image/x-icon';
+}
+
+header('Cache-Control: max-age=2592000, public'); // 1 month
+
+header('Content-Type: ' . $type);
+echo $img;
 
 
 
@@ -47,7 +59,7 @@ function fin_default() {
 	exit;
 }
 
-function CargaWebCurl($url){
+function CargaWebCurl($url, $body = true, $header = false){
 	$cabeceras = array();
 	$cabeceras[] = 'Accept-Encoding: gzip';
 	$cabeceras[] = 'Connection: Connection';
@@ -56,7 +68,8 @@ function CargaWebCurl($url){
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_HEADER, 0);
+	curl_setopt($ch, CURLOPT_NOBODY, !$body);
+	curl_setopt($ch, CURLOPT_HEADER, $header);
 	
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 	curl_setopt($ch, CURLOPT_COOKIEFILE, ""); // Esto es para que en las redirecciones use las cookies que salgan durante las redirecciones
