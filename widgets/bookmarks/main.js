@@ -132,7 +132,7 @@ function recursive_bookmark_parser(element, path, elements){
 			break;
 			default:
 				// Bookmark
-				var a = C("a", ["href", elements[i].uri, "style", "background-image: url(http://grabicon.com/icon?domain="+encodeURI(new URL(elements[i].uri).hostname)+")"], elements[i].title ? elements[i].title : elements[i].uri);
+				var a = C("a", ["href", elements[i].uri, "style", "background-image: url("+API.bookmarks.getFavicon(encodeURI(new URL(elements[i].uri).hostname))+")"], elements[i].title ? elements[i].title : elements[i].uri);
 				
 				element.appendChild(a);
 				element.appendChild(deleteButton);

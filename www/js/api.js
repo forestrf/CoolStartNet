@@ -760,7 +760,10 @@
 					"captchaPublicKey": server_vars.CAPTCHA_PUB_KEY
 				},
 				"bookmarks": {
-					"createObject": bookmarks_base
+					"createObject": bookmarks_base,
+					"getFavicon": function(domain) {
+						return '//' + server_vars.WEB_PATH + 'util/getfavicon?domain=' + domain;
+					}
 				},
 				"dropbox": {
 					"getPathContents": function (path, callback) {
