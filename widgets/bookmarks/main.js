@@ -110,14 +110,14 @@ function recursive_bookmark_parser(element, path, elements){
 							folder.style.height = "0px";
 							folders_opened[path] = false;
 						}
-					}
+					};
 				})(folder_obj, path+"/"+elements[i]);
 				
 				deleteButton.onclick = (function(path, name){
 					return function(){
 						bookmarks.removeFolder(path, name);
 						draw_bookmarks();
-					}
+					};
 				})(path, elements[i]);
 				
 				editButton.onclick = (function(path, name){
@@ -127,12 +127,12 @@ function recursive_bookmark_parser(element, path, elements){
 							draw_bookmarks();
 						});
 						form_folder_name.value = name;
-					}
+					};
 				})(path, elements[i]);
 			break;
 			default:
 				// Bookmark
-				var a = C("a", ["href", elements[i].uri, "style", "background-image: url("+API.bookmarks.getFavicon(encodeURI(new URL(elements[i].uri).hostname))+")"], elements[i].title ? elements[i].title : elements[i].uri);
+				var a = C("a", ["href", elements[i].uri, "style", "background-image: url(" + API.bookmarks.getFavicon(elements[i].uri) + ")"], elements[i].title ? elements[i].title : elements[i].uri);
 				
 				element.appendChild(a);
 				element.appendChild(deleteButton);
@@ -142,7 +142,7 @@ function recursive_bookmark_parser(element, path, elements){
 					return function(event){
 						bookmarks.removeBookmark(path, i);
 						draw_bookmarks();
-					}
+					};
 				})(path, i);
 				
 				editButton.onclick = (function(path, i){
@@ -154,7 +154,7 @@ function recursive_bookmark_parser(element, path, elements){
 						});
 						form_uri.value   = elements[i].uri;
 						form_title.value = elements[i].title;
-					}
+					};
 				})(path, i);
 			break;
 		}
@@ -203,7 +203,7 @@ function create_element(path, selected, show_selector, message, ok_callback){
 			C('div', ['class', 'container'],
 				C("div", ["class", "txt"], message + folder_gui),
 				C("div", ["class", "type_selector", "style", show_selector ? "" : "display:none;"],
-					button_target_bookmark = C("div", ["onclick", function(){change_target_create_element("bookmark")}, "class", selected === 'bookmark' ? "selected" : ''], "Bookmark"),
+					button_target_bookmark = C("div", ["onclick", function(){change_target_create_element("bookmark");}, "class", selected === 'bookmark' ? "selected" : ''], "Bookmark"),
 					button_target_folder   = C("div", ["onclick", function(){change_target_create_element("folder");},  "class", selected === 'folder'   ? "selected" : ''], "Folder")
 				),
 				form_target = C("div", ["class", "form"]),
@@ -307,4 +307,4 @@ var CONFIG_function = function(functions){
 	}
 	
 	
-}
+};

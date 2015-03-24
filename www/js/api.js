@@ -761,8 +761,8 @@
 				},
 				"bookmarks": {
 					"createObject": bookmarks_base,
-					"getFavicon": function(domain) {
-						return '//' + server_vars.WEB_PATH + 'util/getfavicon?domain=' + domain;
+					"getFavicon": function(url) {
+						return '//' + server_vars.WEB_PATH + 'util/getfavicon?url=' + encodeURIComponent(url);
 					}
 				},
 				"dropbox": {

@@ -4,8 +4,8 @@ require_once __DIR__.'/../php/config.php';
 
 // Validate GET option
 
-if (isset($_REQUEST['domain'])) {
-	$domain = &$_REQUEST['domain'];
+if (isset($_REQUEST['url'])) {
+	$url = &$_REQUEST['url'];
 } else {
 	fin_default();
 }
@@ -22,20 +22,35 @@ if(!user_check_access(false, true)){
 	fin_default();
 }
 
+$domain = getDomain($url);
 
-$html = CargaWebCurl('http://' . $domain);
+$html = CargaWebCurl($url);
 
 $favicon = parseFavicon($html);
+//echo $faviconURL;exit;
 if ($favicon !== null) {
-	if (preg_match('@^(?:https?:)?//@', $favicon)) {
+	if (preg_match('@^https?://@', $favicon)) {
 		$faviconURL = $favicon;
-	} elseif (strpos($favicon, '/') === 0) {
+	} elseif (strpos($favicon, '//') === 0) {
+		$faviconURL = 'http:' . $favicon;
+	} else if (strpos($favicon, '/') === 0) {
 		$faviconURL = 'http://' . $domain . $favicon;
 	} else {
 		$faviconURL = 'http://' . $domain . '/' . $favicon;
 	}
 } else {
-	fin_default();
+	$handle = curl_init('http://' . $domain . '/favicon.ico');
+	curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
+	
+	$response = curl_exec($handle);
+	
+	$httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+	if($httpCode === 200) {
+		$faviconURL = 'http://' . $domain . '/favicon.ico';
+	} else {
+		fin_default();
+	}
 }
 
 //echo $faviconURL;exit;
@@ -70,6 +85,8 @@ function CargaWebCurl($url, $body = true, $header = false){
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_NOBODY, !$body);
 	curl_setopt($ch, CURLOPT_HEADER, $header);
+	
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
 	
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 	curl_setopt($ch, CURLOPT_COOKIEFILE, ""); // Esto es para que en las redirecciones use las cookies que salgan durante las redirecciones
@@ -111,4 +128,10 @@ function parseFavicon($html) {
 	}
 	// No match
 	return null;
-} 
+}
+
+function getDomain($url) {
+	$parse = parse_url($url);
+	return $parse['host'];
+}
+
