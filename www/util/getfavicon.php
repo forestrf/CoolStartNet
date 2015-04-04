@@ -32,7 +32,7 @@ $domain = getDomain($url);
 $html = CargaWebCurl($url);
 
 $favicon = parseFavicon($html);
-//echo $faviconURL;exit;
+//var_dump($favicon);exit;
 if ($favicon !== null) {
 	if (preg_match('@^https?://@', $favicon)) {
 		$faviconURL = $favicon;
@@ -112,6 +112,7 @@ function CargaWebCurl($url, $body = true, $header = false){
 
 function parseFavicon($html) {
 	$s = '[ \t\r\n]*?';
+	$t = '[^>]*?';
 	
 	// Get the 'href' attribute value in a <link rel="icon" ... />
 	// Also works for IE style: <link rel="shortcut icon" href="http://www.example.com/myicon.ico" />
@@ -119,16 +120,16 @@ function parseFavicon($html) {
 	$matches = array();
 	// Search for <link rel="icon" type="image/png" href="http://example.com/icon.png" />
 	;
-	if (preg_match("/<link{$s}rel{$s}={$s}[\"'](?:shortcut )?icon[\"']{$s}href{$s}={$s}[\"']([^\"']*)[\"']/i", $html, $matches)) {
+	if (preg_match("/<link{$s}rel{$s}={$s}[\"']{$s}icon{$s}[\"']{$t}href{$s}={$s}[\"']([^\"']*)/i", $html, $matches)) {
 		return trim($matches[1]);
 	}
 	// Order of attributes could be swapped around: <link type="image/png" href="http://example.com/icon.png" rel="icon" />
 	
-	if (preg_match("/<link{$s}href{$s}={$s}[\"']([^\"']*)[\"']{$s}rel{$s}={$s}[\"'](?:shortcut )?icon[\"']/i", $html, $matches)) {
+	if (preg_match("/<link{$s}href{$s}={$s}[\"']([^\"']*)[\"']{$t}rel{$s}={$s}[\"']{$s}icon/i", $html, $matches)) {
 		return trim($matches[1]);
 	}
 	
-	if (preg_match("/<meta{$s}content{$s}={$s}[\"']([^\"']*)[\"']{$s}itemprop{$s}={$s}[\"']image[\"']/i", $html, $matches)) {
+	if (preg_match("/<meta{$s}content{$s}={$s}[\"']([^\"']*)[\"']{$s}itemprop{$s}={$s}[\"']image/i", $html, $matches)) {
 		return trim($matches[1]);
 	}
 	// No match
