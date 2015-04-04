@@ -112,6 +112,7 @@ function CargaWebCurl($url, $body = true, $header = false){
 
 function parseFavicon($html) {
 	$s = '[ \t\r\n]*?';
+	$sx = '[ \t\r\na-z0-9]*?';
 	$t = '[^>]*?';
 	
 	// Get the 'href' attribute value in a <link rel="icon" ... />
@@ -120,12 +121,12 @@ function parseFavicon($html) {
 	$matches = array();
 	// Search for <link rel="icon" type="image/png" href="http://example.com/icon.png" />
 	;
-	if (preg_match("/<link{$s}rel{$s}={$s}[\"']{$s}icon{$s}[\"']{$t}href{$s}={$s}[\"']([^\"']*)/i", $html, $matches)) {
+	if (preg_match("/<link{$s}rel{$s}={$s}[\"']{$sx}icon{$s}[\"']{$t}href{$s}={$s}[\"']([^\"']*)/i", $html, $matches)) {
 		return trim($matches[1]);
 	}
 	// Order of attributes could be swapped around: <link type="image/png" href="http://example.com/icon.png" rel="icon" />
 	
-	if (preg_match("/<link{$s}href{$s}={$s}[\"']([^\"']*)[\"']{$t}rel{$s}={$s}[\"']{$s}icon/i", $html, $matches)) {
+	if (preg_match("/<link{$s}href{$s}={$s}[\"']([^\"']*)[\"']{$t}rel{$s}={$s}[\"']{$sx}icon/i", $html, $matches)) {
 		return trim($matches[1]);
 	}
 	
