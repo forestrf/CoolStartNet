@@ -781,7 +781,7 @@
 						return this; //API.dropbox
 					},
 					"getFileURI": function (path) {
-						return '//' + server_vars.WEB_PATH + 'externalfile' + path;
+						return '//' + server_vars.WEB_PATH + 'externalfile/uid/' + server_vars.USER + '/file' + path;
 					},
 					"available": function (callback) {
 						if (callback === undefined) callback = function () {};

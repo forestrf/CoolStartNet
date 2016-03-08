@@ -606,13 +606,13 @@ class DB {
 	
 	// Set the dropbox token of the current user
 	function setDropboxAccessToken($accessToken) {
-		deleteCache($this->query_getAllAccessToken());
+		$this->deleteCache($this->query_getAllAccessToken());
 		return $this->query("INSERT INTO `access-token` (`IDuser`, `dropbox_accessToken`) VALUES ('{$this->userID}', '{$accessToken}') ON DUPLICATE KEY UPDATE `dropbox_accessToken` = '{$accessToken}';");
 	}
 	
 	// Delete the dropbox token of the current user
 	function delDropboxAccessToken() {
-		deleteCache($this->query_getAllAccessToken());
+		$this->deleteCache($this->query_getAllAccessToken());
 		return $this->query("UPDATE `access-token` SET `dropbox_accessToken` = '' WHERE `IDuser` = '{$this->userID}';");
 	}
 	

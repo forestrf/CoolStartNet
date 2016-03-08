@@ -9,21 +9,12 @@
 	
 	
 	#####################################
-	# Force without WWW and https
+	# Force without WWW
 	#####################################
 
 	# convertir www.***.com en ***.com
 	RewriteCond %{HTTP_HOST} ^www [NC]
-	RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
-	
-	
-	
-	#####################################
-	# Force https
-	#####################################
-	
-	RewriteCond %{HTTPS} off
-	RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+	RewriteRule (.*) http://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 	
 	
 	
@@ -31,6 +22,7 @@
 	# Dropbox Files shortcut
 	#####################################
 	
+	RewriteRule ^externalfile/uid/(.+)/file/(.*)$ external.php?m=2&user=$1&file=/$2 [NC,L]
 	RewriteRule ^externalfile/(.*)$ external.php?m=2&file=/$1 [NC,L]
 	
 	

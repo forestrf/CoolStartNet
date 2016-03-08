@@ -10,7 +10,7 @@ function getWebAuth(){
 	session_start();
 	$appInfo          = new dbx\AppInfo(DROPBOX_KEY, DROPBOX_SECRET);
 	$clientIdentifier = DROPBOX_APP_NAME;
-	$redirectUri      = 'https://'.WEB_PATH.'external-web-files/dropbox-response.php';
+	$redirectUri      = 'https://'.WEB_PATH.'external-web-files/dropbox-response';
 	$csrfTokenStore   = new dbx\ArrayEntryStore($_SESSION, 'dropbox-auth-csrf-token');
 	return new dbx\WebAuth($appInfo, $clientIdentifier, $redirectUri, $csrfTokenStore);
 }

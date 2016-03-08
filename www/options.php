@@ -47,7 +47,8 @@
 			),
 			'Used space',
 			'Download backup of user data',
-			'Upload backup of user data'
+			'Upload backup of user data',
+			C('a', ['href', '//<?=WEB_PATH?>external-web-files/dropbox-request'], 'link with dropbox')
 		));
 		
 		

@@ -179,6 +179,7 @@ function send_mail($for, $subject, $body) {
 function server_vars_js() {
 	return '{
 		"CAPTCHA_PUB_KEY": "'.CAPTCHA_PUBLIC_KEY.'",
+		"USER": "'.G::$SESSION->userID.'",
 		"WEB_PATH": "'.WEB_PATH.'"
 	}';
 }
