@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="//<?=WEB_PATH?>css/developers.css">
 <link rel="stylesheet"  href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
-<!--Codemirror-->
+<!--START Codemirror-->
 <link rel="stylesheet" href="//<?=WEB_PATH?>js/codemirror/lib/codemirror.css">
 <script src="//<?=WEB_PATH?>js/codemirror/lib/codemirror.js"></script>
 <link rel="stylesheet" href="//<?=WEB_PATH?>js/codemirror/addon/dialog/dialog.css">
@@ -26,9 +26,9 @@
 <script src="//<?=WEB_PATH?>js/codemirror/addon/hint/show-hint.js"></script>
 <script src="//<?=WEB_PATH?>js/codemirror/addon/tern/tern.js"></script>
 
-<script src="//marijnhaverbeke.nl/acorn/acorn.js"></script>
-<script src="//marijnhaverbeke.nl/acorn/acorn_loose.js"></script>
-<script src="//marijnhaverbeke.nl/acorn/util/walk.js"></script>
+<script src="//<?=WEB_PATH?>js/acorn/dist/acorn.js"></script>
+<script src="//<?=WEB_PATH?>js/acorn/dist/acorn_loose.js"></script>
+<script src="//<?=WEB_PATH?>js/acorn/dist/walk.js"></script>
 <script src="//<?=WEB_PATH?>js/tern/doc/demo/polyfill.js"></script>
 <script src="//<?=WEB_PATH?>js/tern/lib/signal.js"></script>
 <script src="//<?=WEB_PATH?>js/tern/lib/tern.js"></script>
@@ -36,6 +36,7 @@
 <script src="//<?=WEB_PATH?>js/tern/lib/comment.js"></script>
 <script src="//<?=WEB_PATH?>js/tern/lib/infer.js"></script>
 <script src="//<?=WEB_PATH?>js/tern/plugin/doc_comment.js"></script>
+<!--END Codemirror-->
 
 
 <script>
@@ -50,7 +51,7 @@
 		C(div,
 			menu_left = C("div", ["class", "menu_scrollable left"]),
 			content_left = C("div", ["class", "body_content left"]),
-			content_right = C("div", ["class", "body_content right"]),
+			content_right = C("div", ["class", "body_content right with_bar"]),
 			menu_right = C("div", ["class", "menu_scrollable right"])
 		);
 		
@@ -131,8 +132,10 @@
 		
 		GitHub
 		*/
-		
-		// C("li", C("a", ["href", "doc/reader.html", "onclick", show_docs], "Documentation")),
+				
+		C(menu_right,
+			C("div", ["class", "menu_elem", "onclick", show_docs], C("div", ["class", "file_icon fa fa-question-circle"]), C('span', 'JS API'))
+		);
 		
 		
 		
@@ -144,7 +147,12 @@
 				path = "";
 			}
 			
-			developers_space.appendChild(C("iframe", ["src", "doc/reader.html#" + path, "class", "doc_iframe"]));
+			content_right.innerHTML = "";
+			C(content_right,
+				C("div",
+					C("iframe", ["src", "doc/reader.html#" + path, "class", "doc_iframe"])
+				)
+			);
 			return false;
 		}
 		
@@ -214,17 +222,17 @@
 			API.xhr(
 				'widgets/user-created-files-list',
 				'widgetID=' + data.IDwidget,
-				function (data) {
-					if (data.status === 'OK') {
-						for (var i = 0; i < data.response.length; i++) {
+				function (data2) {
+					if (data2.status === 'OK') {
+						for (var i = 0; i < data2.response.length; i++) {
 							C(menu_left,
 								C("div", ["class", "menu_elem", "onclick", (function(i){
 										return function(){
-											inspect_widget_file(data.IDwidget, data.response[i].name);
+											inspect_widget_file(data.IDwidget, data2.response[i].name);
 										}
 									})(i)],
-									C("div", ["class", "file_icon fa " + icon_from_filename(data.response[i].name)]),
-									C('span', data.response[i].name)
+									C("div", ["class", "file_icon fa " + icon_from_filename(data2.response[i].name)]),
+									C('span', data2.response[i].name)
 								)
 							)
 						}
@@ -257,6 +265,54 @@
 			}
 		}
 		
+		
+		// http://stackoverflow.com/questions/2198470/javascript-uploading-a-file-without-a-file
+		// elements is an array of: isFile (boolean), name (string), filename (string), mimetype (string), data (variable to send / binary blob)
+		function beginQuoteFileUnquoteUpload(url, IDwidget, elements, callbackOK, callbackFAIL) {
+			elements = elements.concat({name: "IDwidget", data: IDwidget});
+			
+			console.log(elements);
+			// Define a boundary, I stole this from IE but you can use any string AFAIK
+			var boundary = "---------------------------36861392015894";
+			var x = new XMLHttpRequest();
+			body = "";
+			
+			for (var i = 0; i < elements.length; i++) {
+				body += '--' + boundary + '\r\n';
+				if (elements[i].isFile !== undefined && elements[i].isFile === true) {
+					body += 'Content-Disposition: form-data; name="files[]"; filename="' + encodeURIComponent(elements[i].filename) + '"\r\n'
+					      + 'Content-type: '+elements[i].mimetype
+				} else {
+					body += 'Content-Disposition: form-data; name="' + elements[i].name + '"';
+				}
+				body += '\r\n\r\n' + elements[i].data + '\r\n';
+			}
+			
+			body += '--' + boundary + '--';
+		
+			x.open("POST", url, true);
+			x.setRequestHeader(
+				"Content-type", "multipart/form-data; boundary="+boundary
+			);
+			x.onreadystatechange = 	x.ontimeout = function () {
+				if (x.readyState == 4) {
+					if (	x.status == 200) {
+						// Don`t fail if it is not a json
+						try {
+							var response = JSON.parse(x.responseText);
+						} catch(e) {
+							callbackFAIL();
+							return;
+						}
+						callbackOK(response);
+					} else {
+						callbackFAIL();
+					}
+				}
+			}
+			x.send(body);
+		}
+		
 		function inspect_widget_file(IDwidget, filename) {
 			content_left.innerHTML = '';
 			var extension = filename.indexOf('.') !== -1 ? filename.substr(filename.lastIndexOf('.') + 1) : '';
@@ -266,24 +322,48 @@
 					C(content_left,
 						C("div", ["class", "widgetelement image"],
 							C("img", ["src", API.url(filename)]),
-							C("div", "update, delete, rename")
+							C("div", "Update, Delete, Rename")
 						)
 					);
 				break;
 				case 'code':
 					var textarea;
+					var editor;
 					C(content_left,
 						C("div", ["class", "widgetelement code"],
-							textarea = C("textarea",
-								C("div", "update, delete, rename")
-							)
+							C("div", ["class", "options"], 
+								C("button", ["onclick", function() {
+									beginQuoteFileUnquoteUpload(
+										'widgets/user-created-files-edit',
+										IDwidget,
+										[{
+											isFile: true,
+											filename: filename,
+											mimetype: mymetype_from_filename(filename),
+											data: editor.getValue()
+										}],
+										function (data) {
+											if (data.status === 'OK') {
+												alert("File updated");
+											} else {
+												alert("There was a problem saving the uploaded file(s)");
+											}
+										},
+										function () {
+											alert("There was a problem uploading the file(s)");
+										}
+									);
+								}], "Update"),
+								"Delete, Rename"
+							),
+							textarea = C("textarea")
 						)
 					);
 					
 					//extension === 'js' o 'css'
 					
 					API.xhr(
-						API.url(filename),
+						API.url(filename) + '?' + Math.random(), // ignore cache
 						null,
 						function (data) {
 							textarea.value = data;
@@ -307,7 +387,7 @@
 							})
 							editor.on("cursorActivity", function(cm) { server.updateArgHints(cm); });
 							
-							document.querySelector(".CodeMirror").style.height = (window.innerHeight - 20) + "px";
+							document.querySelector(".CodeMirror").style.height = (window.innerHeight - 20 - 20) + "px";
 						},
 						function () {
 							alert("There was a problem loading the widget file");
@@ -428,6 +508,26 @@
 			server = new CodeMirror.TernServer({defs: [JSON.parse(ecma5json)]});
 		});
 		
+		
+		
+		
+		var filename_mimetype_extensions = <?=json_encode(G::$mimetype_extensions)?>;
+		
+		function mymetype_from_filename(filename) {
+			var extension = filename.indexOf('.') !== -1 ? filename.substr(filename.lastIndexOf('.') + 1) : '';
+			
+			if (extension !== '') {
+				for (var type in filename_mimetype_extensions) {
+					if (filename_mimetype_extensions[type].indexOf(extension.toLowerCase()) !== -1) {
+						return type;
+					}
+				}
+			}
+			
+			return 'text/plain';
+		}
+		
+		ALGO = mymetype_from_filename;
 		
 	})(API);
 </script>

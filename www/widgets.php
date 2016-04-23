@@ -176,6 +176,26 @@ function user_created_files_add(DB &$db) {
 	}
 }
 
+function user_created_files_edit(DB &$db) {
+	if (isset($_POST['IDwidget'])
+		&& isset($_FILES['files'])
+	){
+		//var_dump($_FILES);
+		$nFiles = count($_FILES['files']['name']);
+		for ($i = 0; $i < $nFiles; $i++) {
+			$file = array(
+				'name' => $_FILES['files']['name'][$i],
+				'tmp_name' => $_FILES['files']['tmp_name'][$i],
+				'error' => $_FILES['files']['error'][$i],
+				'size' => $_FILES['files']['size'][$i]
+			);
+			file_upload_widget($db, $_POST['IDwidget'], $file, $file['name']);
+		}
+		end_ok('files uploaded');
+	}
+	end_ok("LOOOL");
+}
+
 
 
 
