@@ -266,52 +266,6 @@
 		}
 		
 		
-		// http://stackoverflow.com/questions/2198470/javascript-uploading-a-file-without-a-file
-		// elements is an array of: isFile (boolean), name (string), filename (string), mimetype (string), data (variable to send / binary blob)
-		function beginQuoteFileUnquoteUpload(url, IDwidget, elements, callbackOK, callbackFAIL) {
-			elements = elements.concat({name: "IDwidget", data: IDwidget});
-			
-			console.log(elements);
-			// Define a boundary, I stole this from IE but you can use any string AFAIK
-			var boundary = "---------------------------36861392015894";
-			var x = new XMLHttpRequest();
-			body = "";
-			
-			for (var i = 0; i < elements.length; i++) {
-				body += '--' + boundary + '\r\n';
-				if (elements[i].isFile !== undefined && elements[i].isFile === true) {
-					body += 'Content-Disposition: form-data; name="files[]"; filename="' + encodeURIComponent(elements[i].filename) + '"\r\n'
-					      + 'Content-type: '+elements[i].mimetype
-				} else {
-					body += 'Content-Disposition: form-data; name="' + elements[i].name + '"';
-				}
-				body += '\r\n\r\n' + elements[i].data + '\r\n';
-			}
-			
-			body += '--' + boundary + '--';
-		
-			x.open("POST", url, true);
-			x.setRequestHeader(
-				"Content-type", "multipart/form-data; boundary="+boundary
-			);
-			x.onreadystatechange = 	x.ontimeout = function () {
-				if (x.readyState == 4) {
-					if (	x.status == 200) {
-						// Don`t fail if it is not a json
-						try {
-							var response = JSON.parse(x.responseText);
-						} catch(e) {
-							callbackFAIL();
-							return;
-						}
-						callbackOK(response);
-					} else {
-						callbackFAIL();
-					}
-				}
-			}
-			x.send(body);
-		}
 		
 		function inspect_widget_file(IDwidget, filename) {
 			content_left.innerHTML = '';
@@ -333,10 +287,12 @@
 						C("div", ["class", "widgetelement code"],
 							C("div", ["class", "options"], 
 								C("button", ["onclick", function() {
-									beginQuoteFileUnquoteUpload(
+									API.xhr(
 										'widgets/user-created-files-edit',
-										IDwidget,
 										[{
+											name: "IDwidget",
+											data: IDwidget
+										}, {
 											isFile: true,
 											filename: filename,
 											mimetype: mymetype_from_filename(filename),

@@ -144,8 +144,29 @@
 		if (isPost) {
 			if (typeof data === "string") {
 				x.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			} else {
+				// http://stackoverflow.com/questions/2198470/javascript-uploading-a-file-without-a-file
+				// data is an array of: isFile (boolean), name (string), filename (string), mimetype (string), data (variable to send / binary blob)
+				var boundary = "---------------------------36861392015894";
+				body = "";
+				
+				for (var i = 0; i < data.length; i++) {
+					body += '--' + boundary + '\r\n';
+					if (data[i].isFile !== undefined && data[i].isFile === true) {
+						body += 'Content-Disposition: form-data; name="files[]"; filename="' + encodeURIComponent(data[i].filename) + '"\r\n'
+						      + 'Content-type: ' + data[i].mimetype;
+					} else {
+						body += 'Content-Disposition: form-data; name="' + data[i].name + '"';
+					}
+					body += '\r\n\r\n' + data[i].data + '\r\n';
+				}
+				
+				body += '--' + boundary + '--';
+				
+				data = body;
+			
+				x.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
 			}
-			// else data = new FormData(); ...
 			
 			x.send(data);
 		} else x.send();
