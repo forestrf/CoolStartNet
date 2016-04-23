@@ -230,4 +230,4 @@ var CONFIG_function = function(){
 		
 		
 	}
-}
+};

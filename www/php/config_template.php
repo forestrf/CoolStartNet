@@ -41,6 +41,9 @@ define('EMAIL_MAX_LENGTH', 50);
 # Max filename length
 define('FILENAME_MAX_LENGTH', 50);
 
+# Widget files hash output length (md5=32)
+define('WIDGET_FILES_HASH_LENGTH', 32);
+
 # Max number of files for a widget
 define('WIDGET_MAX_FILES_NUMBER', 50);
 

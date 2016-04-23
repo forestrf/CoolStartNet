@@ -26,6 +26,8 @@ Select steep:<p>
 <a href="?steep=create-default-user">Create user DEFAULT and configure it</a><br>
 <a href="?steep=create-test-user">Create user TEST and configure it</a><br>
 
+<a href="../php/cronjobs/deleteunlinkedfiles.php">Delete unlinked files</a><br>
+
 <pre>
 <?php
 

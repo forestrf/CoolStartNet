@@ -128,6 +128,7 @@ class DB {
 	private $d_array = false;
 	function debug_mode($bool) {
 		$this->d = $bool;
+		$this->debug('<span class="info">debug mode: ' . $bool.'</span>');
 	}
 	function debug_to_array($bool) {
 		$this->d_array = $bool;
@@ -440,16 +441,12 @@ class DB {
 	// Doesn't delete from the table 'files' because other file can has the same hash. The unlinked content is deleted from other function that is called from a cronjob.
 	function delete_widget($widgetID) {
 		if ($this->CanIModifyWidget($widgetID) && $this->query("SELECT * FROM `widgets` WHERE `IDwidget` = '{$widgetID}';")) {
-			/*
-			$this->query("DELETE FROM `widgets` WHERE `ID` = '{$widgetID}';");
-			$this->query("DELETE FROM `variables` WHERE `IDwidget` = '{$widgetID}';");
-			$this->query("DELETE FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}';");
-			$this->query("DELETE FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}';");
-			*/
-			return $this->query("DELETE FROM `widgets` WHERE `IDwidget` = '{$widgetID}';" .
-					"DELETE FROM `variables` WHERE `IDwidget` = '{$widgetID}';" .
-					"DELETE FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}';" .
-					"DELETE FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}';");
+			return $this->query(
+				"DELETE FROM `widgets` WHERE `IDwidget` = '{$widgetID}';" .
+				"DELETE FROM `variables` WHERE `IDwidget` = '{$widgetID}';" .
+				"DELETE FROM `widgets-content` WHERE `IDwidget` = '{$widgetID}';" .
+				"DELETE FROM `widgets-user` WHERE `IDwidget` = '{$widgetID}';"
+			);
 		}
 		return false;
 	}
@@ -473,8 +470,9 @@ class DB {
 	}
 	
 	// Delete all unlinked files on the files table
-	function delete_unlinked_files() {
-		$this->query("DELETE FROM `files` WHERE `hash` NOT IN (SELECT `hash` FROM `widgets-content`);");
+	function check_widget_file_hash($hash) {
+		$hash = mysql_escape_mimic($hash);
+		return 0 < count($this->query("SELECT `IDwidget` FROM `widgets-content` WHERE `hash` = '{$hash}' LIMIT 1;"));
 	}
 	
 	// Rename a file from a widget.

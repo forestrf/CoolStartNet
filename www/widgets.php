@@ -193,7 +193,6 @@ function user_created_files_edit(DB &$db) {
 		}
 		end_ok('files uploaded');
 	}
-	end_ok("LOOOL");
 }
 
 
