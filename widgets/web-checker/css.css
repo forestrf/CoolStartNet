@@ -38,6 +38,10 @@
 	background-color: rgba(176, 19, 19, 0.7);
 }
 
-.webchecker > .content > div > span {
-    display: block;
+.webchecker > .content > div > a {
+	color: #eee;
+	display: block;
+}
+.webchecker > .content > div > a:visited {
+	color: #9A961F;
 }

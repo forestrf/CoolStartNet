@@ -66,7 +66,8 @@ function ReDrawElement(elem) {
 				Draw();
 			}
 		}], "Remove"),
-		C("span", elem.web)
+		C("span", "/" + elem.regex + "/"),
+		C("a", ["href", elem.web, "target", "_blank"], elem.web)
 	);
 	return elem.html;
 }
