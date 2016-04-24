@@ -1,0 +1,6 @@
+{
+	"name":"Web checker",
+	"autor":"Andrés Leone",
+	"date":"23/04/2016 12:00:00", /* DD/MM/YYYY HH:MM:SS*/
+	"visible":1
+}

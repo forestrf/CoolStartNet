@@ -111,7 +111,9 @@
 	// callback takes one argument
 	// http://stackoverflow.com/questions/8567114/how-to-make-an-ajax-call-without-jquery
 	// data = null or undefined para usar GET
-	function xhr(url, data, callbackOK, callbackFAIL) {
+	function xhr(url, data, callbackOK, callbackFAIL, responseIsJSON) {
+		if (callbackFAIL === undefined) callbackFAIL = function(){};
+		if (callbackOK === undefined) callbackOK = function(){};
 		var isPost = data !== undefined && data !== null;
 		var x;
 		if (window.XMLHttpRequest) {
@@ -129,7 +131,7 @@
 				if (x.status == 200) {
 					// Don`t fail if it is not a json
 					try {
-						var response = isPost ? JSON.parse(x.responseText) : x.responseText;
+						var response = isPost && (responseIsJSON === undefined || responseIsJSON) ? JSON.parse(x.responseText) : x.responseText;
 					} catch(e) {
 						callbackFAIL();
 						return;
@@ -247,7 +249,7 @@
 			return div;
 		};
 		div.removeClass = function (className) {
-			div.className = div.className.split(className).join("").trim();
+			div.className = (" " + div.className + " ").split(" " + className + " ").join("").trim();
 			return div;
 		};
 		div.flipflopClass = function (className) {

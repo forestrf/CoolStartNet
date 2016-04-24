@@ -1,0 +1,43 @@
+.webchecker {
+	border-radius: 5px;
+	box-shadow: 0 0 10px 0 #000;
+	color: #eee;
+	font-family: Tahoma,Verdana;
+	font-size: 0.8em;
+	margin: -10px 0 0 -20px;
+	padding: 10px 20px 0;
+	
+	-webkit-user-select: none;
+	-moz-user-select: -moz-none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.webchecker > .buttons {
+	height: 25px;
+}
+
+.webchecker > .content {
+	color: #eee;
+	float: left;
+	font-family: Tahoma,Verdana;
+	height: calc(100% - 25px);
+	overflow-x: hidden;
+	overflow-y: auto;
+	width: 100%;
+	font-size: 1.2em;
+}
+
+.webchecker > .content > div {
+	margin: 5px;
+}
+.webchecker > .content > div.matched {
+	background-color: rgba(11, 184, 9, 0.7);
+}
+.webchecker > .content > div.unmatched {
+	background-color: rgba(176, 19, 19, 0.7);
+}
+
+.webchecker > .content > div > span {
+    display: block;
+}
