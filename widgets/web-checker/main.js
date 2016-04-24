@@ -42,7 +42,7 @@ function Draw() {
 			save();
 			i--;
 		} else {
-			C(urls, ReDrawElement(websToCheck[i]));
+			C(urls, ReDrawElement(websToCheck[i]).html);
 		}
 	}
 }
@@ -66,35 +66,69 @@ function ReDrawElement(elem) {
 				Draw();
 			}
 		}], "Remove"),
-		C("span", "/" + elem.regex + "/"),
+		C("span", "/" + elem.regex + "/ - " + (elem.wantToMatch ? "Y" : "N")),
 		C("a", ["href", elem.web, "target", "_blank"], elem.web)
 	);
-	return elem.html;
+	return elem;
 }
 
 function agregaURL() {
 	websToCheck = websToCheck.concat({
 		web: "http://...",
 		regex: "",
-		wantToMatch: true,
+		wantToMatch: 1,
 		matched: "",
 		html: null
 	});
-	edit(websToCheck[websToCheck.length - 1]);
-	save();
-	Draw();
+	C(urls, edit(websToCheck[websToCheck.length - 1]).html);
 }
 
 function edit(elem) {
 	var web         = prompt("Web.............................................................................................................................................................................", elem.web);
 	if (web)         elem.web = web;
-	var regex       = prompt("Regex to match..................................................................................................................................................................", elem.regex);
+	var regex       = prompt("Regex to match..................................................................................................................................................................", elem.regex != "" ? elem.regex : findIdealRegex(elem.web));
 	if (regex)       elem.regex = regex;
-	var wantToMatch = prompt("Wants the regex to match? (y/yes/n/no)..........................................................................................................................................", elem.wantToMatch ? "yes" : "no");
-	if (wantToMatch) elem.wantToMatch = ["yes","y"].indexOf(wantToMatch.toLocaleLowerCase()) != -1;
+	var wantToMatch = prompt("Wants the regex to match? (y/yes/n/no)..........................................................................................................................................", (elem.wantToMatch === 1 ? findIdealWantToMatch(elem.web) : elem.wantToMatch) ? "yes" : "no");
+	if (wantToMatch) elem.wantToMatch = ["yes","y", true].indexOf(wantToMatch.toLocaleLowerCase()) != -1;
 	elem.matched = "";
 	ReDrawElement(elem);
 	save();
+	return elem;
+}
+
+function findIdealRegex(url) {
+	var uD = extractDomain(url);
+	for (var i = 0; i < websToCheck.length; i++) {
+		if (uD == extractDomain(websToCheck[i].web) && websToCheck[i].regex != "") {
+			return websToCheck[i].regex;
+		}
+	}
+	return "Prev";
+}
+
+function findIdealWantToMatch(url) {
+	var uD = extractDomain(url);
+	for (var i = 0; i < websToCheck.length; i++) {
+		if (uD == extractDomain(websToCheck[i].web)) {
+			return websToCheck[i].wantToMatch;
+		}
+	}
+	return "y";
+}
+
+function extractDomain(url) {
+	var domain;
+	//find & remove protocol (http, ftp, etc.) and get domain
+	if (url.indexOf("://") > -1) {
+		domain = url.split('/')[2];
+	}
+	else {
+		domain = url.split('/')[0];
+	}
+	
+	//find & remove port number
+	domain = domain.split(':')[0];
+	return domain;
 }
 
 function comprobarWebs() {
