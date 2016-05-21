@@ -22,13 +22,15 @@ var websToCheck = [];
 var proxy = 'http://127.0.0.1';
 
 API.storage.remoteStorage.get('websToCheck', function(data){
-	if(data && data.length > 0){
+	if (data && data.length > 0) {
 		websToCheck = data;
 		for (var i = 0; i < websToCheck.length; i++) {
 			websToCheck[i].matched = "";
 			websToCheck[i].html = null;
 		}
 		Draw();
+		
+		API.storage.localStorage.set('websToCheck backup day ' + new Date().toString(), GenerateSave());
 	}
 }).get('proxy', function(data){
 	if(data) proxy = data;
