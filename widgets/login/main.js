@@ -131,11 +131,9 @@ function submit(){
 		elems.push(mail);
 	}
 	
-	var data = '';
-	for(var i = 0; i < elems.length; i++){
-		data += elems[i].getAttribute("name") + '=' + encodeURIComponent(elems[i].value) + '&';
-	}
-	data = data.substr(0, data.length -1);
+		
+	var data = [];
+	elems.map(function(e){ data.push(e.getAttribute("name") + '=' + encodeURIComponent(e.value)); });
 	
 	var url = "";
 	if(register.checked){
@@ -146,7 +144,7 @@ function submit(){
 		url = API.siteURLs.login;
 	}
 	
-	API.xhr(url, data, function(data){
+	API.xhr(url, data.join('&'), function(data){
 		if(data.status === 'OK'){
 			if(register.checked){
 				ok('Please, check you e-mail inbox to validate your account');

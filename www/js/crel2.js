@@ -31,7 +31,7 @@ crel2 = function() {
 
 	while (argumentsLength > childIndex) {
 		settings_child = args[childIndex++];
-		if (typeof settings_child !== 'object') {
+		if (typeof settings_child !== 'object' && typeof settings_child !== 'function') {
 			settings_child = document.createTextNode(settings_child);
 		}
 		element.appendChild(settings_child);
