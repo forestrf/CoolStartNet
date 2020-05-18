@@ -9,14 +9,13 @@
 	
 	
 	#####################################
-	# Force without WWW
+	# Force without WWW and https
 	#####################################
 
 	# convertir www.***.com en ***.com
-	RewriteCond %{HTTP_HOST} ^www [NC]
-	RewriteRule (.*) http://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
-	
-	
+	RewriteCond %{HTTP_HOST} ^www\.(.+) [NC]
+	RewriteRule ^ http://%1%{REQUEST_URI} [R=301,L]
+
 	
 	#####################################
 	# Dropbox Files shortcut
@@ -49,7 +48,6 @@
 	
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteRule ^([^\.]+[^/])$ $1.php [NC,L]
-	
 </IfModule>
 
 #CACHE
