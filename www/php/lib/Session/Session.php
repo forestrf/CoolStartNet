@@ -68,9 +68,8 @@ class Session {
 			$session_data = explode('|', $_COOKIE['session']);
 			$user_random = $this->db->get_user_random($session_data[0]);
 			
-			// is the session time greater than today? 
-			if (new DateTime($session_data[2]) > new DateTime()) {
-				
+			// is the session time greater than today?
+			if (strtotime($session_data[2]) > new DateTime()) {
 				// is the user IP the same as the session IP?
 				if ($_SERVER['REMOTE_ADDR'] === $session_data[1]) {
 					$session_test = $this->generate_session_string($session_data[0], $user_random, $session_data[2]);
