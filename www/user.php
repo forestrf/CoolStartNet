@@ -235,15 +235,15 @@ function update_password() {
 
 // Contabilize how many attemps has the user left (by IP)
 function tries_get() {
-	$tries = apc_fetch('login_fail_'.$_SERVER['REMOTE_ADDR']);
+	$tries = apcu_fetch('login_fail_'.$_SERVER['REMOTE_ADDR']);
 	if ($tries === false) $tries = MAX_LOGIN_FAILS;
 	return $tries;
 }
 function tries_decrease() {
-	apc_store('login_fail_'.$_SERVER['REMOTE_ADDR'], tries_get() - 1, LOGIN_FAIL_WAIT * 60);
+	apcu_store('login_fail_'.$_SERVER['REMOTE_ADDR'], tries_get() - 1, LOGIN_FAIL_WAIT * 60);
 }
 function tries_reset() {
-	$tries = apc_delete('login_fail_'.$_SERVER['REMOTE_ADDR']);
+	$tries = apcu_delete('login_fail_'.$_SERVER['REMOTE_ADDR']);
 }
 
 
