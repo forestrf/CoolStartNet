@@ -235,7 +235,7 @@ function update_password() {
 
 // Contabilize how many attemps has the user left (by IP)
 function tries_get() {
-	$tries = MAX_LOGIN_FAILS; return; // Problems with APC
+	$tries = MAX_LOGIN_FAILS; return $tries; // Problems with APC
 	$tries = apcu_fetch('login_fail_'.$_SERVER['REMOTE_ADDR']);
 	if ($tries === false) $tries = MAX_LOGIN_FAILS;
 	return $tries;
