@@ -620,16 +620,19 @@ class DB {
 	
 	// (SET) Cache a result. $query is the sql to be cached, $result is the array of the response.
 	function cacheResult($query, $result) {
+		return; // Problems with APC
 		apcu_store($query, $result, QUERY_CACHE_TTL);
 	}
 	
 	// (GET) Cache a result. $query is the sql to search in the cache, $result is the array of the response.
 	function queryCache($query) {
+		return false; // Problems with APC
 		return apcu_fetch($query); // false if it fails
 	}
 	
 	// (DEL) Cache a result. $query is the sql to delete from the cache.
 	function deleteCache($query) {
+		return; // Problems with APC
 		apcu_delete($query);
 	}
 }
